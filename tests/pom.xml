@@ -3,23 +3,23 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jboss.tools</groupId>
-		<artifactId>cake</artifactId>
+		<artifactId>windup</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>org.jboss.tools.cake</groupId>
+	<groupId>org.jboss.tools.windup</groupId>
 	<artifactId>tests</artifactId>
-	<name>cake.tests</name>
+	<name>windup.tests</name>
 	
 	<packaging>pom</packaging>
 	
 	<properties>
-		<coverage.filter>org.jboss.tools.cake*</coverage.filter>
+		<coverage.filter>org.jboss.tools.windup*</coverage.filter>
 	</properties>
 	
 	<modules>
-		<module>org.jboss.tools.cake.core.tests</module>
-		<module>org.jboss.tools.cake.ui.tests</module>
+		<module>org.jboss.tools.windup.core.tests</module>
+		<module>org.jboss.tools.windup.ui.tests</module>
 	</modules>
 	
 	<build>

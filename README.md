@@ -1,5 +1,5 @@
-# The Cake Eclipse Project
+# The WindUp Eclipse Project
 
 ## Summary
 
-The Cake Eclipse Project provides Eclipse plugins to integrate the Cake project with Eclipse.
+The WindUp Eclipse Project provides Eclipse plugins to integrate the WindUp project with Eclipse.

@@ -9,9 +9,9 @@
 	</parent>
 	
 	<groupId>org.jboss.tools</groupId>
-	<artifactId>cake</artifactId>
+	<artifactId>windup</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>cake.all</name>
+	<name>windup.all</name>
 	
 	<packaging>pom</packaging>
 	

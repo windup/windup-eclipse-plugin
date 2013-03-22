@@ -4,18 +4,18 @@
 	
 	<parent>
 		<groupId>org.jboss.tools</groupId>
-		<artifactId>cake</artifactId>
+		<artifactId>windup</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>org.jboss.tools.cake</groupId>
+	<groupId>org.jboss.tools.windup</groupId>
 	<artifactId>plugins</artifactId>
-	<name>cake.plugins</name>
+	<name>windup.plugins</name>
 	
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>org.jboss.tools.cake.core</module>
-		<module>org.jboss.tools.cake.ui</module>
+		<module>org.jboss.tools.windup.core</module>
+		<module>org.jboss.tools.windup.ui</module>
 	</modules>
 </project>
