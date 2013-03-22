@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cake Core
+Bundle-SymbolicName: org.jboss.tools.cake.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.jboss.tools.cake.core.Activator
+Require-Bundle: org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: JBoss by Red Hat
