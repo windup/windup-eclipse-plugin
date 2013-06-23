@@ -8,7 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.core.runtime,
  org.jboss.tools.windup.core;bundle-version="[1.0.0,2.0.0)",
- org.junit4;bundle-version="[4.8.0,5.0.0)"
+ org.junit4;bundle-version="[4.8.1,5.0.0)"
 Export-Package: org.jboss.tools.windup.core.test
 Eclipse-BundleShape: dir
 Bundle-Vendor: JBoss by Red Hat

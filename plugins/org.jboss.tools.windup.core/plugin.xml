@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.jboss.tools.windup.core.validators.WindupValidator"
+         name="%_validator.name"
+         point="org.eclipse.wst.validation.validatorV2">
+      <validator
+            build="true"
+            class="org.jboss.tools.windup.core.internal.validators.WindupValidator"
+            manual="true"
+            markerId="org.jboss.tools.windup.core.validationMarker">
+         <include>
+            <rules>
+               <fileext
+                     ext="html">
+               </fileext>
+               <fileext
+                     ext="jsp">
+               </fileext>
+               <fileext
+                     ext="xml">
+               </fileext>
+               <fileext
+                     ext="java">
+               </fileext>
+            </rules>
+         </include>
+      </validator>
+   </extension>
+   <extension
+         id="validationMarker"
+         name="%_validationMarker.name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.wst.validation.problemmarker2">
+      </super>
+   </extension>
+
+</plugin>

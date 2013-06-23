@@ -20,4 +20,33 @@
 		<module>plugins</module>
 		<module>tests</module>
 	</modules>
+	
+	<properties>
+		<windup.version>0.7.0</windup.version>
+	</properties>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-engine</artifactId>
+				<version>${windup.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-metadata</artifactId>
+				<version>${windup.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-reporting</artifactId>
+				<version>${windup.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.windup</groupId>
+				<artifactId>windup-rules</artifactId>
+				<version>${windup.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

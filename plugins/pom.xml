@@ -16,6 +16,5 @@
 	
 	<modules>
 		<module>org.jboss.tools.windup.core</module>
-		<module>org.jboss.tools.windup.ui</module>
 	</modules>
 </project>
