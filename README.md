@@ -1,4 +1,7 @@
-# The WindUp Eclipse Project
+windup-eclipse-plugin
+=====================
+
+Windup Eclipse Plugin
 
 ## Summary
 
