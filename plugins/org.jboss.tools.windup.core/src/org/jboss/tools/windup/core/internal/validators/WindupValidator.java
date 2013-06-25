@@ -17,9 +17,11 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.wst.validation.AbstractValidator;
 import org.eclipse.wst.validation.ValidationResult;
+import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.windup.WindupEngine;
@@ -27,13 +29,26 @@ import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
 import org.jboss.windup.metadata.decoration.Line;
 import org.jboss.windup.metadata.decoration.hint.Hint;
+import org.jboss.windup.metadata.decoration.hint.MarkdownHint;
 import org.jboss.windup.metadata.type.FileMetadata;
 
 /**
- * TODO: IAN: doc me
+ * <p>
+ * {@link AbstractValidator} which uses the {@link WindupEngine} to add {@link ValidatorMessage}s
+ * to resources based on the decorations and hits found by the {@link WindupEngine}.
+ * </p>
  */
 public class WindupValidator extends AbstractValidator {	
-	private static final String WINDUP_MARKER_ID = "org.jboss.tools.windup.core.validationMarker"; //$NON-NLS-1$
+	private static final String WINDUP_DECORATION_MARKER_ID = "org.jboss.tools.windup.core.decorationMarker"; //$NON-NLS-1$
+	private static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
+	
+	/**
+	 * @see org.eclipse.wst.validation.AbstractValidator#clean(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public void clean(IProject project, ValidationState state, IProgressMonitor monitor) {
+		cleanUpWindUpMarkers(project);
+	}
 	
 	/**
 	 * @see org.eclipse.wst.validation.AbstractValidator#validationStarting(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
@@ -65,46 +80,54 @@ public class WindupValidator extends AbstractValidator {
 			org.eclipse.wst.validation.ValidationState state,
 			IProgressMonitor monitor) {
 		
-		ValidationResult result = new ValidationResult();
+		//before generating new results clean out existing ones
+		cleanUpWindUpMarkers(resource);
 		
+		//create a new result
+		ValidationResult result = new ValidationResult();
 		try {
+			//process the file with WindUp
 			FileMetadata meta = this.getEngine().processFile(resource.getLocation().toFile());
 			
-			//for each decoration found on the file
-			Collection<AbstractDecoration> decorations = meta.getDecorations();
-			for(AbstractDecoration decoration : decorations) {
-				
-				//create and set the validation message
-				StringBuffer message = new StringBuffer();
-				message.append(Messages.Windup);
-				message.append(decoration.getDescription());
-				message.append("."); //$NON-NLS-1$
-
-				//add hints to the validation message
-				Set<Hint> hints = decoration.getHints();
-				if(!hints.isEmpty()) {
-					message.append(Messages.Hints);
-					for(Hint hint : hints) {
-						message.append(hint.toString());
-						message.append(", "); //$NON-NLS-1$
+			//if meta then WindUp matched on something in the file
+			if(meta != null) {
+				//for each decoration found on the file
+				Collection<AbstractDecoration> decorations = meta.getDecorations();
+				for(AbstractDecoration decoration : decorations) {
+					
+					//determine line number to report issue on
+					int lineNumber = 1;
+					if(decoration instanceof Line) {
+						lineNumber = ((Line) decoration).getLineNumber();
 					}
+					
+					//create validation message for the decoration
+					ValidatorMessage decorationMessage = ValidatorMessage.create(decoration.getDescription(), resource);
+					decorationMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
+					decorationMessage.setType(WINDUP_DECORATION_MARKER_ID);
+					decorationMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+					
+					//create validation messages for the hints
+					Set<Hint> hints = decoration.getHints();
+					if(!hints.isEmpty()) {
+						for(Hint hint : hints) {
+							String hintMessage = null;
+							if(hint instanceof MarkdownHint) {
+								hintMessage = ((MarkdownHint) hint).getMarkdown();
+							} else {
+								hintMessage = hint.toString();
+							}
+							
+							ValidatorMessage hintValidatorMessage = ValidatorMessage.create(hintMessage, resource);
+							hintValidatorMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
+							hintValidatorMessage.setType(WINDUP_HINT_MARKER_ID);
+							hintValidatorMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+							result.add(hintValidatorMessage);
+						}
+					}
+					
+					result.add(decorationMessage);
 				}
-				ValidatorMessage decorationMessage = ValidatorMessage.create(message.toString(), resource);
-				
-				//determine the severity
-				decorationMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-				
-				//set the specific WindUp category
-				decorationMessage.setType(WINDUP_MARKER_ID);
-				
-				//determine line number to report issue on
-				int lineNumber = 1;
-				if(decoration instanceof Line) {
-					lineNumber = ((Line) decoration).getLineNumber();
-				}
-				decorationMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				
-				result.add(decorationMessage);
 			}
 		} catch (IOException e) {
 			WindupCorePlugin.getDefault().logError("Error running WindUp: " + resource, e); //$NON-NLS-1$
@@ -153,5 +176,23 @@ public class WindupValidator extends AbstractValidator {
 		//NOTE: windup currently does not leverage notification levels well so make everything a warning
 		
 		return severity;
+	}
+	
+	/**
+	 * <p>
+	 * Removes all of the WindUp markers from the given {@link IResource}.
+	 * </p>
+	 * 
+	 * @param resource to cleanup the WindUp markers from
+	 */
+	private static void cleanUpWindUpMarkers(IResource resource) {
+		if(resource != null) {
+			try {
+				resource.deleteMarkers(WINDUP_DECORATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+				WindupCorePlugin.getDefault().logError("Error cleaning up markers from: " + resource, e); //$NON-NLS-1$
+			}
+		}
 	}
 }

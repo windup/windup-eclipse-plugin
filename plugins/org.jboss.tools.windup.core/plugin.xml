@@ -8,8 +8,7 @@
       <validator
             build="true"
             class="org.jboss.tools.windup.core.internal.validators.WindupValidator"
-            manual="true"
-            markerId="org.jboss.tools.windup.core.validationMarker">
+            manual="true">
          <include>
             <rules>
                <fileext
@@ -29,8 +28,19 @@
       </validator>
    </extension>
    <extension
-         id="validationMarker"
-         name="%_validationMarker.name"
+         id="decorationMarker"
+         name="%_decorationMarker.name"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.wst.validation.problemmarker2">
+      </super>
+   </extension>
+   <extension
+         id="hintMarker"
+         name="%_hintMarker.name"
          point="org.eclipse.core.resources.markers">
       <persistent
             value="true">
