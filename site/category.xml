@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<description>
+	To install these features, point Eclipse at this site.
+	</description>
+
+	<category-def label="JBoss Tools Windup Nightly Build Update Site" name="AllFeatures">
+		<description>JBoss Tools Windup Nightly Build Update Site: contains all features in this build.</description>
+	</category-def>
+	<category-def label="JBoss Tools Windup Nightly Build Update Site" name="AllSources">
+		<description>JBoss Tools Windup Nightly Build Update Site: contains all source features in this build.</description>
+	</category-def>
+
+<!-- tests -->
+
+	<feature url="features/org.jboss.tools.windup.feature_0.0.0.jar" id="org.jboss.tools.windup.feature" version="0.0.0">
+		<category name="AllFeatures"/>
+	</feature>
+	<feature url="features/org.jboss.tools.windup.feature.source_0.0.0.jar" id="org.jboss.tools.windup.feature.source" version="0.0.0">
+		<category name="AllSources"/>
+	</feature>
+
+</site>
