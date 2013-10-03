@@ -1,14 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: WindUp Core Tests
-Bundle-SymbolicName: org.jboss.tools.windup.core.test
+Bundle-Localization: plugin
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: org.jboss.tools.windup.core.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.jboss.tools.windup.core.test.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.junit;bundle-version="[4.8.2,5.0.0)",
  org.jboss.tools.windup.core;bundle-version="[1.0.0,2.0.0)",
- org.junit4;bundle-version="[4.8.1,5.0.0)"
+ org.jboss.tools.tests
 Export-Package: org.jboss.tools.windup.core.test
-Eclipse-BundleShape: dir
-Bundle-Vendor: JBoss by Red Hat
+Bundle-Vendor: %plugin.vendor
