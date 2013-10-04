@@ -28,7 +28,7 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tychoVersion}</version>
 				<configuration>
-					<product>org.jboss.tools.tests.application</product>
+					<product>org.jboss.tools.tests</product>
 				</configuration>
 			</plugin>
 		</plugins>
