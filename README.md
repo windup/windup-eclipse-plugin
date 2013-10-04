@@ -46,11 +46,11 @@ If you just want to check if things compiles/builds you can run:
 
 But *do not* push changes without having the new and existing unit tests pass!
 
-## Notes
-The Windup engine is resource intensive.  I found I had to increase the memory settings when
-launching Eclipse to keep from running out of memory.
+## Debuging
+The Windup engine is resource intensive.  I found I have had to increase the memory settings when
+launching Eclipse from the debugger to keep from running out of memory.
 
-I when debugging am currently using:
+When debugging am currently using:
 
     -Xms1024m -Xmx2048m -XX:MaxPermSize=1024m
 
