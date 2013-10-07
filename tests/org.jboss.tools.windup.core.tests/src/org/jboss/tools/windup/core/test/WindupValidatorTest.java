@@ -121,7 +121,7 @@ public class WindupValidatorTest extends TestCase {
 					
 					//if an actual marker matches an expected marker
 					if(expectedMarker.message.equals(actualMarker.getAttribute(IMarker.MESSAGE))
-							&& expectedMarker.lineNumber == (int)actualMarker.getAttribute(IMarker.LINE_NUMBER)) {
+							&& expectedMarker.lineNumber == (Integer)actualMarker.getAttribute(IMarker.LINE_NUMBER)) {
 						
 						// remove it from the list of expected markers and found markers
 						actualMarkersIter.remove();

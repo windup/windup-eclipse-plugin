@@ -37,9 +37,6 @@ Therefor the only way to build this project is to first download and build the [
 The tests of this project require the org.jboss.tools.tests project. The recommended way to deal with this is
 to clone https://github.com/jbosstools/jbosstools-base locally and then import the org.jboss.tools.tests project into your Eclipse workspace.
 
-Currently the projects are setup to require Java 1.7, though there is a need to play with this to see if it can
-be lowerd to 1.6.
-
 This command will then run the build:
 
     $ mvn clean verify
