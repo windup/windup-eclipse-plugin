@@ -29,6 +29,17 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>org.jboss.tools.windup.plugins</groupId>
+				<artifactId>org.jboss.tools.windup.core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.tools.windup.plugins</groupId>
+				<artifactId>org.jboss.tools.windup.ui</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		
+			<dependency>
 				<groupId>org.jboss.windup</groupId>
 				<artifactId>windup-engine</artifactId>
 				<version>${windup.version}</version>

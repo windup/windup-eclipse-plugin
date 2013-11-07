@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%windup.category.name"
+            id="org.jboss.tools.windup.ui">
+      </category>
+      <view
+            allowMultiple="false"
+            category="org.jboss.tools.windup.ui"
+            class="org.jboss.tools.windup.ui.views.WindupReportView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.views.WindupReportView"
+            name="%windupreport.view.name">
+      </view>
+   </extension>
+
+</plugin>
