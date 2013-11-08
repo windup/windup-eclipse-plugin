@@ -137,9 +137,7 @@ public class WindupValidator extends AbstractValidator {
 	}
 	
 	/**
-	 * TODO: IAN: doc me
-	 * 
-	 * @return
+	 * @return the shared {@link WindupEngine} instance
 	 */
 	private WindupEngine getEngine() {
 		return WindupCorePlugin.getDefault().getEngine();
