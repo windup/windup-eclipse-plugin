@@ -52,7 +52,7 @@ The Windup engine is resource intensive.  I found I have had to increase the mem
 launching Eclipse from the debugger to keep from running out of memory.
 
 When debugging am currently using:
-
-    -Xms1024m -Xmx2048m -XX:MaxPermSize=1024m
+	
+    -Xms1024m -Xmx1536m -XX:MaxPermSize=512M
 
 These settings will need to be optimized at some point.
