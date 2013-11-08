@@ -2,20 +2,52 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="%windup.category.name"
-            id="org.jboss.tools.windup.ui">
-      </category>
-      <view
-            allowMultiple="false"
-            category="org.jboss.tools.windup.ui"
-            class="org.jboss.tools.windup.ui.views.WindupReportView"
-            icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.views.WindupReportView"
-            name="%windupreport.view.name">
-      </view>
-   </extension>
+	<extension point="org.eclipse.ui.views">
+		<category name="%category.windup.name" id="org.jboss.tools.windup.ui">
+		</category>
+		<view allowMultiple="false" category="org.jboss.tools.windup.ui"
+			class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
+			icon="icons/windup.png" id="org.jboss.tools.windup.ui.views.WindupReportView"
+			name="%view.windup_report.name">
+		</view>
+	</extension>
+	<extension point="org.eclipse.ui.commands">
+		<command categoryId="org.jboss.tools.windup.ui.category.windup"
+			defaultHandler="org.jboss.tools.windup.ui.internal.commands.ViewWindupReportHandler"
+			id="org.jboss.tools.windup.ui.command.viewwindupreport" name="%command.show_in_windup_report_viewer.name">
+		</command>
+		<category id="org.jboss.tools.windup.ui.category.windup"
+			name="%category.windup.name">
+		</category>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution allPopups="false"
+			locationURI="popup:org.eclipse.ui.popup.any?after=additions">
 
+			<menu id="org.jboss.tools.windup.ui.menu.windup" label="%menu.windup.name">
+				<command commandId="org.jboss.tools.windup.ui.command.viewwindupreport"
+					icon="icons/windup.png" label="%command.show_in_windup_report_viewe.name"
+					style="push">
+					<visibleWhen checkEnabled="false">
+						<and>
+							<count value="1">
+							</count>
+							<iterate ifEmpty="false" operator="and">
+								<or>
+									<instanceof value="org.eclipse.core.resources.IFile"></instanceof>
+									<instanceof value="org.eclipse.core.resources.IProject"></instanceof>
+								</or>
+							</iterate>
+						</and>
+					</visibleWhen>
+				</command>
+			</menu>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="*">
+			<showInPart id="org.jboss.tools.windup.ui.views.WindupReportView">
+			</showInPart>
+		</perspectiveExtension>
+	</extension>
 </plugin>
