@@ -11,13 +11,27 @@
 package org.jboss.tools.windup.core;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.jboss.windup.WindupEngine;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
+import org.jboss.tools.windup.core.internal.Messages;
 
 /**
- * TODO: IAN: doc me
+ * <p>
+ * Service used to perform Windup operations inside of Eclipse.
+ * </p>
+ * 
+ * TODO: IAN: turn this into a true Eclipse service
+ * 
+ * TODO: IAN: move {@link WindupCorePlugin#getWindupEngine()} here
+ * TODO: IAN: move {@link WindupCorePlugin#getWindupReportEngine()} here
  */
 public class WindupReportGenerator {
 	private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
@@ -28,7 +42,6 @@ public class WindupReportGenerator {
 	private static IPath reportsDir = WindupCorePlugin.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 	
 	private WindupReportGenerator() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -86,10 +99,47 @@ public class WindupReportGenerator {
 	}
 	
 	/**
-	 * @return the shared {@link WindupEngine} instance
+	 * <p>
+	 * Generate a Windup report for the project containing the given resource.
+	 * </p>
+	 * 
+	 * @param forResource
+	 *            Generate a Windup report for the project containing this
+	 *            resource
 	 */
-	private WindupEngine getEngine() {
-		return WindupCorePlugin.getDefault().getEngine();
+	public void generateReport(IResource forResource) {
+		final IProject selectedProject = forResource.getProject();
+		final String projectName = selectedProject.getName();
+		
+		Job generateJob = new Job(NLS.bind(Messages.generate_windup_report_for, projectName)) {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask(this.getName(), IProgressMonitor.UNKNOWN);
+				IStatus status = null;
+				
+				try {
+					File inputDir = selectedProject.getLocation().toFile();
+					IPath outputPath = reportsDir.append(projectName);
+					WindupCorePlugin.getDefault().getWindupReportEngine().process(
+							inputDir, outputPath.toFile());
+					
+					status = Status.OK_STATUS;
+				} catch (IOException e) {
+					status = new Status(IStatus.ERROR,
+							WindupCorePlugin.PLUGIN_ID,
+							NLS.bind(Messages.error_generating_report_for, projectName));
+					
+					WindupCorePlugin.logError("There was an error generating the Windup report " //$NON-NLS-1$
+							+ "for the project " + projectName, e); //$NON-NLS-1$
+				} finally {
+					monitor.done();
+				}
+				
+				return status;
+			}
+		};
+		
+		generateJob.schedule();
 	}
-	
 }

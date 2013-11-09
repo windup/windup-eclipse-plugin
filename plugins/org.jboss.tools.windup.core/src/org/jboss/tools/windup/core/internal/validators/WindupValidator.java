@@ -140,7 +140,7 @@ public class WindupValidator extends AbstractValidator {
 	 * @return the shared {@link WindupEngine} instance
 	 */
 	private WindupEngine getEngine() {
-		return WindupCorePlugin.getDefault().getEngine();
+		return WindupCorePlugin.getDefault().getWindupEngine();
 	}
 	
 	/**

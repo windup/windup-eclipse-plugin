@@ -8,14 +8,16 @@
 * Contributors:
 *   Red Hat, Inc. - initial API and implementation
 ******************************************************************************/
-package org.jboss.tools.windup.ui.internal;
+package org.jboss.tools.windup.core.internal;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.jboss.tools.windup.ui.internal.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.jboss.tools.windup.core.internal.messages"; //$NON-NLS-1$
 	
-	public static String link_with_editor_and_selection;
+	public static String error_generating_report_for;
+
+	public static String generate_windup_report_for;
 	
 	static {
 		// initialize resource bundle

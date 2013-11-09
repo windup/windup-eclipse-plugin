@@ -10,12 +10,7 @@
 ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.views;
 
-import java.io.File;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -43,6 +38,7 @@ import org.jboss.tools.windup.core.WindupReportGenerator;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.Utils;
 
 /**
  * <p>
@@ -158,23 +154,10 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	public synchronized boolean updateSelection(ISelection selection) {
 		boolean canReact = false;
 		
-		if (selection instanceof StructuredSelection) {
-			StructuredSelection structuredSelection = (StructuredSelection) selection;
-
-			// if only one selection is made update the displayed report
-			if(structuredSelection.size() == 1) {
-				Object firstElement = structuredSelection.getFirstElement();
-				if (firstElement instanceof IResource) {
-					canReact = true;
-					this.displayReport((IResource)firstElement);
-				} else if (firstElement instanceof IAdaptable) {
-					IResource adapted = (IResource) ((IAdaptable) firstElement).getAdapter(IResource.class);
-					if (adapted != null) {
-						canReact = true;
-						this.displayReport(adapted);
-					}
-				}
-			}
+		IResource selectedResource = Utils.getSelectedResource(selection);
+		if(selectedResource != null) {
+			canReact = true;
+			this.displayReport(selectedResource);
 		}
 		
 		return canReact;

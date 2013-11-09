@@ -16,6 +16,10 @@
 			defaultHandler="org.jboss.tools.windup.ui.internal.commands.ViewWindupReportHandler"
 			id="org.jboss.tools.windup.ui.command.viewwindupreport" name="%command.show_in_windup_report_viewer.name">
 		</command>
+		<command categoryId="org.jboss.tools.windup.ui.category.windup"
+			defaultHandler="org.jboss.tools.windup.ui.internal.commands.GenerateWindupReportHandler"
+			id="org.jboss.tools.windup.ui.command.generatewindupreport" name="%command.generate_windup_report.name">
+		</command>
 		<category id="org.jboss.tools.windup.ui.category.windup"
 			name="%category.windup.name">
 		</category>
@@ -25,6 +29,20 @@
 			locationURI="popup:org.eclipse.ui.popup.any?after=additions">
 
 			<menu id="org.jboss.tools.windup.ui.menu.windup" label="%menu.windup.name">
+				<command commandId="org.jboss.tools.windup.ui.command.generatewindupreport"
+					label="%command.generate_windup_report.name" style="push">
+					<visibleWhen checkEnabled="false">
+						<and>
+							<count value="1">
+							</count>
+							<iterate ifEmpty="false" operator="and">
+								<or>
+									<instanceof value="org.eclipse.core.resources.IResource"></instanceof>
+								</or>
+							</iterate>
+						</and>
+					</visibleWhen>
+				</command>
 				<command commandId="org.jboss.tools.windup.ui.command.viewwindupreport"
 					icon="icons/windup.png" label="%command.show_in_windup_report_viewe.name"
 					style="push">

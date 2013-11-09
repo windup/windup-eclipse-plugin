@@ -13,30 +13,25 @@ package org.jboss.tools.windup.ui.internal.commands;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.core.WindupReportGenerator;
+import org.jboss.tools.windup.ui.internal.Utils;
 
 /**
  * <p>
- * Handles viewing the current selection in the Windup Report Viewer
+ * Handles generating the windup report for a project.
  * </p>
  */
-public class ViewWindupReportHandler extends AbstractHandler {
+public class GenerateWindupReportHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		try {
-			WindupReportView windupView = (WindupReportView)PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
-			ISelection selection = HandlerUtil.getCurrentSelection(event);
-			windupView.updateSelection(selection);
-		} catch (PartInitException e) {
-			WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
-		}
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		IResource selectedResource = Utils.getSelectedResource(selection);
+		
+		WindupReportGenerator.getDefault().generateReport(selectedResource);
 		
 		return null;
 	}

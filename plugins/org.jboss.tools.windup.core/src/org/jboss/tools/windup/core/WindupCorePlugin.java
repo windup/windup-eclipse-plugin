@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
+import org.jboss.windup.reporting.ReportEngine;
 import org.osgi.framework.BundleContext;
 
 public class WindupCorePlugin extends Plugin {
@@ -42,7 +43,18 @@ public class WindupCorePlugin extends Plugin {
 	 * This is really expensive to initialize, so it is only done once.
 	 * </p>
 	 */
-	private WindupEngine engine;
+	private WindupEngine windupEngine;
+	
+	/**
+	 * <p>
+	 * {@link ReportEngine} instance used by this plugin.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is really expensive to initialize, so it is only done once.
+	 * </p>
+	 */
+	private ReportEngine reportEngine;
 	
 	/**
 	 * @return singleton instance of the plugin
@@ -51,19 +63,58 @@ public class WindupCorePlugin extends Plugin {
 		return plugin;
 	}
 	
-	public WindupEngine getEngine() {
-		if(this.engine == null) {
+	/**
+	 * <p>
+	 * The {@link WindupEngine} is expensive to initialize so making sure there
+	 * is ever only one helps.
+	 * </p>
+	 * 
+	 * @return the single instance of the {@link WindupEngine} to be used in Eclipse
+	 */
+	public WindupEngine getWindupEngine() {
+		if(this.windupEngine == null) {
 			try {
-				WindupEnvironment settings = new WindupEnvironment();
-				settings.setSource(true);
-				
-				this.engine = new WindupEngine(settings);
+				this.windupEngine = new WindupEngine(this.getWindupEnv());
 			} catch(Throwable t) {
-				this.logError("Error getting Windup Engine.", t); //$NON-NLS-1$
+				logError("Error getting Windup Engine.", t); //$NON-NLS-1$
 			}
 		}
 		
-		return this.engine;
+		return this.windupEngine;
+	}
+	
+	/**
+	 * <p>
+	 * The {@link ReportEngine} is expensive to initialize so making sure there
+	 * is ever only one helps.
+	 * </p>
+	 * 
+	 * @return the single instance of the {@link ReportEngine} to be used in Eclipse
+	 */
+	public ReportEngine getWindupReportEngine() {
+		if(this.reportEngine == null) {
+			try {
+				this.reportEngine = new ReportEngine(this.getWindupEnv());
+			} catch(Throwable t) {
+				logError("Error getting Windup Report Engine.", t); //$NON-NLS-1$
+			}
+		}
+		
+		return this.reportEngine;
+	}
+	
+	/**
+	 * <p>
+	 * Single source for the {@link WindupEnvironment} to use within Eclipse.
+	 * </p>
+	 * 
+	 * @return {@link WindupEnvironment} used to initialize Windup
+	 */
+	private WindupEnvironment getWindupEnv() {
+		WindupEnvironment settings = new WindupEnvironment();
+		settings.setSource(true);
+		
+		return settings;
 	}
 
 	/**
@@ -82,11 +133,15 @@ public class WindupCorePlugin extends Plugin {
 		plugin = null;
 	}
 	
-	public void logError(String message, Throwable t) {
-		StringBuffer logMessage = new StringBuffer();
-		logMessage.append(message);
-		logMessage.append("\n"); //$NON-NLS-1$
-		logMessage.append(t.getMessage());
-		this.getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, logMessage.toString(), t));
+	/**
+	 * <p>
+	 * Logs an error message.
+	 * </p>
+	 * 
+	 * @param message Error message to log
+	 */
+	public static void logError(String message, Throwable exception) {
+		WindupCorePlugin.getDefault().getLog().log(
+				new Status(IStatus.ERROR, WindupCorePlugin.PLUGIN_ID, message, exception));
 	}
 }
