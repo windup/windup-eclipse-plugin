@@ -16,6 +16,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.jboss.tools.windup.ui.internal.messages"; //$NON-NLS-1$
 	
 	public static String link_with_editor_and_selection;
+	public static String generate_windup_report;
 	
 	static {
 		// initialize resource bundle

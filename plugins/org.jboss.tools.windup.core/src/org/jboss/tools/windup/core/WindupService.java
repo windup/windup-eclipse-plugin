@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.windup.WindupEngine;
@@ -111,51 +111,59 @@ public class WindupService {
 	 * Generate a Windup report for the project containing the given resource.
 	 * </p>
 	 * 
+	 * <p>
+	 * This can be a long running operation, it should be run in a Job.
+	 * </p>
+	 * 
 	 * @param resource
 	 *            Generate a Windup report for the project containing this
 	 *            resource
+	 * @param monitor
+	 *            {@link IProgressMonitor} to report progress to
 	 */
-	public void generateReport(IResource resource) {
+	public IStatus generateReport(IResource resource, IProgressMonitor monitor) {
+		//protect against a null given for the progress monitor
+		IProgressMonitor progress;
+		if(monitor != null) {
+			progress = monitor;
+		} else {
+			progress = new NullProgressMonitor();
+		}
+		
 		final IProject selectedProject = resource.getProject();
 		final String projectName = selectedProject.getName();
 		
-		Job generateJob = new Job(NLS.bind(Messages.generate_windup_report_for, projectName)) {
-			
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask(this.getName(), IProgressMonitor.UNKNOWN);
-				IStatus status = null;
-				
-				try {
-					File inputDir = selectedProject.getLocation().toFile();
-					IPath outputPath = reportsDir.append(projectName);
-					
-					File outputDir = outputPath.toFile();
-					
-					//clear out existing report
-					FileUtils.deleteDirectory(outputDir);
-					
-					//generate new report
-					WindupService.this.getWindupReportEngine().process(
-							inputDir, outputDir);
-					
-					status = Status.OK_STATUS;
-				} catch (IOException e) {
-					status = new Status(IStatus.ERROR,
-							WindupCorePlugin.PLUGIN_ID,
-							NLS.bind(Messages.error_generating_report_for, projectName));
-					
-					WindupCorePlugin.logError("There was an error generating the Windup report " //$NON-NLS-1$
-							+ "for the project " + projectName, e); //$NON-NLS-1$
-				} finally {
-					monitor.done();
-				}
-				
-				return status;
-			}
-		};
+		//start the task
+		progress.beginTask(NLS.bind(Messages.generate_windup_report_for, projectName), IProgressMonitor.UNKNOWN);
+		IStatus status = null;
 		
-		generateJob.schedule();
+		try {
+			File inputDir = selectedProject.getLocation().toFile();
+			IPath outputPath = reportsDir.append(projectName);
+			
+			File outputDir = outputPath.toFile();
+			
+			//clear out existing report
+			FileUtils.deleteDirectory(outputDir);
+			
+			//generate new report
+			WindupService.this.getWindupReportEngine().process(
+					inputDir, outputDir);
+			
+			status = Status.OK_STATUS;
+		} catch (IOException e) {
+			status = new Status(IStatus.ERROR,
+					WindupCorePlugin.PLUGIN_ID,
+					NLS.bind(Messages.error_generating_report_for, projectName));
+			
+			WindupCorePlugin.logError("There was an error generating the Windup report " //$NON-NLS-1$
+					+ "for the project " + projectName, e); //$NON-NLS-1$
+		} finally {
+			//mark the monitor as complete
+			progress.done();
+		}
+		
+		return status;
 	}
 	
 	/**
