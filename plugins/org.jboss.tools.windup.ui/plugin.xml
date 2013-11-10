@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
 	<extension point="org.eclipse.ui.views">
 		<category name="%category.windup.name" id="org.jboss.tools.windup.ui">
 		</category>
 		<view allowMultiple="false" category="org.jboss.tools.windup.ui"
 			class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
-			icon="icons/windup.png" id="org.jboss.tools.windup.ui.views.WindupReportView"
+			icon="icons/windup_report.png" id="org.jboss.tools.windup.ui.views.WindupReportView"
 			name="%view.windup_report.name">
 		</view>
 	</extension>
@@ -30,7 +29,8 @@
 
 			<menu id="org.jboss.tools.windup.ui.menu.windup" label="%menu.windup.name">
 				<command commandId="org.jboss.tools.windup.ui.command.generatewindupreport"
-					label="%command.generate_windup_report.name" style="push">
+					icon="icons/windup.png" label="%command.generate_windup_report.name"
+					style="push">
 					<visibleWhen checkEnabled="false">
 						<and>
 							<count value="1">
@@ -44,7 +44,7 @@
 					</visibleWhen>
 				</command>
 				<command commandId="org.jboss.tools.windup.ui.command.viewwindupreport"
-					icon="icons/windup.png" label="%command.show_in_windup_report_viewe.name"
+					icon="icons/windup_report.png" label="%command.show_in_windup_report_viewe.name"
 					style="push">
 					<visibleWhen checkEnabled="false">
 						<and>
