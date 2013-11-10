@@ -10,7 +10,6 @@
 ******************************************************************************/
 package org.jboss.tools.windup.core.internal.validators;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -24,6 +23,7 @@ import org.eclipse.wst.validation.ValidationResult;
 import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
+import org.jboss.tools.windup.core.WindupService;
 import org.jboss.windup.WindupEngine;
 import org.jboss.windup.metadata.decoration.AbstractDecoration;
 import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
@@ -85,62 +85,53 @@ public class WindupValidator extends AbstractValidator {
 		
 		//create a new result
 		ValidationResult result = new ValidationResult();
-		try {
-			//process the file with WindUp
-			FileMetadata meta = this.getEngine().processFile(resource.getLocation().toFile());
-			
-			//if meta then WindUp matched on something in the file
-			if(meta != null) {
-				//for each decoration found on the file
-				Collection<AbstractDecoration> decorations = meta.getDecorations();
-				for(AbstractDecoration decoration : decorations) {
-					
-					//determine line number to report issue on
-					int lineNumber = 1;
-					if(decoration instanceof Line) {
-						lineNumber = ((Line) decoration).getLineNumber();
-					}
-					
-					//create validation message for the decoration
-					ValidatorMessage decorationMessage = ValidatorMessage.create(decoration.getDescription(), resource);
-					decorationMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-					decorationMessage.setType(WINDUP_DECORATION_MARKER_ID);
-					decorationMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-					
-					//create validation messages for the hints
-					Set<Hint> hints = decoration.getHints();
-					if(!hints.isEmpty()) {
-						for(Hint hint : hints) {
-							String hintMessage = null;
-							if(hint instanceof MarkdownHint) {
-								hintMessage = ((MarkdownHint) hint).getMarkdown();
-							} else {
-								hintMessage = hint.toString();
-							}
-							
-							ValidatorMessage hintValidatorMessage = ValidatorMessage.create(hintMessage, resource);
-							hintValidatorMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-							hintValidatorMessage.setType(WINDUP_HINT_MARKER_ID);
-							hintValidatorMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-							result.add(hintValidatorMessage);
-						}
-					}
-					
-					result.add(decorationMessage);
+
+		//process the file with WindUp
+		FileMetadata meta = WindupService.getDefault().getFileMetadata(resource);
+		
+		//if meta then WindUp matched on something in the file
+		if(meta != null) {
+			//for each decoration found on the file
+			Collection<AbstractDecoration> decorations = meta.getDecorations();
+			for(AbstractDecoration decoration : decorations) {
+				
+				//determine line number to report issue on
+				int lineNumber = 1;
+				if(decoration instanceof Line) {
+					lineNumber = ((Line) decoration).getLineNumber();
 				}
+				
+				//create validation message for the decoration
+				ValidatorMessage decorationMessage = ValidatorMessage.create(decoration.getDescription(), resource);
+				decorationMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
+				decorationMessage.setType(WINDUP_DECORATION_MARKER_ID);
+				decorationMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+				
+				//create validation messages for the hints
+				Set<Hint> hints = decoration.getHints();
+				if(!hints.isEmpty()) {
+					for(Hint hint : hints) {
+						String hintMessage = null;
+						if(hint instanceof MarkdownHint) {
+							hintMessage = ((MarkdownHint) hint).getMarkdown();
+						} else {
+							hintMessage = hint.toString();
+						}
+						
+						ValidatorMessage hintValidatorMessage = ValidatorMessage.create(hintMessage, resource);
+						hintValidatorMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
+						hintValidatorMessage.setType(WINDUP_HINT_MARKER_ID);
+						hintValidatorMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+						result.add(hintValidatorMessage);
+					}
+				}
+				
+				result.add(decorationMessage);
 			}
-		} catch (IOException e) {
-			WindupCorePlugin.getDefault().logError("Error running WindUp: " + resource, e); //$NON-NLS-1$
 		}
 		
+		
 		return result;
-	}
-	
-	/**
-	 * @return the shared {@link WindupEngine} instance
-	 */
-	private WindupEngine getEngine() {
-		return WindupCorePlugin.getDefault().getWindupEngine();
 	}
 	
 	/**
@@ -189,7 +180,7 @@ public class WindupValidator extends AbstractValidator {
 				resource.deleteMarkers(WINDUP_DECORATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
 			} catch (CoreException e) {
-				WindupCorePlugin.getDefault().logError("Error cleaning up markers from: " + resource, e); //$NON-NLS-1$
+				WindupCorePlugin.logError("Error cleaning up markers from: " + resource, e); //$NON-NLS-1$
 			}
 		}
 	}

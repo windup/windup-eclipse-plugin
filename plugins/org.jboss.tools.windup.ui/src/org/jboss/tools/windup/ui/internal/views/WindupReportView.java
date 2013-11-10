@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
-import org.jboss.tools.windup.core.WindupReportGenerator;
+import org.jboss.tools.windup.core.WindupService;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -176,7 +176,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 		if(this.currentSelection != resource) {
 			this.currentSelection = resource;
 		
-			IPath reportPath = WindupReportGenerator.getDefault().getReportPath(resource);
+			IPath reportPath = WindupService.getDefault().getReportLocation(resource);
 			
 			if(reportPath != null) {
 				this.browser.setUrl(reportPath.toString());

@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.jboss.tools.windup.core.WindupReportGenerator;
+import org.jboss.tools.windup.core.WindupService;
 import org.jboss.tools.windup.ui.internal.Utils;
 
 /**
@@ -31,7 +31,7 @@ public class GenerateWindupReportHandler extends AbstractHandler {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		IResource selectedResource = Utils.getSelectedResource(selection);
 		
-		WindupReportGenerator.getDefault().generateReport(selectedResource);
+		WindupService.getDefault().generateReport(selectedResource);
 		
 		return null;
 	}
