@@ -5,6 +5,9 @@ import org.osgi.framework.BundleContext;
 
 public class WindupCoreTestPlugin implements BundleActivator {
 
+	// The plug-in ID
+	public static final String PLUGIN_ID = "org.jboss.tools.windup.core.test"; //$NON-NLS-1$
+	
 	private static BundleContext context;
 
 	static BundleContext getContext() {

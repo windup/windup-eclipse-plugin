@@ -70,7 +70,7 @@ public class WindupValidatorTest extends TestCase {
 			ExpectedMarkerInfo[] expectedDecorationMarkers, ExpectedMarkerInfo[] expectedHintMarkers) throws CoreException, OperationCanceledException, InterruptedException {
 		
 		TestProjectProvider provider = new TestProjectProvider(
-				"org.jboss.tools.windup.core.test", null, projectName, false);
+				WindupCoreTestPlugin.PLUGIN_ID, null, projectName, false);
 		IProject project = provider.getProject();
 		
 		//be sure the project is built

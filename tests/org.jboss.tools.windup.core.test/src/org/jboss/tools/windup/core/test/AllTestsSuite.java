@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	WindupValidatorTest.class
+	WindupValidatorTest.class,
+	WindupServiceTest.class
 })
 public class AllTestsSuite {
 
