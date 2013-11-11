@@ -10,6 +10,7 @@
 ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.views;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
@@ -24,6 +25,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -37,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
+import org.jboss.tools.windup.core.IWindupReportListener;
 import org.jboss.tools.windup.core.WindupService;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -56,7 +59,9 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	public static final String ID = "org.jboss.tools.windup.ui.views.WindupReportView"; //$NON-NLS-1$
 
 	/**
-	 * TODO: IAN: doc me
+	 * <p>
+	 * The parent {@link Composite} for this view.
+	 * </p>
 	 */
 	private Composite composite;
 	
@@ -83,6 +88,14 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	 * @see #syncronizeViewWithCurrentSelection
 	 */
 	private ISelectionListener selectionChangedListener;
+	
+	/**
+	 * <p>
+	 * Listener used to listen to changes in Windup reports, such as a new one
+	 * being generated.
+	 * </p>
+	 */
+	private IWindupReportListener reportListener;
 	
 	/**
 	 * <p>
@@ -153,6 +166,26 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 		ISelectionService srv = (ISelectionService) site.getService(ISelectionService.class);
 		srv.addPostSelectionListener(selectionChangedListener);
 
+		//react to Windup report generations
+		this.reportListener = new IWindupReportListener() {
+			@Override
+			public void reportGenerated(IProject project) {
+				/* if the current selection is in the project that
+				 * just had a report generated, refresh the view */
+				if(WindupReportView.this.currentSelection != null
+						&& WindupReportView.this.currentSelection.getProject().equals(project) ) {
+					
+					//refresh has to take place in the display thread
+					Display.getDefault().syncExec(new Runnable() {
+					    public void run() {
+					    	WindupReportView.this.refresh();
+					    }
+					});
+				}
+			}
+		};
+		WindupService.getDefault().addWindupReportListener(reportListener);
+		
 		//store view preferences
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		if (preferenceStore.contains(Preferences.REPORTVIEW_SYNC_SELECTION)) {
@@ -207,9 +240,11 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	public void dispose() {
 		super.dispose();
 
-		//remove selection listener
+		//remove listeners
 		ISelectionService srv = (ISelectionService) getSite().getService(ISelectionService.class);
 		srv.removePostSelectionListener(this.selectionChangedListener);
+		
+		WindupService.getDefault().removeWindupReportListener(this.reportListener);
 	}
 
 	/**

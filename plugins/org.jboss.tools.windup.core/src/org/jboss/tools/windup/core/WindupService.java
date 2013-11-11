@@ -12,6 +12,8 @@ package org.jboss.tools.windup.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IProject;
@@ -75,11 +77,19 @@ public class WindupService {
 	
 	/**
 	 * <p>
+	 * List of the subscribed {@link IWindupReportListener}s.
+	 * </p>
+	 */
+	private List<IWindupReportListener> windupReportListeners;
+	
+	/**
+	 * <p>
 	 * Private constructor for singleton instance.
 	 * </p>
 	 */
 	private WindupService() {
 		this.windupLock = new Object();
+		this.windupReportListeners = new ArrayList<IWindupReportListener>();
 	}
 	
 	/**
@@ -170,6 +180,9 @@ public class WindupService {
 						inputDir, outputDir);
 			}
 			
+			//notify listeners that a report was just generated
+			this.notifyReportGenerated(selectedProject);
+			
 			status = Status.OK_STATUS;
 		} catch (IOException e) {
 			status = new Status(IStatus.ERROR,
@@ -258,6 +271,28 @@ public class WindupService {
 	
 	/**
 	 * <p>
+	 * Registers a {@link IWindupReportListener}.
+	 * </p>
+	 * 
+	 * @param listener {@link IWindupReportListener} to register
+	 */
+	public void addWindupReportListener(IWindupReportListener listener) {
+		this.windupReportListeners.add(listener);
+	}
+	
+	/**
+	 * <p>
+	 * Removes an already registered {@link IWindupReportListener}.
+	 * </p>
+	 * 
+	 * @param listener {@link IWindupReportListener} to unregister
+	 */
+	public void removeWindupReportListener(IWindupReportListener listener) {
+		this.windupReportListeners.remove(listener);
+	}
+	
+	/**
+	 * <p>
 	 * The {@link WindupEngine} is expensive to initialize so making sure there
 	 * is ever only one helps.
 	 * </p>
@@ -308,6 +343,22 @@ public class WindupService {
 		settings.setSource(true);
 		
 		return settings;
+	}
+	
+	/**
+	 * <p>
+	 * Notifies all of the registered {@link IWindupReportListener} that a
+	 * Windup report was just generated for the given {@link IProject}.
+	 * </p>
+	 * 
+	 * @param project
+	 *            Notify all registered {@link IWindupReportListener} that a
+	 *            Windup report was just generated for this {@link IProject}
+	 */
+	private void notifyReportGenerated(IProject project) {
+		for(IWindupReportListener listener : WindupService.this.windupReportListeners) {
+			listener.reportGenerated(project);
+		}
 	}
 	
 	/**
