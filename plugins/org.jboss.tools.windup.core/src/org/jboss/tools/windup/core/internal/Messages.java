@@ -18,6 +18,12 @@ public class Messages extends NLS {
 	public static String error_generating_report_for;
 
 	public static String generate_windup_report_for;
+
+	public static String generating_report;
+
+	public static String removing_old_report;
+
+	public static String waiting_for_windup_to_be_avaialbe;
 	
 	static {
 		// initialize resource bundle

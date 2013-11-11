@@ -20,6 +20,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -52,30 +55,85 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	 */
 	public static final String ID = "org.jboss.tools.windup.ui.views.WindupReportView"; //$NON-NLS-1$
 
-	private Browser browser = null;
-	
-	private ISelectionListener selectionChangedListener;
-	
-	private boolean reactOnSelection = true;
+	/**
+	 * TODO: IAN: doc me
+	 */
+	private Composite composite;
 	
 	/**
 	 * <p>
-	 * The current resource who's report is being displayed.
+	 * Widget used to display the HTML Windup report.
 	 * </p>
 	 */
-	private IResource currentSelection = null;
-
+	private Browser browser;
+	
+	/**
+	 * <p>
+	 * Used to display messages to the user in the view.
+	 * </p>
+	 */
+	private StyledText message;
+	
+	/**
+	 * <p>
+	 * Listens for selection changes so that the view can be synchronized with
+	 * the current selection if so specified by the user.
+	 * </p>
+	 * 
+	 * @see #syncronizeViewWithCurrentSelection
+	 */
+	private ISelectionListener selectionChangedListener;
+	
+	/**
+	 * <p>
+	 * <code>true</code> if the view should sync with the current workbench
+	 * selection, <code>false</code> otherwise.
+	 * </p>
+	 */
+	private boolean syncronizeViewWithCurrentSelection;
+	
+	/**
+	 * <p>
+	 * The current resource for which a Windup report is currently being displayed.
+	 * </p>
+	 */
+	private IResource currentSelection;
+	
+	/**
+	 * <p>
+	 * Required default constructor for this view since it is created via
+	 * extension point.
+	 * </p>
+	 */
+	public WindupReportView() {
+		this.browser = null;
+		this.selectionChangedListener = null;
+		this.currentSelection = null;
+		this.syncronizeViewWithCurrentSelection = false;
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
-		this.browser = new Browser(parent, SWT.NONE);
-
+		this.composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(1, false);
+		this.composite.setLayout(layout);
+		
+		//create the message label
+		this.message = new StyledText(this.composite, SWT.WRAP);
+		this.message.setLayoutData(new GridData(
+				SWT.FILL, SWT.FILL, true, true));
+		this.message.setVisible(false);
+		
+		this.browser = new Browser(this.composite, SWT.NONE);
+		this.browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 		//react to selection changes
 		this.selectionChangedListener = new ISelectionListener() {
 			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 				
 				/* if update on selection and the current selection is not
 				 * the same as the containing workbench part */
-				if (WindupReportView.this.reactOnSelection && part != getSite().getPart()) {
+				if (WindupReportView.this.syncronizeViewWithCurrentSelection && part != getSite().getPart()) {
 					
 					/* if editor selection
 					 * else if some other sort of selection */
@@ -98,14 +156,28 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 		//store view preferences
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		if (preferenceStore.contains(Preferences.REPORTVIEW_SYNC_SELECTION)) {
-			this.reactOnSelection = preferenceStore.getBoolean(Preferences.REPORTVIEW_SYNC_SELECTION);
+			this.syncronizeViewWithCurrentSelection = preferenceStore.getBoolean(Preferences.REPORTVIEW_SYNC_SELECTION);
 		} else {
-			preferenceStore.setDefault(Preferences.REPORTVIEW_SYNC_SELECTION, true);
+			preferenceStore.setDefault(Preferences.REPORTVIEW_SYNC_SELECTION, this.syncronizeViewWithCurrentSelection);
 		}
 		
 		// get the views toolbar
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager toolbar = actionBars.getToolBarManager();
+		
+		// create and add refresh action to the toolbar
+		Action refresh = new Action(
+				Messages.refresh,
+				WindupUIPlugin.getImageDescriptor("icons/refresh.gif")) { //$NON-NLS-1$
+			
+			@Override
+			public void run() {
+				super.run();
+				
+				WindupReportView.this.refresh();
+			}
+		};
+		toolbar.add(refresh);
 		
 		// create and add link with selection action to the toolbar
 		Action linkSelectionAction = new BooleanPropertyAction(
@@ -117,7 +189,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 			public void run() {
 				super.run();
 				
-				WindupReportView.this.reactOnSelection = this.isChecked();
+				WindupReportView.this.syncronizeViewWithCurrentSelection = this.isChecked();
 			}
 		};
 		linkSelectionAction.setImageDescriptor(
@@ -151,16 +223,33 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	 * @return <code>true</code> if the view can react to the given selection,
 	 *         </code>false</code> otherwise
 	 */
-	public synchronized boolean updateSelection(ISelection selection) {
+	public boolean updateSelection(ISelection selection) {
 		boolean canReact = false;
 		
 		IResource selectedResource = Utils.getSelectedResource(selection);
 		if(selectedResource != null) {
 			canReact = true;
-			this.displayReport(selectedResource);
+			this.displayReport(selectedResource, false);
 		}
 		
 		return canReact;
+	}
+
+	/**
+	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
+	 */
+	@Override
+	public boolean show(ShowInContext context) {
+		return this.updateSelection(context.getSelection());
+	}
+	
+	/**
+	 * <p>
+	 * Forces the view to update the report.
+	 * </p>
+	 */
+	private void refresh() {
+		this.displayReport(this.currentSelection, true);
 	}
 	
 	/**
@@ -170,23 +259,72 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	 * 
 	 * @param resource
 	 *            {@link IResource} to display the Windup report for
+	 * @param force
+	 *            if <code>true</code> then refresh the view even if the the
+	 *            view is already displaying the report for the given resource,
+	 *            if <code>false</code> and the view is already displaying the
+	 *            report for the given resource then do nothing
 	 */
-	private synchronized void displayReport(IResource resource) {
+	private synchronized void displayReport(IResource resource, boolean force) {
 		//don't change displayed report if current selection is same as newly selected resource
-		if(this.currentSelection != resource) {
+		if(this.currentSelection != resource || force) {
 			this.currentSelection = resource;
-		
-			IPath reportPath = WindupService.getDefault().getReportLocation(resource);
 			
-			if(reportPath != null) {
-				this.browser.setUrl(reportPath.toString());
+			if(WindupService.getDefault().reportExists(resource)) {
+				IPath reportPath = WindupService.getDefault().getReportLocation(resource);
+				
+				if(reportPath != null) {
+					this.showReport(reportPath, true);
+				} else {
+					this.showMessage(Messages.report_has_no_information_on_resource, true);
+				}
 			} else {
-				//TODO: IAN: something better here
-				this.browser.setText("can't find report"); //$NON-NLS-1$
+				this.showMessage(Messages.windup_report_has_not_been_generated, true);
 			}
-			
-			this.browser.getBrowserType();
 		}
+	}
+	
+	/**
+	 * <p>
+	 * Displays the report in the view and optionally hides the current message.
+	 * </p>
+	 * 
+	 * @param reportPath {@link IPath} to the report to show
+	 * @param hideMessage
+	 *            <code>true</code> to hide the current message, <code>false</code> to
+	 *            show the message with the report
+	 */
+	private void showReport(IPath reportPath, boolean hideMessage) {
+		this.browser.setUrl(reportPath.toString());
+		this.browser.setVisible(true);
+		((GridData)this.browser.getLayoutData()).exclude = false;
+		
+		this.message.setVisible(!hideMessage);
+		((GridData)this.message.getLayoutData()).exclude = hideMessage;
+		
+		this.composite.layout(true);
+	}
+	
+	/**
+	 * <p>
+	 * Displays the given message in the view and optionally hides the report.
+	 * </p>
+	 * 
+	 * @param message
+	 *            text message to display to user in the view
+	 * @param hideReport
+	 *            <code>true</code> to hide the report, <code>false</code> to
+	 *            show the message with the report
+	 */
+	private void showMessage(String message, boolean hideReport) {
+		this.message.setText(message);
+		this.message.setVisible(true);
+		((GridData)this.message.getLayoutData()).exclude = false;
+		
+		this.browser.setVisible(!hideReport);
+		((GridData)this.browser.getLayoutData()).exclude = hideReport;
+		
+		this.composite.layout(true);
 	}
 	
 	/**
@@ -194,13 +332,5 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	 */
 	private IPreferenceStore getPreferenceStore() {
 		return WindupUIPlugin.getDefault().getPreferenceStore();
-	}
-
-	/**
-	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
-	 */
-	@Override
-	public boolean show(ShowInContext context) {
-		return this.updateSelection(context.getSelection());
 	}
 }

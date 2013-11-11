@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.windup.WindupEngine;
@@ -65,10 +66,20 @@ public class WindupService {
 	
 	/**
 	 * <p>
+	 * Windup itself is not designed to be run in a multi-threaded/multi-access
+	 * environment. This lock is used to make the use of a single shared
+	 * {@link WindupEngine} and {@link ReportEngine} thread safe.
+	 * </p>
+	 */
+	private final Object windupLock;
+	
+	/**
+	 * <p>
 	 * Private constructor for singleton instance.
 	 * </p>
 	 */
 	private WindupService() {
+		this.windupLock = new Object();
 	}
 	
 	/**
@@ -98,7 +109,9 @@ public class WindupService {
 		FileMetadata meta = null;
 		
 		try {
-			meta = this.getWindupEngine().processFile(resource.getLocation().toFile());
+			synchronized(this.windupLock) {
+				meta = this.getWindupEngine().processFile(resource.getLocation().toFile());
+			}
 		} catch (IOException e) {
 			WindupCorePlugin.logError("Error getting Windup metadata for: " + resource, e); //$NON-NLS-1$
 		}
@@ -125,7 +138,7 @@ public class WindupService {
 		//protect against a null given for the progress monitor
 		IProgressMonitor progress;
 		if(monitor != null) {
-			progress = monitor;
+			progress = new SubProgressMonitor(monitor, 1);;
 		} else {
 			progress = new NullProgressMonitor();
 		}
@@ -144,11 +157,18 @@ public class WindupService {
 			File outputDir = outputPath.toFile();
 			
 			//clear out existing report
+			progress.subTask(Messages.removing_old_report);
 			FileUtils.deleteDirectory(outputDir);
 			
-			//generate new report
-			WindupService.this.getWindupReportEngine().process(
-					inputDir, outputDir);
+			//wait for the engine to be avaialbe and then generate the report
+			progress.subTask(Messages.waiting_for_windup_to_be_avaialbe);
+			synchronized(this.windupLock) {
+				progress.subTask(Messages.generating_report);
+				
+				//generate new report
+				WindupService.this.getWindupReportEngine().process(
+						inputDir, outputDir);
+			}
 			
 			status = Status.OK_STATUS;
 		} catch (IOException e) {
@@ -168,6 +188,27 @@ public class WindupService {
 	
 	/**
 	 * <p>
+	 * Determines if a report exists for the {@link IProject} containing the
+	 * given {@link IResource}.
+	 * </p>
+	 * 
+	 * @param resource
+	 *            determine if a report exists for the {@link IProject}
+	 *            containing this {@link IResource}
+	 * 
+	 * @return <code>true</code> if a report exists for the {@link IProject}
+	 *         containing the given {@link IResource}, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean reportExists(IResource resource) {
+		IPath reportPath = getProjectReportPath(resource);
+		File reportDir = new File(reportPath.toString());
+		
+		return reportDir.exists();
+	}
+	
+	/**
+	 * <p>
 	 * Get the Windup report for the given resource.
 	 * </p>
 	 * 
@@ -179,7 +220,7 @@ public class WindupService {
 	 */
 	public IPath getReportLocation(IResource resource) {
 		
-		IPath projectReportPath = reportsDir.append(resource.getProject().getName());
+		IPath projectReportPath = getProjectReportPath(resource);
 		
 		IPath reportPath = null;
 		switch (resource.getType()) {
@@ -204,10 +245,12 @@ public class WindupService {
 			}
 		}
 		
-		//determine if the report of the given file exists
-		File reportFile = new File(reportPath.toString());
-		if(!reportFile.exists()) {
-			
+		//determine if the report of the given file exists, if it doesn't return null
+		if(reportPath != null) {
+			File reportFile = new File(reportPath.toString());
+			if(!reportFile.exists()) {
+				reportPath = null;
+			}
 		}
 		
 		return reportPath;
@@ -244,7 +287,7 @@ public class WindupService {
 	private ReportEngine getWindupReportEngine() {
 		if(this.reportEngine == null) {
 			try {
-				this.reportEngine = new ReportEngine(this.getWindupEnv());
+				this.reportEngine = new ReportEngine(this.getWindupEnv(), this.getWindupEngine());
 			} catch(Throwable t) {
 				WindupCorePlugin.logError("Error getting Windup Report Engine.", t); //$NON-NLS-1$
 			}
@@ -265,5 +308,22 @@ public class WindupService {
 		settings.setSource(true);
 		
 		return settings;
+	}
+	
+	/**
+	 * <p>
+	 * Get the location where the report should be stored for the
+	 * {@link IProject} containing the given {@link IResource}
+	 * </p>
+	 * 
+	 * @param resource
+	 *            get the location where the report should be stored for the
+	 *            {@link IProject} containing this {@link IResource}
+	 * 
+	 * @return location where the report should be stored for the
+	 *         {@link IProject} containing the given {@link IResource}
+	 */
+	private static IPath getProjectReportPath(IResource resource) {
+		return reportsDir.append(resource.getProject().getName());
 	}
 }

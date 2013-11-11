@@ -38,6 +38,7 @@
 							<iterate ifEmpty="false" operator="and">
 								<or>
 									<instanceof value="org.eclipse.core.resources.IResource"></instanceof>
+									<adapt type="org.eclipse.core.resources.IResource"></adapt>
 								</or>
 							</iterate>
 						</and>
@@ -54,12 +55,21 @@
 								<or>
 									<instanceof value="org.eclipse.core.resources.IFile"></instanceof>
 									<instanceof value="org.eclipse.core.resources.IProject"></instanceof>
+									<adapt type="org.eclipse.core.resources.IProject"></adapt>
+									<adapt type="org.eclipse.core.resources.IFile"></adapt>
 								</or>
 							</iterate>
 						</and>
 					</visibleWhen>
 				</command>
 			</menu>
+		</menuContribution>
+		<menuContribution allPopups="false"
+			locationURI="toolbar:org.jboss.tools.windup.ui.views.WindupReportView">
+			<command commandId="org.jboss.tools.windup.ui.command.generatewindupreport"
+				icon="icons/windup.png" label="%command.generate_windup_report.name"
+				style="push">
+			</command>
 		</menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.perspectiveExtensions">
