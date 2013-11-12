@@ -168,6 +168,10 @@ public class WindupService {
 			
 			//clear out existing report
 			progress.subTask(Messages.removing_old_report);
+			/* the windup report engine opens and closes a lot of file IO and GC
+			 * seems to be the only sure fire way to guaranty Windup is no longer
+			 * holding onto file references when trying to delete the old report */
+			System.gc();
 			FileUtils.deleteDirectory(outputDir);
 			
 			//wait for the engine to be avaialbe and then generate the report
