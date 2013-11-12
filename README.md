@@ -56,3 +56,26 @@ When debugging am currently using:
     -Xms1024m -Xmx1536m -XX:MaxPermSize=512M
 
 These settings will need to be optimized at some point.
+
+## Releaseing
+
+These are the steps to release a new version of the plugin
+
+1. Update the version of the plugin to the release version
+```
+    $ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=2.0.0
+```
+2. Build the plugin
+```
+    $ mvn clean verify
+```
+3. Perform an installation test of the plugin
+4. Test the plugin UI contributions
+5. Commit the release version change
+6. Create a new Github release https://github.com/windup/windup-eclipse-plugin/releases/new
+7. Update the version of the plugin to the next SNAPSHOT
+```
+    $ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=2.1.0-SNAPSHOT
+```
+8. Commit the snapshot version change
+9. Continue development on next release
