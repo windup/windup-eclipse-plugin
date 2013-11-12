@@ -18,10 +18,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.jboss.tools.windup.core.WindupService;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.Utils;
+import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
  * <p>
@@ -36,10 +41,27 @@ public class GenerateWindupReportHandler extends AbstractHandler {
 		Job job = new Job(Messages.generate_windup_report) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				ISelection selection = HandlerUtil.getCurrentSelection(event);
+				final ISelection selection = HandlerUtil.getCurrentSelection(event);
 				IResource selectedResource = Utils.getSelectedResource(selection);
 				
-				return WindupService.getDefault().generateReport(selectedResource, monitor);
+				//generate the report
+				IStatus status = WindupService.getDefault().generateReport(selectedResource, monitor);
+				
+				//show the report view for the selected resource
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							WindupReportView windupView = (WindupReportView)PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
+							windupView.updateSelection(selection);
+						} catch (PartInitException e) {
+							WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
+						}
+					}
+				});
+				
+				return status;
 			}
 		};
 		job.setUser(true);
