@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.core;singleton:=true
-Bundle-Version: 2.1.0
+Bundle-Version: 2.2.0.qualifier
 Bundle-Activator: org.jboss.tools.windup.core.WindupCorePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.wst.validation;bundle-version="[1.2.402,2.0.0)",
