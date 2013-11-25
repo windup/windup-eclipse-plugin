@@ -17,9 +17,9 @@ public class Messages extends NLS {
 	
 	public static String error_generating_report_for;
 
+	public static String generate_windup_reports;
+	
 	public static String generate_windup_report_for;
-
-	public static String generating_report;
 
 	public static String removing_old_report;
 

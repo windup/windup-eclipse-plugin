@@ -145,6 +145,24 @@ public class WindupService {
 	 *            {@link IProgressMonitor} to report progress to
 	 */
 	public IStatus generateReport(IResource resource, IProgressMonitor monitor) {
+		return this.generateReport(new IProject[] {resource.getProject()}, monitor);
+	}
+	
+	/**
+	 * <p>
+	 * Generate a Windup report for the given projects.
+	 * </p>
+	 * 
+	 * <p>
+	 * This can be a long running operation, it should be run in a Job.
+	 * </p>
+	 * 
+	 * @param projects
+	 *            Generate a Windup reports for these {@link IProject}s
+	 * @param monitor
+	 *            {@link IProgressMonitor} to report progress to
+	 */
+	public IStatus generateReport(IProject[] projects, IProgressMonitor monitor) {
 		//protect against a null given for the progress monitor
 		IProgressMonitor progress;
 		if(monitor != null) {
@@ -153,15 +171,65 @@ public class WindupService {
 			progress = new NullProgressMonitor();
 		}
 		
-		final IProject selectedProject = resource.getProject();
-		final String projectName = selectedProject.getName();
+		//start the task
+		progress.beginTask(Messages.generate_windup_reports, projects.length);
+		IStatus status = null;
+		
+		try {
+			//for each project generate a report 
+			for(IProject project : projects) {
+				// if not canceled, continue generating reports for the given projects
+				if(!progress.isCanceled()) {
+					status = this.generateReport(project, monitor);
+					
+					//if not an okay status stop generating reports
+					if(!status.equals(Status.OK_STATUS)) {
+						break;
+					}
+				} else {
+					status = Status.CANCEL_STATUS;
+					break;
+				}
+			}
+		} finally {
+			progress.done();
+		}
+		
+		return status;
+	}
+	
+	/**
+	 * <p>
+	 * Generate a Windup report for the given project.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE:</b> This can be a long running operation, it should be run in a
+	 * Job.
+	 * </p>
+	 * 
+	 * @param project
+	 *            Generate a Windup report for this project
+	 * @param monitor
+	 *            {@link IProgressMonitor} to report progress to
+	 */
+	private IStatus generateReport(IProject project, IProgressMonitor monitor) {
+		//protect against a null given for the progress monitor
+		IProgressMonitor progress;
+		if(monitor != null) {
+			progress = new SubProgressMonitor(monitor, 1);;
+		} else {
+			progress = new NullProgressMonitor();
+		}
+		
+		String projectName = project.getName();
 		
 		//start the task
 		progress.beginTask(NLS.bind(Messages.generate_windup_report_for, projectName), IProgressMonitor.UNKNOWN);
 		IStatus status = null;
 		
 		try {
-			File inputDir = selectedProject.getLocation().toFile();
+			File inputDir = project.getLocation().toFile();
 			IPath outputPath = reportsDir.append(projectName);
 			
 			File outputDir = outputPath.toFile();
@@ -177,7 +245,7 @@ public class WindupService {
 			//wait for the engine to be avaialbe and then generate the report
 			progress.subTask(Messages.waiting_for_windup_to_be_avaialbe);
 			synchronized(this.windupLock) {
-				progress.subTask(Messages.generating_report);
+				progress.subTask(NLS.bind(Messages.generate_windup_report_for, projectName));
 				
 				//generate new report
 				WindupService.this.getWindupReportEngine().process(
@@ -185,7 +253,7 @@ public class WindupService {
 			}
 			
 			//notify listeners that a report was just generated
-			this.notifyReportGenerated(selectedProject);
+			this.notifyReportGenerated(project);
 			
 			status = Status.OK_STATUS;
 		} catch (IOException e) {

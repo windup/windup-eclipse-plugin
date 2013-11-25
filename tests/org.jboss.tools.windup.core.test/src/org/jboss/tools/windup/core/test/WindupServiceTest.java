@@ -91,6 +91,42 @@ public class WindupServiceTest {
 	}
 	
 	@Test
+	public void testGenerateReports() throws CoreException {
+		//import test projects
+		TestProjectProvider portalProjectProvider = new TestProjectProvider(
+				WindupCoreTestPlugin.PLUGIN_ID, null, "Portal-WAR", false);
+		
+		TestProjectProvider wasProjectProvider = new TestProjectProvider(
+				WindupCoreTestPlugin.PLUGIN_ID, null, "WAS-EAR", false);
+		
+		IProject portalProject = portalProjectProvider.getProject();
+		IProject wasProject = wasProjectProvider.getProject();
+		
+		//generate reports
+		IProject[] projects = new IProject[] { portalProject, wasProject };
+		WindupService.getDefault().generateReport(projects, null);
+		
+		//verify report index exists for all projects that reports were generated for
+		for(IProject project : projects) {
+			IPath reportHomeLocation = WindupService.getDefault().getReportLocation(project);
+			File reportHomeFile = reportHomeLocation.toFile();
+			Assert.assertTrue("The index.html for the generated report should exist.", reportHomeFile.exists());
+		}
+		
+		//test that a report file exists for JSP file in the portal project
+		IFile jspFile = portalProject.getFile(new Path("WebContent/WebContent/Portal.jsp"));
+		IPath jspReportLocation = WindupService.getDefault().getReportLocation(jspFile);
+		File jspReportFile = jspReportLocation.toFile();
+		Assert.assertTrue("A report resource should exist for " + jspFile, jspReportFile.exists());
+		
+		//test that a report file exists for WAS deployment file in the was project
+		IFile deploymentFile = wasProject.getFile(new Path("EarContent/META-INF/deployment.xml"));
+		IPath deploymentReportLocation = WindupService.getDefault().getReportLocation(deploymentFile);
+		File deploymentReportFile = deploymentReportLocation.toFile();
+		Assert.assertTrue("A report resource should exist for " + deploymentReportFile, deploymentReportFile.exists());
+	}
+	
+	@Test
 	public void testReportExists() throws CoreException {
 		TestProjectProvider provider = new TestProjectProvider(
 				WindupCoreTestPlugin.PLUGIN_ID, null, "Portal-WAR", false);

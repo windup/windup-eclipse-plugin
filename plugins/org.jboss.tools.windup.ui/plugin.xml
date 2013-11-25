@@ -33,8 +33,6 @@
 					style="push">
 					<visibleWhen checkEnabled="false">
 						<and>
-							<count value="1">
-							</count>
 							<iterate ifEmpty="false" operator="and">
 								<or>
 									<instanceof value="org.eclipse.core.resources.IResource"></instanceof>
