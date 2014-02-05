@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2013 Red Hat, Inc.
+* Copyright (c) 2013, 2014 Red Hat, Inc.
 * Distributed under license by Red Hat, Inc. All rights reserved.
 * This program is made available under the terms of the
 * Eclipse Public License v1.0 which accompanies this distribution,
@@ -26,6 +26,36 @@ public class Messages extends NLS {
 	public static String windup_report_has_not_been_generated;
 	
 	public static String select_projects_to_generate_windup_reports_for;
+	
+	public static String Question;
+	
+	public static String Options;
+	
+	public static String WindupReportExport_page_one_title;
+	public static String WindupReportExport_page_one_description;
+	public static String WindupReportExport_exportReportsTitle;
+	public static String WindupReportExport_select_all;
+	public static String WindupReportExport_deselect_all;
+	public static String WindupReportExport_compressContents;
+	public static String WindupReportExport_saveInZipFormat;
+	public static String WindupReportExport_saveInTarFormat;
+	public static String WindupReportExport_selectDestintationDialogTitle;
+	public static String WindupReportExport_destinationLabel;
+	public static String WindupReportExport_browse;
+	public static String WindupReportExport_mustBeFileError;
+	public static String WindupReportExport_errorDialogTitle;
+	public static String WindupReportExport_noneSelected;
+	public static String WindupReportExport_directoryCreationError;
+	public static String WindupReportExport_archiveAlreadyExistsError;
+	public static String WindupReportExport_directoryExists;
+	public static String WindupReportExport_destinationEmptyError;
+	public static String WindupReportExport_question_shouldOverwriteExisting;
+	public static String WindupReportExport_question_createTargetDirectory;
+	public static String WindupReportExport_question_fileExists;
+	public static String WindupReportExport_question_overwriteNameAndPath;
+	public static String WindupReportExport_operationExceptionMessage;
+	public static String WindupReportExport_errorGeneratingReports;
+	public static String WindupReportExport_reGenerateReportBeforeExport;
 	
 	static {
 		// initialize resource bundle

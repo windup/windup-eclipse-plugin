@@ -166,7 +166,7 @@ public class WindupService {
 		//protect against a null given for the progress monitor
 		IProgressMonitor progress;
 		if(monitor != null) {
-			progress = new SubProgressMonitor(monitor, 1);;
+			progress = monitor;
 		} else {
 			progress = new NullProgressMonitor();
 		}
@@ -180,7 +180,7 @@ public class WindupService {
 			for(IProject project : projects) {
 				// if not canceled, continue generating reports for the given projects
 				if(!progress.isCanceled()) {
-					status = this.generateReport(project, monitor);
+					status = this.generateReport(project, progress);
 					
 					//if not an okay status stop generating reports
 					if(!status.equals(Status.OK_STATUS)) {
@@ -339,6 +339,21 @@ public class WindupService {
 		}
 		
 		return reportPath;
+	}
+	
+	/**
+	 * <p>
+	 * Get the Windup report parent directory for the given resource.
+	 * </p>
+	 * 
+	 * @param resource
+	 *            get the location of the Windup report parent directory for this
+	 *            {@link IResource}
+	 * 
+	 * @return location of the Windup report parent directory for the given {@link IResource}
+	 */
+	public IPath getReportParentDirectoryLocation(IResource resource) {
+		return getProjectReportPath(resource);
 	}
 	
 	/**

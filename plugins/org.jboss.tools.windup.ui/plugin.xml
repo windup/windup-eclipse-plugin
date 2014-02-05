@@ -2,24 +2,29 @@
 <?eclipse version="3.4"?>
 <plugin>
 	<extension point="org.eclipse.ui.views">
-		<category name="%category.windup.name" id="org.jboss.tools.windup.ui">
+		<category name="%category.windup.name"
+			id="org.jboss.tools.windup.ui.view.category.windup">
 		</category>
-		<view allowMultiple="false" category="org.jboss.tools.windup.ui"
-			class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
+		<view allowMultiple="false"
+			category="org.jboss.tools.windup.ui.view.category.windup" class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
 			icon="icons/windup_report.png" id="org.jboss.tools.windup.ui.views.WindupReportView"
 			name="%view.windup_report.name">
 		</view>
 	</extension>
 	<extension point="org.eclipse.ui.commands">
-		<command categoryId="org.jboss.tools.windup.ui.category.windup"
+		<command categoryId="org.jboss.tools.windup.ui.command.category.windup"
 			defaultHandler="org.jboss.tools.windup.ui.internal.commands.ViewWindupReportHandler"
 			id="org.jboss.tools.windup.ui.command.viewwindupreport" name="%command.show_in_windup_report_viewer.name">
 		</command>
-		<command categoryId="org.jboss.tools.windup.ui.category.windup"
+		<command categoryId="org.jboss.tools.windup.ui.command.category.windup"
 			defaultHandler="org.jboss.tools.windup.ui.internal.commands.GenerateWindupReportHandler"
 			id="org.jboss.tools.windup.ui.command.generatewindupreport" name="%command.generate_windup_report.name">
 		</command>
-		<category id="org.jboss.tools.windup.ui.category.windup"
+		<command categoryId="org.jboss.tools.windup.ui.command.category.windup"
+			defaultHandler="org.jboss.tools.windup.ui.internal.commands.ExportWindupReportHandler"
+			id="org.jboss.tools.windup.ui.command.exportwindupreport" name="%command.export_windup_report.name">
+		</command>
+		<category id="org.jboss.tools.windup.ui.command.category.windup"
 			name="%category.windup.name">
 		</category>
 	</extension>
@@ -43,18 +48,31 @@
 					</visibleWhen>
 				</command>
 				<command commandId="org.jboss.tools.windup.ui.command.viewwindupreport"
-					icon="icons/windup_report.png" label="%command.show_in_windup_report_viewe.name"
+					icon="icons/windup_report.png" label="%command.show_in_windup_report_viewer.name"
 					style="push">
 					<visibleWhen checkEnabled="false">
 						<and>
-							<count value="1">
-							</count>
+							<count value="1"></count>
 							<iterate ifEmpty="false" operator="and">
 								<or>
 									<instanceof value="org.eclipse.core.resources.IFile"></instanceof>
 									<instanceof value="org.eclipse.core.resources.IProject"></instanceof>
 									<adapt type="org.eclipse.core.resources.IProject"></adapt>
 									<adapt type="org.eclipse.core.resources.IFile"></adapt>
+								</or>
+							</iterate>
+						</and>
+					</visibleWhen>
+				</command>
+				<command commandId="org.jboss.tools.windup.ui.command.exportwindupreport"
+					icon="icons/export_windup_report.png" label="%command.export_windup_report.name"
+					style="push">
+					<visibleWhen checkEnabled="false">
+						<and>
+							<iterate ifEmpty="false" operator="and">
+								<or>
+									<instanceof value="org.eclipse.core.resources.IResource"></instanceof>
+									<adapt type="org.eclipse.core.resources.IResource"></adapt>
 								</or>
 							</iterate>
 						</and>
@@ -76,4 +94,28 @@
 			</showInPart>
 		</perspectiveExtension>
 	</extension>
+	<extension point="org.eclipse.ui.exportWizards">
+		<category id="org.jboss.tools.windup.ui.export.category.windup"
+			name="%category.windup.name">
+		</category>
+		<wizard id="org.jboss.tools.windup.ui.exportWizard.WindupReport"
+			category="org.jboss.tools.windup.ui.export.category.windup"
+			class="org.jboss.tools.windup.ui.internal.wizards.WindupReportExportWizard"
+			icon="icons/export_windup_report.png"
+			name="%export.windup_reports.name">
+     <description>
+        %export.windup_reports.description
+     </description>
+     <keywordReference
+           id="org.jboss.tools.windup.ui.keywords.WindupReport">
+     </keywordReference>
+		</wizard>
+	</extension>
+ <extension
+       point="org.eclipse.ui.keywords">
+    <keyword
+          id="org.jboss.tools.windup.ui.keywords.WindupReport"
+          label="%keywords.windup_report.labels">
+    </keyword>
+ </extension>
 </plugin>
