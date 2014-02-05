@@ -10,10 +10,12 @@
 ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.wizards;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 
 /**
@@ -41,6 +43,13 @@ public class WindupReportExportWizard extends Wizard implements IExportWizard {
 	 */
 	public WindupReportExportWizard() {
 		this.setWindowTitle(Messages.WindupReportExport_exportReportsTitle);
+
+		IDialogSettings workbenchSettings = WindupUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection("WindupReportExportWizard");//$NON-NLS-1$
+		if (section == null) {
+			section = workbenchSettings.addNewSection("WindupReportExportWizard");//$NON-NLS-1$
+		}
+		this.setDialogSettings(section);
 	}
 
 	/**

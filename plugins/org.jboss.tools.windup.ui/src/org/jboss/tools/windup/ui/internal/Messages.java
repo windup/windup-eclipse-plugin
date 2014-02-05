@@ -41,6 +41,7 @@ public class Messages extends NLS {
 	public static String WindupReportExport_saveInTarFormat;
 	public static String WindupReportExport_selectDestintationDialogTitle;
 	public static String WindupReportExport_destinationLabel;
+	public static String WindupReportExport_rootDirNameLabel;
 	public static String WindupReportExport_browse;
 	public static String WindupReportExport_mustBeFileError;
 	public static String WindupReportExport_errorDialogTitle;

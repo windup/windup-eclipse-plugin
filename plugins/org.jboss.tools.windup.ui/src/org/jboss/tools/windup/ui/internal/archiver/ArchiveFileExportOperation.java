@@ -55,6 +55,8 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 	private List<File> filesToExport;
 
 	private File rootResource;
+	
+	private IPath rootArchiveDirectory;
 
 	private List<IStatus> errorTable = new ArrayList<IStatus>(1); //IStatus
 
@@ -87,6 +89,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 
 		this.filesToExport = files;
 		this.destinationArchiveName = archiveName;
+		this.rootArchiveDirectory = null;
 	}
 
 	/**
@@ -104,6 +107,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 		super();
 		this.rootResource = file;
 		this.destinationArchiveName = archiveName;
+		this.rootArchiveDirectory = null;
 	}
 
 	/**
@@ -133,7 +137,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 	 *            boolean
 	 */
 	public void setUseCompression(boolean value) {
-		useCompression = value;
+		this.useCompression = value;
 	}
 
 	/**
@@ -146,7 +150,22 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 	 *            boolean
 	 */
 	public void setUseTarFormat(boolean value) {
-		useTarFormat = value;
+		this.useTarFormat = value;
+	}
+	
+	/**
+	 * <p>
+	 * Used to set an optional root directory for all archived files to be
+	 * placed under in the archive. If specified the archive will have one root
+	 * directory with this name and all added {@link File}s to the archive will
+	 * go under this one root directory.
+	 * </p>
+	 * 
+	 * @param rootArchiveDirectoryName
+	 *            name of the directory to put at the root of the archive
+	 */
+	public void setRootArchiveDirectoryName(String rootArchiveDirectoryName) {
+		this.rootArchiveDirectory = new Path(rootArchiveDirectoryName);
 	}
 	
 	/**
@@ -296,7 +315,14 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 	 */
 	private String createDestinationName(File fileToExport, IPath relativeTo) {
 		IPath fullPath = new Path(fileToExport.getAbsolutePath());
-		return fullPath.makeRelativeTo(relativeTo).toString();
+		IPath archiveRelativePath = fullPath.makeRelativeTo(relativeTo);
+		
+		//if a root directory is specified then all files should be nested under it
+		if(this.rootArchiveDirectory != null) {
+			archiveRelativePath = this.rootArchiveDirectory.append(archiveRelativePath);
+		}
+		
+		return archiveRelativePath.toString();
 	}
 	
 	/**

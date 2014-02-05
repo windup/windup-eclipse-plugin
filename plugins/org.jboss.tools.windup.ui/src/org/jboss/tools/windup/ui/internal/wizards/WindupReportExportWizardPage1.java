@@ -78,6 +78,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 	
 	// dialog store id constants
 	private static final String STORE_DESTINATION_NAMES_ID = "WindupReportExportWizardPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
+	private static final String STORE_ROOT_DIR_NAMES_ID = "WindupReportExportWizardPage1.STORE_ROOT_DIR_NAMES_ID"; //$NON-NLS-1$
 	private final static String STORE_COMPRESS_CONTENTS_ID = "WindupReportExportWizardPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
 	private final static String STORE_RE_GENERATE_REPORTS_ID = "WindupReportExportWizardPage1.STORE_RE_GENERATE_REPORTS_ID"; //$NON-NLS-1$
 	
@@ -85,11 +86,15 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 	private static final String TAR_FIRST_FILE_FILTER = "*.tar;*.zip;*.tar.gz;*.tgz"; //$NON-NLS-1$
 	private static final String TARGZ_FIRST_FILE_FILTER = "*.tar.gz;*.tgz;*.tar;*.zip"; //$NON-NLS-1$
 	
-	
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	private static final int COMBO_HISTORY_LENGTH = 5;
 	private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 	private static final int SIZING_SELECTION_WIDGET_WIDTH = 300;
+	
+	/**
+	 * The default root directory name of all exported Windup reports.
+	 */
+	private static final String DEFAULT_ARCHIVE_ROOT_DIRECTORY_NAME = "WindupReports"; //$NON-NLS-1$
 
 	private IStructuredSelection initialResourceSelection;
 
@@ -100,6 +105,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 	private Button zipFormatButton;
 	private Button targzFormatButton;
 	private Combo destinationNameField;
+	private Combo rootDirNameField;
 	private Button destinationBrowseButton;
 	
 	/**
@@ -143,6 +149,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 		createButtonsGroup(composite);
 
 		createDestinationGroup(composite);
+		createArchiveRootDirectoryNameGroup(composite);
 
 		createOptionsGroup(composite);
 
@@ -395,7 +402,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 
 		if (selectedFileName != null) {
 			setErrorMessage(null);
-			setDestinationValue(selectedFileName);
+			this.destinationNameField.setText(selectedFileName);
 		}
 	}
 
@@ -406,19 +413,35 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 	private void restoreWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-			String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
-			if (directoryNames == null || directoryNames.length == 0) {
-				return; // ie.- no settings stored
+			// load previous destinations 
+			String[] prevDirectoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
+			if (prevDirectoryNames != null && prevDirectoryNames.length > 0) {
+				this.destinationNameField.setText(prevDirectoryNames[0]);
+				for (String prevDirecotryName : prevDirectoryNames) {
+					this.destinationNameField.add(prevDirecotryName);
+				}
+			}
+			
+			//load previous root dir names
+			String[] rootDirNames = settings.getArray(STORE_ROOT_DIR_NAMES_ID);
+			if (rootDirNames != null && rootDirNames.length > 0) {
+				this.rootDirNameField.setText(rootDirNames[0]);
+				for (String prevRootDirName : rootDirNames) {
+					this.rootDirNameField.add(prevRootDirName);
+				}
+			} else {
+				this.rootDirNameField.setText(DEFAULT_ARCHIVE_ROOT_DIRECTORY_NAME);
 			}
 
-			// destination
-			setDestinationValue(directoryNames[0]);
-			for (int i = 0; i < directoryNames.length; i++) {
-				this.destinationNameField.add(directoryNames[i]);
+			if(settings.get(STORE_COMPRESS_CONTENTS_ID) != null) {
+				this.compressContentsCheckbox.setSelection(settings.getBoolean(STORE_COMPRESS_CONTENTS_ID));
 			}
-
-			this.compressContentsCheckbox.setSelection(settings.getBoolean(STORE_COMPRESS_CONTENTS_ID));
-			this.reGenerateReportsCheckbox.setSelection(settings.getBoolean(STORE_RE_GENERATE_REPORTS_ID));
+			
+			if(settings.get(STORE_RE_GENERATE_REPORTS_ID) != null) {
+				this.reGenerateReportsCheckbox.setSelection(settings.getBoolean(STORE_RE_GENERATE_REPORTS_ID));
+			}
+		} else {
+			this.rootDirNameField.setText(DEFAULT_ARCHIVE_ROOT_DIRECTORY_NAME);
 		}
 	}
 	
@@ -432,18 +455,27 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 		// update directory names history
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-			String[] directoryNames = settings
-					.getArray(STORE_DESTINATION_NAMES_ID);
+			//save previous directory names
+			String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
 			if (directoryNames == null) {
 				directoryNames = new String[0];
 			}
-
 			directoryNames = addToHistory(directoryNames, getDestinationValue());
 			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+			
+			//save previous archive  names
+			String[] prevRoodDirNames = settings.getArray(STORE_ROOT_DIR_NAMES_ID);
+			if (prevRoodDirNames == null) {
+				prevRoodDirNames = new String[0];
+			}
+			prevRoodDirNames = addToHistory(prevRoodDirNames, this.rootDirNameField.getText());
+			settings.put(STORE_ROOT_DIR_NAMES_ID, prevRoodDirNames);
 
+			//save compress setting
 			settings.put(STORE_COMPRESS_CONTENTS_ID,
 					this.compressContentsCheckbox.getSelection());
 			
+			//save re-generate reports setting
 			settings.put(STORE_RE_GENERATE_REPORTS_ID,
 					this.reGenerateReportsCheckbox.getSelection());
 		}
@@ -496,7 +528,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 		destinationSelectionGroup.setFont(font);
 
-		
+		//create the label
 		Label destinationLabel = new Label(destinationSelectionGroup, SWT.NONE);
 		destinationLabel.setText(Messages.WindupReportExport_destinationLabel);
 		destinationLabel.setFont(font);
@@ -516,6 +548,37 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 		this.destinationBrowseButton.addListener(SWT.Selection, this);
 		this.destinationBrowseButton.setFont(font);
 		this.setButtonLayoutData(this.destinationBrowseButton);
+	}
+	
+	/**
+	 * Create the export destination specification widgets
+	 * 
+	 * @param parent
+	 *			org.eclipse.swt.widgets.Composite
+	 */
+	private void createArchiveRootDirectoryNameGroup(Composite parent) {
+
+		Font font = parent.getFont();
+		// destination specification group
+		Composite rootDirNameGroup = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		rootDirNameGroup.setLayout(layout);
+		rootDirNameGroup.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+		rootDirNameGroup.setFont(font);
+
+		//create the label
+		Label rootDirNameLabel = new Label(rootDirNameGroup, SWT.NONE);
+		rootDirNameLabel.setText(Messages.WindupReportExport_rootDirNameLabel);
+		rootDirNameLabel.setFont(font);
+
+		// destination name entry field
+		this.rootDirNameField = new Combo(rootDirNameGroup, SWT.SINGLE | SWT.BORDER);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
+		this.rootDirNameField.setLayoutData(data);
+		this.rootDirNameField.setFont(font);
 
 		// vertical spacer
 		new Label(parent, SWT.NONE);
@@ -567,15 +630,6 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 	 */
 	private void giveFocusToDestination() {
 		this.destinationNameField.setFocus();
-	}
-
-	/**
-	 * Set the contents of the receivers destination specification widget to the
-	 * passed value
-	 * 
-	 */
-	private void setDestinationValue(String value) {
-		this.destinationNameField.setText(value);
 	}
 
 	/**
@@ -716,48 +770,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 			setMessage(null);
 		}
 	}
-
-	/**
-	 * Adds an entry to a history, while taking care of duplicate history items
-	 * and excessively long histories. The assumption is made that all histories
-	 * should be of length
-	 * <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
-	 * 
-	 * @param history
-	 *			the current history
-	 * @param newEntry
-	 *			the entry to add to the history
-	 */
-	private String[] addToHistory(String[] history, String newEntry) {
-		ArrayList<String> l = new ArrayList<String>(Arrays.asList(history));
-		addToHistory(l, newEntry);
-		String[] r = new String[l.size()];
-		l.toArray(r);
-		return r;
-	}
-
-	/**
-	 * Adds an entry to a history, while taking care of duplicate history items
-	 * and excessively long histories. The assumption is made that all histories
-	 * should be of length
-	 * <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
-	 * 
-	 * @param history
-	 *			the current history
-	 * @param newEntry
-	 *			the entry to add to the history
-	 */
-	private void addToHistory(List<String> history, String newEntry) {
-		history.remove(newEntry);
-		history.add(0, newEntry);
-
-		// since only one new item was added, we can be over the limit
-		// by at most one item
-		if (history.size() > COMBO_HISTORY_LENGTH) {
-			history.remove(COMBO_HISTORY_LENGTH);
-		}
-	}
-
+	
 	/**
 	 * Returns whether this page is complete. This determination is made based
 	 * upon the current contents of this page's controls. Subclasses wishing to
@@ -938,8 +951,13 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 		final ArchiveFileExportOperation exportOperation = new ArchiveFileExportOperation(
 				reportParentDirectories,
 				getDestinationValue());
-		exportOperation.setUseCompression(compressContentsCheckbox.getSelection());
-		exportOperation.setUseTarFormat(targzFormatButton.getSelection());
+		exportOperation.setUseCompression(this.compressContentsCheckbox.getSelection());
+		exportOperation.setUseTarFormat(this.targzFormatButton.getSelection());
+		
+		String rootDirName = this.rootDirNameField.getText() ;
+		if(rootDirName != null && !rootDirName.trim().isEmpty()) {
+			exportOperation.setRootArchiveDirectoryName(rootDirName);
+		}
 		
 		try {
 			/* create an operation to optionally generate any required reports,
@@ -1026,5 +1044,32 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 					exception);
 		}
 		displayErrorDialog(message);
+	}
+	
+	/**
+	 * <p>
+	 * Adds an entry to a history, while taking care of duplicate history items
+	 * and excessively long histories. The assumption is made that all histories
+	 * should be of length {@link #COMBO_HISTORY_LENGTH}.
+	 * </p>
+	 * 
+	 * @param history
+	 *			the current history
+	 * @param newEntry
+	 *			the entry to add to the history
+	 */
+	private static String[] addToHistory(String[] history, String newEntry) {
+		ArrayList<String> historyList = new ArrayList<String>(Arrays.asList(history));
+		
+		historyList.remove(newEntry);
+		historyList.add(0, newEntry);
+
+		// since only one new item was added, we can be over the limit
+		// by at most one item
+		if (historyList.size() > COMBO_HISTORY_LENGTH) {
+			historyList.remove(COMBO_HISTORY_LENGTH);
+		}
+		
+		return historyList.toArray(new String[historyList.size()]);
 	}
 }
