@@ -3,12 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.ui;singleton:=true
-Bundle-Version: 2.2.0.qualifier
+Bundle-Version: 3.0.0
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
 Bundle-Vendor: %plugin.vendor
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.jboss.tools.windup.core;bundle-version="[2.0.0,3.0.0)",
+ org.jboss.tools.windup.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.ui.browser;bundle-version="[3.4.2,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.8.1,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.8.2,4.0.0)",

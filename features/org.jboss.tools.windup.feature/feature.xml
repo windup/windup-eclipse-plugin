@@ -2,7 +2,7 @@
 <feature
       id="org.jboss.tools.windup.feature"
       label="WindUp Feature"
-      version="2.2.0.qualifier"
+      version="3.0.0"
       provider-name="Red Hat, Inc.">
 
    <description url="http://www.example.com/description">
