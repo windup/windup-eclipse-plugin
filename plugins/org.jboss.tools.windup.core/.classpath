@@ -50,8 +50,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/spring-core-3.1.0.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-expression-3.1.0.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-web-3.1.0.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-engine-0.7.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-metadata-0.7.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-engine-0.7.0.jar" sourcepath="/windup-engine/src/main/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-metadata-0.7.0.jar" sourcepath="/windup-metadata/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/windup-rules-0.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xalan-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
