@@ -74,6 +74,7 @@ import org.jboss.tools.windup.ui.internal.archiver.ArchiveFileExportOperation;
  * 
  * @see org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExportPage1
  */
+@SuppressWarnings("restriction")
 public class WindupReportExportWizardPage1 extends WizardPage implements Listener, IOverwriteQuery {
 	
 	// dialog store id constants

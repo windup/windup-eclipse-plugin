@@ -29,6 +29,7 @@ import java.io.IOException;
  * 
  * @see org.eclipse.ui.internal.wizards.datatransfer.IFileExporter
  */
+@SuppressWarnings("restriction")
 public interface IFileExporter {
 
 	/**

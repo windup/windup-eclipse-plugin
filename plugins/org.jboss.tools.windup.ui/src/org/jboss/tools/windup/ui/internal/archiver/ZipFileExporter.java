@@ -34,6 +34,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
  * 
  * @see org.eclipse.ui.internal.wizards.datatransfer.ZipFileExporter
  */
+@SuppressWarnings("restriction")
 public class ZipFileExporter extends AbstractArchiveFileExporter {
 
 	/**
