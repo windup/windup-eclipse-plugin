@@ -2,9 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
-Bundle-SymbolicName: org.jboss.tools.windup.core;singleton:=true
+Bundle-SymbolicName: org.jboss.tools.windup.runtime;singleton:=true
 Bundle-Version: 3.1.0.qualifier
-Bundle-Activator: org.jboss.tools.windup.core.WindupCorePlugin
+Bundle-Activator: org.jboss.tools.windup.runtime.internal.WindupRuntimePlugin
+Eclipse-BundleShape: dir
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)",
  org.eclipse.wst.validation;bundle-version="[1.2.402,2.0.0)",
  org.eclipse.core.resources;bundle-version="[3.8.1,4.0.0)",
@@ -19,6 +20,13 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %plugin.vendor
-Bundle-ClassPath: .
-Export-Package: org.jboss.tools.windup.core
-Import-Package: org.jboss.forge.furnace
+Bundle-ClassPath: .,
+ lib/engine-2.0.0-SNAPSHOT.jar,
+ lib/metadata-2.0.0-SNAPSHOT.jar,
+ lib/reporting-2.0.0-SNAPSHOT.jar,
+ lib/legacy-windup-2.0.0-SNAPSHOT.jar
+Export-Package: org.jboss.windup,
+ org.jboss.windup.metadata.decoration,
+ org.jboss.windup.metadata.decoration.hint,
+ org.jboss.windup.metadata.type,
+ org.jboss.windup.reporting

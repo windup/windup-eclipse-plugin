@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -25,9 +24,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
+import org.jboss.tools.forge.core.furnace.FurnaceProvider;
+import org.jboss.tools.forge.core.furnace.FurnaceService;
 import org.jboss.tools.windup.core.internal.Messages;
+import org.jboss.tools.windup.core.internal.utils.FileUtils;
 import org.jboss.windup.WindupEngine;
 import org.jboss.windup.WindupEnvironment;
+import org.jboss.windup.WindupFactory;
 import org.jboss.windup.metadata.type.FileMetadata;
 import org.jboss.windup.reporting.ReportEngine;
 
@@ -236,11 +239,7 @@ public class WindupService {
 			
 			//clear out existing report
 			progress.subTask(Messages.removing_old_report);
-			/* the windup report engine opens and closes a lot of file IO and GC
-			 * seems to be the only sure fire way to guaranty Windup is no longer
-			 * holding onto file references when trying to delete the old report */
-			System.gc();
-			FileUtils.deleteDirectory(outputDir);
+			FileUtils.delete(outputDir, true);
 			
 			//wait for the engine to be avaialbe and then generate the report
 			progress.subTask(Messages.waiting_for_windup_to_be_avaialbe);
@@ -389,7 +388,7 @@ public class WindupService {
 	private WindupEngine getWindupEngine() {
 		if(this.windupEngine == null) {
 			try {
-				this.windupEngine = new WindupEngine(this.getWindupEnv());
+				this.windupEngine = this.getWindupFactory().createWindupEngine(this.getWindupSettings());
 			} catch(Throwable t) {
 				WindupCorePlugin.logError("Error getting Windup Engine.", t); //$NON-NLS-1$
 			}
@@ -409,7 +408,8 @@ public class WindupService {
 	private ReportEngine getWindupReportEngine() {
 		if(this.reportEngine == null) {
 			try {
-				this.reportEngine = new ReportEngine(this.getWindupEnv(), this.getWindupEngine());
+				this.reportEngine = this.getWindupFactory().createReportEngine(
+						this.getWindupSettings(), this.getWindupEngine());
 			} catch(Throwable t) {
 				WindupCorePlugin.logError("Error getting Windup Report Engine.", t); //$NON-NLS-1$
 			}
@@ -425,11 +425,24 @@ public class WindupService {
 	 * 
 	 * @return {@link WindupEnvironment} used to initialize Windup
 	 */
-	private WindupEnvironment getWindupEnv() {
+	private WindupEnvironment getWindupSettings() {
 		WindupEnvironment settings = new WindupEnvironment();
 		settings.setSource(true);
 		
 		return settings;
+	}
+	
+	/**
+	 * @return {@link WindupFactory} for interacting with Windup via Furnace
+	 */
+	private WindupFactory getWindupFactory() {
+		FurnaceProvider.INSTANCE.startFurnace();
+		try {
+			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
+		} catch (InterruptedException e) {
+			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
+		}
+		return FurnaceService.INSTANCE.lookup(WindupFactory.class);
 	}
 	
 	/**

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jboss.tools.windup</groupId>
+		<artifactId>plugins</artifactId>
+		<version>3.1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.jboss.tools.windup.plugins</groupId>
+	<artifactId>org.jboss.tools.windup.runtime</artifactId>
+
+	<packaging>eclipse-plugin</packaging>
+	
+	<properties>
+		<furnace.addon.dir>furnace-addon-repository</furnace.addon.dir>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.windup.legacy.application</groupId>
+			<artifactId>legacy-windup</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.legacy.application</groupId>
+			<artifactId>engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.legacy.application</groupId>
+			<artifactId>metadata</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.legacy.application</groupId>
+			<artifactId>reporting</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+ 		<plugins>
+			<plugin>
+				<groupId>org.jboss.forge.furnace</groupId>
+				<artifactId>furnace-maven-plugin</artifactId>
+				<version>${furnace.version}</version>
+				<executions>
+					<execution>
+						<id>deploy-addons</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>addon-install</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<addonRepository>${basedir}/${furnace.addon.dir}</addonRepository>
+							<addonIds>
+								<addonId>org.jboss.windup.legacy.application:legacy-windup,${windup.version}</addonId>
+							</addonIds>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>get-libraries</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<skip>false</skip>
+							<outputDirectory>${basedir}/lib</outputDirectory>
+							<excludeScope>system</excludeScope>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/lib</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/${furnace.addon.dir}</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
