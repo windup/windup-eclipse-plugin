@@ -20,20 +20,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.jboss.windup.legacy.application</groupId>
-			<artifactId>legacy-windup</artifactId>
+			<groupId>${windup.groupId}</groupId>
+			<artifactId>windup-legacy-app-addon</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.windup.legacy.application</groupId>
-			<artifactId>engine</artifactId>
+			<groupId>${windup.groupId}</groupId>
+			<artifactId>windup-legacy-engine</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.windup.legacy.application</groupId>
-			<artifactId>metadata</artifactId>
+			<groupId>${windup.groupId}</groupId>
+			<artifactId>windup-legacy-metadata</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.windup.legacy.application</groupId>
-			<artifactId>reporting</artifactId>
+			<groupId>${windup.groupId}</groupId>
+			<artifactId>windup-legacy-reporting</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -54,7 +54,7 @@
 						<configuration>
 							<addonRepository>${basedir}/${furnace.addon.dir}</addonRepository>
 							<addonIds>
-								<addonId>org.jboss.windup.legacy.application:legacy-windup,${windup.version}</addonId>
+								<addonId>${windup.groupId}:windup-legacy-app-addon,${windup.version}</addonId>
 							</addonIds>
 						</configuration>
 					</execution>
@@ -75,6 +75,7 @@
 							<outputDirectory>${basedir}/lib</outputDirectory>
 							<excludeScope>system</excludeScope>
 							<excludeTransitive>true</excludeTransitive>
+							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
 				</executions>

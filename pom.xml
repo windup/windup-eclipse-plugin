@@ -22,7 +22,8 @@
 	</modules>
 	
 	<properties>
-		<windup.version>2.0.0-SNAPSHOT</windup.version>
+		<windup.version>1.0.0-SNAPSHOT</windup.version>
+		<windup.groupId>org.jboss.windup.legacy.app</windup.groupId>
 		<furnace.version>2.6.0.Final</furnace.version>
  		<tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
 	</properties>
@@ -46,23 +47,23 @@
 			</dependency>
 			
 			<dependency>
-				<groupId>org.jboss.windup.legacy.application</groupId>
-				<artifactId>legacy-windup</artifactId>
+				<groupId>${windup.groupId}</groupId>
+				<artifactId>windup-legacy-app-addon</artifactId>
 				<version>${windup.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss.windup.legacy.application</groupId>
-				<artifactId>engine</artifactId>
+				<groupId>${windup.groupId}</groupId>
+				<artifactId>windup-legacy-engine</artifactId>
 				<version>${windup.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss.windup.legacy.application</groupId>
-				<artifactId>metadata</artifactId>
+				<groupId>${windup.groupId}</groupId>
+				<artifactId>windup-legacy-metadata</artifactId>
 				<version>${windup.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss.windup.legacy.application</groupId>
-				<artifactId>reporting</artifactId>
+				<groupId>${windup.groupId}</groupId>
+				<artifactId>windup-legacy-reporting</artifactId>
 				<version>${windup.version}</version>
 			</dependency>
 		</dependencies>

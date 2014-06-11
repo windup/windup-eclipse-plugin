@@ -22,10 +22,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %plugin.vendor
 Bundle-ClassPath: .,
- lib/engine-2.0.0-SNAPSHOT.jar,
- lib/metadata-2.0.0-SNAPSHOT.jar,
- lib/reporting-2.0.0-SNAPSHOT.jar,
- lib/legacy-windup-2.0.0-SNAPSHOT.jar
+ lib/windup-legacy-app-addon.jar,
+ lib/windup-legacy-engine.jar,
+ lib/windup-legacy-metadata.jar,
+ lib/windup-legacy-reporting.jar
 Export-Package: org.jboss.windup,
  org.jboss.windup.metadata.decoration,
  org.jboss.windup.metadata.decoration.hint,
