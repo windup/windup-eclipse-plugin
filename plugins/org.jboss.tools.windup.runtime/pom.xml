@@ -13,7 +13,7 @@
 	<artifactId>org.jboss.tools.windup.runtime</artifactId>
 
 	<packaging>eclipse-plugin</packaging>
-	
+
 	<properties>
 		<furnace.addon.dir>furnace-addon-repository</furnace.addon.dir>
 	</properties>
@@ -35,10 +35,27 @@
 			<groupId>${windup.groupId}</groupId>
 			<artifactId>windup-legacy-reporting</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.forge.furnace</groupId>
+			<artifactId>furnace</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.furnace</groupId>
+			<artifactId>furnace-se</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.furnace</groupId>
+			<artifactId>furnace-manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.furnace</groupId>
+			<artifactId>furnace-manager-resolver-maven</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
- 		<plugins>
+		<plugins>
 			<plugin>
 				<groupId>org.jboss.forge.furnace</groupId>
 				<artifactId>furnace-maven-plugin</artifactId>
