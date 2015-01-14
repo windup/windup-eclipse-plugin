@@ -19,21 +19,60 @@
 	</properties>
 
 	<dependencies>
+		<!-- Windup API -->
 		<dependency>
-			<groupId>${windup.groupId}</groupId>
-			<artifactId>windup-legacy-app-addon</artifactId>
+			<groupId>org.jboss.windup.exec</groupId>
+			<artifactId>windup-exec-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${windup.groupId}</groupId>
-			<artifactId>windup-legacy-engine</artifactId>
+			<groupId>org.jboss.windup.graph</groupId>
+			<artifactId>windup-graph-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${windup.groupId}</groupId>
-			<artifactId>windup-legacy-metadata</artifactId>
+			<groupId>org.jboss.windup.config</groupId>
+			<artifactId>windup-config-api</artifactId>
+		</dependency>
+	
+	    <!-- furnace addons -->
+		<dependency>
+			<groupId>org.jboss.windup.exec</groupId>
+			<artifactId>windup-exec</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${windup.groupId}</groupId>
-			<artifactId>windup-legacy-reporting</artifactId>
+			<groupId>org.jboss.windup.graph</groupId>
+			<artifactId>windup-graph</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.config</groupId>
+			<artifactId>windup-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.config</groupId>
+			<artifactId>windup-config-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.ext</groupId>
+			<artifactId>windup-config-groovy</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.reporting</groupId>
+			<artifactId>windup-reporting</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.rexster</groupId>
+			<artifactId>rexster</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.rules.apps</groupId>
+			<artifactId>rules-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.rules.apps</groupId>
+			<artifactId>rules-java-ee</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.rules.apps</groupId>
+			<artifactId>rules-xml</artifactId>
 		</dependency>
 
 		<dependency>
@@ -71,7 +110,16 @@
 						<configuration>
 							<addonRepository>${basedir}/${furnace.addon.dir}</addonRepository>
 							<addonIds>
-								<addonId>${windup.groupId}:windup-legacy-app-addon,${windup.version}</addonId>
+								<addonId>org.jboss.windup.exec:windup-exec,${windup.version}</addonId>
+								<addonId>org.jboss.windup.graph:windup-graph,${windup.version}</addonId>
+								<addonId>org.jboss.windup.config:windup-config,${windup.version}</addonId>
+								<addonId>org.jboss.windup.config:windup-config-xml,${windup.version}</addonId>
+								<addonId>org.jboss.windup.ext:windup-config-groovy,${windup.version}</addonId>
+								<addonId>org.jboss.windup.reporting:windup-reporting,${windup.version}</addonId>
+								<addonId>org.jboss.windup.rexster:rexster,${windup.version}</addonId>
+								<addonId>org.jboss.windup.rules.apps:rules-java,${windup.version}</addonId>
+								<addonId>org.jboss.windup.rules.apps:rules-java-ee,${windup.version}</addonId>
+								<addonId>org.jboss.windup.rules.apps:rules-xml,${windup.version}</addonId>
 							</addonIds>
 						</configuration>
 					</execution>
