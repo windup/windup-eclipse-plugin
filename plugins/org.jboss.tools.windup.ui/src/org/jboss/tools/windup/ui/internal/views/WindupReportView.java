@@ -39,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
-import org.jboss.tools.windup.core.IWindupReportListener;
+import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupService;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -95,7 +95,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 	 * being generated.
 	 * </p>
 	 */
-	private IWindupReportListener reportListener;
+	private IWindupListener reportListener;
 	
 	/**
 	 * <p>
@@ -167,9 +167,9 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 		srv.addPostSelectionListener(selectionChangedListener);
 
 		//react to Windup report generations
-		this.reportListener = new IWindupReportListener() {
+		this.reportListener = new IWindupListener() {
 			@Override
-			public void reportGenerated(IProject project) {
+			public void graphGenerated(IProject project) {
 				/* if the current selection is in the project that
 				 * just had a report generated, refresh the view */
 				if(WindupReportView.this.currentSelection != null
@@ -184,7 +184,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 				}
 			}
 		};
-		WindupService.getDefault().addWindupReportListener(reportListener);
+		WindupService.getDefault().addWindupListener(reportListener);
 		
 		//store view preferences
 		IPreferenceStore preferenceStore = getPreferenceStore();
@@ -244,7 +244,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget{
 		ISelectionService srv = (ISelectionService) getSite().getService(ISelectionService.class);
 		srv.removePostSelectionListener(this.selectionChangedListener);
 		
-		WindupService.getDefault().removeWindupReportListener(this.reportListener);
+		WindupService.getDefault().removeWindupListener(this.reportListener);
 	}
 
 	/**

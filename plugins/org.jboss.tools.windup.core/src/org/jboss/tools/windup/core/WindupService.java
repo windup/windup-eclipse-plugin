@@ -12,8 +12,11 @@ package org.jboss.tools.windup.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -28,11 +31,13 @@ import org.jboss.tools.forge.core.furnace.FurnaceProvider;
 import org.jboss.tools.forge.core.furnace.FurnaceService;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.internal.utils.FileUtils;
-import org.jboss.windup.WindupEngine;
-import org.jboss.windup.WindupEnvironment;
-import org.jboss.windup.WindupFactory;
-import org.jboss.windup.metadata.type.FileMetadata;
-import org.jboss.windup.reporting.ReportEngine;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 
 /**
  * <p>
@@ -49,41 +54,17 @@ public class WindupService {
 	
 	/**
 	 * <p>
-	 * {@link WindupEngine} instance used by this plugin.
-	 * </p>
-	 * 
-	 * <p>
-	 * This is really expensive to initialize, so it is only done once.
+	 * List of the subscribed {@link IWindupListener}s.
 	 * </p>
 	 */
-	private WindupEngine windupEngine;
+	private List<IWindupListener> windupListeners;
 	
 	/**
 	 * <p>
-	 * {@link ReportEngine} instance used by this plugin.
-	 * </p>
-	 * 
-	 * <p>
-	 * This is really expensive to initialize, so it is only done once.
+	 * Map of Windup {@link GraphContext}s to their associated {@link IProject}s.
 	 * </p>
 	 */
-	private ReportEngine reportEngine;
-	
-	/**
-	 * <p>
-	 * Windup itself is not designed to be run in a multi-threaded/multi-access
-	 * environment. This lock is used to make the use of a single shared
-	 * {@link WindupEngine} and {@link ReportEngine} thread safe.
-	 * </p>
-	 */
-	private final Object windupLock;
-	
-	/**
-	 * <p>
-	 * List of the subscribed {@link IWindupReportListener}s.
-	 * </p>
-	 */
-	private List<IWindupReportListener> windupReportListeners;
+	private Map<IProject, GraphContext> windupGraphContexts;
 	
 	/**
 	 * <p>
@@ -91,8 +72,8 @@ public class WindupService {
 	 * </p>
 	 */
 	private WindupService() {
-		this.windupLock = new Object();
-		this.windupReportListeners = new ArrayList<IWindupReportListener>();
+		this.windupGraphContexts = new HashMap<>();
+		this.windupListeners = new ArrayList<IWindupListener>();
 	}
 	
 	/**
@@ -117,12 +98,13 @@ public class WindupService {
 	 * 
 	 * @return {@link FileMetadata} for the given {@link IResource} or
 	 *         <code>null</code> if none can be calculated
-	 */
+	 *//*
 	public FileMetadata getFileMetadata(IResource resource) {
 		FileMetadata meta = null;
 		
 		try {
 			synchronized(this.windupLock) {
+				
 				meta = this.getWindupEngine().processFile(resource.getLocation().toFile());
 			}
 		} catch (IOException e) {
@@ -130,7 +112,7 @@ public class WindupService {
 		}
 		
 		return meta;
-	}
+	}*/
 	
 	/**
 	 * <p>
@@ -147,8 +129,8 @@ public class WindupService {
 	 * @param monitor
 	 *            {@link IProgressMonitor} to report progress to
 	 */
-	public IStatus generateReport(IResource resource, IProgressMonitor monitor) {
-		return this.generateReport(new IProject[] {resource.getProject()}, monitor);
+	public IStatus generateGraph(IResource resource, IProgressMonitor monitor) {
+		return this.generateGraph(new IProject[] {resource.getProject()}, monitor);
 	}
 	
 	/**
@@ -165,7 +147,7 @@ public class WindupService {
 	 * @param monitor
 	 *            {@link IProgressMonitor} to report progress to
 	 */
-	public IStatus generateReport(IProject[] projects, IProgressMonitor monitor) {
+	public IStatus generateGraph(IProject[] projects, IProgressMonitor monitor) {
 		//protect against a null given for the progress monitor
 		IProgressMonitor progress;
 		if(monitor != null) {
@@ -183,7 +165,7 @@ public class WindupService {
 			for(IProject project : projects) {
 				// if not canceled, continue generating reports for the given projects
 				if(!progress.isCanceled()) {
-					status = this.generateReport(project, progress);
+					status = this.generateGraph(project, progress);
 					
 					//if not an okay status stop generating reports
 					if(!status.equals(Status.OK_STATUS)) {
@@ -216,7 +198,7 @@ public class WindupService {
 	 * @param monitor
 	 *            {@link IProgressMonitor} to report progress to
 	 */
-	private IStatus generateReport(IProject project, IProgressMonitor monitor) {
+	private IStatus generateGraph(IProject project, IProgressMonitor monitor) {
 		//protect against a null given for the progress monitor
 		IProgressMonitor progress;
 		if(monitor != null) {
@@ -243,31 +225,73 @@ public class WindupService {
 			
 			//wait for the engine to be avaialbe and then generate the report
 			progress.subTask(Messages.waiting_for_windup_to_be_avaialbe);
-			synchronized(this.windupLock) {
-				progress.subTask(NLS.bind(Messages.generate_windup_report_for, projectName));
-				
-				//generate new report
-				WindupService.this.getWindupReportEngine().process(
-						inputDir, outputDir);
-			}
+	
+			//set up monitoring
+			progress.subTask(NLS.bind(Messages.generate_windup_report_for, projectName));
+			WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
+			
+			//set configuration
+			WindupConfiguration windupConfiguration = new WindupConfiguration();
+			windupConfiguration.setInputPath(inputDir.toPath());
+			windupConfiguration.setOutputDirectory(outputDir.toPath());
+			
+			
+			
+			//set up graph context factory
+			GraphContextFactory graphContextFactory = this.getGraphContextFactory();
+			Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph"); //$NON-NLS-1$
+			
+			//generate new graph context
+			GraphContext graphContext = graphContextFactory.create(graphPath);
+            windupConfiguration
+                        .setProgressMonitor(windupProgressMonitor)
+                        .setGraphContext(graphContext);
+            
+            WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
+			javaCfg.addIgnoredFileRegex(".*\\.class"); //$NON-NLS-1$
+            
+			this.getWindupProcessor().execute(windupConfiguration);
+			
+			//store the new graph
+			setGraph(project, graphContext);
 			
 			//notify listeners that a report was just generated
-			this.notifyReportGenerated(project);
+			this.notifyGraphGenerated(project);
 			
 			status = Status.OK_STATUS;
-		} catch (IOException e) {
-			status = new Status(IStatus.ERROR,
-					WindupCorePlugin.PLUGIN_ID,
-					NLS.bind(Messages.error_generating_report_for, projectName));
-			
-			WindupCorePlugin.logError("There was an error generating the Windup report " //$NON-NLS-1$
-					+ "for the project " + projectName, e); //$NON-NLS-1$
 		} finally {
 			//mark the monitor as complete
 			progress.done();
 		}
 		
 		return status;
+	}
+
+	/**
+	 * <p>
+	 * Sets the current {@link GraphContext} for a given {@link IProject}. If a {@link GraphContext}
+	 * already exists for the given {@link IProject} then the old {@link GraphContext} will be cleaned up
+	 * before the new one is set.
+	 * </p>
+	 * 
+	 * @param project {@link IProject} to associated the given {@link GraphContext} with
+	 * @param graphContext {@link GraphContext} to associate with the given {@link IProject}
+	 */
+	private void setGraph(IProject project, GraphContext graphContext) {
+		GraphContext oldContext = this.windupGraphContexts.get(project);
+		if(oldContext != null) {
+			try {
+				oldContext.close();
+				FileUtils.delete(oldContext.getGraphDirectory().toFile(), true);
+			} catch (IOException e) {
+				WindupCorePlugin.logError(
+					"Error deteling old Windup GraphContext, '" + //$NON-NLS-1$
+					oldContext.getGraphDirectory() +
+					",' for project '" //$NON-NLS-1$
+					+ project.getName() + "'.", e); //$NON-NLS-1$
+			}
+		}
+		this.windupGraphContexts.put(project, graphContext);
 	}
 	
 	/**
@@ -357,107 +381,78 @@ public class WindupService {
 	
 	/**
 	 * <p>
-	 * Registers a {@link IWindupReportListener}.
+	 * Registers a {@link IWindupListener}.
 	 * </p>
 	 * 
-	 * @param listener {@link IWindupReportListener} to register
+	 * @param listener {@link IWindupListener} to register
 	 */
-	public void addWindupReportListener(IWindupReportListener listener) {
-		this.windupReportListeners.add(listener);
+	public void addWindupListener(IWindupListener listener) {
+		this.windupListeners.add(listener);
 	}
 	
 	/**
 	 * <p>
-	 * Removes an already registered {@link IWindupReportListener}.
+	 * Removes an already registered {@link IWindupListener}.
 	 * </p>
 	 * 
-	 * @param listener {@link IWindupReportListener} to unregister
+	 * @param listener {@link IWindupListener} to unregister
 	 */
-	public void removeWindupReportListener(IWindupReportListener listener) {
-		this.windupReportListeners.remove(listener);
+	public void removeWindupListener(IWindupListener listener) {
+		this.windupListeners.remove(listener);
 	}
 	
 	/**
-	 * <p>
-	 * The {@link WindupEngine} is expensive to initialize so making sure there
-	 * is ever only one helps.
-	 * </p>
-	 * 
-	 * @return the single instance of the {@link WindupEngine} to be used in Eclipse
+	 * @return {@link WindupProcessor} for interacting with Windup via Furnace
 	 */
-	private WindupEngine getWindupEngine() {
-		if(this.windupEngine == null) {
-			try {
-				this.windupEngine = this.getWindupFactory().createWindupEngine(this.getWindupSettings());
-			} catch(Throwable t) {
-				WindupCorePlugin.logError("Error getting Windup Engine.", t); //$NON-NLS-1$
-			}
-		}
-		
-		return this.windupEngine;
-	}
-	
-	/**
-	 * <p>
-	 * The {@link ReportEngine} is expensive to initialize so making sure there
-	 * is ever only one helps.
-	 * </p>
-	 * 
-	 * @return the single instance of the {@link ReportEngine} to be used in Eclipse
-	 */
-	private ReportEngine getWindupReportEngine() {
-		if(this.reportEngine == null) {
-			try {
-				this.reportEngine = this.getWindupFactory().createReportEngine(
-						this.getWindupSettings(), this.getWindupEngine());
-			} catch(Throwable t) {
-				WindupCorePlugin.logError("Error getting Windup Report Engine.", t); //$NON-NLS-1$
-			}
-		}
-		
-		return this.reportEngine;
-	}
-	
-	/**
-	 * <p>
-	 * Single source for the {@link WindupEnvironment} to use within Eclipse.
-	 * </p>
-	 * 
-	 * @return {@link WindupEnvironment} used to initialize Windup
-	 */
-	private WindupEnvironment getWindupSettings() {
-		WindupEnvironment settings = new WindupEnvironment();
-		settings.setSource(true);
-		
-		return settings;
-	}
-	
-	/**
-	 * @return {@link WindupFactory} for interacting with Windup via Furnace
-	 */
-	private WindupFactory getWindupFactory() {
+	private WindupProcessor getWindupProcessor() {
 		FurnaceProvider.INSTANCE.startFurnace();
 		try {
 			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
 		} catch (InterruptedException e) {
 			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
 		}
-		return FurnaceService.INSTANCE.lookup(WindupFactory.class);
+		return FurnaceService.INSTANCE.lookup(WindupProcessor.class);
+	}
+	
+	/**
+	 * @return {@link GraphContextFactory} for interacting with Windup via Furnace
+	 */
+	private WindupJavaConfigurationService getWindupJavaConfigurationService() {
+		FurnaceProvider.INSTANCE.startFurnace();
+		try {
+			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
+		} catch (InterruptedException e) {
+			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
+		}
+		return FurnaceService.INSTANCE.lookup(WindupJavaConfigurationService.class);
+	}
+	
+	/**
+	 * @return {@link GraphContextFactory} for interacting with Windup via Furnace
+	 */
+	private GraphContextFactory getGraphContextFactory() {
+		FurnaceProvider.INSTANCE.startFurnace();
+		try {
+			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
+		} catch (InterruptedException e) {
+			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
+		}
+		return FurnaceService.INSTANCE.lookup(GraphContextFactory.class);
 	}
 	
 	/**
 	 * <p>
-	 * Notifies all of the registered {@link IWindupReportListener} that a
+	 * Notifies all of the registered {@link IWindupListener} that a
 	 * Windup report was just generated for the given {@link IProject}.
 	 * </p>
 	 * 
 	 * @param project
-	 *            Notify all registered {@link IWindupReportListener} that a
+	 *            Notify all registered {@link IWindupListener} that a
 	 *            Windup report was just generated for this {@link IProject}
 	 */
-	private void notifyReportGenerated(IProject project) {
-		for(IWindupReportListener listener : WindupService.this.windupReportListeners) {
-			listener.reportGenerated(project);
+	private void notifyGraphGenerated(IProject project) {
+		for(IWindupListener listener : WindupService.this.windupListeners) {
+			listener.graphGenerated(project);
 		}
 	}
 	
