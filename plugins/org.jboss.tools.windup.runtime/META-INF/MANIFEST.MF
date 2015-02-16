@@ -6,18 +6,9 @@ Bundle-SymbolicName: org.jboss.tools.windup.runtime;singleton:=true
 Bundle-Version: 3.1.0.qualifier
 Bundle-Activator: org.jboss.tools.windup.runtime.internal.WindupRuntimePlugin
 Eclipse-BundleShape: dir
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)",
- org.eclipse.wst.validation;bundle-version="[1.2.402,2.0.0)",
- org.eclipse.core.resources;bundle-version="[3.8.1,4.0.0)",
- org.eclipse.core.expressions;bundle-version="[3.4.401,4.0.0)",
- org.eclipse.core.filesystem;bundle-version="[1.3.200,2.0.0)",
- org.eclipse.jdt.core;bundle-version="[3.8.3,4.0.0)",
- org.eclipse.osgi.services;bundle-version="[3.3.100,4.0.0)",
- org.eclipse.core.jobs;bundle-version="[3.5.300,4.0.0)",
- org.eclipse.jface;bundle-version="[3.9.1,4.0.0)",
- org.jboss.tools.forge.core;bundle-version="[1.3.0,2.0.0)",
- org.jboss.tools.windup.runtime;bundle-version="[3.1.0,4.0.0)",
- org.jboss.tools.forge2.runtime;bundle-version="[2.0.1,3.0.0)"
+Require-Bundle: org.eclipse.osgi.services;bundle-version="[3.3.100,4.0.0)",
+ org.jboss.tools.forge.core;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %plugin.vendor
@@ -25,7 +16,9 @@ Bundle-ClassPath: .,
  lib/windup-config-api.jar,
  lib/windup-exec-api.jar,
  lib/windup-graph-api.jar,
- lib/rules-java.jar
+ lib/rules-java.jar,
+ lib/windup-reporting-api.jar,
+ lib/rules-base-api.jar
 Export-Package: org.jboss.windup.config,
  org.jboss.windup.config.builder,
  org.jboss.windup.config.condition,
@@ -38,6 +31,7 @@ Export-Package: org.jboss.windup.config,
  org.jboss.windup.config.operation.iteration,
  org.jboss.windup.config.operation.ruleelement,
  org.jboss.windup.config.parameters,
+ org.jboss.windup.config.phase,
  org.jboss.windup.config.query,
  org.jboss.windup.config.selectors,
  org.jboss.windup.engine.predicates,
@@ -54,6 +48,16 @@ Export-Package: org.jboss.windup.config,
  org.jboss.windup.graph.model.resource,
  org.jboss.windup.graph.service,
  org.jboss.windup.graph.service.exception,
+ org.jboss.windup.reporting,
+ org.jboss.windup.reporting.config,
+ org.jboss.windup.reporting.config.classification,
+ org.jboss.windup.reporting.freemarker,
+ org.jboss.windup.reporting.model,
+ org.jboss.windup.reporting.model.source,
+ org.jboss.windup.reporting.query,
+ org.jboss.windup.reporting.renderer,
+ org.jboss.windup.reporting.rules,
+ org.jboss.windup.reporting.service,
  org.jboss.windup.rules.apps.java,
  org.jboss.windup.rules.apps.java.binary,
  org.jboss.windup.rules.apps.java.condition,
@@ -67,4 +71,8 @@ Export-Package: org.jboss.windup.config,
  org.jboss.windup.rules.apps.java.scan.provider,
  org.jboss.windup.rules.apps.java.service,
  org.jboss.windup.rules.apps.java.xml,
- org.jboss.windup.rules.apps.maven.dao
+ org.jboss.windup.rules.apps.maven.dao,
+ org.jboss.windup.rules.files,
+ org.jboss.windup.rules.files.condition,
+ org.jboss.windup.rules.files.condition.regex,
+ org.jboss.windup.rules.files.model

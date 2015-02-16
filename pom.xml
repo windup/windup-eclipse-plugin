@@ -22,7 +22,7 @@
 	</modules>
 
 	<properties>
-		<windup.version>2.0.0.Beta8</windup.version>
+		<windup.version>2.0.0.Final</windup.version>
 		<windup.groupId>org.jboss.windup.legacy.app</windup.groupId>
 		<furnace.version>2.12.3.Final</furnace.version>
 		<tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
@@ -60,6 +60,16 @@
 			<dependency>
 				<groupId>org.jboss.windup.config</groupId>
 				<artifactId>windup-config-api</artifactId>
+				<version>${windup.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.windup.reporting</groupId>
+				<artifactId>windup-reporting-api</artifactId>
+				<version>${windup.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.windup.rules.apps</groupId>
+				<artifactId>rules-base-api</artifactId>
 				<version>${windup.version}</version>
 			</dependency>
 

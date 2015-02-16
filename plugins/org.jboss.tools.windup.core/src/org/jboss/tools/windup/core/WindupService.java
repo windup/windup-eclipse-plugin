@@ -36,6 +36,12 @@ import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 
@@ -88,31 +94,16 @@ public class WindupService {
 	}
 	
 	/**
-	 * <p>
-	 * Use the {@link WindupEngine} to get the {@link FileMetadata} for the
-	 * given {@link IResource}.
-	 * </p>
-	 * 
-	 * @param resource
-	 *            get the Windup {@link FileMetadata} for this {@link IResource}
-	 * 
-	 * @return {@link FileMetadata} for the given {@link IResource} or
-	 *         <code>null</code> if none can be calculated
-	 *//*
-	public FileMetadata getFileMetadata(IResource resource) {
-		FileMetadata meta = null;
+	 * TODO: IAN: doc me
+	 */
+	public Iterable<InlineHintModel> getInlineHints(IResource resource) {
+		//InlineHintService and FileService
+		FileService fileService = this.getServiceFromFurnace(FileService.class);
+		FileModel fileModel = fileService.findByPath(resource.getFullPath().toString());
 		
-		try {
-			synchronized(this.windupLock) {
-				
-				meta = this.getWindupEngine().processFile(resource.getLocation().toFile());
-			}
-		} catch (IOException e) {
-			WindupCorePlugin.logError("Error getting Windup metadata for: " + resource, e); //$NON-NLS-1$
-		}
-		
-		return meta;
-	}*/
+		InlineHintService hintService = this.getServiceFromFurnace(InlineHintService.class);
+		return hintService.getHintsForFile(fileModel);
+	}
 	
 	/**
 	 * <p>
@@ -210,24 +201,20 @@ public class WindupService {
 		String projectName = project.getName();
 		
 		//start the task
-		progress.beginTask(NLS.bind(Messages.generate_windup_report_for, projectName), IProgressMonitor.UNKNOWN);
+		progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, projectName), IProgressMonitor.UNKNOWN);
 		IStatus status = null;
 		
 		try {
 			File inputDir = project.getLocation().toFile();
-			IPath outputPath = reportsDir.append(projectName);
-			
+			IPath outputPath = getProjectReportPath(project);
 			File outputDir = outputPath.toFile();
 			
 			//clear out existing report
 			progress.subTask(Messages.removing_old_report);
 			FileUtils.delete(outputDir, true);
-			
-			//wait for the engine to be avaialbe and then generate the report
-			progress.subTask(Messages.waiting_for_windup_to_be_avaialbe);
 	
 			//set up monitoring
-			progress.subTask(NLS.bind(Messages.generate_windup_report_for, projectName));
+			progress.subTask(NLS.bind(Messages.generate_windup_graph_for, projectName));
 			WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
 			
 			//set configuration
@@ -235,27 +222,31 @@ public class WindupService {
 			windupConfiguration.setInputPath(inputDir.toPath());
 			windupConfiguration.setOutputDirectory(outputDir.toPath());
 			
-			
-			
 			//set up graph context factory
-			GraphContextFactory graphContextFactory = this.getGraphContextFactory();
+			GraphContextFactory graphContextFactory = this.getServiceFromFurnace(GraphContextFactory.class);
 			Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph"); //$NON-NLS-1$
 			
-			//generate new graph context
+			//create new graph
 			GraphContext graphContext = graphContextFactory.create(graphPath);
             windupConfiguration
                         .setProgressMonitor(windupProgressMonitor)
                         .setGraphContext(graphContext);
             
+            //set up ignore rules for the graph
+			GraphService<IgnoredFileRegexModel> graphService =
+					new GraphService<IgnoredFileRegexModel>(graphContext, IgnoredFileRegexModel.class);
+			IgnoredFileRegexModel ignored = graphService.create();
+			ignored.setRegex(".*\\.class"); //$NON-NLS-1$
             WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
-			javaCfg.addIgnoredFileRegex(".*\\.class"); //$NON-NLS-1$
-            
-			this.getWindupProcessor().execute(windupConfiguration);
+			javaCfg.addIgnoredFileRegex(ignored);
+			
+			//generate the graph
+			this.getServiceFromFurnace(WindupProcessor.class).execute(windupConfiguration);
 			
 			//store the new graph
-			setGraph(project, graphContext);
+			this.setGraph(project, graphContext);
 			
-			//notify listeners that a report was just generated
+			//notify listeners that a graph was just generated
 			this.notifyGraphGenerated(project);
 			
 			status = Status.OK_STATUS;
@@ -341,7 +332,7 @@ public class WindupService {
 				break;
 			}
 			
-			/*  if selected resource is the project then get the Windup
+			/* if selected resource is the project then get the Windup
 			 * report home page for that project */
 			case IResource.PROJECT: {
 				reportPath = projectReportPath.append(PROJECT_REPORT_HOME_PAGE);
@@ -402,45 +393,6 @@ public class WindupService {
 	}
 	
 	/**
-	 * @return {@link WindupProcessor} for interacting with Windup via Furnace
-	 */
-	private WindupProcessor getWindupProcessor() {
-		FurnaceProvider.INSTANCE.startFurnace();
-		try {
-			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
-		} catch (InterruptedException e) {
-			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
-		}
-		return FurnaceService.INSTANCE.lookup(WindupProcessor.class);
-	}
-	
-	/**
-	 * @return {@link GraphContextFactory} for interacting with Windup via Furnace
-	 */
-	private WindupJavaConfigurationService getWindupJavaConfigurationService() {
-		FurnaceProvider.INSTANCE.startFurnace();
-		try {
-			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
-		} catch (InterruptedException e) {
-			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
-		}
-		return FurnaceService.INSTANCE.lookup(WindupJavaConfigurationService.class);
-	}
-	
-	/**
-	 * @return {@link GraphContextFactory} for interacting with Windup via Furnace
-	 */
-	private GraphContextFactory getGraphContextFactory() {
-		FurnaceProvider.INSTANCE.startFurnace();
-		try {
-			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
-		} catch (InterruptedException e) {
-			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
-		}
-		return FurnaceService.INSTANCE.lookup(GraphContextFactory.class);
-	}
-	
-	/**
 	 * <p>
 	 * Notifies all of the registered {@link IWindupListener} that a
 	 * Windup report was just generated for the given {@link IProject}.
@@ -471,5 +423,21 @@ public class WindupService {
 	 */
 	private static IPath getProjectReportPath(IResource resource) {
 		return reportsDir.append(resource.getProject().getName());
+	}
+	
+	/**
+	 * TODO: DOC ME
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private <T> T getServiceFromFurnace(Class<T> clazz) {
+		FurnaceProvider.INSTANCE.startFurnace();
+		try {
+			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
+		} catch (InterruptedException e) {
+			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
+		}
+		return FurnaceService.INSTANCE.lookup(clazz);
 	}
 }

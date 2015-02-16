@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/rules-java.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/rules-base-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-reporting-api.jar" sourcepath="/Users/Ian/.m2/repository/org/jboss/windup/reporting/windup-reporting-api/2.0.0.Final/windup-reporting-api-2.0.0.Final-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="lib/windup-config-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/windup-exec-api.jar" sourcepath="/home/ian/.m2/repository/org/jboss/windup/exec/windup-exec-api/2.0.0.Beta8/windup-exec-api-2.0.0.Beta8-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-graph-api.jar" sourcepath="/home/ian/.m2/repository/org/jboss/windup/graph/windup-graph-api/2.0.0.Beta8/windup-graph-api-2.0.0.Beta8-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-graph-api.jar" sourcepath="/Users/Ian/.m2/repository/org/jboss/windup/graph/windup-graph-api/2.0.0.Final/windup-graph-api-2.0.0.Final-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/rules-java.jar" sourcepath="/Users/Ian/.m2/repository/org/jboss/windup/rules/apps/rules-java/2.0.0.Final/rules-java-2.0.0.Final-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
