@@ -22,7 +22,7 @@
 	</modules>
 
 	<properties>
-		<windup.version>2.0.0.Final</windup.version>
+		<windup.version>2.1.0.Final</windup.version>
 		<windup.groupId>org.jboss.windup.legacy.app</windup.groupId>
 		<furnace.version>2.12.3.Final</furnace.version>
 		<tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
