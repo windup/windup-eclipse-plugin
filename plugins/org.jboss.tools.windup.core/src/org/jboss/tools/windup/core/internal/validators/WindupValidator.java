@@ -78,7 +78,7 @@ public class WindupValidator extends AbstractValidator {
 		ValidationResult result = new ValidationResult();
 
 		//process the file with WindUp
-		Iterable<InlineHintModel> inlineHints = WindupService.getDefault().getInlineHints(resource);
+		Iterable<InlineHintModel> inlineHints = WindupService.getDefault().getInlineHints(resource, monitor);
 		
 		//if meta then WindUp matched on something in the file
 		if(inlineHints != null) {

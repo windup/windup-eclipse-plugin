@@ -24,8 +24,10 @@ public class Messages extends NLS {
 	public static String generate_windup_graph_for;
 
 	public static String removing_old_report;
+	
+	public static String waiting_for_furnace;
 
-	public static String waiting_for_windup_to_be_avaialbe;
+	public static String get_windup_graph_context_factory;
 	
 	static {
 		// initialize resource bundle

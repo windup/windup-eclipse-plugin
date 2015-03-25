@@ -96,12 +96,17 @@ public class WindupService {
 	/**
 	 * TODO: IAN: doc me
 	 */
-	public Iterable<InlineHintModel> getInlineHints(IResource resource) {
+	public Iterable<InlineHintModel> getInlineHints(IResource resource, IProgressMonitor monitor) {
 		//InlineHintService and FileService
-		FileService fileService = this.getServiceFromFurnace(FileService.class);
+		
+		IProject project = resource.getProject();
+		GraphContext context = this.getGraph(project, monitor);
+		
+		FileService fileService = this.getTypeFromFurnace(FileService.class, monitor);
+		fileService.setGraphContext(context);
 		FileModel fileModel = fileService.findByPath(resource.getFullPath().toString());
 		
-		InlineHintService hintService = this.getServiceFromFurnace(InlineHintService.class);
+		InlineHintService hintService = this.getTypeFromFurnace(InlineHintService.class, monitor);
 		return hintService.getHintsForFile(fileModel);
 	}
 	
@@ -214,34 +219,38 @@ public class WindupService {
 			FileUtils.delete(outputDir, true);
 	
 			//set up monitoring
-			progress.subTask(NLS.bind(Messages.generate_windup_graph_for, projectName));
-			WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
+			progress.subTask(Messages.get_windup_graph_context_factory);
+			
 			
 			//set configuration
-			WindupConfiguration windupConfiguration = new WindupConfiguration();
+			WindupConfiguration windupConfiguration = this.getServiceFromFurnace(WindupConfiguration.class, progress);
 			windupConfiguration.setInputPath(inputDir.toPath());
 			windupConfiguration.setOutputDirectory(outputDir.toPath());
 			
 			//set up graph context factory
-			GraphContextFactory graphContextFactory = this.getServiceFromFurnace(GraphContextFactory.class);
+			GraphContextFactory graphContextFactory = this.getServiceFromFurnace(GraphContextFactory.class, progress);
 			Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph"); //$NON-NLS-1$
 			
 			//create new graph
+			progress.subTask(NLS.bind(Messages.generate_windup_graph_for, projectName));
+			WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
 			GraphContext graphContext = graphContextFactory.create(graphPath);
             windupConfiguration
                         .setProgressMonitor(windupProgressMonitor)
                         .setGraphContext(graphContext);
             
             //set up ignore rules for the graph
-			GraphService<IgnoredFileRegexModel> graphService =
-					new GraphService<IgnoredFileRegexModel>(graphContext, IgnoredFileRegexModel.class);
+            GraphService<IgnoredFileRegexModel> graphService = this.getTypeFromFurnace(GraphService.class, progress);
+			graphService.setGraphContext(graphContext);
+			graphService.setType(IgnoredFileRegexModel.class);
 			IgnoredFileRegexModel ignored = graphService.create();
 			ignored.setRegex(".*\\.class"); //$NON-NLS-1$
-            WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
+			WindupJavaConfigurationService windupJavaConfigurationService = this.getTypeFromFurnace(WindupJavaConfigurationService.class, progress);
+			WindupJavaConfigurationModel javaCfg = windupJavaConfigurationService.getJavaConfigurationModel(graphContext);
 			javaCfg.addIgnoredFileRegex(ignored);
 			
 			//generate the graph
-			this.getServiceFromFurnace(WindupProcessor.class).execute(windupConfiguration);
+			this.getServiceFromFurnace(WindupProcessor.class, progress).execute(windupConfiguration);
 			
 			//store the new graph
 			this.setGraph(project, graphContext);
@@ -283,6 +292,17 @@ public class WindupService {
 			}
 		}
 		this.windupGraphContexts.put(project, graphContext);
+	}
+	
+	private GraphContext getGraph(IProject project, IProgressMonitor monitor) {
+		GraphContext context = this.windupGraphContexts.get(project);
+		
+		if(context == null) {
+			this.generateGraph(project, monitor);
+			context = this.windupGraphContexts.get(project);
+		}
+		
+		return context;
 	}
 	
 	/**
@@ -428,16 +448,52 @@ public class WindupService {
 	/**
 	 * TODO: DOC ME
 	 * 
-	 * @param clazz
-	 * @return
+	 * @param monitor
 	 */
-	private <T> T getServiceFromFurnace(Class<T> clazz) {
+	private void waitForFurnace(IProgressMonitor monitor) {
+		//protect against a null given for the progress monitor
+		IProgressMonitor progress;
+		if (monitor != null) {
+			progress = new SubProgressMonitor(monitor, 1);
+			;
+		} else {
+			progress = new NullProgressMonitor();
+		}
+
+		// start the task
+		progress.beginTask(Messages.waiting_for_furnace,IProgressMonitor.UNKNOWN);
+
 		FurnaceProvider.INSTANCE.startFurnace();
 		try {
 			FurnaceService.INSTANCE.waitUntilContainerIsStarted();
 		} catch (InterruptedException e) {
 			WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
 		}
+		
+		progress.done();
+	}
+	
+	/**
+	 * TODO: DOC ME
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private <T> T getServiceFromFurnace(Class<T> clazz, IProgressMonitor monitor) {
+		this.waitForFurnace(monitor);
+		
 		return FurnaceService.INSTANCE.lookup(clazz);
+	}
+	
+	/**
+	 * TODO: DOC ME
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private <T> T getTypeFromFurnace(Class<T> clazz, IProgressMonitor monitor) {
+		this.waitForFurnace(monitor);
+		
+		return FurnaceService.INSTANCE.lookupType(clazz);
 	}
 }

@@ -40,6 +40,17 @@
 			<groupId>org.jboss.windup.rules.apps</groupId>
 			<artifactId>rules-base-api</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.windup.graph.frames</groupId>
+    		<artifactId>windup-frames</artifactId>
+    		<version>${windup.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.windup.utils</groupId>
+    		<artifactId>utils</artifactId>
+    		<version>${windup.version}</version>
+		</dependency>
 
 		<!-- furnace addons -->
 		<dependency>
@@ -147,7 +158,7 @@
 							<skip>false</skip>
 							<outputDirectory>${basedir}/lib</outputDirectory>
 							<excludeScope>system</excludeScope>
-							<excludeTransitive>true</excludeTransitive>
+							<excludeTransitive>false</excludeTransitive>
 							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
