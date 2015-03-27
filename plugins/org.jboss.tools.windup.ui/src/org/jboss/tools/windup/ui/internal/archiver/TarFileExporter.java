@@ -36,6 +36,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
  * 
  * @see org.eclipse.ui.internal.wizards.datatransfer.TarFileExporter
  */
+@SuppressWarnings("restriction")
 public class TarFileExporter extends AbstractArchiveFileExporter {
 	private GZIPOutputStream gzipOutputStream;
 

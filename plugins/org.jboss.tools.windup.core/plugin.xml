@@ -49,5 +49,4 @@
             type="org.eclipse.wst.validation.problemmarker2">
       </super>
    </extension>
-
 </plugin>

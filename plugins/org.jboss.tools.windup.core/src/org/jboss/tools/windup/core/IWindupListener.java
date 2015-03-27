@@ -13,22 +13,22 @@ package org.jboss.tools.windup.core;
 import java.util.EventListener;
 
 import org.eclipse.core.resources.IProject;
+import org.jboss.windup.graph.GraphContext;
 
 /**
  * <p>
  * Interface for listening to Windup report changes.
  * </p>
  */
-public interface IWindupReportListener extends EventListener {
+public interface IWindupListener extends EventListener {
 	
 	/**
 	 * <p>
-	 * Notifiers the listener when a Windup report is generated for the given
-	 * {@link IProject}
+	 * Notifiers the listener when a Windup {@link GraphContext} is generated for the given {@link IProject}
 	 * </p>
 	 * 
 	 * @param project
-	 *            {@link IProject} that a Windup report was generated for
+	 *            {@link IProject} that a Windup {@link GraphContext} was generated for
 	 */
-	public void reportGenerated(IProject project);
+	public void graphGenerated(IProject project);
 }

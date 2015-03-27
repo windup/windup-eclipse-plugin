@@ -75,7 +75,7 @@ public class GenerateWindupReportHandler extends AbstractHandler {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {	
 							//generate the report
-							IStatus status = WindupService.getDefault().generateReport(userSelectedProjects, monitor);
+							IStatus status = WindupService.getDefault().generateGraph(userSelectedProjects, monitor);
 							
 							//show the report view for the selected resource
 							Display.getDefault().asyncExec(new Runnable() {

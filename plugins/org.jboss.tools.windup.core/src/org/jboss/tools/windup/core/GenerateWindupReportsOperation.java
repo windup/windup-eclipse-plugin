@@ -50,7 +50,7 @@ public class GenerateWindupReportsOperation implements IRunnableWithProgress {
 			InterruptedException {
 		
 		// generate the reports
-		this.result = WindupService.getDefault().generateReport(
+		this.result = WindupService.getDefault().generateGraph(
 				this.projectsToGenerateReportsFor.toArray(
 						new IProject[this.projectsToGenerateReportsFor.size()])
 				, monitor);

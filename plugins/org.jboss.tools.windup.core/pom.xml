@@ -13,91 +13,11 @@
 	<artifactId>org.jboss.tools.windup.core</artifactId>
 
 	<packaging>eclipse-plugin</packaging>
-
+	
 	<dependencies>
 		<dependency>
-			<groupId>org.jboss.windup</groupId>
-			<artifactId>windup-engine</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.windup</groupId>
-			<artifactId>windup-metadata</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.windup</groupId>
-			<artifactId>windup-reporting</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.windup</groupId>
-			<artifactId>windup-rules</artifactId>
+			<groupId>org.jboss.tools.windup.plugins</groupId>
+			<artifactId>org.jboss.tools.windup.runtime</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-dependency-plugin</artifactId>
-										<versionRange>[2.4,)</versionRange>
-										<goals>
-											<goal>copy</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>get-libraries</id>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<skip>false</skip>
-							<outputDirectory>${basedir}/lib</outputDirectory>
-							<excludeScope>system</excludeScope>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>lib</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

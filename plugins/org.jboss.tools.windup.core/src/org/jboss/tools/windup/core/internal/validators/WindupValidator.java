@@ -10,9 +10,6 @@
 ******************************************************************************/
 package org.jboss.tools.windup.core.internal.validators;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,13 +21,7 @@ import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupService;
-import org.jboss.windup.WindupEngine;
-import org.jboss.windup.metadata.decoration.AbstractDecoration;
-import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
-import org.jboss.windup.metadata.decoration.Line;
-import org.jboss.windup.metadata.decoration.hint.Hint;
-import org.jboss.windup.metadata.decoration.hint.MarkdownHint;
-import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.reporting.model.InlineHintModel;
 
 /**
  * <p>
@@ -87,84 +78,26 @@ public class WindupValidator extends AbstractValidator {
 		ValidationResult result = new ValidationResult();
 
 		//process the file with WindUp
-		FileMetadata meta = WindupService.getDefault().getFileMetadata(resource);
+		Iterable<InlineHintModel> inlineHints = WindupService.getDefault().getInlineHints(resource, monitor);
 		
 		//if meta then WindUp matched on something in the file
-		if(meta != null) {
-			//for each decoration found on the file
-			Collection<AbstractDecoration> decorations = meta.getDecorations();
-			for(AbstractDecoration decoration : decorations) {
-				
-				//determine line number to report issue on
-				int lineNumber = 1;
-				if(decoration instanceof Line) {
-					lineNumber = ((Line) decoration).getLineNumber();
-				}
+		if(inlineHints != null) {
+			//for each hint found on the file
+			for(InlineHintModel inlineHint : inlineHints) {
 				
 				//create validation message for the decoration
-				ValidatorMessage decorationMessage = ValidatorMessage.create(decoration.getDescription(), resource);
-				decorationMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-				decorationMessage.setType(WINDUP_DECORATION_MARKER_ID);
-				decorationMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+				ValidatorMessage hintMessage = ValidatorMessage.create(inlineHint.getHint(), resource);
+				hintMessage.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+				hintMessage.setType(WINDUP_HINT_MARKER_ID);
+				hintMessage.setAttribute(IMarker.LINE_NUMBER, inlineHint.getLineNumber());
+				hintMessage.setAttribute(IMarker.CHAR_START, inlineHint.getColumnNumber());
+				hintMessage.setAttribute(IMarker.CHAR_END, inlineHint.getColumnNumber() + inlineHint.getLength());
 				
-				//create validation messages for the hints
-				Set<Hint> hints = decoration.getHints();
-				if(!hints.isEmpty()) {
-					for(Hint hint : hints) {
-						String hintMessage = null;
-						if(hint instanceof MarkdownHint) {
-							hintMessage = ((MarkdownHint) hint).getMarkdown();
-						} else {
-							hintMessage = hint.toString();
-						}
-						
-						ValidatorMessage hintValidatorMessage = ValidatorMessage.create(hintMessage, resource);
-						hintValidatorMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-						hintValidatorMessage.setType(WINDUP_HINT_MARKER_ID);
-						hintValidatorMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-						result.add(hintValidatorMessage);
-					}
-				}
-				
-				result.add(decorationMessage);
+				result.add(hintMessage);
 			}
 		}
-		
 		
 		return result;
-	}
-	
-	/**
-	 * <p>Convert a {@link NotificationLevel} to an {@link IMarker} severity</p>
-	 * 
-	 * @param level {@link NotificationLevel} to convert to an {@link IMarker} severity
-	 * 
-	 * @return {@link IMarker} severity equivalent for the given {@link NotificationLevel}
-	 */
-	private static int levelToSeverity(NotificationLevel level) {
-		int severity;
-		switch(level) {
-			case CRITICAL:
-			case SEVERE: {
-				severity = IMarker.SEVERITY_ERROR;
-				break;
-			}
-		
-			case INFO: {
-				severity = IMarker.SEVERITY_INFO;
-				break;
-			}
-			
-			case WARNING: 
-			default: {
-				severity = IMarker.SEVERITY_WARNING;
-				break;
-			}
-		}
-		
-		//NOTE: windup currently does not leverage notification levels well so make everything a warning
-		
-		return severity;
 	}
 	
 	/**

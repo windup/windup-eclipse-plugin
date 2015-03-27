@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.jboss.tools.test.util.TestProjectProvider;
-import org.jboss.tools.windup.core.IWindupReportListener;
+import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupService;
 import org.junit.After;
@@ -84,7 +84,7 @@ public class WindupServiceTest {
 				WindupCoreTestPlugin.PLUGIN_ID, null, "Portal-WAR", false);
 		IProject project = provider.getProject();
 		
-		WindupService.getDefault().generateReport(project, null);
+		WindupService.getDefault().generateGraph(project, null);
 		
 		//test that the report home file exists
 		IPath reportHomeLocation = WindupService.getDefault().getReportLocation(project);
@@ -112,7 +112,7 @@ public class WindupServiceTest {
 		
 		//generate reports
 		IProject[] projects = new IProject[] { portalProject, wasProject };
-		WindupService.getDefault().generateReport(projects, null);
+		WindupService.getDefault().generateGraph(projects, null);
 		
 		//verify report index exists for all projects that reports were generated for
 		for(IProject project : projects) {
@@ -140,7 +140,7 @@ public class WindupServiceTest {
 				WindupCoreTestPlugin.PLUGIN_ID, null, "Portal-WAR", false);
 		IProject project = provider.getProject();
 		
-		WindupService.getDefault().generateReport(project, null);
+		WindupService.getDefault().generateGraph(project, null);
 		
 		boolean reportExists = WindupService.getDefault().reportExists(project);
 		Assert.assertTrue("WindupService should report that the windup report exists for the given project.", reportExists);
@@ -154,14 +154,14 @@ public class WindupServiceTest {
 	
 		final List<IProject> notifiedProjects = new ArrayList<IProject>();
 		
-		WindupService.getDefault().addWindupReportListener(new IWindupReportListener() {
+		WindupService.getDefault().addWindupListener(new IWindupListener() {
 			@Override
-			public void reportGenerated(IProject reportGeneratedForProject) {
+			public void graphGenerated(IProject reportGeneratedForProject) {
 				notifiedProjects.add(reportGeneratedForProject);
 			}
 		});
 		
-		WindupService.getDefault().generateReport(project, null);
+		WindupService.getDefault().generateGraph(project, null);
 		
 		Assert.assertTrue("Listener was not notified of report generation for the project.",
 				notifiedProjects.contains(project));
@@ -175,17 +175,17 @@ public class WindupServiceTest {
 	
 		final List<IProject> notifiedProjects = new ArrayList<IProject>();
 		
-		IWindupReportListener listener = new IWindupReportListener() {
+		IWindupListener listener = new IWindupListener() {
 			@Override
-			public void reportGenerated(IProject reportGeneratedForProject) {
+			public void graphGenerated(IProject reportGeneratedForProject) {
 				notifiedProjects.add(reportGeneratedForProject);
 			}
 		};
 		
-		WindupService.getDefault().addWindupReportListener(listener);
-		WindupService.getDefault().removeWindupReportListener(listener);
+		WindupService.getDefault().addWindupListener(listener);
+		WindupService.getDefault().removeWindupListener(listener);
 		
-		WindupService.getDefault().generateReport(project, null);
+		WindupService.getDefault().generateGraph(project, null);
 		
 		Assert.assertTrue("Listener should not have been notified of report generation.",
 				notifiedProjects.isEmpty());
