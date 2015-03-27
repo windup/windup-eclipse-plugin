@@ -1,26 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/furnace-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/utils.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/blueprints-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/rexster.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/rules-base-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/rules-java-ee.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/rules-java.jar" sourcepath="/home/ian/.m2/repository/org/jboss/windup/rules/apps/rules-java/2.2.0/rules-java-2.2.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/rules-xml.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-config-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-config-groovy.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-config-xml.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-config.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-exec-api.jar" sourcepath="/home/ian/.m2/repository/org/jboss/windup/exec/windup-exec-api/2.2.0/windup-exec-api-2.2.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-exec.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-frames.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-graph-api.jar" sourcepath="/home/ian/.m2/repository/org/jboss/windup/graph/windup-graph-api/2.2.0/windup-graph-api-2.2.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-graph.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-reporting-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/windup-reporting.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src/"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-config-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-exec-api.jar" sourcepath="/Users/lb3/.m2/repository/org/jboss/windup/exec/windup-exec-api/2.2.0.Final/windup-exec-api-2.2.0.Final-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-frames.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-graph-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-reporting-api.jar" sourcepath="/Users/lb3/.m2/repository/org/jboss/windup/reporting/windup-reporting-api/2.2.0.Final/windup-reporting-api-2.2.0.Final-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/windup-rules-base-api.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
