@@ -102,11 +102,11 @@ public class WindupService {
 		IProject project = resource.getProject();
 		GraphContext context = this.getGraph(project, monitor);
 		
-		FileService fileService = this.getTypeFromFurnace(FileService.class, monitor);
+		FileService fileService = this.getServiceFromFurnace(FileService.class, monitor);
 		fileService.setGraphContext(context);
 		FileModel fileModel = fileService.findByPath(resource.getFullPath().toString());
 		
-		InlineHintService hintService = this.getTypeFromFurnace(InlineHintService.class, monitor);
+		InlineHintService hintService = this.getServiceFromFurnace(InlineHintService.class, monitor);
 		return hintService.getHintsForFile(fileModel);
 	}
 	
@@ -240,12 +240,12 @@ public class WindupService {
                         .setGraphContext(graphContext);
             
             //set up ignore rules for the graph
-            GraphService<IgnoredFileRegexModel> graphService = this.getTypeFromFurnace(GraphService.class, progress);
+            GraphService<IgnoredFileRegexModel> graphService = this.getServiceFromFurnace(GraphService.class, progress);
 			graphService.setGraphContext(graphContext);
 			graphService.setType(IgnoredFileRegexModel.class);
 			IgnoredFileRegexModel ignored = graphService.create();
 			ignored.setRegex(".*\\.class"); //$NON-NLS-1$
-			WindupJavaConfigurationService windupJavaConfigurationService = this.getTypeFromFurnace(WindupJavaConfigurationService.class, progress);
+			WindupJavaConfigurationService windupJavaConfigurationService = this.getServiceFromFurnace(WindupJavaConfigurationService.class, progress);
 			WindupJavaConfigurationModel javaCfg = windupJavaConfigurationService.getJavaConfigurationModel(graphContext);
 			javaCfg.addIgnoredFileRegex(ignored);
 			
@@ -483,17 +483,5 @@ public class WindupService {
 		this.waitForFurnace(monitor);
 		
 		return FurnaceService.INSTANCE.lookup(clazz);
-	}
-	
-	/**
-	 * TODO: DOC ME
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	private <T> T getTypeFromFurnace(Class<T> clazz, IProgressMonitor monitor) {
-		this.waitForFurnace(monitor);
-		
-		return FurnaceService.INSTANCE.lookupType(clazz);
 	}
 }

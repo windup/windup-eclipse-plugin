@@ -23,7 +23,7 @@
 
 	<properties>
 		<windup.version>2.2.0</windup.version>
-		<furnace.version>2.12.3.Final</furnace.version>
+		<furnace.version>2.15.2.Final</furnace.version>
 		<tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
 	</properties>
 
