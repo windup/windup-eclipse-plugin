@@ -41,7 +41,7 @@ Export-Package: com.tinkerpop.frames;
    javassist.util.proxy,
    com.tinkerpop.blueprints,
    com.tinkerpop.frames.modules,
-   new com.tinkerpop.frames.modules.javahandler,
+   com.tinkerpop.frames.modules.javahandler,
    com.google.common.cache",
  com.tinkerpop.frames.modules.typedgraph;uses:="com.tinkerpop.frames,com.tinkerpop.blueprints,com.tinkerpop.frames.modules",
  com.tinkerpop.frames.structures;uses:="com.tinkerpop.frames,com.tinkerpop.blueprints",
@@ -116,7 +116,7 @@ Export-Package: com.tinkerpop.frames;
    org.jboss.windup.config.metadata",
  org.jboss.windup.config.query;
   uses:="org.jboss.windup.config,
-   new org.jboss.windup.config.query,
+   org.jboss.windup.config.query,
    com.tinkerpop.gremlin.java,
    com.tinkerpop.frames,
    com.tinkerpop.blueprints,
@@ -250,5 +250,5 @@ Export-Package: com.tinkerpop.frames;
    org.jboss.windup.graph.model.resource,
    org.w3c.dom",
  org.jboss.windup.rules.files.condition.regex;uses:="com.googlecode.streamflyer.util.statistics,com.googlecode.streamflyer.regex",
- org.jboss.windup.rules.files.model;uses:="org.jboss.windup.graph.model,com.tinkerpop.frames.modules.javahandler,org.jboss.windup.graph.model.resource"
+ org.jboss.windup.rules.files.model;uses:="org.jboss.windup.graph.model,com.tinkerpop.frames.modules.javahandler,org.jboss.windup.graph.model.resource" 
 Import-Package: org.jboss.forge.furnace.proxy
