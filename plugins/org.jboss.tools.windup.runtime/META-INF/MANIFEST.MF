@@ -19,7 +19,8 @@ Bundle-ClassPath: .,
  lib/windup-frames.jar,
  lib/windup-graph-api.jar,
  lib/windup-reporting-api.jar,
- lib/windup-rules-base-api.jar
+ lib/windup-rules-base-api.jar,
+ lib/blueprints-core.jar
 Export-Package: com.tinkerpop.frames;
   uses:="com.tinkerpop.blueprints.util.wrappers,
    com.tinkerpop.frames.annotations,
