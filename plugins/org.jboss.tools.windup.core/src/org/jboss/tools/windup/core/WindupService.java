@@ -32,9 +32,11 @@ import org.jboss.tools.forge.core.furnace.FurnaceProvider;
 import org.jboss.tools.forge.core.furnace.FurnaceService;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.internal.utils.FileUtils;
+import org.jboss.tools.windup.runtime.internal.FurnaceRepositoryProvider;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -62,19 +64,11 @@ public class WindupService
 
     /**
      * <p>
-     * Map of Windup {@link GraphContext}s to their associated {@link IProject}s.
-     * </p>
-     */
-    private Map<IProject, GraphContext> windupGraphContexts;
-
-    /**
-     * <p>
      * Private constructor for singleton instance.
      * </p>
      */
     private WindupService()
     {
-        this.windupGraphContexts = new HashMap<>();
         this.windupListeners = new ArrayList<IWindupListener>();
     }
 
@@ -236,6 +230,8 @@ public class WindupService
             WindupConfiguration windupConfiguration = new WindupConfiguration();
             windupConfiguration.setInputPath(inputDir.toPath());
             windupConfiguration.setOutputDirectory(outputDir.toPath());
+            File rulesDir = new File(FurnaceRepositoryProvider.findWindupHome(), "rules");
+            windupConfiguration.setOptionValue(UserRulesDirectoryOption.NAME, rulesDir);
 
             // set up graph context factory
             GraphContextFactory graphContextFactory = this.getServiceFromFurnace(GraphContextFactory.class, progress);
@@ -244,42 +240,39 @@ public class WindupService
             // create new graph
             progress.subTask(NLS.bind(Messages.generate_windup_graph_for, projectName));
             WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
-            GraphContext graphContext = graphContextFactory.create(graphPath);
-            windupConfiguration
-                        .setProgressMonitor(windupProgressMonitor)
-                        .setGraphContext(graphContext);
-
-            /*
-             * This really needs to be done using a real API in Windup. This is a hack to work around the fact that a real API
-             * doesn't exist.
-             */
-            // GraphService<IgnoredFileRegexModel> graphService = this.getServiceFromFurnace(GraphService.class,
-            // progress);
-            // graphService.setGraphContext(graphContext);
-            // graphService.setType(IgnoredFileRegexModel.class);
-            // IgnoredFileRegexModel ignored = graphService.create();
-            //			ignored.setRegex(".*\\.class"); //$NON-NLS-1$
-            // WindupJavaConfigurationService windupJavaConfigurationService =
-            // this.getServiceFromFurnace(WindupJavaConfigurationService.class, progress);
-            // WindupJavaConfigurationModel javaCfg =
-            // windupJavaConfigurationService.getJavaConfigurationModel(graphContext);
-            // javaCfg.addIgnoredFileRegex(ignored);
-
-            // generate the graph
-            WindupProcessor windupProcessor = this.getServiceFromFurnace(WindupProcessor.class, progress);
-            windupProcessor.execute(windupConfiguration);
-
-            // store the new graph
-            this.setGraph(project, graphContext);
-
-            // notify listeners that a graph was just generated
-            this.notifyGraphGenerated(project);
-
+            try (GraphContext graphContext = graphContextFactory.create(graphPath)) {
+	            windupConfiguration
+	                        .setProgressMonitor(windupProgressMonitor)
+	                        .setGraphContext(graphContext);
+	
+	            /*
+	             * This really needs to be done using a real API in Windup. This is a hack to work around the fact that a real API
+	             * doesn't exist.
+	             */
+	            // GraphService<IgnoredFileRegexModel> graphService = this.getServiceFromFurnace(GraphService.class,
+	            // progress);
+	            // graphService.setGraphContext(graphContext);
+	            // graphService.setType(IgnoredFileRegexModel.class);
+	            // IgnoredFileRegexModel ignored = graphService.create();
+	            //			ignored.setRegex(".*\\.class"); //$NON-NLS-1$
+	            // WindupJavaConfigurationService windupJavaConfigurationService =
+	            // this.getServiceFromFurnace(WindupJavaConfigurationService.class, progress);
+	            // WindupJavaConfigurationModel javaCfg =
+	            // windupJavaConfigurationService.getJavaConfigurationModel(graphContext);
+	            // javaCfg.addIgnoredFileRegex(ignored);
+	
+	            // generate the graph
+	            WindupProcessor windupProcessor = this.getServiceFromFurnace(WindupProcessor.class, progress);
+	            windupProcessor.execute(windupConfiguration);
+	
+	            // notify listeners that a graph was just generated
+	            this.notifyGraphGenerated(project);
+            }
             status = Status.OK_STATUS;
         }
         catch(Exception e)
         {
-            throw e;
+            throw new RuntimeException(e);
         }
         finally
         {
@@ -290,48 +283,6 @@ public class WindupService
         return status;
     }
 
-    /**
-     * <p>
-     * Sets the current {@link GraphContext} for a given {@link IProject}. If a {@link GraphContext} already exists for
-     * the given {@link IProject} then the old {@link GraphContext} will be cleaned up before the new one is set.
-     * </p>
-     * 
-     * @param project {@link IProject} to associated the given {@link GraphContext} with
-     * @param graphContext {@link GraphContext} to associate with the given {@link IProject}
-     */
-    private void setGraph(IProject project, GraphContext graphContext)
-    {
-        GraphContext oldContext = this.windupGraphContexts.get(project);
-        if (oldContext != null)
-        {
-            try
-            {
-                oldContext.close();
-                FileUtils.delete(oldContext.getGraphDirectory().toFile(), true);
-            }
-            catch (IOException e)
-            {
-                WindupCorePlugin.logError(
-                            "Error deteling old Windup GraphContext, '" + //$NON-NLS-1$
-                                        oldContext.getGraphDirectory() + ",' for project '" //$NON-NLS-1$
-                                        + project.getName() + "'.", e); //$NON-NLS-1$
-            }
-        }
-        this.windupGraphContexts.put(project, graphContext);
-    }
-
-    private GraphContext getGraph(IProject project, IProgressMonitor monitor)
-    {
-        GraphContext context = this.windupGraphContexts.get(project);
-
-        if (context == null)
-        {
-            this.generateGraph(project, monitor);
-            context = this.windupGraphContexts.get(project);
-        }
-
-        return context;
-    }
 
     /**
      * <p>
@@ -522,6 +473,6 @@ public class WindupService
     {
         this.waitForFurnace(monitor);
 
-        return FurnaceService.INSTANCE.lookup(clazz);
+        return FurnaceService.INSTANCE.lookupImported(clazz).get();
     }
 }

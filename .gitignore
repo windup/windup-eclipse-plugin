@@ -1,3 +1,4 @@
 /target
 .idea
 *.iml
+plugins/org.jboss.tools.windup.runtime/windup/

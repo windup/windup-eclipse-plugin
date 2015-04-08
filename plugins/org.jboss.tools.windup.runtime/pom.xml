@@ -16,7 +16,7 @@
 
     <properties>
         <furnace.version>2.15.3.Final</furnace.version>
-        <furnace.addon.dir>furnace-addon-repository</furnace.addon.dir>
+        <windup.dist.dir>windup</windup.dist.dir>
     </properties>
 
     <dependencies>
@@ -42,7 +42,15 @@
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-base-api</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-distribution</artifactId>
+            <version>${windup.version}</version>
+            <classifier>offline</classifier>
+            <type>zip</type>
+        </dependency>
+
         <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-proxy</artifactId>
@@ -52,30 +60,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <version>${furnace.version}</version>
-                <executions>
-                    <execution>
-                        <id>deploy-addons</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>addon-install</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <addonRepository>${basedir}/${furnace.addon.dir}</addonRepository>
-                            <addonIds>
-                                <addonId>org.jboss.windup.ui:windup-ui,${windup.version}</addonId>
-                                <addonId>org.jboss.windup.rules.apps:windup-rules-java,${windup.version}</addonId>
-                                <addonId>org.jboss.windup.rules.apps:windup-rules-java-project,${windup.version}</addonId>
-                                <addonId>org.jboss.windup.rules.apps:windup-rules-java-ee,${windup.version}</addonId>
-                            </addonIds>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -91,7 +75,30 @@
                             <outputDirectory>${basedir}/lib</outputDirectory>
                             <excludeScope>system</excludeScope>
                             <excludeTransitive>false</excludeTransitive>
+                            <excludeTypes>pom,zip</excludeTypes>
                             <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.windup</groupId>
+                                    <artifactId>windup-distribution</artifactId>
+                                    <version>${windup.version}</version>
+                                    <classifier>offline</classifier>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${windup.dist.dir}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
@@ -108,7 +115,7 @@
                             </includes>
                         </fileset>
                         <fileset>
-                            <directory>${basedir}/${furnace.addon.dir}</directory>
+                            <directory>${basedir}/${windup.dist.dir}</directory>
                             <includes>
                                 <include>**/*</include>
                             </includes>
