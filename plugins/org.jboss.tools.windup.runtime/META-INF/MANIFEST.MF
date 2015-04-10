@@ -20,7 +20,8 @@ Bundle-ClassPath: .,
  lib/windup-graph-api.jar,
  lib/windup-reporting-api.jar,
  lib/windup-rules-base-api.jar,
- lib/blueprints-core.jar
+ lib/blueprints-core.jar,
+ lib/windup-tooling-api.jar
 Export-Package: com.tinkerpop.frames;
   uses:="com.tinkerpop.blueprints.util.wrappers,
    com.tinkerpop.frames.annotations,
@@ -251,5 +252,17 @@ Export-Package: com.tinkerpop.frames;
    org.jboss.windup.graph.model.resource,
    org.w3c.dom",
  org.jboss.windup.rules.files.condition.regex;uses:="com.googlecode.streamflyer.util.statistics,com.googlecode.streamflyer.regex",
- org.jboss.windup.rules.files.model;uses:="org.jboss.windup.graph.model,com.tinkerpop.frames.modules.javahandler,org.jboss.windup.graph.model.resource" 
+ org.jboss.windup.rules.files.model;uses:="org.jboss.windup.graph.model,com.tinkerpop.frames.modules.javahandler,org.jboss.windup.graph.model.resource",
+ org.jboss.windup.tooling;uses:="org.jboss.forge.furnace.addons,
+   org.jboss.windup.config,
+   org.jboss.windup.graph,
+   org.jboss.forge.furnace,
+   org.jboss.windup.exec,
+   org.jboss.forge.furnace.util", 
+ org.jboss.windup.tooling.data;uses:="org.jboss.forge.furnace.addons,
+   org.jboss.windup.config,
+   org.jboss.windup.graph,
+   org.jboss.forge.furnace,
+   org.jboss.windup.exec,
+   org.jboss.forge.furnace.util"
 Import-Package: org.jboss.forge.furnace.proxy

@@ -25,43 +25,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.wst.validation.ValidationFramework;
+import org.eclipse.wst.validation.Validator;
 import org.jboss.tools.test.util.TestProjectProvider;
 import org.jboss.tools.windup.core.WindupService;
 import org.junit.Test;
 
 public class WindupValidatorTest extends TestCase
 {
-    private static final String WINDUP_DECORATION_MARKER_ID = "org.jboss.tools.windup.core.decorationMarker"; //$NON-NLS-1$
+    private static final String WINDUP_CLASSIFICATION_MARKER_ID = "org.jboss.tools.windup.core.classificationMarker"; //$NON-NLS-1$
     private static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
 
     @Test
-    public void foooooootestWASEAR() throws Exception
+    public void testWASEAR() throws Exception
     {
         doWindupValidatorTest("WAS-EAR",
                     new ExpectedMarkerInfo[] {
                     new ExpectedMarkerInfo("IBM Deployment Descriptor", 1)
                     },
                     new ExpectedMarkerInfo[] {});
-    }
-
-    @Test
-    public void testPortalWAR() throws Exception
-    {
-        doWindupValidatorTest(
-                    "Portal-WAR",
-                    new ExpectedMarkerInfo[] {
-                                new ExpectedMarkerInfo("Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-navigation",
-                                            3)
-                                ,
-                                new ExpectedMarkerInfo("Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-dynamicui", 4)
-                                , new ExpectedMarkerInfo("Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-logic", 5)
-                                , new ExpectedMarkerInfo("Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-core", 6)
-                                , new ExpectedMarkerInfo("Blacklist Namespace: http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-fmt", 7)
-                                , new ExpectedMarkerInfo("Blacklist Namespace: http://www.ibm.com/jsf/html_extended", 8)
-                    },
-                    new ExpectedMarkerInfo[] {
-                    new ExpectedMarkerInfo("IBM specific.", 8)
-                    });
     }
 
     /**
@@ -86,17 +67,29 @@ public class WindupValidatorTest extends TestCase
                     WindupCoreTestPlugin.PLUGIN_ID, null, projectName, false);
         IProject project = provider.getProject();
 
-        // be sure the project is built
-        project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-
         IProject[] projects = new IProject[] { project };
         WindupService.getDefault().generateGraph(projects, null);
-        
+
+        // be sure the project is built
+        project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
+
         // wait for the validation framework to finish
         ValidationFramework.getDefault().join(new NullProgressMonitor());
 
-        compareMarkers(project, WINDUP_DECORATION_MARKER_ID, expectedDecorationMarkers);
+        for (Validator v : ValidationFramework.getDefault().getValidators())
+        {
+            boolean isBuildValidation = v.isBuildValidation();
+            boolean isManualValidation = v.isManualValidation();
+            System.out.println("V: " + v + " " + isBuildValidation + ", " + isManualValidation);
+        }
+
+        for (Object b : project.getBuildConfigs())
+        {
+            System.out.println("B: " + b);
+        }
+
         compareMarkers(project, WINDUP_HINT_MARKER_ID, expectedHintMarkers);
+        compareMarkers(project, WINDUP_CLASSIFICATION_MARKER_ID, expectedDecorationMarkers);
 
         provider.dispose();
     }
@@ -119,7 +112,6 @@ public class WindupValidatorTest extends TestCase
 
         if (expectedMarkers != null)
         {
-
             // for each expected marker
             List<ExpectedMarkerInfo> expectedMarkersList = new ArrayList<ExpectedMarkerInfo>(Arrays.asList(expectedMarkers));
             Iterator<ExpectedMarkerInfo> expectedMarkersIter = expectedMarkersList.iterator();
@@ -141,6 +133,7 @@ public class WindupValidatorTest extends TestCase
                         // remove it from the list of expected markers and found markers
                         actualMarkersIter.remove();
                         expectedMarkersIter.remove();
+                        break;
                     }
                 }
             }

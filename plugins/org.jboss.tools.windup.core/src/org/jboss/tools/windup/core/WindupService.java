@@ -11,8 +11,6 @@
 package org.jboss.tools.windup.core;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,13 +31,11 @@ import org.jboss.tools.forge.core.furnace.FurnaceService;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.internal.utils.FileUtils;
 import org.jboss.tools.windup.runtime.internal.FurnaceRepositoryProvider;
-import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
-import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.tooling.ExecutionBuilder;
+import org.jboss.windup.tooling.ExecutionResults;
+import org.jboss.windup.tooling.data.Classification;
+import org.jboss.windup.tooling.data.Hint;
 
 /**
  * <p>
@@ -61,6 +57,8 @@ public class WindupService
      * </p>
      */
     private List<IWindupListener> windupListeners;
+
+    private Map<IProject, ExecutionResults> projectToResults = new HashMap<>();
 
     /**
      * <p>
@@ -86,23 +84,31 @@ public class WindupService
     }
 
     /**
-     * TODO: IAN: doc me
+     * Returns an {@link Iterable} with all {@link Hint}s returned by Windup during the last run.
+     * 
+     * NOTE: This will return an empty list if Windup has not yet been run on this project.
      */
-    public Iterable<InlineHintModel> getInlineHints(IResource resource, IProgressMonitor monitor)
+    public Iterable<Hint> getHints(IResource resource, IProgressMonitor monitor)
     {
-        /*
-         * This needs a real API in a Windup tooling API for eclipse.
-         */
-        // IProject project = resource.getProject();
-        // GraphContext context = this.getGraph(project, monitor);
-        //
-        // FileService fileService = this.getServiceFromFurnace(FileService.class, monitor);
-        // fileService.setGraphContext(context);
-        // FileModel fileModel = fileService.findByPath(resource.getFullPath().toString());
-        //
-        // InlineHintService hintService = this.getServiceFromFurnace(InlineHintService.class, monitor);
-        // return hintService.getHintsForFile(fileModel);
-        return Collections.emptyList();
+        ExecutionResults results = projectToResults.get(resource.getProject());
+        if (results == null)
+            return Collections.emptyList();
+        else
+            return results.getHints();
+    }
+
+    /**
+     * Returns an {@link Iterable} with all {@link Classification}s returned by Windup during the last run.
+     * 
+     * NOTE: This will return an empty list if Windup has not yet been run on this project.
+     */
+    public Iterable<Classification> getClassifications(IResource resource, IProgressMonitor monitor)
+    {
+        ExecutionResults results = projectToResults.get(resource.getProject());
+        if (results == null)
+            return Collections.emptyList();
+        else
+            return results.getClassifications();
     }
 
     /**
@@ -223,54 +229,24 @@ public class WindupService
             progress.subTask(Messages.removing_old_report);
             FileUtils.delete(outputDir, true);
 
-            // set up monitoring
-            progress.subTask(Messages.get_windup_graph_context_factory);
-
-            // set configuration
-            WindupConfiguration windupConfiguration = new WindupConfiguration();
-            windupConfiguration.setInputPath(inputDir.toPath());
-            windupConfiguration.setOutputDirectory(outputDir.toPath());
-            File rulesDir = new File(FurnaceRepositoryProvider.findWindupHome(), "rules");
-            windupConfiguration.setOptionValue(UserRulesDirectoryOption.NAME, rulesDir);
-
-            // set up graph context factory
-            GraphContextFactory graphContextFactory = this.getServiceFromFurnace(GraphContextFactory.class, progress);
-            Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph"); //$NON-NLS-1$
-
             // create new graph
             progress.subTask(NLS.bind(Messages.generate_windup_graph_for, projectName));
+
             WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
-            try (GraphContext graphContext = graphContextFactory.create(graphPath)) {
-	            windupConfiguration
-	                        .setProgressMonitor(windupProgressMonitor)
-	                        .setGraphContext(graphContext);
-	
-	            /*
-	             * This really needs to be done using a real API in Windup. This is a hack to work around the fact that a real API
-	             * doesn't exist.
-	             */
-	            // GraphService<IgnoredFileRegexModel> graphService = this.getServiceFromFurnace(GraphService.class,
-	            // progress);
-	            // graphService.setGraphContext(graphContext);
-	            // graphService.setType(IgnoredFileRegexModel.class);
-	            // IgnoredFileRegexModel ignored = graphService.create();
-	            //			ignored.setRegex(".*\\.class"); //$NON-NLS-1$
-	            // WindupJavaConfigurationService windupJavaConfigurationService =
-	            // this.getServiceFromFurnace(WindupJavaConfigurationService.class, progress);
-	            // WindupJavaConfigurationModel javaCfg =
-	            // windupJavaConfigurationService.getJavaConfigurationModel(graphContext);
-	            // javaCfg.addIgnoredFileRegex(ignored);
-	
-	            // generate the graph
-	            WindupProcessor windupProcessor = this.getServiceFromFurnace(WindupProcessor.class, progress);
-	            windupProcessor.execute(windupConfiguration);
-	
-	            // notify listeners that a graph was just generated
-	            this.notifyGraphGenerated(project);
-            }
+            ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
+            ExecutionResults results = execBuilder.begin(FurnaceRepositoryProvider.findWindupHome().toPath())
+                        .setInput(inputDir.toPath())
+                        .setOutput(outputDir.toPath())
+                        .setProgressMonitor(windupProgressMonitor)
+                        .ignore("\\.class$")
+                        .execute();
+            projectToResults.put(project, results);
+
+            // notify listeners that a graph was just generated
+            this.notifyGraphGenerated(project);
             status = Status.OK_STATUS;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new RuntimeException(e);
         }
@@ -283,7 +259,6 @@ public class WindupService
         return status;
     }
 
-
     /**
      * <p>
      * Determines if a report exists for the {@link IProject} containing the given {@link IResource}.
@@ -291,8 +266,7 @@ public class WindupService
      * 
      * @param resource determine if a report exists for the {@link IProject} containing this {@link IResource}
      * 
-     * @return <code>true</code> if a report exists for the {@link IProject} containing the given {@link IResource},
-     *         <code>false</code> otherwise.
+     * @return <code>true</code> if a report exists for the {@link IProject} containing the given {@link IResource}, <code>false</code> otherwise.
      */
     public boolean reportExists(IResource resource)
     {
@@ -397,12 +371,10 @@ public class WindupService
 
     /**
      * <p>
-     * Notifies all of the registered {@link IWindupListener} that a Windup report was just generated for the given
-     * {@link IProject}.
+     * Notifies all of the registered {@link IWindupListener} that a Windup report was just generated for the given {@link IProject}.
      * </p>
      * 
-     * @param project Notify all registered {@link IWindupListener} that a Windup report was just generated for this
-     *            {@link IProject}
+     * @param project Notify all registered {@link IWindupListener} that a Windup report was just generated for this {@link IProject}
      */
     private void notifyGraphGenerated(IProject project)
     {
@@ -414,15 +386,12 @@ public class WindupService
 
     /**
      * <p>
-     * Get the location where the report should be stored for the {@link IProject} containing the given
-     * {@link IResource}
+     * Get the location where the report should be stored for the {@link IProject} containing the given {@link IResource}
      * </p>
      * 
-     * @param resource get the location where the report should be stored for the {@link IProject} containing this
-     *            {@link IResource}
+     * @param resource get the location where the report should be stored for the {@link IProject} containing this {@link IResource}
      * 
-     * @return location where the report should be stored for the {@link IProject} containing the given
-     *         {@link IResource}
+     * @return location where the report should be stored for the {@link IProject} containing the given {@link IResource}
      */
     private static IPath getProjectReportPath(IResource resource)
     {
