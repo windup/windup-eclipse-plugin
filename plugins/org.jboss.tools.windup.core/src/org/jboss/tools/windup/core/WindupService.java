@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -36,6 +37,7 @@ import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
+import org.jboss.windup.tooling.data.ReportLink;
 
 /**
  * <p>
@@ -45,7 +47,6 @@ import org.jboss.windup.tooling.data.Hint;
 public class WindupService
 {
     private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
-    private static final String HTML_FILE_EXTENSION = "html"; //$NON-NLS-1$
 
     private static WindupService service;
 
@@ -296,11 +297,23 @@ public class WindupService
         // if selected resource is a file get the file specific report page
         case IResource.FILE:
         {
-            IPath workspaceRelativePath = resource.getProject().getFullPath().append(resource.getProjectRelativePath());
-
-            reportPath = projectReportPath.append(workspaceRelativePath).addFileExtension(HTML_FILE_EXTENSION);
-
-            break;
+            File resourceAsFile = resource.getFullPath().toFile().getAbsoluteFile();
+            ExecutionResults executionResults = projectToResults.get(resource.getProject());
+            if (executionResults == null)
+                break;
+            for (ReportLink reportLink : executionResults.getReportLinks())
+            {
+                if (resourceAsFile.equals(reportLink.getInputFile()))
+                {
+                    File reportFile = reportLink.getReportFile();
+                    IFile[] possibleFiles = resource.getWorkspace().getRoot().findFilesForLocationURI(reportFile.toURI());
+                    if (possibleFiles != null && possibleFiles.length > 0)
+                    {
+                        reportPath = possibleFiles[0].getProjectRelativePath();
+                        break;
+                    }
+                }
+            }
         }
 
         /*
