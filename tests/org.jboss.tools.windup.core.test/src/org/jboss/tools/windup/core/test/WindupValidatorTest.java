@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.wst.validation.ValidationFramework;
-import org.eclipse.wst.validation.Validator;
 import org.jboss.tools.test.util.TestProjectProvider;
 import org.jboss.tools.windup.core.WindupService;
 import org.junit.Test;
@@ -75,18 +74,6 @@ public class WindupValidatorTest extends TestCase
 
         // wait for the validation framework to finish
         ValidationFramework.getDefault().join(new NullProgressMonitor());
-
-        for (Validator v : ValidationFramework.getDefault().getValidators())
-        {
-            boolean isBuildValidation = v.isBuildValidation();
-            boolean isManualValidation = v.isManualValidation();
-            System.out.println("V: " + v + " " + isBuildValidation + ", " + isManualValidation);
-        }
-
-        for (Object b : project.getBuildConfigs())
-        {
-            System.out.println("B: " + b);
-        }
 
         compareMarkers(project, WINDUP_HINT_MARKER_ID, expectedHintMarkers);
         compareMarkers(project, WINDUP_CLASSIFICATION_MARKER_ID, expectedDecorationMarkers);

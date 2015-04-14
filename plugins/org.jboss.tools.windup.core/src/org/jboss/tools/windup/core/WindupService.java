@@ -11,13 +11,13 @@
 package org.jboss.tools.windup.core;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -297,7 +297,7 @@ public class WindupService
         // if selected resource is a file get the file specific report page
         case IResource.FILE:
         {
-            File resourceAsFile = resource.getFullPath().toFile().getAbsoluteFile();
+            File resourceAsFile = resource.getLocation().toFile().getAbsoluteFile();
             ExecutionResults executionResults = projectToResults.get(resource.getProject());
             if (executionResults == null)
                 break;
@@ -306,14 +306,14 @@ public class WindupService
                 if (resourceAsFile.equals(reportLink.getInputFile()))
                 {
                     File reportFile = reportLink.getReportFile();
-                    IFile[] possibleFiles = resource.getWorkspace().getRoot().findFilesForLocationURI(reportFile.toURI());
-                    if (possibleFiles != null && possibleFiles.length > 0)
-                    {
-                        reportPath = possibleFiles[0].getProjectRelativePath();
-                        break;
-                    }
+                    Path projectPath = resource.getProject().getLocation().toFile().toPath();
+                    Path reportFileRelativeToProject = projectPath.relativize(reportFile.toPath());
+                    IPath projectLocation = resource.getProject().getLocation();
+                    reportPath = projectLocation.append(reportFileRelativeToProject.toString());
+                    break;
                 }
             }
+            break;
         }
 
         /*
