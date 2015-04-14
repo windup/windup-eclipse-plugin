@@ -31,7 +31,7 @@ import org.jboss.tools.forge.core.furnace.FurnaceProvider;
 import org.jboss.tools.forge.core.furnace.FurnaceService;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.internal.utils.FileUtils;
-import org.jboss.tools.windup.runtime.internal.FurnaceRepositoryProvider;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
@@ -235,7 +235,7 @@ public class WindupService
 
             WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
             ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
-            ExecutionResults results = execBuilder.begin(FurnaceRepositoryProvider.findWindupHome().toPath())
+            ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
                         .setInput(inputDir.toPath())
                         .setOutput(outputDir.toPath())
                         .setProgressMonitor(windupProgressMonitor)

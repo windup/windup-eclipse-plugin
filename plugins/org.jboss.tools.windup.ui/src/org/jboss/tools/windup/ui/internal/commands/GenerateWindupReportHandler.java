@@ -1,13 +1,13 @@
 /*******************************************************************************
-* Copyright (c) 2013 Red Hat, Inc.
-* Distributed under license by Red Hat, Inc. All rights reserved.
-* This program is made available under the terms of the
-* Eclipse Public License v1.0 which accompanies this distribution,
-* and is available at http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*   Red Hat, Inc. - initial API and implementation
-******************************************************************************/
+ * Copyright (c) 2013 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.commands;
 
 import java.util.Arrays;
@@ -42,63 +42,74 @@ import org.jboss.tools.windup.ui.internal.views.WindupReportView;
  * Handles generating the windup report for a project.
  * </p>
  */
-public class GenerateWindupReportHandler extends AbstractHandler {
+public class GenerateWindupReportHandler extends AbstractHandler
+{
 
-	@Override
-	public Object execute(final ExecutionEvent event) throws ExecutionException {
-			Shell activeShell = HandlerUtil.getActiveShellChecked(event);
-			
-			final ISelection selection = HandlerUtil.getCurrentSelection(event);
-			List<IProject> currentSelectionProjects = Utils.getSelectedProjects(selection);
-			
-			//open multiple project selection dialog
-			ListSelectionDialog projectSelectDialog = new ListSelectionDialog(
-					activeShell,
-					ResourcesPlugin.getWorkspace().getRoot(), 
-					new BaseWorkbenchContentProvider(),
-					new WorkbenchLabelProvider(),
-					Messages.select_projects_to_generate_windup_reports_for);
-			projectSelectDialog.setTitle(Messages.generate_windup_report); 
-			projectSelectDialog.setInitialElementSelections(currentSelectionProjects);
-			projectSelectDialog.open();
-			
-			//if user made selection
-			if(projectSelectDialog.getReturnCode() == Window.OK) {
-				Object[] userSelectedObjects = projectSelectDialog.getResult();
-				final IProject[] userSelectedProjects = Arrays.copyOf(userSelectedObjects,
-						userSelectedObjects.length, IProject[].class);
-				
-				if(userSelectedProjects != null && userSelectedProjects.length > 0) {
-				
-					//create a job to generate the report in
-					Job job = new Job(Messages.generate_windup_report) {
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {	
-							//generate the report
-							IStatus status = WindupService.getDefault().generateGraph(userSelectedProjects, monitor);
-							
-							//show the report view for the selected resource
-							Display.getDefault().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									try {
-										WindupReportView windupView = (WindupReportView)PlatformUI.getWorkbench()
-												.getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
-										windupView.updateSelection(selection);
-									} catch (PartInitException e) {
-										WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
-									}
-								}
-							});
-							
-							return status;
-						}
-					};
-					job.setUser(true);
-					job.schedule();
-				}
-			}
-		
-		return null;
-	}
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException
+    {
+        Shell activeShell = HandlerUtil.getActiveShellChecked(event);
+
+        final ISelection selection = HandlerUtil.getCurrentSelection(event);
+        List<IProject> currentSelectionProjects = Utils.getSelectedProjects(selection);
+
+        // open multiple project selection dialog
+        ListSelectionDialog projectSelectDialog = new ListSelectionDialog(
+                    activeShell,
+                    ResourcesPlugin.getWorkspace().getRoot(),
+                    new BaseWorkbenchContentProvider(),
+                    new WorkbenchLabelProvider(),
+                    Messages.select_projects_to_generate_windup_reports_for);
+        projectSelectDialog.setTitle(Messages.generate_windup_report);
+        projectSelectDialog.setInitialElementSelections(currentSelectionProjects);
+        projectSelectDialog.open();
+
+        // if user made selection
+        if (projectSelectDialog.getReturnCode() == Window.OK)
+        {
+            Object[] userSelectedObjects = projectSelectDialog.getResult();
+            final IProject[] userSelectedProjects = Arrays.copyOf(userSelectedObjects,
+                        userSelectedObjects.length, IProject[].class);
+
+            if (userSelectedProjects != null && userSelectedProjects.length > 0)
+            {
+
+                // create a job to generate the report in
+                Job job = new Job(Messages.generate_windup_report)
+                {
+                    @Override
+                    protected IStatus run(IProgressMonitor monitor)
+                    {
+                        // generate the report
+                        IStatus status = WindupService.getDefault().generateGraph(userSelectedProjects, monitor);
+
+                        // show the report view for the selected resource
+                        Display.getDefault().asyncExec(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                try
+                                {
+                                    WindupReportView windupView = (WindupReportView) PlatformUI.getWorkbench()
+                                                .getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
+                                    windupView.updateSelection(selection);
+                                }
+                                catch (PartInitException e)
+                                {
+                                    WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
+                                }
+                            }
+                        });
+
+                        return status;
+                    }
+                };
+                job.setUser(true);
+                job.schedule();
+            }
+        }
+
+        return null;
+    }
 }

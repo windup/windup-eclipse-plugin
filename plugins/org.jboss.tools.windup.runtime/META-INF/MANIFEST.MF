@@ -4,7 +4,7 @@ Bundle-Localization: plugin
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.runtime;singleton:=true
 Bundle-Version: 3.1.0.qualifier
-Bundle-Activator: org.jboss.tools.windup.runtime.internal.WindupRuntimePlugin
+Bundle-Activator: org.jboss.tools.windup.runtime.WindupRuntimePlugin
 Eclipse-BundleShape: dir
 Require-Bundle: org.eclipse.osgi.services;bundle-version="[3.3.100,4.0.0)",
  org.jboss.tools.forge.core;bundle-version="[2.0.0,3.0.0)",
@@ -48,6 +48,7 @@ Export-Package: com.tinkerpop.frames;
  com.tinkerpop.frames.modules.typedgraph;uses:="com.tinkerpop.frames,com.tinkerpop.blueprints,com.tinkerpop.frames.modules",
  com.tinkerpop.frames.structures;uses:="com.tinkerpop.frames,com.tinkerpop.blueprints",
  com.tinkerpop.frames.util,
+ org.jboss.tools.windup.runtime,
  org.jboss.tools.windup.runtime.internal;x-internal:=true;uses:="org.eclipse.core.runtime,org.jboss.tools.forge.core.furnace.repository,org.osgi.framework",
  org.jboss.windup.config;
   uses:="org.jboss.windup.graph.model,
