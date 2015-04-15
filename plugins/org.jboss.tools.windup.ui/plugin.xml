@@ -87,6 +87,14 @@
 				style="push">
 			</command>
 		</menuContribution>
+		<menuContribution 
+			class="org.jboss.tools.windup.ui.markers.MarkerContributionFactory" 
+			locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+	        	<dynamic 
+	        		class="org.jboss.tools.windup.ui.markers.MarkerMenuContribution" 
+	        		id="windupMarkerExtensionMenu"
+	    		/>
+     	</menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension targetID="*">

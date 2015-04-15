@@ -18,6 +18,15 @@ import org.osgi.framework.BundleContext;
 public class WindupCorePlugin extends Plugin
 {
     /**
+     * The id for windup classification markers
+     */
+    public static final String WINDUP_CLASSIFICATION_MARKER_ID = "org.jboss.tools.windup.core.classificationMarker"; //$NON-NLS-1$
+    /**
+     * The id for windup hint markers
+     */
+    public static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
+
+    /**
      * <p>
      * The plugin ID.
      * </p>

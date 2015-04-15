@@ -33,9 +33,6 @@ import org.jboss.windup.tooling.data.Hint;
  */
 public class WindupValidator extends AbstractValidator
 {
-    private static final String WINDUP_CLASSIFICATION_MARKER_ID = "org.jboss.tools.windup.core.classificationMarker"; //$NON-NLS-1$
-    private static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
-
     public WindupValidator()
     {
     }
@@ -94,10 +91,11 @@ public class WindupValidator extends AbstractValidator
         {
             ValidatorMessage hintMessage = ValidatorMessage.create(hint.getHint(), resource);
             hintMessage.setAttribute(IMarker.SEVERITY, convertSeverity(hint.getSeverity()));
-            hintMessage.setType(WINDUP_HINT_MARKER_ID);
+            hintMessage.setType(WindupCorePlugin.WINDUP_HINT_MARKER_ID);
             hintMessage.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
             hintMessage.setAttribute(IMarker.CHAR_START, hint.getColumn());
             hintMessage.setAttribute(IMarker.CHAR_END, hint.getColumn() + hint.getLength());
+            hintMessage.setAttribute(IMarker.USER_EDITABLE, true);
 
             result.add(hintMessage);
         }
@@ -107,7 +105,7 @@ public class WindupValidator extends AbstractValidator
         {
             ValidatorMessage message = ValidatorMessage.create(classification.getClassification(), resource);
             message.setAttribute(IMarker.SEVERITY, convertSeverity(classification.getSeverity()));
-            message.setType(WINDUP_CLASSIFICATION_MARKER_ID);
+            message.setType(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID);
             message.setAttribute(IMarker.LINE_NUMBER, 1);
             message.setAttribute(IMarker.CHAR_START, 0);
             message.setAttribute(IMarker.CHAR_END, 0);
@@ -148,8 +146,8 @@ public class WindupValidator extends AbstractValidator
         {
             try
             {
-                resource.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
-                resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+                resource.deleteMarkers(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
+                resource.deleteMarkers(WindupCorePlugin.WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
             }
             catch (CoreException e)
             {
