@@ -1,13 +1,13 @@
 /*******************************************************************************
-* Copyright (c) 2013 Red Hat, Inc.
-* Distributed under license by Red Hat, Inc. All rights reserved.
-* This program is made available under the terms of the
-* Eclipse Public License v1.0 which accompanies this distribution,
-* and is available at http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*   Red Hat, Inc. - initial API and implementation
-******************************************************************************/
+ * Copyright (c) 2013 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.commands;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -25,19 +25,24 @@ import org.jboss.tools.windup.ui.internal.views.WindupReportView;
  * Handles viewing the current selection in the Windup Report Viewer
  * </p>
  */
-public class ViewWindupReportHandler extends AbstractHandler {
+public class ViewWindupReportHandler extends AbstractHandler
+{
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		try {
-			WindupReportView windupView = (WindupReportView)PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
-			ISelection selection = HandlerUtil.getCurrentSelection(event);
-			windupView.updateSelection(selection);
-		} catch (PartInitException e) {
-			WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
-		}
-		
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException
+    {
+        try
+        {
+            WindupReportView windupView = (WindupReportView) PlatformUI.getWorkbench()
+                        .getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
+            ISelection selection = HandlerUtil.getCurrentSelection(event);
+            windupView.updateSelection(selection);
+        }
+        catch (PartInitException e)
+        {
+            WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
+        }
+
+        return null;
+    }
 }

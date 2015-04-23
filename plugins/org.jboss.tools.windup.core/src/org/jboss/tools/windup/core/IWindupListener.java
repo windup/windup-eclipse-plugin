@@ -8,19 +8,27 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui;
+package org.jboss.tools.windup.core;
+
+import java.util.EventListener;
+
+import org.eclipse.core.resources.IProject;
+import org.jboss.windup.graph.GraphContext;
 
 /**
  * <p>
- * Preferences for the Windup UI plugin.
+ * Interface for listening to Windup report changes.
  * </p>
  */
-public class Preferences
+public interface IWindupListener extends EventListener
 {
+
     /**
      * <p>
-     * Preference for whether or not to sync the report view with the current selection.
+     * Notifiers the listener when a Windup {@link GraphContext} is generated for the given {@link IProject}
      * </p>
+     * 
+     * @param project {@link IProject} that a Windup {@link GraphContext} was generated for
      */
-    public final static String REPORTVIEW_SYNC_SELECTION = "reportview_sync_selection"; //$NON-NLS-1$
+    public void graphGenerated(IProject project);
 }

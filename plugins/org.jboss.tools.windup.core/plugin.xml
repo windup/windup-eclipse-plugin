@@ -12,15 +12,19 @@
          <include>
             <rules>
                <fileext
+                     caseSensitive="false"
                      ext="html">
                </fileext>
                <fileext
+                     caseSensitive="false"
                      ext="jsp">
                </fileext>
                <fileext
+                     caseSensitive="false"
                      ext="xml">
                </fileext>
                <fileext
+                     caseSensitive="false"
                      ext="java">
                </fileext>
             </rules>
@@ -28,8 +32,8 @@
       </validator>
    </extension>
    <extension
-         id="decorationMarker"
-         name="%_decorationMarker.name"
+         id="classificationMarker"
+         name="%_classificationMarker.name"
          point="org.eclipse.core.resources.markers">
       <persistent
             value="true">
@@ -49,5 +53,4 @@
             type="org.eclipse.wst.validation.problemmarker2">
       </super>
    </extension>
-
 </plugin>

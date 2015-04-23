@@ -1,17 +1,14 @@
 /*******************************************************************************
-* Copyright (c) 2013 Red Hat, Inc.
-* Distributed under license by Red Hat, Inc. All rights reserved.
-* This program is made available under the terms of the
-* Eclipse Public License v1.0 which accompanies this distribution,
-* and is available at http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*   Red Hat, Inc. - initial API and implementation
-******************************************************************************/
+ * Copyright (c) 2013 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.core.internal.validators;
-
-import java.util.Collection;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -24,164 +21,138 @@ import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupService;
-import org.jboss.windup.WindupEngine;
-import org.jboss.windup.metadata.decoration.AbstractDecoration;
-import org.jboss.windup.metadata.decoration.AbstractDecoration.NotificationLevel;
-import org.jboss.windup.metadata.decoration.Line;
-import org.jboss.windup.metadata.decoration.hint.Hint;
-import org.jboss.windup.metadata.decoration.hint.MarkdownHint;
-import org.jboss.windup.metadata.type.FileMetadata;
+import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.tooling.data.Classification;
+import org.jboss.windup.tooling.data.Hint;
 
 /**
  * <p>
- * {@link AbstractValidator} which uses the {@link WindupEngine} to add {@link ValidatorMessage}s
- * to resources based on the decorations and hits found by the {@link WindupEngine}.
+ * {@link AbstractValidator} which uses the {@link WindupService} to add {@link ValidatorMessage}s to resources based on the decorations and hits
+ * found by the {@link WindupService}.
  * </p>
  */
-public class WindupValidator extends AbstractValidator {	
-	private static final String WINDUP_DECORATION_MARKER_ID = "org.jboss.tools.windup.core.decorationMarker"; //$NON-NLS-1$
-	private static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
-	
-	/**
-	 * @see org.eclipse.wst.validation.AbstractValidator#clean(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void clean(IProject project, ValidationState state, IProgressMonitor monitor) {
-		cleanUpWindUpMarkers(project);
-	}
-	
-	/**
-	 * @see org.eclipse.wst.validation.AbstractValidator#validationStarting(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void validationStarting(IProject project,
-			org.eclipse.wst.validation.ValidationState state,
-			IProgressMonitor monitor) {
-		
-		super.validationStarting(project, state, monitor);
-	}
-	
-	/**
-	 * @see org.eclipse.wst.validation.AbstractValidator#validationFinishing(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void validationFinishing(IProject project,
-			org.eclipse.wst.validation.ValidationState state,
-			IProgressMonitor monitor) {
-		
-		super.validationFinishing(project, state, monitor);
-	}
-	
-	/**
-	 * @see org.eclipse.wst.validation.AbstractValidator#validate(org.eclipse.core.resources.IResource, int, org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public ValidationResult validate(IResource resource, int kind,
-			org.eclipse.wst.validation.ValidationState state,
-			IProgressMonitor monitor) {
-		
-		//before generating new results clean out existing ones
-		cleanUpWindUpMarkers(resource);
-		
-		//create a new result
-		ValidationResult result = new ValidationResult();
+public class WindupValidator extends AbstractValidator
+{
+    public WindupValidator()
+    {
+    }
 
-		//process the file with WindUp
-		FileMetadata meta = WindupService.getDefault().getFileMetadata(resource);
-		
-		//if meta then WindUp matched on something in the file
-		if(meta != null) {
-			//for each decoration found on the file
-			Collection<AbstractDecoration> decorations = meta.getDecorations();
-			for(AbstractDecoration decoration : decorations) {
-				
-				//determine line number to report issue on
-				int lineNumber = 1;
-				if(decoration instanceof Line) {
-					lineNumber = ((Line) decoration).getLineNumber();
-				}
-				
-				//create validation message for the decoration
-				ValidatorMessage decorationMessage = ValidatorMessage.create(decoration.getDescription(), resource);
-				decorationMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-				decorationMessage.setType(WINDUP_DECORATION_MARKER_ID);
-				decorationMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				
-				//create validation messages for the hints
-				Set<Hint> hints = decoration.getHints();
-				if(!hints.isEmpty()) {
-					for(Hint hint : hints) {
-						String hintMessage = null;
-						if(hint instanceof MarkdownHint) {
-							hintMessage = ((MarkdownHint) hint).getMarkdown();
-						} else {
-							hintMessage = hint.toString();
-						}
-						
-						ValidatorMessage hintValidatorMessage = ValidatorMessage.create(hintMessage, resource);
-						hintValidatorMessage.setAttribute(IMarker.SEVERITY, levelToSeverity(decoration.getLevel()));
-						hintValidatorMessage.setType(WINDUP_HINT_MARKER_ID);
-						hintValidatorMessage.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-						result.add(hintValidatorMessage);
-					}
-				}
-				
-				result.add(decorationMessage);
-			}
-		}
-		
-		
-		return result;
-	}
-	
-	/**
-	 * <p>Convert a {@link NotificationLevel} to an {@link IMarker} severity</p>
-	 * 
-	 * @param level {@link NotificationLevel} to convert to an {@link IMarker} severity
-	 * 
-	 * @return {@link IMarker} severity equivalent for the given {@link NotificationLevel}
-	 */
-	private static int levelToSeverity(NotificationLevel level) {
-		int severity;
-		switch(level) {
-			case CRITICAL:
-			case SEVERE: {
-				severity = IMarker.SEVERITY_ERROR;
-				break;
-			}
-		
-			case INFO: {
-				severity = IMarker.SEVERITY_INFO;
-				break;
-			}
-			
-			case WARNING: 
-			default: {
-				severity = IMarker.SEVERITY_WARNING;
-				break;
-			}
-		}
-		
-		//NOTE: windup currently does not leverage notification levels well so make everything a warning
-		
-		return severity;
-	}
-	
-	/**
-	 * <p>
-	 * Removes all of the WindUp markers from the given {@link IResource}.
-	 * </p>
-	 * 
-	 * @param resource to cleanup the WindUp markers from
-	 */
-	private static void cleanUpWindUpMarkers(IResource resource) {
-		if(resource != null) {
-			try {
-				resource.deleteMarkers(WINDUP_DECORATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
-			} catch (CoreException e) {
-				WindupCorePlugin.logError("Error cleaning up markers from: " + resource, e); //$NON-NLS-1$
-			}
-		}
-	}
+    /**
+     * @see org.eclipse.wst.validation.AbstractValidator#clean(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState,
+     *      org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @Override
+    public void clean(IProject project, ValidationState state, IProgressMonitor monitor)
+    {
+        cleanUpWindUpMarkers(project);
+    }
+
+    /**
+     * @see org.eclipse.wst.validation.AbstractValidator#validationStarting(org.eclipse.core.resources.IProject,
+     *      org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @Override
+    public void validationStarting(IProject project,
+                org.eclipse.wst.validation.ValidationState state,
+                IProgressMonitor monitor)
+    {
+
+        super.validationStarting(project, state, monitor);
+    }
+
+    /**
+     * @see org.eclipse.wst.validation.AbstractValidator#validationFinishing(org.eclipse.core.resources.IProject,
+     *      org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @Override
+    public void validationFinishing(IProject project,
+                org.eclipse.wst.validation.ValidationState state,
+                IProgressMonitor monitor)
+    {
+
+        super.validationFinishing(project, state, monitor);
+    }
+
+    /**
+     * @see org.eclipse.wst.validation.AbstractValidator#validate(org.eclipse.core.resources.IResource, int,
+     *      org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @Override
+    public ValidationResult validate(IResource resource, int kind,
+                org.eclipse.wst.validation.ValidationState state,
+                IProgressMonitor monitor)
+    {
+        cleanUpWindUpMarkers(resource);
+
+        ValidationResult result = new ValidationResult();
+
+        Iterable<Hint> hints = WindupService.getDefault().getHints(resource, monitor);
+        for (Hint hint : hints)
+        {
+            ValidatorMessage hintMessage = ValidatorMessage.create(hint.getHint(), resource);
+            hintMessage.setAttribute(IMarker.SEVERITY, convertSeverity(hint.getSeverity()));
+            hintMessage.setType(WindupCorePlugin.WINDUP_HINT_MARKER_ID);
+            hintMessage.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+            hintMessage.setAttribute(IMarker.CHAR_START, hint.getColumn());
+            hintMessage.setAttribute(IMarker.CHAR_END, hint.getColumn() + hint.getLength());
+            hintMessage.setAttribute(IMarker.USER_EDITABLE, true);
+
+            result.add(hintMessage);
+        }
+
+        Iterable<Classification> classifications = WindupService.getDefault().getClassifications(resource, monitor);
+        for (Classification classification : classifications)
+        {
+            ValidatorMessage message = ValidatorMessage.create(classification.getClassification(), resource);
+            message.setAttribute(IMarker.SEVERITY, convertSeverity(classification.getSeverity()));
+            message.setType(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID);
+            message.setAttribute(IMarker.LINE_NUMBER, 1);
+            message.setAttribute(IMarker.CHAR_START, 0);
+            message.setAttribute(IMarker.CHAR_END, 0);
+
+            result.add(message);
+        }
+
+        return result;
+    }
+
+    private int convertSeverity(Severity severity)
+    {
+        switch (severity)
+        {
+        case INFO:
+            return IMarker.SEVERITY_INFO;
+        case WARNING:
+            return IMarker.SEVERITY_WARNING;
+        case CRITICAL:
+            return IMarker.SEVERITY_ERROR;
+        case SEVERE:
+            return IMarker.SEVERITY_ERROR;
+        default:
+            return IMarker.SEVERITY_INFO;
+        }
+    }
+
+    /**
+     * <p>
+     * Removes all of the WindUp markers from the given {@link IResource}.
+     * </p>
+     * 
+     * @param resource to cleanup the WindUp markers from
+     */
+    private static void cleanUpWindUpMarkers(IResource resource)
+    {
+        if (resource != null)
+        {
+            try
+            {
+                resource.deleteMarkers(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
+                resource.deleteMarkers(WindupCorePlugin.WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+            }
+            catch (CoreException e)
+            {
+                WindupCorePlugin.logError("Error cleaning up markers from: " + resource, e); //$NON-NLS-1$
+            }
+        }
+    }
 }
