@@ -53,12 +53,12 @@
 					<visibleWhen checkEnabled="false">
 						<and>
 							<count value="1"></count>
-							<iterate ifEmpty="false" operator="and">
+							<iterate ifEmpty="false" operator="or">
 								<or>
 									<instanceof value="org.eclipse.core.resources.IFile"></instanceof>
-									<instanceof value="org.eclipse.core.resources.IProject"></instanceof>
-									<adapt type="org.eclipse.core.resources.IProject"></adapt>
+                                                                        <instanceof value="org.eclipse.jdt.core.ICompilationUnit"></instanceof>
 									<adapt type="org.eclipse.core.resources.IFile"></adapt>
+                                                                        <adapt type="org.eclipse.jdt.core.ICompilationUnit"></adapt>
 								</or>
 							</iterate>
 						</and>

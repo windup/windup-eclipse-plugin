@@ -10,6 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.core.internal.validators;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -21,6 +25,7 @@ import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupService;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
@@ -89,12 +94,49 @@ public class WindupValidator extends AbstractValidator
         Iterable<Hint> hints = WindupService.getDefault().getHints(resource, monitor);
         for (Hint hint : hints)
         {
+
             ValidatorMessage hintMessage = ValidatorMessage.create(hint.getHint(), resource);
             hintMessage.setAttribute(IMarker.SEVERITY, convertSeverity(hint.getSeverity()));
             hintMessage.setType(WindupCorePlugin.WINDUP_HINT_MARKER_ID);
             hintMessage.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
-            hintMessage.setAttribute(IMarker.CHAR_START, hint.getColumn());
-            hintMessage.setAttribute(IMarker.CHAR_END, hint.getColumn() + hint.getLength());
+
+            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(hint.getFile())))
+            {
+                int currentLine = 1;
+                int pos = 0;
+                int currentByte;
+                int lastByte = 0;
+
+                int startPos = -1;
+                int endPos = -1;
+                while ((currentByte = bis.read()) != -1)
+                {
+                    pos++;
+                    if (currentByte == '\n' && lastByte != '\r')
+                    {
+                        currentLine++;
+                        if (startPos != -1)
+                        {
+                            endPos = pos;
+                            break;
+                        }
+                    }
+
+                    if (currentLine == hint.getLineNumber())
+                        startPos = pos;
+
+                    lastByte = currentByte;
+                }
+                if (endPos == -1)
+                    endPos = pos;
+
+                hintMessage.setAttribute(IMarker.CHAR_START, startPos);
+                hintMessage.setAttribute(IMarker.CHAR_END, endPos);
+            }
+            catch (IOException e)
+            {
+                WindupRuntimePlugin.logError(e.getMessage(), e);
+            }
             hintMessage.setAttribute(IMarker.USER_EDITABLE, true);
 
             result.add(hintMessage);
@@ -118,6 +160,9 @@ public class WindupValidator extends AbstractValidator
 
     private int convertSeverity(Severity severity)
     {
+        if (severity == null)
+            return IMarker.SEVERITY_WARNING;
+
         switch (severity)
         {
         case INFO:
@@ -129,7 +174,7 @@ public class WindupValidator extends AbstractValidator
         case SEVERE:
             return IMarker.SEVERITY_ERROR;
         default:
-            return IMarker.SEVERITY_INFO;
+            return IMarker.SEVERITY_WARNING;
         }
     }
 
