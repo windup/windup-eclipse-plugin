@@ -11,8 +11,11 @@
 package org.jboss.tools.windup.core.internal.validators;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -94,68 +97,86 @@ public class WindupValidator extends AbstractValidator
         Iterable<Hint> hints = WindupService.getDefault().getHints(resource, monitor);
         for (Hint hint : hints)
         {
-
-            ValidatorMessage hintMessage = ValidatorMessage.create(hint.getHint(), resource);
-            hintMessage.setAttribute(IMarker.SEVERITY, convertSeverity(hint.getSeverity()));
-            hintMessage.setType(WindupCorePlugin.WINDUP_HINT_MARKER_ID);
-            hintMessage.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
-
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(hint.getFile())))
+            if (matches(hint.getFile(), resource))
             {
-                int currentLine = 1;
-                int pos = 0;
-                int currentByte;
-                int lastByte = 0;
 
-                int startPos = -1;
-                int endPos = -1;
-                while ((currentByte = bis.read()) != -1)
+                ValidatorMessage hintMessage = ValidatorMessage.create(hint.getHint(), resource);
+                hintMessage.setAttribute(IMarker.SEVERITY, convertSeverity(hint.getSeverity()));
+                hintMessage.setType(WindupCorePlugin.WINDUP_HINT_MARKER_ID);
+                hintMessage.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+
+                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(hint.getFile())))
                 {
-                    pos++;
-                    if (currentByte == '\n' && lastByte != '\r')
+                    int currentLine = 1;
+                    int pos = 0;
+                    int currentByte;
+                    int lastByte = 0;
+
+                    int startPos = -1;
+                    int endPos = -1;
+                    while ((currentByte = bis.read()) != -1)
                     {
-                        currentLine++;
-                        if (startPos != -1)
+                        pos++;
+                        if (currentByte == '\n' && lastByte != '\r')
                         {
-                            endPos = pos;
-                            break;
+                            currentLine++;
+                            if (startPos != -1)
+                            {
+                                endPos = pos;
+                                break;
+                            }
                         }
+
+                        if (currentLine == hint.getLineNumber())
+                            startPos = pos;
+
+                        lastByte = currentByte;
                     }
+                    if (endPos == -1)
+                        endPos = pos;
 
-                    if (currentLine == hint.getLineNumber())
-                        startPos = pos;
-
-                    lastByte = currentByte;
+                    hintMessage.setAttribute(IMarker.CHAR_START, startPos);
+                    hintMessage.setAttribute(IMarker.CHAR_END, endPos);
                 }
-                if (endPos == -1)
-                    endPos = pos;
+                catch (IOException e)
+                {
+                    WindupRuntimePlugin.logError(e.getMessage(), e);
+                }
+                hintMessage.setAttribute(IMarker.USER_EDITABLE, true);
 
-                hintMessage.setAttribute(IMarker.CHAR_START, startPos);
-                hintMessage.setAttribute(IMarker.CHAR_END, endPos);
+                result.add(hintMessage);
             }
-            catch (IOException e)
-            {
-                WindupRuntimePlugin.logError(e.getMessage(), e);
-            }
-            hintMessage.setAttribute(IMarker.USER_EDITABLE, true);
-
-            result.add(hintMessage);
         }
 
+        Set<String> seen = new HashSet<>();
         Iterable<Classification> classifications = WindupService.getDefault().getClassifications(resource, monitor);
         for (Classification classification : classifications)
         {
-            ValidatorMessage message = ValidatorMessage.create(classification.getClassification(), resource);
-            message.setAttribute(IMarker.SEVERITY, convertSeverity(classification.getSeverity()));
-            message.setType(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID);
-            message.setAttribute(IMarker.LINE_NUMBER, 1);
-            message.setAttribute(IMarker.CHAR_START, 0);
-            message.setAttribute(IMarker.CHAR_END, 0);
+            if (matches(classification.getFile(), resource))
+            {
+                String title = classification.getClassification();
+                if (!seen.contains(title))
+                {
+                    seen.add(title);
 
-            result.add(message);
+                    ValidatorMessage message = ValidatorMessage.create(title, resource);
+                    message.setAttribute(IMarker.SEVERITY, convertSeverity(classification.getSeverity()));
+                    message.setType(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID);
+                    message.setAttribute(IMarker.LINE_NUMBER, 1);
+                    message.setAttribute(IMarker.CHAR_START, 0);
+                    message.setAttribute(IMarker.CHAR_END, 0);
+
+                    result.add(message);
+                }
+            }
         }
 
         return result;
+    }
+
+    private boolean matches(File file, IResource resource)
+    {
+        return file.getAbsolutePath().contains(resource.getFullPath().toString());
     }
 
     private int convertSeverity(Severity severity)

@@ -2,7 +2,9 @@ package org.jboss.tools.windup.ui.markers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -67,7 +69,7 @@ public class MarkerMenuContribution extends ContributionItem
                         .findMarkers(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_ZERO);
             IMarker[] hintMarkers = ((FileEditorInput) editor.getEditorInput()).getFile()
                         .findMarkers(WindupCorePlugin.WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_ZERO);
-            List<IMarker> all = new ArrayList<>(Arrays.asList(classificationMarkers));
+            Set<IMarker> all = new HashSet<>(Arrays.asList(classificationMarkers));
             all.addAll(Arrays.asList(hintMarkers));
             return all.toArray(new IMarker[all.size()]);
         }
