@@ -67,7 +67,7 @@ public class MarkerMenuContribution extends ContributionItem
                         .findMarkers(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_ZERO);
             IMarker[] hintMarkers = ((FileEditorInput) editor.getEditorInput()).getFile()
                         .findMarkers(WindupCorePlugin.WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_ZERO);
-            List<IMarker> all = Arrays.asList(classificationMarkers);
+            List<IMarker> all = new ArrayList<>(Arrays.asList(classificationMarkers));
             all.addAll(Arrays.asList(hintMarkers));
             return all.toArray(new IMarker[all.size()]);
         }
