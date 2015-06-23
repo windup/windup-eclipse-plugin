@@ -100,7 +100,11 @@ public class WindupValidator extends AbstractValidator
             if (matches(hint.getFile(), resource))
             {
 
-                ValidatorMessage hintMessage = ValidatorMessage.create(hint.getHint(), resource);
+                String message = hint.getHint();
+                if (message != null)
+                    message = message.trim();
+
+                ValidatorMessage hintMessage = ValidatorMessage.create(message, resource);
                 hintMessage.setAttribute(IMarker.SEVERITY, convertSeverity(hint.getSeverity()));
                 hintMessage.setType(WindupCorePlugin.WINDUP_HINT_MARKER_ID);
                 hintMessage.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
@@ -109,7 +113,7 @@ public class WindupValidator extends AbstractValidator
                 {
                     int currentLine = 1;
                     int pos = 0;
-                    int currentByte;
+                    int currentByte = 0;
                     int lastByte = 0;
 
                     int startPos = -1;
@@ -127,7 +131,7 @@ public class WindupValidator extends AbstractValidator
                             }
                         }
 
-                        if (currentLine == hint.getLineNumber())
+                        if (currentLine == hint.getLineNumber() && startPos == -1)
                             startPos = pos;
 
                         lastByte = currentByte;
