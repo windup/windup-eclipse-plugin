@@ -32,8 +32,8 @@ import org.jboss.windup.tooling.data.Hint;
 
 /**
  * <p>
- * {@link AbstractValidator} which uses the {@link WindupService} to add {@link ValidatorMessage}s to resources based on the decorations and hits
- * found by the {@link WindupService}.
+ * {@link AbstractValidator} which uses the {@link WindupService} to add {@link ValidatorMessage}s to resources based on
+ * the decorations and hits found by the {@link WindupService}.
  * </p>
  */
 public class WindupValidator extends AbstractValidator
@@ -43,8 +43,8 @@ public class WindupValidator extends AbstractValidator
     }
 
     /**
-     * @see org.eclipse.wst.validation.AbstractValidator#clean(org.eclipse.core.resources.IProject, org.eclipse.wst.validation.ValidationState,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.wst.validation.AbstractValidator#clean(org.eclipse.core.resources.IProject,
+     *      org.eclipse.wst.validation.ValidationState, org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
     public void clean(IProject project, ValidationState state, IProgressMonitor monitor)
@@ -165,16 +165,12 @@ public class WindupValidator extends AbstractValidator
 
         switch (severity)
         {
-        case INFO:
-            return IMarker.SEVERITY_INFO;
-        case WARNING:
+        case MANDATORY:
+            return IMarker.SEVERITY_ERROR;
+        case OPTIONAL:
             return IMarker.SEVERITY_WARNING;
-        case CRITICAL:
-            return IMarker.SEVERITY_ERROR;
-        case SEVERE:
-            return IMarker.SEVERITY_ERROR;
         default:
-            return IMarker.SEVERITY_WARNING;
+            return IMarker.SEVERITY_ERROR;
         }
     }
 

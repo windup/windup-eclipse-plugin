@@ -5,4 +5,4 @@ plugins/org.jboss.tools.windup.runtime/windup/
 .settings
 .classpath
 .project
-
+bin/
