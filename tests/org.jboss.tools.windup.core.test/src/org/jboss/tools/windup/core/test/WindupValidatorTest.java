@@ -39,7 +39,7 @@ public class WindupValidatorTest extends TestCase
     {
         doWindupValidatorTest("WAS-EAR",
                     new ExpectedMarkerInfo[] {
-                    new ExpectedMarkerInfo("IBM Deployment Descriptor", 1)
+                    new ExpectedMarkerInfo("WebSphere deployment descriptor", 1)
                     },
                     new ExpectedMarkerInfo[] {});
     }
