@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <windup.version>2.3.1-SNAPSHOT</windup.version>
+        <windup.version>2.6.0-SNAPSHOT</windup.version>
         <tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
     </properties>
 

@@ -15,7 +15,7 @@
     <packaging>eclipse-plugin</packaging>
 
     <properties>
-        <furnace.version>2.18.2.Final</furnace.version>
+        <furnace.version>2.22.10.Final</furnace.version>
         <windup.dist.dir>windup</windup.dist.dir>
     </properties>
 
