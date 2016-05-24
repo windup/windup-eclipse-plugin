@@ -9,7 +9,9 @@ The Windup Eclipse Project provides Eclipse plugins to integrate the Windup proj
 
 ## Installing
 
-Right now the only way to install the plugin is to get the code, compile it, and then drop the built plugin into the dropins folder of your Eclipse install.
+Before you can install the Windup plugin, you'll need to have [JBoss Tools](http://tools.jboss.org/downloads/) installed in Eclipse.
+
+Building the project generates a zip archive containing an Eclipse update site under site/target/. You can install the features into Eclipse from the archive via "Help > Install New Software > Add... > Archive...".
 
 ## Get the code
 
@@ -43,11 +45,12 @@ This command will then run the build:
 
 If you just want to check if things compiles/builds you can run:
 
-    $ mvn clean verify -DskipTest=true
+    $ mvn clean verify -DskipTests=true
 
 But *do not* push changes without having the new and existing unit tests pass!
 
-## Debuging
+## Debugging
+
 The Windup engine is resource intensive.  I found I have had to increase the memory settings when
 launching Eclipse from the debugger to keep from running out of memory.
 
@@ -57,7 +60,7 @@ When debugging am currently using:
 
 These settings will need to be optimized at some point.
 
-## Releaseing
+## Releasing
 
 These are the steps to release a new version of the plugin
 
