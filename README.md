@@ -33,17 +33,18 @@ The general idea is to keep your 'master' branch in-sync with the
 
 ## Building
 
-This project has a dependency on the windup project which does not have an official release in any maven repository yet.
-Therefor the only way to build this project is to first download and build the [windup project](https://github.com/windup/windup).
+In order to build this project you'll need to clone and build:
 
-The tests of this project require the org.jboss.tools.tests project. The recommended way to deal with this is
-to clone https://github.com/jbosstools/jbosstools-base locally and then import the org.jboss.tools.tests project into your Eclipse workspace.
+* https://github.com/jbosstools/jbosstools-base
+* https://github.com/jbosstools/jbosstools-forge
+
+You'll also need [the windup-distribution archive](https://github.com/windup/windup/wiki/Dev-Build-from-Source) for the latest snapshot version of [Windup](https://github.com/windup/windup).
 
 This command will then run the build:
 
     $ mvn clean verify
 
-If you just want to check if things compiles/builds you can run:
+If you just want to check if things compile/build you can run:
 
     $ mvn clean verify -DskipTests=true
 
