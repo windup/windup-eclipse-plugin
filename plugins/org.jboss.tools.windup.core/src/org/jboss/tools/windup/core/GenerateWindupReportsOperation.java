@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.jboss.tools.windup.core.services.WindupService;
 
 /**
  * <p>
@@ -25,21 +26,22 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  */
 public class GenerateWindupReportsOperation implements IRunnableWithProgress
 {
-
+	private WindupService windup;
     /**
      * {@link List} of {@link IProject}s to generate Windup reports for
      */
-    private final List<IProject> projectsToGenerateReportsFor;
+    private List<IProject> projects;
 
     private IStatus result;
+    
+    public GenerateWindupReportsOperation(WindupService windup, List<IProject> projects) {
+    	this.windup = windup;
+    	this.projects = projects;
+    }
 
     /**
      * @param projectsToGenerateReportsFor operation will generate Windup reports for these {@link IProject}s
      */
-    public GenerateWindupReportsOperation(List<IProject> projectsToGenerateReportsFor)
-    {
-        this.projectsToGenerateReportsFor = projectsToGenerateReportsFor;
-    }
 
     /**
      * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -48,12 +50,9 @@ public class GenerateWindupReportsOperation implements IRunnableWithProgress
     public void run(IProgressMonitor monitor) throws InvocationTargetException,
                 InterruptedException
     {
-
         // generate the reports
-        this.result = WindupService.getDefault().generateGraph(
-                    this.projectsToGenerateReportsFor.toArray(
-                                new IProject[this.projectsToGenerateReportsFor.size()])
-                    , monitor);
+        this.result = windup.generateGraph(this.projects.toArray(
+        		new IProject[this.projects.size()]) , monitor);
     }
 
     /**

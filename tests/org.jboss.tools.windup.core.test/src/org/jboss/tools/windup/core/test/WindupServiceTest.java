@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.jboss.tools.test.util.TestProjectProvider;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
-import org.jboss.tools.windup.core.WindupService;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,9 +34,9 @@ import org.junit.Test;
  * Tests for the {@link WindupService}.
  * </p>
  */
-public class WindupServiceTest
+public class WindupServiceTest extends WindupTest
 {
-
+	
     @After
     public void cleanUpGeneratedReports() throws IOException, InterruptedException
     {
@@ -65,7 +65,7 @@ public class WindupServiceTest
         IProject project = provider.getProject();
 
         IFile jspFile = project.getFile(new Path("WebContent/WebContent/Portal.jsp"));
-        IPath reportLocation = WindupService.getDefault().getReportLocation(jspFile);
+        IPath reportLocation = windupService.getReportLocation(jspFile);
 
         Assert.assertNull("Report location should be null for a resource in a "
                     + "project who's Windup report has not been generated", reportLocation);
@@ -79,7 +79,7 @@ public class WindupServiceTest
         IProject project = provider.getProject();
 
         IFile folder = project.getFile(new Path("WebContent/WebContent"));
-        IPath reportLocation = WindupService.getDefault().getReportLocation(folder);
+        IPath reportLocation = windupService.getReportLocation(folder);
 
         Assert.assertNull("Report location should be null for a resource that "
                     + "does not have a corresponding Windup report resource", reportLocation);
@@ -92,16 +92,16 @@ public class WindupServiceTest
                     WindupCoreTestPlugin.PLUGIN_ID, null, "WAS-EAR", false);
         IProject project = provider.getProject();
 
-        WindupService.getDefault().generateGraph(project, null);
+        windupService.generateGraph(project, null);
 
         // test that the report home file exists
-        IPath reportHomeLocation = WindupService.getDefault().getReportLocation(project);
+        IPath reportHomeLocation = windupService.getReportLocation(project);
         File reportHomeFile = reportHomeLocation.toFile();
         Assert.assertTrue("The index.html for the generated report should exist.", reportHomeFile.exists());
 
         // test that a report file exists for JSP file
         IFile xmlFile = project.getFile(new Path("EarContent/META-INF/deployment.xml"));
-        IPath xmlReportLocation = WindupService.getDefault().getReportLocation(xmlFile);
+        IPath xmlReportLocation = windupService.getReportLocation(xmlFile);
         Assert.assertNotNull("JSP Report Location should be found", xmlReportLocation);
         File xmlReportFile = xmlReportLocation.toFile();
         Assert.assertTrue("A report resource should exist for " + xmlFile, xmlReportFile.exists());
@@ -122,19 +122,19 @@ public class WindupServiceTest
 
         // generate reports
         IProject[] projects = new IProject[] { portalProject, wasProject };
-        WindupService.getDefault().generateGraph(projects, null);
+        windupService.generateGraph(projects, null);
 
         // verify report index exists for all projects that reports were generated for
         for (IProject project : projects)
         {
-            IPath reportHomeLocation = WindupService.getDefault().getReportLocation(project);
+            IPath reportHomeLocation = windupService.getReportLocation(project);
             File reportHomeFile = reportHomeLocation.toFile();
             Assert.assertTrue("The index.html for the generated report should exist.", reportHomeFile.exists());
         }
 
         // test that a report file exists for WAS deployment file in the was project
         IFile deploymentFile = wasProject.getFile(new Path("EarContent/META-INF/deployment.xml"));
-        IPath deploymentReportLocation = WindupService.getDefault().getReportLocation(deploymentFile);
+        IPath deploymentReportLocation = windupService.getReportLocation(deploymentFile);
         File deploymentReportFile = deploymentReportLocation.toFile();
         Assert.assertTrue("A report resource should exist for " + deploymentReportFile, deploymentReportFile.exists());
     }
@@ -146,9 +146,9 @@ public class WindupServiceTest
                     WindupCoreTestPlugin.PLUGIN_ID, null, "Portal-WAR", false);
         IProject project = provider.getProject();
 
-        WindupService.getDefault().generateGraph(project, null);
+        windupService.generateGraph(project, null);
 
-        boolean reportExists = WindupService.getDefault().reportExists(project);
+        boolean reportExists = windupService.reportExists(project);
         Assert.assertTrue("WindupService should report that the windup report exists for the given project.", reportExists);
     }
 
@@ -161,7 +161,7 @@ public class WindupServiceTest
 
         final List<IProject> notifiedProjects = new ArrayList<IProject>();
 
-        WindupService.getDefault().addWindupListener(new IWindupListener()
+        windupService.addWindupListener(new IWindupListener()
         {
             @Override
             public void graphGenerated(IProject reportGeneratedForProject)
@@ -170,7 +170,7 @@ public class WindupServiceTest
             }
         });
 
-        WindupService.getDefault().generateGraph(project, null);
+        windupService.generateGraph(project, null);
 
         Assert.assertTrue("Listener was not notified of report generation for the project.",
                     notifiedProjects.contains(project));
@@ -194,10 +194,10 @@ public class WindupServiceTest
             }
         };
 
-        WindupService.getDefault().addWindupListener(listener);
-        WindupService.getDefault().removeWindupListener(listener);
+        windupService.addWindupListener(listener);
+        windupService.removeWindupListener(listener);
 
-        WindupService.getDefault().generateGraph(project, null);
+        windupService.generateGraph(project, null);
 
         Assert.assertTrue("Listener should not have been notified of report generation.",
                     notifiedProjects.isEmpty());

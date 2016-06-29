@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.core;
+package org.jboss.tools.windup.core.services;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -26,9 +28,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.forge.core.furnace.FurnaceProvider;
 import org.jboss.tools.forge.core.furnace.FurnaceService;
+import org.jboss.tools.windup.core.IWindupListener;
+import org.jboss.tools.windup.core.WindupCorePlugin;
+import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.internal.utils.FileUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
@@ -44,45 +50,16 @@ import org.jboss.windup.tooling.data.ReportLink;
  * Service used to perform Windup operations inside of Eclipse.
  * </p>
  */
+@Singleton
+@Creatable
 public class WindupService
 {
     private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
 
-    private static WindupService service;
-
     private static IPath reportsDir = WindupCorePlugin.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
-    /**
-     * <p>
-     * List of the subscribed {@link IWindupListener}s.
-     * </p>
-     */
-    private List<IWindupListener> windupListeners;
-
+    private List<IWindupListener> windupListeners = new ArrayList<IWindupListener>();
     private Map<IProject, ExecutionResults> projectToResults = new HashMap<>();
-
-    /**
-     * <p>
-     * Private constructor for singleton instance.
-     * </p>
-     */
-    private WindupService()
-    {
-        this.windupListeners = new ArrayList<IWindupListener>();
-    }
-
-    /**
-     * @return singleton instance of the {@link WindupService}
-     */
-    public static WindupService getDefault()
-    {
-        if (service == null)
-        {
-            service = new WindupService();
-        }
-
-        return service;
-    }
 
     /**
      * Returns an {@link Iterable} with all {@link Hint}s returned by Windup during the last run.
@@ -188,7 +165,7 @@ public class WindupService
 
         return status;
     }
-
+    
     /**
      * <p>
      * Generate a Windup report for the given project.
@@ -201,7 +178,7 @@ public class WindupService
      * @param project Generate a Windup report for this project
      * @param monitor {@link IProgressMonitor} to report progress to
      */
-    private IStatus generateGraph(IProject project, IProgressMonitor monitor)
+    public IStatus generateGraph(IProject project, IProgressMonitor monitor)
     {
         // protect against a null given for the progress monitor
         IProgressMonitor progress;
@@ -358,7 +335,7 @@ public class WindupService
         return getProjectReportPath(resource);
     }
 
-    /**
+	/**
      * <p>
      * Registers a {@link IWindupListener}.
      * </p>

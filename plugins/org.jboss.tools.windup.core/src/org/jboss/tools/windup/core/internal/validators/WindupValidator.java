@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +29,7 @@ import org.eclipse.wst.validation.ValidationResult;
 import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
-import org.jboss.tools.windup.core.WindupService;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.tooling.data.Classification;
@@ -41,6 +43,8 @@ import org.jboss.windup.tooling.data.Hint;
  */
 public class WindupValidator extends AbstractValidator
 {
+	@Inject private WindupService windup;
+	
     public WindupValidator()
     {
     }
@@ -90,11 +94,14 @@ public class WindupValidator extends AbstractValidator
                 org.eclipse.wst.validation.ValidationState state,
                 IProgressMonitor monitor)
     {
+    	if (windup == null) {
+    		return new ValidationResult();
+    	}
         cleanUpWindUpMarkers(resource);
 
         ValidationResult result = new ValidationResult();
 
-        Iterable<Hint> hints = WindupService.getDefault().getHints(resource, monitor);
+        Iterable<Hint> hints = windup.getHints(resource, monitor);
         for (Hint hint : hints)
         {
             if (matches(hint.getFile(), resource))
@@ -153,7 +160,7 @@ public class WindupValidator extends AbstractValidator
         }
 
         Set<String> seen = new HashSet<>();
-        Iterable<Classification> classifications = WindupService.getDefault().getClassifications(resource, monitor);
+        Iterable<Classification> classifications = windup.getClassifications(resource, monitor);
         for (Classification classification : classifications)
         {
             if (matches(classification.getFile(), resource))

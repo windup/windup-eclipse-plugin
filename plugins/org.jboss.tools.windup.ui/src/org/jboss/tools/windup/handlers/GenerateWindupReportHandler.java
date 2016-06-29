@@ -8,64 +8,58 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.commands;
+package org.jboss.tools.windup.handlers;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.jboss.tools.windup.core.WindupService;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.Utils;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.internal.services.ViewService;
 
 /**
- * <p>
- * Handles generating the windup report for a project.
- * </p>
+ * Generates a Windup report. 
  */
-public class GenerateWindupReportHandler extends AbstractHandler
-{
+public class GenerateWindupReportHandler {
 
-    @Override
-    public Object execute(final ExecutionEvent event) throws ExecutionException
+	@Inject private WindupService windupService;
+	@Inject private ViewService viewService;
+	
+    @Execute
+    public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, @Named(IServiceConstants.ACTIVE_SELECTION) @Optional ISelection selection)
     {
-        Shell activeShell = HandlerUtil.getActiveShellChecked(event);
-
-        final ISelection selection = HandlerUtil.getCurrentSelection(event);
         List<IProject> currentSelectionProjects = Utils.getSelectedProjects(selection);
 
         // open multiple project selection dialog
         ListSelectionDialog projectSelectDialog = new ListSelectionDialog(
-                    activeShell,
+                    shell,
                     ResourcesPlugin.getWorkspace().getRoot(),
                     new BaseWorkbenchContentProvider(),
                     new WorkbenchLabelProvider(),
                     Messages.select_projects_to_generate_windup_reports_for);
         projectSelectDialog.setTitle(Messages.generate_windup_report);
         projectSelectDialog.setInitialElementSelections(currentSelectionProjects);
-        projectSelectDialog.open();
-
         // if user made selection
-        if (projectSelectDialog.getReturnCode() == Window.OK)
+        if (projectSelectDialog.open() == Window.OK)
         {
             Object[] userSelectedObjects = projectSelectDialog.getResult();
             final IProject[] userSelectedProjects = Arrays.copyOf(userSelectedObjects,
@@ -73,7 +67,6 @@ public class GenerateWindupReportHandler extends AbstractHandler
 
             if (userSelectedProjects != null && userSelectedProjects.length > 0)
             {
-
                 // create a job to generate the report in
                 Job job = new Job(Messages.generate_windup_report)
                 {
@@ -81,7 +74,7 @@ public class GenerateWindupReportHandler extends AbstractHandler
                     protected IStatus run(IProgressMonitor monitor)
                     {
                         // generate the report
-                        IStatus status = WindupService.getDefault().generateGraph(userSelectedProjects, monitor);
+                        IStatus status = windupService.generateGraph(userSelectedProjects, monitor);
 
                         // show the report view for the selected resource
                         Display.getDefault().asyncExec(new Runnable()
@@ -89,16 +82,7 @@ public class GenerateWindupReportHandler extends AbstractHandler
                             @Override
                             public void run()
                             {
-                                try
-                                {
-                                    WindupReportView windupView = (WindupReportView) PlatformUI.getWorkbench()
-                                                .getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
-                                    windupView.updateSelection(selection);
-                                }
-                                catch (PartInitException e)
-                                {
-                                    WindupUIPlugin.logError("Error opening the Windup Report view", e); //$NON-NLS-1$
-                                }
+                            	GenerateWindupReportHandler.this.viewService.activateWindupReportView().updateSelection(selection);
                             }
                         });
 
@@ -109,7 +93,5 @@ public class GenerateWindupReportHandler extends AbstractHandler
                 job.schedule();
             }
         }
-
-        return null;
     }
 }
