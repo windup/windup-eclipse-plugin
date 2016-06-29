@@ -2,11 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
-Bundle-SymbolicName: org.jboss.tools.windup.core.test;singleton:=true
+Bundle-SymbolicName: org.jboss.tools.windup.ui.tests;singleton:=true
 Bundle-Version: 3.1.0.qualifier
-Bundle-Activator: org.jboss.tools.windup.core.test.WindupCoreTestPlugin
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.wst.validation;bundle-version="[1.2.402,2.0.0)",
@@ -18,6 +17,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.di,
- org.jboss.tools.tests
-Export-Package: org.jboss.tools.windup.core.test
+ org.jboss.tools.tests,
+ org.jboss.tools.windup.core.test,
+ org.eclipse.e4.ui.workbench,
+ com.google.guava,
+ org.apache.log4j,
+ org.eclipse.e4.ui.workbench.renderers.swt,
+ org.eclipse.swtbot.eclipse.finder,
+ org.jboss.tools.windup.ui
 Bundle-Vendor: %plugin.vendor
+Bundle-Activator: org.jboss.tools.windup.ui.tests.Activator

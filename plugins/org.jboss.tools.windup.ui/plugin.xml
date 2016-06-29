@@ -1,129 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
 <plugin>
-	<extension point="org.eclipse.ui.views">
-		<category name="%category.windup.name"
-			id="org.jboss.tools.windup.ui.view.category.windup">
-		</category>
-		<view allowMultiple="false"
-			category="org.jboss.tools.windup.ui.view.category.windup" class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
-			icon="icons/windup_report.png" id="org.jboss.tools.windup.ui.views.WindupReportView"
-			name="%view.windup_report.name">
-		</view>
-	</extension>
-	<extension point="org.eclipse.ui.commands">
-		<command categoryId="org.jboss.tools.windup.ui.command.category.windup"
-			defaultHandler="org.jboss.tools.windup.ui.internal.commands.ViewWindupReportHandler"
-			id="org.jboss.tools.windup.ui.command.viewwindupreport" name="%command.show_in_windup_report_viewer.name">
-		</command>
-		<command categoryId="org.jboss.tools.windup.ui.command.category.windup"
-			defaultHandler="org.jboss.tools.windup.ui.internal.commands.GenerateWindupReportHandler"
-			id="org.jboss.tools.windup.ui.command.generatewindupreport" name="%command.generate_windup_report.name">
-		</command>
-		<command categoryId="org.jboss.tools.windup.ui.command.category.windup"
-			defaultHandler="org.jboss.tools.windup.ui.internal.commands.ExportWindupReportHandler"
-			id="org.jboss.tools.windup.ui.command.exportwindupreport" name="%command.export_windup_report.name">
-		</command>
-		<category id="org.jboss.tools.windup.ui.command.category.windup"
-			name="%category.windup.name">
-		</category>
-	</extension>
-	<extension point="org.eclipse.ui.menus">
-		<menuContribution allPopups="false"
-			locationURI="popup:org.eclipse.ui.popup.any?after=additions">
 
-			<menu id="org.jboss.tools.windup.ui.menu.windup" label="%menu.windup.name">
-				<command commandId="org.jboss.tools.windup.ui.command.generatewindupreport"
-					icon="icons/windup.png" label="%command.generate_windup_report.name"
-					style="push">
-					<visibleWhen checkEnabled="false">
-						<and>
-							<iterate ifEmpty="false" operator="and">
-								<or>
-									<instanceof value="org.eclipse.core.resources.IResource"></instanceof>
-									<adapt type="org.eclipse.core.resources.IResource"></adapt>
-								</or>
-							</iterate>
-						</and>
-					</visibleWhen>
-				</command>
-				<command commandId="org.jboss.tools.windup.ui.command.viewwindupreport"
-					icon="icons/windup_report.png" label="%command.show_in_windup_report_viewer.name"
-					style="push">
-					<visibleWhen checkEnabled="false">
-						<and>
-							<count value="1"></count>
-							<iterate ifEmpty="false" operator="or">
-								<or>
-									<instanceof value="org.eclipse.core.resources.IFile"></instanceof>
-                                                                        <instanceof value="org.eclipse.jdt.core.ICompilationUnit"></instanceof>
-									<adapt type="org.eclipse.core.resources.IFile"></adapt>
-                                                                        <adapt type="org.eclipse.jdt.core.ICompilationUnit"></adapt>
-								</or>
-							</iterate>
-						</and>
-					</visibleWhen>
-				</command>
-				<command commandId="org.jboss.tools.windup.ui.command.exportwindupreport"
-					icon="icons/export_windup_report.png" label="%command.export_windup_report.name"
-					style="push">
-					<visibleWhen checkEnabled="false">
-						<and>
-							<iterate ifEmpty="false" operator="and">
-								<or>
-									<instanceof value="org.eclipse.core.resources.IResource"></instanceof>
-									<adapt type="org.eclipse.core.resources.IResource"></adapt>
-								</or>
-							</iterate>
-						</and>
-					</visibleWhen>
-				</command>
-			</menu>
-		</menuContribution>
-		<menuContribution allPopups="false"
-			locationURI="toolbar:org.jboss.tools.windup.ui.views.WindupReportView">
-			<command commandId="org.jboss.tools.windup.ui.command.generatewindupreport"
-				icon="icons/windup.png" label="%command.generate_windup_report.name"
-				style="push">
-			</command>
-		</menuContribution>
-		<menuContribution 
-			class="org.jboss.tools.windup.ui.markers.MarkerContributionFactory" 
-			locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-	        	<dynamic 
-	        		class="org.jboss.tools.windup.ui.markers.MarkerMenuContribution" 
-	        		id="windupMarkerExtensionMenu"
-	    		/>
-     	</menuContribution>
-	</extension>
-	<extension point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension targetID="*">
-			<showInPart id="org.jboss.tools.windup.ui.views.WindupReportView">
-			</showInPart>
-		</perspectiveExtension>
-	</extension>
-	<extension point="org.eclipse.ui.exportWizards">
-		<category id="org.jboss.tools.windup.ui.export.category.windup"
-			name="%category.windup.name">
-		</category>
-		<wizard id="org.jboss.tools.windup.ui.exportWizard.WindupReport"
-			category="org.jboss.tools.windup.ui.export.category.windup"
-			class="org.jboss.tools.windup.ui.internal.wizards.WindupReportExportWizard"
-			icon="icons/export_windup_report.png"
-			name="%export.windup_reports.name">
-     <description>
-        %export.windup_reports.description
-     </description>
-     <keywordReference
-           id="org.jboss.tools.windup.ui.keywords.WindupReport">
-     </keywordReference>
-		</wizard>
-	</extension>
- <extension
-       point="org.eclipse.ui.keywords">
-    <keyword
-          id="org.jboss.tools.windup.ui.keywords.WindupReport"
-          label="%keywords.windup_report.labels">
-    </keyword>
- </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%category.windup.name"
+            id="org.jboss.tools.windup.ui.view.category.windup">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            name="%category.windup.name"
+            id="org.jboss.tools.windup.ui.export.category.windup">
+      </category>
+      <wizard
+            name="%export.windup_reports.name"
+            icon="icons/export_windup_report.png"
+            category="org.jboss.tools.windup.ui.export.category.windup"
+            class="org.jboss.tools.windup.ui.internal.wizards.WindupReportExportWizard"
+            id="org.jboss.tools.windup.ui.exportWizard.WindupReport">
+         <description>
+         </description>
+         <keywordReference
+               id="org.jboss.tools.windup.ui.keywords.WindupReport">
+         </keywordReference>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            label="%keywords.windup_report.labels"
+            id="org.jboss.tools.windup.ui.keywords.WindupReport">
+      </keyword>
+   </extension>
+   <extension
+         id="org.jboss.tools.windup.ui.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="windup.e4xmi">
+      </fragment>
+      <processor
+            apply="initial"
+            beforefragment="false"
+            class="org.jboss.tools.windup.ui.WindupPerspective">
+      </processor>
+   </extension>
+   <extension
+         id="windup.expressions"
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.jboss.tools.windup.ui.expression.generateReport">
+         <and>
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <or>
+                  <instanceof
+                        value="org.eclipse.core.resources.IResource">
+                  </instanceof>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                  </adapt>
+               </or>
+            </iterate>
+         </and>
+      </definition>
+      <definition
+            id="org.jboss.tools.windup.ui.expression.showReport">
+              <and>
+                 <count
+                       value="1">
+                 </count>
+                 <iterate
+                       ifEmpty="false"
+                       operator="or">
+                    <or>
+                       <instanceof
+                             value="org.eclipse.core.resources.IFile">
+                       </instanceof>
+                       <instanceof
+                             value="org.eclipse.jdt.core.ICompilationUnit">
+                       </instanceof>
+                       <adapt
+                             type="org.eclipse.core.resources.IFile">
+                       </adapt>
+                       <adapt
+                             type="org.eclipse.jdt.core.ICompilationUnit">
+                       </adapt>
+                    </or>
+                 </iterate>
+              </and> 
+      </definition>
+      <definition
+            id="org.jboss.tools.windup.ui.expression.exportReport">
+              <and>
+                 <iterate
+                       ifEmpty="false"
+                       operator="and">
+                    <or>
+                       <instanceof
+                             value="org.eclipse.core.resources.IResource">
+                       </instanceof>
+                       <adapt
+                             type="org.eclipse.core.resources.IResource">
+                       </adapt>
+                    </or>
+                 </iterate>
+              </and>
+      </definition>
+   </extension>
+
 </plugin>

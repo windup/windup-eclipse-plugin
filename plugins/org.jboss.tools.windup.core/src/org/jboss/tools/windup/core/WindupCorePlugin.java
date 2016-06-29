@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
+import com.google.inject.Injector;
+
 public class WindupCorePlugin extends Plugin
 {
     /**
@@ -39,6 +41,11 @@ public class WindupCorePlugin extends Plugin
      * </p>
      */
     private static WindupCorePlugin plugin;
+    
+    /**
+     * The windup dependency injector.
+     */
+    private Injector injector;
 
     /**
      * @return singleton instance of the plugin

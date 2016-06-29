@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.tools</groupId>
         <artifactId>parent</artifactId>
-        <version>4.4.0.Alpha1-SNAPSHOT</version>
+        <version>4.4.1.Alpha1-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup</artifactId>
@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <windup.version>2.6.0-SNAPSHOT</windup.version>
+        <windup.version>3.0.0-SNAPSHOT</windup.version>
         <tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
     </properties>
 
@@ -43,7 +43,6 @@
                 <artifactId>org.jboss.tools.windup.ui</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-bom</artifactId>
@@ -84,7 +83,7 @@
                     <version>2.8</version>
                 </plugin>
 
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven 
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven
                     build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
