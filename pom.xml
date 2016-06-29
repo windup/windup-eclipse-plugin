@@ -15,14 +15,14 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>features</module>
         <module>plugins</module>
+        <module>features</module>
         <module>tests</module>
         <module>site</module>
     </modules>
 
     <properties>
-        <windup.version>2.6.0-SNAPSHOT</windup.version>
+        <windup.version>3.0.0-SNAPSHOT</windup.version>
         <tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
     </properties>
 
@@ -51,6 +51,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-distribution</artifactId>
+                <version>${windup.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
 
         </dependencies>
     </dependencyManagement>
@@ -113,4 +122,16 @@
             </plugins>
         </pluginManagement>
     </build>
+    <repositories>
+	    <repository>
+		<id>jbosstools-base</id>
+		<layout>p2</layout>
+		<url>${jbosstools-base-site}</url>
+	    </repository>
+	    <repository>
+		<id>jbosstools-forge</id>
+		<layout>p2</layout>
+		<url>${jbosstools-forge-site}</url>
+	    </repository>
+    </repositories>
 </project>
