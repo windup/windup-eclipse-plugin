@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -26,14 +24,17 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.wst.validation.ValidationFramework;
 import org.jboss.tools.test.util.TestProjectProvider;
-import org.jboss.tools.windup.core.WindupService;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class WindupValidatorTest extends TestCase
+import junit.framework.Assert;
+
+public class WindupValidatorTest extends WindupTest
 {
     private static final String WINDUP_CLASSIFICATION_MARKER_ID = "org.jboss.tools.windup.core.classificationMarker"; //$NON-NLS-1$
     private static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
-
+    
+    @Ignore
     @Test
     public void testWASEAR() throws Exception
     {
@@ -57,7 +58,7 @@ public class WindupValidatorTest extends TestCase
      * @throws InterruptedException can happen when waiting for validation framework
      * @throws OperationCanceledException can happen when waiting for validation framework
      */
-    private static void doWindupValidatorTest(String projectName,
+    private void doWindupValidatorTest(String projectName,
                 ExpectedMarkerInfo[] expectedDecorationMarkers, ExpectedMarkerInfo[] expectedHintMarkers) throws CoreException,
                 OperationCanceledException, InterruptedException
     {
@@ -67,7 +68,7 @@ public class WindupValidatorTest extends TestCase
         IProject project = provider.getProject();
 
         IProject[] projects = new IProject[] { project };
-        WindupService.getDefault().generateGraph(projects, null);
+        windupService.generateGraph(projects, null);
 
         // be sure the project is built
         project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
@@ -140,7 +141,7 @@ public class WindupValidatorTest extends TestCase
 
                 errorMessage.append("    " + actualMarkers.size());
 
-                fail(errorMessage.toString());
+                Assert.fail(errorMessage.toString());
             }
         }
     }

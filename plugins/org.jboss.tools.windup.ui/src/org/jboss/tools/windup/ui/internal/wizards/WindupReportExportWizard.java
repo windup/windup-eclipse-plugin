@@ -10,11 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.wizards;
 
+import javax.inject.Inject;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 
@@ -39,6 +42,8 @@ public class WindupReportExportWizard extends Wizard implements IExportWizard
      * The main page of the wizard.
      */
     private WindupReportExportWizardPage1 mainPage;
+    
+    @Inject private WindupService windup;
 
     /**
      * <p>
@@ -73,9 +78,8 @@ public class WindupReportExportWizard extends Wizard implements IExportWizard
     @Override
     public void addPages()
     {
-        WindupReportExportWizardPage1 page1 = new WindupReportExportWizardPage1(this.selection);
-        this.mainPage = page1;
-        this.addPage(page1);
+    	this.mainPage = new WindupReportExportWizardPage1(windup, this.selection);
+        this.addPage(mainPage);
     }
 
     /**

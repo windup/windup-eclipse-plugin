@@ -57,7 +57,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.jboss.tools.windup.core.GenerateWindupReportsOperation;
-import org.jboss.tools.windup.core.WindupService;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.Utils;
@@ -109,7 +109,9 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
     private Combo destinationNameField;
     private Combo rootDirNameField;
     private Button destinationBrowseButton;
-
+    
+    private WindupService windup;
+    
     /**
      * <p>
      * Creates the page using the given default selection.
@@ -117,7 +119,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
      * 
      * @param selection Current selection to determine the default projects to export reports for
      */
-    public WindupReportExportWizardPage1(IStructuredSelection selection)
+    public WindupReportExportWizardPage1(WindupService windup, IStructuredSelection selection)
     {
         super("windupReportExportPage1", //$NON-NLS-1$
                     Messages.WindupReportExport_exportReportsTitle,
@@ -125,8 +127,8 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
 
         setTitle(Messages.WindupReportExport_page_one_title);
         setDescription(Messages.WindupReportExport_page_one_description);
-
         this.initialResourceSelection = selection;
+        this.windup = windup;
     }
 
     /**
@@ -195,7 +197,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
         boolean reGenerateAllReports = this.reGenerateReportsCheckbox.getSelection();
         for (IProject selectedProject : selectedProjects)
         {
-            IPath reportLocation = WindupService.getDefault().getReportParentDirectoryLocation(selectedProject);
+            IPath reportLocation = windup.getReportParentDirectoryLocation(selectedProject);
             File reportParentDir = reportLocation.toFile();
             reportParentDirectories.add(reportParentDir);
 
@@ -203,7 +205,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
              * if regenerating all windup reports or windup report does not exist for project add it to the list of projects to create windup reports
              * for
              */
-            if (reGenerateAllReports || !WindupService.getDefault().reportExists(selectedProject))
+            if (reGenerateAllReports || !windup.reportExists(selectedProject))
             {
                 generateReportsForProjects.add(selectedProject);
             }
@@ -1012,7 +1014,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
          */
         final GenerateWindupReportsOperation generateReportsOperation =
                     projectsWithoutReports.isEmpty() ?
-                                null : new GenerateWindupReportsOperation(projectsWithoutReports);
+                                null : new GenerateWindupReportsOperation(windup, projectsWithoutReports);
 
         // create an operation to export all of the selected windup reports
         final ArchiveFileExportOperation exportOperation = new ArchiveFileExportOperation(

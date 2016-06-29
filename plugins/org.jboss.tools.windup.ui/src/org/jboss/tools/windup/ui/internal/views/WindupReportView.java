@@ -10,12 +10,18 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.views;
 
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.preference.BooleanPropertyAction;
+import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -23,24 +29,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.part.ViewPart;
 import org.jboss.tools.windup.core.IWindupListener;
-import org.jboss.tools.windup.core.WindupService;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -51,8 +48,13 @@ import org.jboss.tools.windup.ui.internal.Utils;
  * A view to display Windup Reports.
  * </p>
  */
-public class WindupReportView extends ViewPart implements IShowInTarget
+public class WindupReportView implements IShowInTarget
 {
+	@Inject private MPart part;
+	@Inject private WindupService windupService;
+	@Inject private ESelectionService selectionService;
+	
+	//@Inject private IViewSite site;
 
     /**
      * The ID of the view as specified by the extension.
@@ -123,34 +125,33 @@ public class WindupReportView extends ViewPart implements IShowInTarget
         this.syncronizeViewWithCurrentSelection = false;
     }
 
-    @Override
-    public void createPartControl(Composite parent)
+    @Inject
+    public void createPartControl(Composite composite)
     {
-        this.composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1, false);
-        this.composite.setLayout(layout);
+    	this.composite = composite;
+        //this.composite = new Composite(parent, SWT.NONE);
+//        GridLayout layout = new GridLayout(1, false);
+//        this.composite.setLayout(layout);
+        GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(composite);;
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(composite);
 
         // create the message label
         this.message = new StyledText(this.composite, SWT.WRAP);
-        this.message.setLayoutData(new GridData(
-                    SWT.FILL, SWT.FILL, true, true));
+        this.message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         this.message.setVisible(false);
 
         this.browser = new Browser(this.composite, SWT.NONE);
         this.browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // react to selection changes
-        this.selectionChangedListener = new ISelectionListener()
-        {
-            public void selectionChanged(IWorkbenchPart part, ISelection selection)
-            {
-
-                /*
+        this.selectionChangedListener = new ISelectionListener() {
+			@Override
+			public void selectionChanged(MPart part, Object selection) {
+				/*
                  * if update on selection and the current selection is not the same as the containing workbench part
                  */
-                if (WindupReportView.this.syncronizeViewWithCurrentSelection && part != getSite().getPart())
+                if (WindupReportView.this.syncronizeViewWithCurrentSelection && part != WindupReportView.this.part)
                 {
-
                     /*
                      * if editor selection else if some other sort of selection
                      */
@@ -165,15 +166,18 @@ public class WindupReportView extends ViewPart implements IShowInTarget
                     }
                     else
                     {
-                        updateSelection(selection);
+                    	if (!(selection instanceof ISelection)) {
+                    		selection = new StructuredSelection(selection);
+                    	}
+                    	else {
+                    		updateSelection((ISelection)selection);
+                    	}
                     }
-                }
-            }
-        };
-        IWorkbenchPartSite site = getSite();
-        ISelectionService srv = (ISelectionService) site.getService(ISelectionService.class);
-        srv.addPostSelectionListener(selectionChangedListener);
-
+                }			
+			}
+		};
+		selectionService.addPostSelectionListener(selectionChangedListener);
+		
         // react to Windup report generations
         this.reportListener = new IWindupListener()
         {
@@ -198,7 +202,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget
                 }
             }
         };
-        WindupService.getDefault().addWindupListener(reportListener);
+        windupService.addWindupListener(reportListener);
 
         // store view preferences
         IPreferenceStore preferenceStore = getPreferenceStore();
@@ -210,63 +214,25 @@ public class WindupReportView extends ViewPart implements IShowInTarget
         {
             preferenceStore.setDefault(Preferences.REPORTVIEW_SYNC_SELECTION, this.syncronizeViewWithCurrentSelection);
         }
-
-        // get the views toolbar
-        IActionBars actionBars = getViewSite().getActionBars();
-        IToolBarManager toolbar = actionBars.getToolBarManager();
-
-        // create and add refresh action to the toolbar
-        Action refresh = new Action(
-                    Messages.refresh,
-                    WindupUIPlugin.getImageDescriptor("icons/refresh.gif")) { //$NON-NLS-1$
-
-            @Override
-            public void run()
-            {
-                super.run();
-
-                WindupReportView.this.refresh();
-            }
-        };
-        toolbar.add(refresh);
-
-        // create and add link with selection action to the toolbar
-        Action linkSelectionAction = new BooleanPropertyAction(
-                    Messages.link_with_editor_and_selection,
-                    this.getPreferenceStore(),
-                    Preferences.REPORTVIEW_SYNC_SELECTION)
-        {
-
-            @Override
-            public void run()
-            {
-                super.run();
-
-                WindupReportView.this.syncronizeViewWithCurrentSelection = this.isChecked();
-            }
-        };
-        linkSelectionAction.setImageDescriptor(
-                    PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-                                ISharedImages.IMG_ELCL_SYNCED));
-        toolbar.add(linkSelectionAction);
+    }
+    
+    public void setSynchronizeSelection(boolean sync) {
+    	this.syncronizeViewWithCurrentSelection = sync;
     }
 
-    @Override
+    @Focus
     public void setFocus()
     {
         this.browser.setFocus();
     }
 
-    @Override
+    @PreDestroy
     public void dispose()
     {
-        super.dispose();
-
         // remove listeners
-        ISelectionService srv = (ISelectionService) getSite().getService(ISelectionService.class);
-        srv.removePostSelectionListener(this.selectionChangedListener);
-
-        WindupService.getDefault().removeWindupListener(this.reportListener);
+        //ISelectionService srv = (ISelectionService) site.getService(ISelectionService.class);
+    	selectionService.removePostSelectionListener(this.selectionChangedListener);
+        windupService.removeWindupListener(this.reportListener);
     }
 
     /**
@@ -306,7 +272,7 @@ public class WindupReportView extends ViewPart implements IShowInTarget
      * Forces the view to update the report.
      * </p>
      */
-    private void refresh()
+    public void refresh()
     {
         this.displayReport(this.currentSelection, true);
     }
@@ -327,9 +293,9 @@ public class WindupReportView extends ViewPart implements IShowInTarget
         {
             this.currentSelection = resource;
 
-            if (WindupService.getDefault().reportExists(resource))
+            if (windupService.reportExists(resource))
             {
-                IPath reportPath = WindupService.getDefault().getReportLocation(resource);
+                IPath reportPath = windupService.getReportLocation(resource);
 
                 if (reportPath != null)
                 {
