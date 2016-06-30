@@ -33,16 +33,17 @@ The general idea is to keep your 'master' branch in-sync with the
 
 ## Building
 
-In order to build this project you'll need to clone and build:
+This project depends on [jbosstools-base](https://github.com/jbosstools/jbosstools-base) and [jbosstools-forge](https://github.com/jbosstools/jbosstools-forge). 
 
-* https://github.com/jbosstools/jbosstools-base
-* https://github.com/jbosstools/jbosstools-forge
-
-You'll also need [the windup-distribution archive](https://github.com/windup/windup/wiki/Dev-Build-from-Source) for the latest snapshot version of [Windup](https://github.com/windup/windup).
+The build will also pull in a snapshot build of [Windup](https://github.com/windup/windup).
 
 This command will then run the build:
 
     $ mvn clean verify
+
+Since we depend on a snapshot build of windup-distribution, you occasionally may need to run:
+
+    $ mvn -U clean verify
 
 If you just want to check if things compile/build you can run:
 
