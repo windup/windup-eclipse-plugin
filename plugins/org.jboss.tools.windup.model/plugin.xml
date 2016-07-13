@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated windup -->
+      <package
+            uri="org.jboss.tools.windup"
+            class="org.jboss.tools.windup.windup.WindupPackage"
+            genModel="model/windup.genmodel"/>
+   </extension>
+</plugin>

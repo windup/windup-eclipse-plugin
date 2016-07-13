@@ -92,7 +92,7 @@ public class WindupServiceTest extends WindupTest
                     WindupCoreTestPlugin.PLUGIN_ID, null, "WAS-EAR", false);
         IProject project = provider.getProject();
 
-        windupService.generateGraph(project, null);
+        windupService.generateGraph(project);
 
         // test that the report home file exists
         IPath reportHomeLocation = windupService.getReportLocation(project);
@@ -138,7 +138,7 @@ public class WindupServiceTest extends WindupTest
         File deploymentReportFile = deploymentReportLocation.toFile();
         Assert.assertTrue("A report resource should exist for " + deploymentReportFile, deploymentReportFile.exists());
     }
-
+    
     @Test
     public void testReportExists() throws CoreException
     {
@@ -146,7 +146,7 @@ public class WindupServiceTest extends WindupTest
                     WindupCoreTestPlugin.PLUGIN_ID, null, "Portal-WAR", false);
         IProject project = provider.getProject();
 
-        windupService.generateGraph(project, null);
+        windupService.generateGraph(project);
 
         boolean reportExists = windupService.reportExists(project);
         Assert.assertTrue("WindupService should report that the windup report exists for the given project.", reportExists);
@@ -170,7 +170,7 @@ public class WindupServiceTest extends WindupTest
             }
         });
 
-        windupService.generateGraph(project, null);
+        windupService.generateGraph(project);
 
         Assert.assertTrue("Listener was not notified of report generation for the project.",
                     notifiedProjects.contains(project));
@@ -197,7 +197,7 @@ public class WindupServiceTest extends WindupTest
         windupService.addWindupListener(listener);
         windupService.removeWindupListener(listener);
 
-        windupService.generateGraph(project, null);
+        windupService.generateGraph(project);
 
         Assert.assertTrue("Listener should not have been notified of report generation.",
                     notifiedProjects.isEmpty());

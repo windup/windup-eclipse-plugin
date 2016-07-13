@@ -20,10 +20,16 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)",
  org.jboss.tools.windup.runtime,
  org.jboss.tools.windup.runtime,
  org.jboss.tools.windup.runtime,
- org.apache.log4j,
- com.google.inject,
  org.jboss.tools.common,
- org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0.v20160229-1459",
- org.eclipse.e4.core.di.annotations
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+ org.eclipse.e4.core.di.annotations,
+ org.eclipse.debug.core,
+ org.eclipse.jdt.launching,
+ org.apache.log4j,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.di,
+ com.google.guava,
+ org.eclipse.e4.core.services,
+ org.eclipse.core.filesystem;bundle-version="1.6.0",
+ org.jboss.tools.windup.model
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

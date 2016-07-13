@@ -15,7 +15,9 @@ import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -42,6 +44,10 @@ import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.Utils;
+
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
+import static org.jboss.tools.windup.ui.internal.util.ResourceUtils.findProject;
 
 /**
  * <p>
@@ -233,6 +239,16 @@ public class WindupReportView implements IShowInTarget
         //ISelectionService srv = (ISelectionService) site.getService(ISelectionService.class);
     	selectionService.removePostSelectionListener(this.selectionChangedListener);
         windupService.removeWindupListener(this.reportListener);
+    }
+    
+    public void updateConfiguration(ILaunchConfiguration configuration) {
+		try {
+			String projectName = configuration.getAttribute(ATTR_PROJECT_NAME, DEFAULT);
+			IProject project = findProject(projectName);
+	    	displayReport(project, false);
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
     }
 
     /**

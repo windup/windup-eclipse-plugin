@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated windup -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="org.jboss.tools.windup.windup.presentation.WindupModelWizardID"
+            name="%_UI_WindupModelWizard_label"
+            class="org.jboss.tools.windup.windup.presentation.WindupModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/WindupModelFile.gif">
+         <description>%_UI_WindupModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated windup -->
+      <editor
+            id="org.jboss.tools.windup.windup.presentation.WindupEditorID"
+            name="%_UI_WindupEditor_label"
+            icon="icons/full/obj16/WindupModelFile.gif"
+            extensions="windup"
+            class="org.jboss.tools.windup.windup.presentation.WindupEditor"
+            contributorClass="org.jboss.tools.windup.windup.presentation.WindupActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

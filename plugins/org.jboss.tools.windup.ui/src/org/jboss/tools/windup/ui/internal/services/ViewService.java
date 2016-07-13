@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Red Hat, Inc.
+ * Copyright (c) 2016 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,10 +10,13 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
 
-import org.eclipse.e4.core.di.annotations.Creatable;
+import javax.inject.Inject;
+
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -24,16 +27,13 @@ import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 /**
  * Service for view related functionality.
  */
-@Singleton
-@Creatable
 public class ViewService {
 
 	@Inject private EPartService partService;
 	@Inject private MApplication application;
 	
 	/**
-	 * Activates and returns the {@link WindupReportView}.
-	 * @return the activated view.
+	 * @return the activated {@link WindupReportView}.
 	 */
 	public WindupReportView activateWindupReportView() {
 		application.getChildren().get(0).getContext().activate();
@@ -41,5 +41,11 @@ public class ViewService {
 		MPart part = (MPart)holder.getRef();
 		partService.showPart(part, PartState.ACTIVATE);
 		return (WindupReportView)part.getObject();
+	}
+	
+	@Inject
+	@Optional
+	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ILaunchConfiguration configuration) {
+		activateWindupReportView().updateConfiguration(configuration);
 	}
 }

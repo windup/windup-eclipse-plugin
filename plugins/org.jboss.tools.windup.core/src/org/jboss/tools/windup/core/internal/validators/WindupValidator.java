@@ -101,7 +101,7 @@ public class WindupValidator extends AbstractValidator
 
         ValidationResult result = new ValidationResult();
 
-        Iterable<Hint> hints = windup.getHints(resource, monitor);
+        Iterable<Hint> hints = windup.getHints(resource);
         for (Hint hint : hints)
         {
             if (matches(hint.getFile(), resource))

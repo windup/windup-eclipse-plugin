@@ -10,79 +10,95 @@
  ******************************************************************************/
 package org.jboss.tools.windup.core;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
-import com.google.inject.Injector;
+public class WindupCorePlugin extends Plugin {
+	/**
+	 * The id for windup classification markers
+	 */
+	public static final String WINDUP_CLASSIFICATION_MARKER_ID = "org.jboss.tools.windup.core.classificationMarker"; //$NON-NLS-1$
+	/**
+	 * The id for windup hint markers
+	 */
+	public static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
 
-public class WindupCorePlugin extends Plugin
-{
-    /**
-     * The id for windup classification markers
-     */
-    public static final String WINDUP_CLASSIFICATION_MARKER_ID = "org.jboss.tools.windup.core.classificationMarker"; //$NON-NLS-1$
-    /**
-     * The id for windup hint markers
-     */
-    public static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
+	/**
+	 * <p>
+	 * The plugin ID.
+	 * </p>
+	 */
+	public static final String PLUGIN_ID = "org.jboss.tools.windup.core"; //$NON-NLS-1$
 
-    /**
-     * <p>
-     * The plugin ID.
-     * </p>
-     */
-    public static final String PLUGIN_ID = "org.jboss.tools.windup.core"; //$NON-NLS-1$
+	/**
+	 * <p>
+	 * The singleton instance of the plugin.
+	 * </p>
+	 */
+	private static WindupCorePlugin plugin;
 
-    /**
-     * <p>
-     * The singleton instance of the plugin.
-     * </p>
-     */
-    private static WindupCorePlugin plugin;
-    
-    /**
-     * The windup dependency injector.
-     */
-    private Injector injector;
+	/**
+	 * @return singleton instance of the plugin
+	 */
+	public static WindupCorePlugin getDefault() {
+		return plugin;
+	}
 
-    /**
-     * @return singleton instance of the plugin
-     */
-    public static WindupCorePlugin getDefault()
-    {
-        return plugin;
-    }
+	/**
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext bundleContext) throws Exception {
+		super.start(bundleContext);
+		plugin = this;
+	}
 
-    /**
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
-    public void start(BundleContext bundleContext) throws Exception
-    {
-        super.start(bundleContext);
-        plugin = this;
-    }
+	/**
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext bundleContext) throws Exception {
+		super.stop(bundleContext);
+		plugin = null;
+	}
 
-    /**
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop(BundleContext bundleContext) throws Exception
-    {
-        super.stop(bundleContext);
-        plugin = null;
-    }
+	/**
+	 * <p>
+	 * Logs an error message.
+	 * </p>
+	 * 
+	 * @param message
+	 *            Error message to log
+	 */
+	public static void logError(String message, Throwable exception) {
+		WindupCorePlugin.getDefault().getLog()
+				.log(new Status(IStatus.ERROR, WindupCorePlugin.PLUGIN_ID, message, exception));
+	}
 
-    /**
-     * <p>
-     * Logs an error message.
-     * </p>
-     * 
-     * @param message Error message to log
-     */
-    public static void logError(String message, Throwable exception)
-    {
-        WindupCorePlugin.getDefault().getLog().log(
-                    new Status(IStatus.ERROR, WindupCorePlugin.PLUGIN_ID, message, exception));
-    }
+	public static void log(IStatus status) {
+		WindupCorePlugin.getDefault().getLog().log(status);
+	}
+
+	public static void logErrorMessage(final String message) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
+	}
+
+	public static void logErrorMessage(final String message, final Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e));
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException) {
+			status = ((CoreException) e).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+		}
+		log(status);
+	}
 }

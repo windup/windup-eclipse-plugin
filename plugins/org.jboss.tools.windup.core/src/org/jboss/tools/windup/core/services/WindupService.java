@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Red Hat, Inc.
+ * Copyright (c) 2016 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -39,11 +39,15 @@ import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.internal.utils.FileUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.exec.configuration.options.TargetOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.ReportLink;
+
+import com.google.common.collect.Lists;
 
 /**
  * <p>
@@ -66,7 +70,7 @@ public class WindupService
      * 
      * NOTE: This will return an empty list if Windup has not yet been run on this project.
      */
-    public Iterable<Hint> getHints(IResource resource, IProgressMonitor monitor)
+    public Iterable<Hint> getHints(IResource resource)
     {
         ExecutionResults results = projectToResults.get(resource.getProject());
         if (results == null)
@@ -88,24 +92,7 @@ public class WindupService
         else
             return results.getClassifications();
     }
-
-    /**
-     * <p>
-     * Generate a Windup report for the project containing the given resource.
-     * </p>
-     * 
-     * <p>
-     * This can be a long running operation, it should be run in a Job.
-     * </p>
-     * 
-     * @param resource Generate a Windup report for the project containing this resource
-     * @param monitor {@link IProgressMonitor} to report progress to
-     */
-    public IStatus generateGraph(IResource resource, IProgressMonitor monitor)
-    {
-        return this.generateGraph(new IProject[] { resource.getProject() }, monitor);
-    }
-
+    
     /**
      * <p>
      * Generate a Windup report for the given projects.
@@ -166,6 +153,10 @@ public class WindupService
         return status;
     }
     
+    public IStatus generateGraph(IProject project) {
+    	return generateGraph(project, null);
+    }
+    
     /**
      * <p>
      * Generate a Windup report for the given project.
@@ -212,12 +203,23 @@ public class WindupService
 
             WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
             ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
-            ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
+            
+            /*ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
                         .setInput(inputDir.toPath())
                         .setOutput(outputDir.toPath())
                         .setProgressMonitor(windupProgressMonitor)
                         .ignore("\\.class$")
-                        .execute();
+                        .execute();*/
+            
+            ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
+                    .setInput(inputDir.toPath())
+                    .setOutput(outputDir.toPath())
+                    .setProgressMonitor(windupProgressMonitor)
+                    .setOption(SourceModeOption.NAME, true)
+                    .setOption(TargetOption.NAME, Lists.newArrayList("eap"))
+                    .ignore("\\.class$")
+                    .execute();
+            
             projectToResults.put(project, results);
 
             // notify listeners that a graph was just generated

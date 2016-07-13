@@ -44,6 +44,21 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.tools.windup.plugins</groupId>
+                <artifactId>org.jboss.tools.windup.model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.tools.windup.plugins</groupId>
+                <artifactId>org.jboss.tools.windup.edit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.tools.windup.plugins</groupId>
+                <artifactId>org.jboss.tools.windup.editor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-bom</artifactId>
                 <version>${windup.version}</version>

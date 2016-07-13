@@ -10,10 +10,21 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui;
 
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -24,10 +35,16 @@ public class WindupUIPlugin extends AbstractUIPlugin
 
     // The plug-in ID
     public static final String PLUGIN_ID = "org.jboss.tools.windup.ui"; //$NON-NLS-1$
-
+    
+    public static final String IMG_RUN_EXC = "icons/run_exc.png"; //$NON-NLS-1$
+    public static final String IMG_HELP = "icons/help.png"; //$NON-NLS-1$
+    public static final String IMG_NEW_CONFIG = "icons/new_con.png"; //$NON-NLS-1$
+    public static final String IMG_DELETE_CONFIG = "icons/delete_config.png"; //$NON-NLS-1$
+    public static final String IMG_WINDUP = "icons/windup.png"; //$NON-NLS-1$
+    
     // The shared instance
     private static WindupUIPlugin plugin;
-
+    
     /**
      * The constructor
      */
@@ -86,4 +103,50 @@ public class WindupUIPlugin extends AbstractUIPlugin
         WindupUIPlugin.getDefault().getLog().log(
                     new Status(IStatus.ERROR, WindupUIPlugin.PLUGIN_ID, message, exception));
     }
+    
+	public static void log(IStatus status) {
+		WindupCorePlugin.getDefault().getLog().log(status);
+	}
+
+	public static void logErrorMessage(final String message) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
+	}
+
+	public static void logErrorMessage(final String message, final Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e));
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException) {
+			status = ((CoreException) e).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+		}
+		log(status);
+	}
+	
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		reg.put(IMG_RUN_EXC, createImageDescriptor(IMG_RUN_EXC));
+		reg.put(IMG_HELP, createImageDescriptor(IMG_HELP));
+		reg.put(IMG_NEW_CONFIG, createImageDescriptor(IMG_NEW_CONFIG));
+		reg.put(IMG_DELETE_CONFIG, createImageDescriptor(IMG_DELETE_CONFIG));
+		reg.put(IMG_WINDUP, createImageDescriptor(IMG_WINDUP));
+	}
+    
+    private ImageDescriptor createImageDescriptor(String path) {
+    	URL url = FileLocator.find(getBundle(), new Path(path), null);
+        return ImageDescriptor.createFromURL(url);
+    }
+    
+    public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		return null;
+	}
 }

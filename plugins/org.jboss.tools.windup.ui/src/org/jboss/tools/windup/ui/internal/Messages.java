@@ -58,7 +58,32 @@ public class Messages extends NLS
     public static String WindupReportExport_operationExceptionMessage;
     public static String WindupReportExport_errorGeneratingReports;
     public static String WindupReportExport_reGenerateReportBeforeExport;
+    
+    // Launch
+    public static String inputTabName;
+    public static String applicationsToMigrate;
+    public static String launchMode;
+    public static String launchTab;
+    public static String launchTabTitle;
+    public static String launchName;
+    
+    public static String generate_windup_report_for;
+    
+    public static String selectLaunchConfiguration;
+    public static String selectExistinConfiguration;
+    public static String errorConfiguringWindup;
+    
+    // General Info
+    public static String generalInfoTitle;
+    public static String generalInfoDescription;
 
+    // Issues
+    public static String issuesTab;
+    public static String issuesTabTitle;
+    
+    // Editor
+    public static String windupEditorTitle;
+    
     static
     {
         // initialize resource bundle

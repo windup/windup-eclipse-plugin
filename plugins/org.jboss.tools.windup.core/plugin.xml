@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
 <plugin>
    <extension
          id="org.jboss.tools.windup.core.validators.WindupValidator"
@@ -42,7 +41,7 @@
             type="org.eclipse.wst.validation.problemmarker2">
       </super>
    </extension>
-   <extension
+    <extension
          id="hintMarker"
          name="%_hintMarker.name"
          point="org.eclipse.core.resources.markers">

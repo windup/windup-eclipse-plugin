@@ -38,7 +38,7 @@
          id="org.jboss.tools.windup.ui.fragment"
          point="org.eclipse.e4.workbench.model">
       <fragment
-            uri="windup.e4xmi">
+            uri="windup-ui.e4xmi">
       </fragment>
       <processor
             apply="initial"
@@ -110,5 +110,60 @@
               </and>
       </definition>
    </extension>
-
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.jboss.tools.windup.ui.internal.launch.WindupLaunchGroup"
+            id="org.jboss.tools.windup.ui.WindupLaunchConfigurationTabGroup"
+            type="org.jboss.tools.windup.core.WindupLaunchConfigurationType">
+         <launchMode
+               description="%windupLaunch.run"
+               mode="run"
+               perspective="org.jboss.tools.windup.ui.perspective">
+         </launchMode>
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.jboss.tools.windup.core.WindupLaunchConfigurationType"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.WindupLaunchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.jboss.tools.windup.ui.toolbar1">
+            <command
+                  commandId="org.jboss.tools.windup.ui.command.showWindup"
+                  icon="icons/windup.png"
+                  style="push"
+                  tooltip="Open Windup">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.internal.editor.OpenWindupEditorHandler"
+            id="org.jboss.tools.windup.ui.command.showWindup"
+            name="Open Windup">
+      </command>
+   </extension>
+    <extension
+             point="org.eclipse.debug.core.launchConfigurationTypes">
+          <launchConfigurationType
+                sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+                name="%windupLaunch.configType.name"
+                sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
+                delegate="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.launch.WindupLaunchDelegate"
+                modes="run"
+                id="org.jboss.tools.windup.ui.WindupLaunchConfigurationType">
+          </launchConfigurationType>
+     </extension>
 </plugin>
