@@ -4,6 +4,7 @@ package org.jboss.tools.windup.windup;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -187,13 +188,58 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__PARAMETERS = PARAMETERIZED__PARAMETERS;
 
 	/**
+	 * The feature id for the '<em><b>Inputs</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__INPUTS = PARAMETERIZED_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Windup Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__WINDUP_RESULT = PARAMETERIZED_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Windup Home</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__WINDUP_HOME = PARAMETERIZED_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION = PARAMETERIZED_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Source Mode</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__SOURCE_MODE = PARAMETERIZED_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 0;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 5;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -305,6 +351,108 @@ public interface WindupPackage extends EPackage {
 	 */
 	int WINDUP_MODEL_OPERATION_COUNT = 0;
 
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.InputImpl <em>Input</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.InputImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getInput()
+	 * @generated
+	 */
+	int INPUT = 5;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT__NAME = NAMED_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Uri</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT__URI = NAMED_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Input</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT___VALIDATE__DIAGNOSTICCHAIN_MAP = NAMED_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Input</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.WindupResultImpl <em>Result</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.WindupResultImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupResult()
+	 * @generated
+	 */
+	int WINDUP_RESULT = 6;
+
+	/**
+	 * The feature id for the '<em><b>Execution Results</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDUP_RESULT__EXECUTION_RESULTS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Result</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDUP_RESULT_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Result</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDUP_RESULT_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '<em>Execution Results</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.windup.tooling.ExecutionResults
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
+	 * @generated
+	 */
+	int WINDUP_EXECUTION_RESULTS = 7;
+
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.NamedElement <em>Named Element</em>}'.
@@ -346,6 +494,61 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getConfigurationElement();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getInputs <em>Inputs</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Inputs</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getInputs()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_Inputs();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Windup Result</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_WindupResult();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupHome <em>Windup Home</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Windup Home</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getWindupHome()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_WindupHome();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportLocation <em>Generated Report Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generated Report Location</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportLocation()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_GeneratedReportLocation();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode <em>Source Mode</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Source Mode</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_SourceMode();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -409,6 +612,59 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getWindupModel_ConfigurationElements();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Input <em>Input</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Input</em>'.
+	 * @see org.jboss.tools.windup.windup.Input
+	 * @generated
+	 */
+	EClass getInput();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Input#getUri <em>Uri</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Uri</em>'.
+	 * @see org.jboss.tools.windup.windup.Input#getUri()
+	 * @see #getInput()
+	 * @generated
+	 */
+	EAttribute getInput_Uri();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.WindupResult <em>Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Result</em>'.
+	 * @see org.jboss.tools.windup.windup.WindupResult
+	 * @generated
+	 */
+	EClass getWindupResult();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.WindupResult#getExecutionResults <em>Execution Results</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Execution Results</em>'.
+	 * @see org.jboss.tools.windup.windup.WindupResult#getExecutionResults()
+	 * @see #getWindupResult()
+	 * @generated
+	 */
+	EAttribute getWindupResult_ExecutionResults();
+
+	/**
+	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Execution Results</em>'.
+	 * @see org.jboss.windup.tooling.ExecutionResults
+	 * @model instanceClass="org.jboss.windup.tooling.ExecutionResults" serializeable="false"
+	 * @generated
+	 */
+	EDataType getWindupExecutionResults();
 
 	/**
 	 * Returns the factory that creates the instances of the model.

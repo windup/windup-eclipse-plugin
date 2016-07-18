@@ -16,8 +16,10 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 import static org.jboss.tools.windup.ui.internal.Messages.launchTabTitle;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -48,14 +50,19 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 public class WindupConfigurationsTable {
 	
 	private static final String TOOLBAR_ID = "toolbar:org.jboss.tools.windup.toolbar.configurations.table"; //$NON-NLS-1$
+	
+	private static final String SELECTED_CONFIGURATION = "selectedConfiguration";
  
 	@Inject private IEventBroker broker;
 	@Inject private IMenuService menuService;
 	@Inject private ModelService modelService;
 	@Inject private FormToolkit toolkit;
+	@Inject private IEclipsePreferences preferences;
 	
 	private ToolBarManager toolBarManager;
 	private TableViewer tableViewer;
+	
+	private ConfigurationElement selectedConfiguration;
 	
 	@PostConstruct
 	private void create(Composite parent) {
@@ -76,14 +83,17 @@ public class WindupConfigurationsTable {
 		section.setClient(client);
 		
 		createControls(client, section);
+		
+		focus();
 	}
 	
 	private void createControls(Composite parent, Section section) {
 		createToolbar(section);
 		this.tableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		tableViewer.addSelectionChangedListener((e) -> {
-			broker.post(ACTIVE_CONFIG, ((StructuredSelection)e.getSelection()).getFirstElement());
-			broker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
+			this.selectedConfiguration = (ConfigurationElement)((StructuredSelection)e.getSelection()).getFirstElement(); 
+			broker.post(ACTIVE_CONFIG, selectedConfiguration);
+			update();
 		});
 		
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableViewer.getTable());
@@ -104,12 +114,34 @@ public class WindupConfigurationsTable {
 	
 	@Inject
 	@Optional
-	private void configCreated(@UIEventTopic(CONFIG_CREATED) ConfigurationElement config) {
-		tableViewer.setSelection(new StructuredSelection(config), true);
+	private void configCreated(@UIEventTopic(CONFIG_CREATED) ConfigurationElement configuration) {
+		tableViewer.setSelection(new StructuredSelection(configuration), true);
 	}
 	
 	@Inject
 	@Optional
-	private void configDeleted(@UIEventTopic(CONFIG_DELETED) ConfigurationElement config) {
+	private void configDeleted(@UIEventTopic(CONFIG_DELETED) ConfigurationElement configuration) {
+	}
+	
+	@PreDestroy
+	private void dispose() {
+		if (selectedConfiguration != null) {
+			preferences.put(SELECTED_CONFIGURATION, selectedConfiguration.getName());
+		}
+	}
+	
+	private void update() {
+		broker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
+	}
+	
+	private void focus() {
+		String previouslySelected = preferences.get(SELECTED_CONFIGURATION, null);
+		if (previouslySelected != null) {
+			ConfigurationElement configuration = modelService.findConfiguration(previouslySelected);
+			if (configuration != null) {
+				tableViewer.setSelection(new StructuredSelection(configuration), true);
+			}
+		}
+		tableViewer.getTable().setFocus();
 	}
 }

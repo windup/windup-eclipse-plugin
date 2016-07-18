@@ -12,11 +12,21 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import javax.inject.Inject;
 
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.Form;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 
 /**
  * Base tab for Windup's editor.
  */
 public class WindupFormTab extends FormTab {
 	@Inject protected Form editorForm;
+	@Inject protected ConfigurationElement configuration;
+	
+	protected Composite createContainer(Composite parent) {
+		Composite container = toolkit.createComposite(parent);
+		GridLayoutFactory.fillDefaults().applyTo(container);
+		return container;
+	}
 }

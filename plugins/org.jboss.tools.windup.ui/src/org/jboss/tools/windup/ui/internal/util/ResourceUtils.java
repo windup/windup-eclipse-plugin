@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
@@ -64,6 +65,15 @@ public class ResourceUtils {
 			}
 		}
 		return projects;
+	}
+	
+	/**
+	 * @return the platform URI path.
+	 */
+	public static String getProjectURI(IResource resource) {
+		return String.format("platform:/plugin/%s/%s", 
+				resource.getProject().getName(), 
+				resource.getProjectRelativePath().toString());
 	}
 	
 	/**

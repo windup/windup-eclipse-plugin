@@ -15,12 +15,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
@@ -33,12 +34,13 @@ public class FormTab {
 	@Inject protected IMenuService menuService;
 	@Inject protected IEclipseContext context;
 	
-	protected ScrolledForm form;
+	protected Form form;
 
 	@PostConstruct
 	protected void create(Composite parent) {
-		form = toolkit.createScrolledForm(parent);
+		form = toolkit.createForm(parent);
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(form.getBody());
 		BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 			@Override
 			public void run() {

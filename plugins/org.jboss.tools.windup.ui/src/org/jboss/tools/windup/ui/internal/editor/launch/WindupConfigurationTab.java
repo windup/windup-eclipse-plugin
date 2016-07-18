@@ -14,7 +14,9 @@ import static org.jboss.tools.windup.ui.internal.Messages.launchTab;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.WindupFormTab;
 
@@ -32,11 +34,46 @@ public class WindupConfigurationTab extends WindupFormTab {
 	private void createContent(Composite parent) {
 		fillBody(parent);
 	}
-	
-	private void fillBody(Composite parent) {
-		GridLayoutFactory.fillDefaults().extendedMargins(5, 0, 10, 0).applyTo(parent);
+
+	private IEclipseContext createChildContext(Composite parent) {
 		IEclipseContext context = createChildContext();
 		context.set(Composite.class, parent);
-		ContextInjectionFactory.make(GeneralInfoSection.class, context);
+		return context;
+	}
+	
+	private void fillBody(Composite parent) {
+		Composite info = createContainer(parent);
+		ContextInjectionFactory.make(GeneralInfoSection.class, createChildContext(info));
+		Composite options = createContainer(parent);
+		ContextInjectionFactory.make(OptionsSections.class, createChildContext(options));
+		Composite input = createContainer(parent);
+		ContextInjectionFactory.make(InputSection.class, createChildContext(input));
+		
+		FormLayout layout = new FormLayout();
+		layout.marginTop = 10;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.marginBottom = 5;
+		parent.setLayout(layout);
+		
+		FormData data = new FormData();
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		info.setLayoutData(data);
+		
+		data = new FormData();
+		data.top = new FormAttachment(info);
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		options.setLayoutData(data);
+		
+		data = new FormData();
+		data.top = new FormAttachment(options);
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.bottom = new FormAttachment(100);
+		input.setLayoutData(data);
+		
+		form.layout(true, true);
 	}
 }

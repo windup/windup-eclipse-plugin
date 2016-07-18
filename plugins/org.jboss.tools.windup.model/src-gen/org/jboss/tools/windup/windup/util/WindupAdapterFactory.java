@@ -88,6 +88,14 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 				return createWindupModelAdapter();
 			}
 			@Override
+			public Adapter caseInput(Input object) {
+				return createInputAdapter();
+			}
+			@Override
+			public Adapter caseWindupResult(WindupResult object) {
+				return createWindupResultAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -174,6 +182,34 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createWindupModelAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.Input <em>Input</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.jboss.tools.windup.windup.Input
+	 * @generated
+	 */
+	public Adapter createInputAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.WindupResult <em>Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.jboss.tools.windup.windup.WindupResult
+	 * @generated
+	 */
+	public Adapter createWindupResultAdapter() {
 		return null;
 	}
 

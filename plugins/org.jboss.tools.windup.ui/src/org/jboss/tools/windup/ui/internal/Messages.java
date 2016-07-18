@@ -67,6 +67,9 @@ public class Messages extends NLS
     public static String launchTabTitle;
     public static String launchName;
     
+    public static String windupInput;
+    public static String inputDescription;
+    
     public static String generate_windup_report_for;
     
     public static String selectLaunchConfiguration;
@@ -76,7 +79,23 @@ public class Messages extends NLS
     // General Info
     public static String generalInfoTitle;
     public static String generalInfoDescription;
-
+    
+    public static String windupReport;
+    public static String windupHomeLocation;
+    
+    public static String sourceMode;
+    
+    public static String javaRuntimeEnvironment;
+    public static String searchJRE;
+    
+    // Windup Options
+    public static String windupOptions;
+    public static String optionsDescription;
+    
+    public static String generatedReportLocation;
+    public static String browseLabel;
+    public static String generatedReportLocationSearch;
+    
     // Issues
     public static String issuesTab;
     public static String issuesTabTitle;

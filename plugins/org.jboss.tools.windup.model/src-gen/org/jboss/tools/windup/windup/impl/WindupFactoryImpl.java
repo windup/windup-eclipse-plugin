@@ -3,6 +3,7 @@
 package org.jboss.tools.windup.windup.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -61,8 +62,36 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 			case WindupPackage.PARAMETER: return createParameter();
 			case WindupPackage.PARAMETERIZED: return createParameterized();
 			case WindupPackage.WINDUP_MODEL: return createWindupModel();
+			case WindupPackage.INPUT: return createInput();
+			case WindupPackage.WINDUP_RESULT: return createWindupResult();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -114,6 +143,26 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 	public WindupModel createWindupModel() {
 		WindupModelImpl windupModel = new WindupModelImpl();
 		return windupModel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Input createInput() {
+		InputImpl input = new InputImpl();
+		return input;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public WindupResult createWindupResult() {
+		WindupResultImpl windupResult = new WindupResultImpl();
+		return windupResult;
 	}
 
 	/**

@@ -100,6 +100,19 @@ public class WindupSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case WindupPackage.INPUT: {
+				Input input = (Input)theEObject;
+				T result = caseInput(input);
+				if (result == null) result = caseNamedElement(input);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case WindupPackage.WINDUP_RESULT: {
+				WindupResult windupResult = (WindupResult)theEObject;
+				T result = caseWindupResult(windupResult);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -176,6 +189,36 @@ public class WindupSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseWindupModel(WindupModel object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Input</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Input</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseInput(Input object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Result</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Result</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseWindupResult(WindupResult object) {
 		return null;
 	}
 

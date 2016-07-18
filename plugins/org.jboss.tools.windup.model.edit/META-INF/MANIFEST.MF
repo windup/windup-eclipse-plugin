@@ -17,5 +17,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.workspace,
  org.eclipse.emf.ecore.edit,
  org.eclipse.emf.edit.ui,
- com.google.guava
+ com.google.guava,
+ org.jboss.tools.windup.runtime
 Bundle-ActivationPolicy: lazy

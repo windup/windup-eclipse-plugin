@@ -24,8 +24,9 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 /**
  * Handler for running Windup using the active {@link ConfigurationElement}.
  */
-public class RunWindupHanlder {
+public class RunWindupHandler {
 
+	@Inject WindupService windup;
 	private ConfigurationElement configuration;
 	
 	@Inject
@@ -36,10 +37,12 @@ public class RunWindupHanlder {
 	
 	@Execute
 	public void run(WindupService windup) {
+		windup.generateGraph(configuration);
 	}
 	
 	@CanExecute
 	public boolean canExecute() {
-		return configuration != null;
+		// TODO: Anything else we should require?
+		return configuration != null && !configuration.getInputs().isEmpty();
 	}
 }

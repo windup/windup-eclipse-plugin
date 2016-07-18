@@ -17,13 +17,10 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -46,20 +43,9 @@ public class TabStack {
 	protected void create(Composite parent) {
 		this.folder = new CTabFolder(parent, SWT.BOTTOM | SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(folder);
-		folder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) { 
-				CTabItem item = (CTabItem) e.item;
-				TabWrapper tab = tabs.get(item);
-				ContextInjectionFactory.invoke(
-						tab.getObject(), 
-						Focus.class, 
-						tab.getContext());
-			}
-		});
 	}
 	
-	protected <T> T addTab(Class<T> clazz) {
+	protected <T> TabWrapper addTab(Class<T> clazz) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		Composite parent = new Composite(folder, SWT.NONE);
 		parent.setLayout(new FillLayout());
@@ -67,8 +53,9 @@ public class TabStack {
 		IEclipseContext child = createTabContext(parent);
 		child.set(CTabItem.class, item);
 		T object = create(clazz, child);
-		tabs.put(item, new TabWrapper(object, child));
-		return object;
+		TabWrapper wrapper = new TabWrapper(object, child, item);
+		tabs.put(item, wrapper);
+		return wrapper;
 	}
 	
 	protected IEclipseContext createTabContext(Composite parent) {
@@ -86,6 +73,9 @@ public class TabStack {
 		return folder;
 	}
 	
+	protected void closeTab() {
+	}
+	
 	/**
 	 * A wrapper for each child tab.
 	 */
@@ -93,10 +83,12 @@ public class TabStack {
 		
 		private Object object;
 		private IEclipseContext context;
+		private CTabItem item;
 		
-		public TabWrapper(Object object, IEclipseContext context) {
+		public TabWrapper(Object object, IEclipseContext context, CTabItem item) {
 			this.context = context;
 			this.object = object;
+			this.item = item;
 		}
 
 		public Object getObject() {
@@ -105,6 +97,10 @@ public class TabStack {
 		
 		public IEclipseContext getContext() {
 			return context;
+		}
+		
+		public CTabItem getItem() {
+			return item;
 		}
 	}
 }

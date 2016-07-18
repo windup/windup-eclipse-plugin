@@ -67,6 +67,24 @@ public interface WindupFactory extends EFactory {
 	WindupModel createWindupModel();
 
 	/**
+	 * Returns a new object of class '<em>Input</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Input</em>'.
+	 * @generated
+	 */
+	Input createInput();
+
+	/**
+	 * Returns a new object of class '<em>Result</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Result</em>'.
+	 * @generated
+	 */
+	WindupResult createWindupResult();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

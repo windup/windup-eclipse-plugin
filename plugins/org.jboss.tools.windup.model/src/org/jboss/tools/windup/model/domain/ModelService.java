@@ -15,6 +15,7 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -23,6 +24,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.emf.common.util.URI;
@@ -35,9 +37,12 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.jboss.tools.windup.model.Activator;
 import org.jboss.tools.windup.model.util.NameUtil;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
+
+import com.google.common.base.Objects;
 
 /**
  * Service for interacting with Windup's model and editing domain.
@@ -47,6 +52,8 @@ import org.jboss.tools.windup.windup.WindupModel;
 public class ModelService {
 	
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
+	
+	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
 	@Inject private IEventBroker broker; 
 	
@@ -165,6 +172,9 @@ public class ModelService {
 	public void createConfiguration() {
 		String name = NameUtil.generateUniqueConfigurationElementName(model);
 		ConfigurationElement configuration = createConfiguration(name);
+		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
+		configuration.setGeneratedReportLocation(getGeneratedReportLocation(configuration).toOSString());
+		configuration.setSourceMode(true);
 		broker.post(CONFIG_CREATED, configuration);
 	}
 	
@@ -186,5 +196,16 @@ public class ModelService {
 	@PreDestroy
 	private void dispose() {
 		save();
+	}
+	
+	public ConfigurationElement findConfiguration(String name) {
+		Optional<ConfigurationElement> found = model.getConfigurationElements().stream().filter(configuration -> {
+			return Objects.equal(configuration.getName(), name);
+		}).findFirst();
+		return found.isPresent() ? found.get() : null;
+	}
+	
+	public IPath getGeneratedReportLocation(ConfigurationElement configuration) {
+		return reportsDir.append(configuration.getName());
 	}
 }

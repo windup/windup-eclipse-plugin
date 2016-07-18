@@ -52,7 +52,7 @@ public class WindupEditor {
 	private static final String SASH_LEFT = "weightLeft"; //$NON-NLS-1$
 	private static final String SASH_RIGHT = "weightRight"; //$NON-NLS-1$
 	
-	private static final int SASH_LEFT_DEFAULT = 310;
+	private static final int SASH_LEFT_DEFAULT = 238;
 	private static final int SASH_RIGHT_DEFAULT = 685;
 	
 	@Inject private Composite container;
@@ -87,6 +87,7 @@ public class WindupEditor {
 		context.set(Form.class, form);
 		context.set(FormToolkit.class, toolkit);
 		context.set(DataBindingContext.class, bindingContext);
+		context.set(IEclipsePreferences.class, preferences);
 		
 		this.sash = new SashForm(comp, SWT.SMOOTH|SWT.VERTICAL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);

@@ -31,6 +31,11 @@ public interface WindupConstants {
 	String LAUNCH_COMPLETED = "windup/launch/completed";
 	
 	/**
+	 * Windup completed
+	 */
+	String WINDUP_RUN_COMPLETED = "windup/run/completed";
+	
+	/**
 	 * UI Events
 	 */
 	String ACTIVE_CONFIG = "windup/config/selected";

@@ -13,6 +13,8 @@ import org.eclipse.emf.ecore.util.EObjectValidator;
 
 import org.jboss.tools.windup.windup.*;
 
+import org.jboss.windup.tooling.ExecutionResults;
+
 /**
  * <!-- begin-user-doc -->
  * The <b>Validator</b> for the model.
@@ -103,6 +105,12 @@ public class WindupValidator extends EObjectValidator {
 				return validateParameterized((Parameterized)value, diagnostics, context);
 			case WindupPackage.WINDUP_MODEL:
 				return validateWindupModel((WindupModel)value, diagnostics, context);
+			case WindupPackage.INPUT:
+				return validateInput((Input)value, diagnostics, context);
+			case WindupPackage.WINDUP_RESULT:
+				return validateWindupResult((WindupResult)value, diagnostics, context);
+			case WindupPackage.WINDUP_EXECUTION_RESULTS:
+				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -201,6 +209,43 @@ public class WindupValidator extends EObjectValidator {
 	 */
 	public boolean validateWindupModel(WindupModel windupModel, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint(windupModel, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateInput(Input input, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment(input, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(input, diagnostics, context);
+		if (result || diagnostics != null) result &= validateNamedElement_validate(input, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateWindupResult(WindupResult windupResult, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(windupResult, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateWindupExecutionResults(ExecutionResults windupExecutionResults, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
 	}
 
 	/**

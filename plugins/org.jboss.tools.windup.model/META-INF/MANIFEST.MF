@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.transaction,
  org.eclipse.e4.core.services,
  com.google.guava,
- org.eclipse.emf.ecore.xmi
+ org.eclipse.emf.ecore.xmi,
+ org.jboss.tools.windup.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.model,

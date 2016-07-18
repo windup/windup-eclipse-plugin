@@ -187,6 +187,52 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Input} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected InputItemProvider inputItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Input}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createInputAdapter() {
+		if (inputItemProvider == null) {
+			inputItemProvider = new InputItemProvider(this);
+		}
+
+		return inputItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.WindupResult} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected WindupResultItemProvider windupResultItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.WindupResult}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createWindupResultAdapter() {
+		if (windupResultItemProvider == null) {
+			windupResultItemProvider = new WindupResultItemProvider(this);
+		}
+
+		return windupResultItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -290,6 +336,8 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (parameterItemProvider != null) parameterItemProvider.dispose();
 		if (parameterizedItemProvider != null) parameterizedItemProvider.dispose();
 		if (windupModelItemProvider != null) windupModelItemProvider.dispose();
+		if (inputItemProvider != null) inputItemProvider.dispose();
+		if (windupResultItemProvider != null) windupResultItemProvider.dispose();
 	}
 
 }

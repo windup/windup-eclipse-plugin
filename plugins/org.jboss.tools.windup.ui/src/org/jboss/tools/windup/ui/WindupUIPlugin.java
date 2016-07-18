@@ -41,6 +41,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_NEW_CONFIG = "icons/new_con.png"; //$NON-NLS-1$
     public static final String IMG_DELETE_CONFIG = "icons/delete_config.png"; //$NON-NLS-1$
     public static final String IMG_WINDUP = "icons/windup.png"; //$NON-NLS-1$
+    public static final String IMG_JRE = "icons/module_view.png"; //$NON-NLS-1$
+    public static final String IMG_SEARCH = "icons/search.png"; //$NON-NLS-1$
     
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -135,6 +137,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_NEW_CONFIG, createImageDescriptor(IMG_NEW_CONFIG));
 		reg.put(IMG_DELETE_CONFIG, createImageDescriptor(IMG_DELETE_CONFIG));
 		reg.put(IMG_WINDUP, createImageDescriptor(IMG_WINDUP));
+		reg.put(IMG_JRE, createImageDescriptor(IMG_JRE));
+		reg.put(IMG_SEARCH, createImageDescriptor(IMG_SEARCH));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {
