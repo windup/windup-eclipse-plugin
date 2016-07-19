@@ -10,13 +10,22 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor.report;
 
-import javax.annotation.PostConstruct;
+import static org.jboss.tools.windup.model.domain.WindupConstants.WINDUP_RUN_COMPLETED;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.AbstractSection;
+import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.WindupResult;
+
+import com.google.common.base.Objects;
 
 /**
  * Section containing an embedded browser.
@@ -30,5 +39,19 @@ public class BrowserSection extends AbstractSection {
 	protected void createSection(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
+		loadReport();
+	}
+	
+	@Inject
+	@Optional
+	private void updateDynamicTabs(@UIEventTopic(WINDUP_RUN_COMPLETED) ConfigurationElement configuration) {
+		WindupResult result = configuration.getWindupResult();
+		if (Objects.equal(this.configuration, configuration) && result != null) {
+			loadReport();
+		}
+	}
+	
+	private void loadReport() {
+		browser.setUrl(windupService.getReportPath(configuration).toString());
 	}
 }

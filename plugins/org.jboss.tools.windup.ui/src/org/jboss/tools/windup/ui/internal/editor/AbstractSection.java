@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -35,6 +36,7 @@ public abstract class AbstractSection {
 	@Inject protected DataBindingContext bindingContext;
 	@Inject protected ModelService modelService;
 	@Inject protected IEventBroker broker;
+	@Inject protected WindupService windupService;
 	
 	protected Section section;
 	

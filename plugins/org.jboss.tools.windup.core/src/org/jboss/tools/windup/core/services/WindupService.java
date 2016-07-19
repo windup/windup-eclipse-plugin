@@ -476,6 +476,10 @@ public class WindupService
         }
     }
 
+    public IPath getReportPath(ConfigurationElement configuration) {
+    	return ModelService.reportsDir.append(configuration.getName()).append(PROJECT_REPORT_HOME_PAGE);
+    }
+    
     /**
      * <p>
      * Get the location where the report should be stored for the {@link IProject} containing the given {@link IResource}

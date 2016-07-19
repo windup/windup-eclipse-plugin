@@ -41,15 +41,22 @@ public class WindupTabStack extends TabStack {
 	protected void create(Composite parent) {
 		super.create(parent);
 		addTab(WindupConfigurationTab.class);
+		updateTabs();
 		folder.setSelection(0);
-		updateDynamicTabs(this.configuration);
 	}
 	
 	@Inject
 	@Optional
 	private void updateDynamicTabs(@UIEventTopic(WINDUP_RUN_COMPLETED) ConfigurationElement configuration) {
+		if (Objects.equal(this.configuration, configuration)) {
+			updateTabs();
+			folder.setSelection(1);
+		}
+	}
+	
+	private void updateTabs() {
 		WindupResult result = configuration.getWindupResult();
-		if (Objects.equal(this.configuration, configuration) && result != null) {
+		if (result != null) {
 			if (issuesTab == null && reportTab == null) {
 				this.reportTab = addTab(WindupReportTab.class);
 				this.issuesTab = addTab(WindupIssuesTab.class);

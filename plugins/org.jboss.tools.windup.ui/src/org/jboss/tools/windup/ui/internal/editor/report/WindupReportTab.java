@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor.report;
 
-import static org.jboss.tools.windup.ui.internal.Messages.*;
+import static org.jboss.tools.windup.ui.internal.Messages.windupReport;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -23,6 +23,9 @@ import org.jboss.tools.windup.ui.internal.editor.WindupFormTab;
  * Tab for displaying the Windup reports.
  */
 public class WindupReportTab extends WindupFormTab {
+	
+	@SuppressWarnings("unused")
+	private BrowserSection browserSection;
 	
 	@Override
 	protected void createFormContent(Composite parent) {
@@ -44,6 +47,6 @@ public class WindupReportTab extends WindupFormTab {
 		Composite container = createContainer(parent);
 		GridLayoutFactory.fillDefaults().extendedMargins(5, 5, 10, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		ContextInjectionFactory.make(BrowserSection.class, createChildContext(container));
+		this.browserSection = ContextInjectionFactory.make(BrowserSection.class, createChildContext(container));
 	}
 }

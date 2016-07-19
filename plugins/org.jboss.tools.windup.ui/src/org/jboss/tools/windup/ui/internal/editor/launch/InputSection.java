@@ -24,8 +24,10 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.navigator.resources.ResourceToItemsMapper;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 import org.jboss.tools.windup.ui.internal.editor.AbstractSection;
 import org.jboss.tools.windup.windup.Input;
@@ -39,6 +41,17 @@ import com.google.common.base.Objects;
 public class InputSection extends AbstractSection {
 	
 	private CheckboxTreeViewer treeViewer;
+	
+	// this is temp code used for demo/prototyping purposes.
+	protected void fillSection_(Composite parent) {
+		section.setText(windupInput);
+		section.setDescription(inputDescription);
+		CommonViewer viewer = new CommonViewer("org.eclipse.ui.navigator.ProjectExplorer", 
+				parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setMapper(new ResourceToItemsMapper(viewer));
+		viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 200).applyTo(viewer.getTree());
+	}
 
 	@Override
 	protected void fillSection(Composite parent) {
