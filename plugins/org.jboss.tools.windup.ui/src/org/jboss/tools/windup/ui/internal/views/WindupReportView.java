@@ -290,7 +290,9 @@ public class WindupReportView implements IShowInTarget
      */
     public void refresh()
     {
-        this.displayReport(this.currentSelection, true);
+    	if (currentSelection != null) {
+    		this.displayReport(this.currentSelection, true);
+    	}
     }
 
     /**
@@ -337,8 +339,7 @@ public class WindupReportView implements IShowInTarget
      * @param reportPath {@link IPath} to the report to show
      * @param hideMessage <code>true</code> to hide the current message, <code>false</code> to show the message with the report
      */
-    private void showReport(IPath reportPath, boolean hideMessage)
-    {
+    public void showReport(IPath reportPath, boolean hideMessage) {
         this.browser.setUrl(reportPath.toString());
         this.browser.setVisible(true);
         ((GridData) this.browser.getLayoutData()).exclude = false;

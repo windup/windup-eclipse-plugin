@@ -11,6 +11,7 @@
           <children xsi:type="basic:PartSashContainer" xmi:id="_t5VCsDphEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partsashcontainer.editorArea" containerData="6600" horizontal="true"/>
           <children xsi:type="basic:PartStack" xmi:id="_ACfAcDpiEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partstack.bottomRight" containerData="3400">
             <children xsi:type="advanced:Placeholder" xmi:id="_AHnQwDwSEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.placeholder.windupReport" ref="_FoKaIDwQEeabQKKuPTy1jQ"/>
+            <children xsi:type="basic:Part" xmi:id="_1POzcFMyEeavI68HNfKfbQ" elementId="org.jboss.tools.windup.ui.issue.details" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.issues.IssueDetailsView" label="Issue Details" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" closeable="true"/>
           </children>
         </children>
       </children>
@@ -72,5 +73,6 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_3VCkoEkGEeab9oKjuw75kg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_58crwEkGEeab9oKjuw75kg" elementId="org.jboss.tools.windup.ui.addon.markerService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerService"/>
+    <elements xsi:type="application:Addon" xmi:id="_OATG0E71Eea2x-7ba-JCLw" elementId="org.jboss.tools.windup.ui.addon.launchConfigurationService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.LaunchConfigurationService"/>
   </fragments>
 </fragment:ModelFragments>

@@ -96,6 +96,18 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 				return createWindupResultAdapter();
 			}
 			@Override
+			public Adapter caseIssue(Issue object) {
+				return createIssueAdapter();
+			}
+			@Override
+			public Adapter caseHint(Hint object) {
+				return createHintAdapter();
+			}
+			@Override
+			public Adapter caseClassification(Classification object) {
+				return createClassificationAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -210,6 +222,48 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createWindupResultAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.Issue <em>Issue</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.jboss.tools.windup.windup.Issue
+	 * @generated
+	 */
+	public Adapter createIssueAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.jboss.tools.windup.windup.Hint
+	 * @generated
+	 */
+	public Adapter createHintAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.Classification <em>Classification</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.jboss.tools.windup.windup.Classification
+	 * @generated
+	 */
+	public Adapter createClassificationAdapter() {
 		return null;
 	}
 

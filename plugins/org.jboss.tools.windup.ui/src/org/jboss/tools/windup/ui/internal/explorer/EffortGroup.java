@@ -8,19 +8,11 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.navigator;
-
-import javax.annotation.PostConstruct;
-
-import org.eclipse.swt.widgets.Composite;
+package org.jboss.tools.windup.ui.internal.explorer;
 
 /**
- * A navigational tree viewer for Windup results.
+ * Represents an effort grouping.
  */
-public class WindupNavigator {
+public class EffortGroup {
 
-	@PostConstruct
-	private void create(Composite parent) {
-		
-	}
 }

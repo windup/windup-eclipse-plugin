@@ -233,6 +233,75 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Issue} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected IssueItemProvider issueItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Issue}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createIssueAdapter() {
+		if (issueItemProvider == null) {
+			issueItemProvider = new IssueItemProvider(this);
+		}
+
+		return issueItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Hint} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected HintItemProvider hintItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Hint}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createHintAdapter() {
+		if (hintItemProvider == null) {
+			hintItemProvider = new HintItemProvider(this);
+		}
+
+		return hintItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Classification} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ClassificationItemProvider classificationItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Classification}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createClassificationAdapter() {
+		if (classificationItemProvider == null) {
+			classificationItemProvider = new ClassificationItemProvider(this);
+		}
+
+		return classificationItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -338,6 +407,9 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (windupModelItemProvider != null) windupModelItemProvider.dispose();
 		if (inputItemProvider != null) inputItemProvider.dispose();
 		if (windupResultItemProvider != null) windupResultItemProvider.dispose();
+		if (issueItemProvider != null) issueItemProvider.dispose();
+		if (hintItemProvider != null) hintItemProvider.dispose();
+		if (classificationItemProvider != null) classificationItemProvider.dispose();
 	}
 
 }

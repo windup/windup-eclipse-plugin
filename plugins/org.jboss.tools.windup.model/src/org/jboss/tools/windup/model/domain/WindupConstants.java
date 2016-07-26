@@ -39,6 +39,8 @@ public interface WindupConstants {
 	 * UI Events
 	 */
 	String ACTIVE_CONFIG = "windup/config/selected";
+	String SYNCH = "windup/config/synch";
+	String MARKERS_ATTACHED = "windup/issue/markers";
 	
 	/**
 	 * Model Events

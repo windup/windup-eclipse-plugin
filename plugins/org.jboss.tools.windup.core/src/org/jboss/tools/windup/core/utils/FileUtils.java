@@ -1,4 +1,4 @@
-package org.jboss.tools.windup.core.internal.utils;
+package org.jboss.tools.windup.core.utils;
 
 import java.io.File;
 

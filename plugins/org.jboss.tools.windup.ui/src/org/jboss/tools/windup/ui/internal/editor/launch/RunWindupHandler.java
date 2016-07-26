@@ -14,11 +14,15 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.jboss.tools.windup.core.services.WindupService;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
 /**
@@ -37,12 +41,18 @@ public class RunWindupHandler {
 	
 	@Execute
 	public void run(WindupService windup) {
-		windup.generateGraph(configuration);
+		Job job = new Job(Messages.generate_windup_report) {
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+            	return windup.generateGraph(configuration, monitor);               
+            }
+        };
+        job.setUser(true);
+        job.schedule();
 	}
 	
 	@CanExecute
 	public boolean canExecute() {
-		// TODO: Anything else we should require?
 		return configuration != null && !configuration.getInputs().isEmpty();
 	}
 }

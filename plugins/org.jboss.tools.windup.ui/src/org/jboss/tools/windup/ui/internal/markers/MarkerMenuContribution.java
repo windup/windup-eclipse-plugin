@@ -1,5 +1,7 @@
 package org.jboss.tools.windup.ui.internal.markers;
 
+import static org.jboss.tools.windup.core.utils.WindupMarker.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,7 +20,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 
 public class MarkerMenuContribution extends ContributionItem
@@ -66,9 +67,9 @@ public class MarkerMenuContribution extends ContributionItem
         try
         {
             IMarker[] classificationMarkers = ((FileEditorInput) editor.getEditorInput()).getFile()
-                        .findMarkers(WindupCorePlugin.WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_ZERO);
+                        .findMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_ZERO);
             IMarker[] hintMarkers = ((FileEditorInput) editor.getEditorInput()).getFile()
-                        .findMarkers(WindupCorePlugin.WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_ZERO);
+                        .findMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_ZERO);
             Set<IMarker> all = new HashSet<>(Arrays.asList(classificationMarkers));
             all.addAll(Arrays.asList(hintMarkers));
             return all.toArray(new IMarker[all.size()]);

@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.model.domain;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_CREATED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
 
 import java.io.File;
@@ -25,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.emf.common.util.URI;
@@ -36,7 +36,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.jboss.tools.windup.model.Activator;
-import org.jboss.tools.windup.model.util.NameUtil;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.WindupFactory;
@@ -52,6 +51,8 @@ import com.google.common.base.Objects;
 public class ModelService {
 	
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
+	
+    private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
@@ -164,27 +165,26 @@ public class ModelService {
 		return Activator.getDefault().getStateLocation().append("windup.xmi").toFile();
 	}
 	
+	public void deleteConfiguration(String name) {
+		Optional<ConfigurationElement> configuration = model.getConfigurationElements().stream().filter(c -> Objects.equal(name, c.getName())).findFirst();
+		if (configuration.isPresent()) {
+			deleteConfiguration(configuration.get());
+		}
+	}
+	
 	public void deleteConfiguration(ConfigurationElement configuration) {
 		EcoreUtil.delete(configuration);
 		broker.post(CONFIG_DELETED, configuration);
 	}
 	
-	public void createConfiguration() {
-		String name = NameUtil.generateUniqueConfigurationElementName(model);
-		ConfigurationElement configuration = createConfiguration(name);
-		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
-		configuration.setGeneratedReportLocation(getGeneratedReportLocation(configuration).toOSString());
-		configuration.setSourceMode(true);
-		broker.post(CONFIG_CREATED, configuration);
-	}
-	
 	public ConfigurationElement createConfiguration(String name) {
-		return write(() -> {
-			ConfigurationElement config = WindupFactory.eINSTANCE.createConfigurationElement();
-			config.setName(name);
-			model.getConfigurationElements().add(config);
-			return config;
-		});
+		ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
+		configuration.setName(name);
+		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
+		configuration.setGeneratedReportLocation(getGeneratedReportBaseLocation(configuration).toOSString());
+		configuration.setSourceMode(true);
+		model.getConfigurationElements().add(configuration);
+		return configuration;
 	}
 	
 	public void addDirtyListener(Consumer<Boolean> runner) {
@@ -205,7 +205,11 @@ public class ModelService {
 		return found.isPresent() ? found.get() : null;
 	}
 	
-	public IPath getGeneratedReportLocation(ConfigurationElement configuration) {
-		return reportsDir.append(configuration.getName());
+	public IPath getGeneratedReportHomeLocation(ConfigurationElement configuration) {
+		return new Path(configuration.getGeneratedReportLocation().concat(PROJECT_REPORT_HOME_PAGE));
+	}
+	
+	public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration) {
+		return reportsDir.append(configuration.getName().replaceAll("\\s+", "").concat(File.separator));
 	}
 }

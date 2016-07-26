@@ -7,6 +7,13 @@
             name="%category.windup.name"
             id="org.jboss.tools.windup.ui.view.category.windup">
       </category>
+      <view
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorer"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.explorer"
+            name="Issue Explorer">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -113,9 +120,9 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.jboss.tools.windup.ui.internal.launch.WindupLaunchGroup"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.launch.WindupLaunchGroup"
             id="org.jboss.tools.windup.ui.WindupLaunchConfigurationTabGroup"
-            type="org.jboss.tools.windup.core.WindupLaunchConfigurationType">
+            type="org.jboss.tools.windup.ui.WindupLaunchConfigurationType">
          <launchMode
                description="%windupLaunch.run"
                mode="run"
@@ -126,9 +133,9 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="org.jboss.tools.windup.core.WindupLaunchConfigurationType"
+            configTypeID="org.jboss.tools.windup.ui.WindupLaunchConfigurationType"
             icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.WindupLaunchConfigurationTypeImage">
+            id="org.jboss.tools.windup.ui.WindupLaunchConfigurationType">
       </launchConfigurationTypeImage>
    </extension>
    <extension
@@ -166,4 +173,79 @@
                 id="org.jboss.tools.windup.ui.WindupLaunchConfigurationType">
           </launchConfigurationType>
      </extension>
+    <extension
+          point="org.eclipse.ui.navigator.navigatorContent">
+       <navigatorContent
+             activeByDefault="true"
+             contentProvider="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider"
+             icon="icons/windup.png"
+             id="org.jboss.tools.windup.ui.explorer.WindupExplorerContentProvider"
+             labelProvider="org.jboss.tools.windup.ui.internal.explorer.IssueExplorerLabelProvider"
+             name="Windup Explorer Content Provider"
+             priority="highest">
+          <triggerPoints>
+             <adapt
+                   type="org.eclipse.core.resources.IResource">
+             </adapt>
+             <adapt
+                   type="org.jboss.tools.windup.ui.internal.explorer.WindupGroup">
+             </adapt>
+             <adapt
+                   type="org.jboss.tools.windup.windup.Issue">
+             </adapt>
+          </triggerPoints>
+          <actionProvider
+                class="org.jboss.tools.windup.ui.internal.explorer.IssueActionProvider"
+                priority="highest">
+             <enablement>
+                <or>
+                   <adapt
+                         type="org.eclipse.core.resources.IResource">
+                   </adapt>
+                   <adapt
+                         type="org.jboss.tools.windup.ui.internal.explorer.IssueGroupNode">
+                   </adapt></or></enablement>
+          </actionProvider>
+       </navigatorContent>
+    </extension>
+    <extension
+          point="org.eclipse.ui.navigator.viewer">
+       <viewer
+             viewerId="org.jboss.tools.windup.ui.explorer">
+          <options>
+             <property
+                   name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
+                   value="true">
+             </property>
+             <property
+                   name="org.eclipse.ui.navigator.hideCollapseAllAction"
+                   value="true">
+             </property>
+          </options>
+       </viewer>
+       <viewerContentBinding
+             viewerId="org.jboss.tools.windup.ui.explorer">
+          <includes>
+             <contentExtension
+                   isRoot="true"
+                   pattern="org.jboss.tools.windup.ui.*">
+             </contentExtension></includes>
+       </viewerContentBinding>
+       <viewerActionBinding
+             viewerId="org.jboss.tools.windup.ui.explorer">
+          <includes>
+             <actionExtension
+                   pattern="org.jboss.tools.windup.ui.*">
+             </actionExtension></includes>
+       </viewerActionBinding>
+    </extension>
+    <extension
+          point="org.eclipse.ui.perspectiveExtensions">
+       <perspectiveExtension
+             targetID="*">
+          <viewShortcut
+                id="org.jboss.tools.windup.ui.explorer">
+          </viewShortcut>
+       </perspectiveExtension>
+    </extension>
 </plugin>

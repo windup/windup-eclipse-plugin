@@ -29,6 +29,7 @@ public class WindupPerspective {
 	public static final String ID = "org.jboss.tools.windup.ui.perspective";
 	
 	private static final String TOP_LEFT = "org.jboss.tools.windup.ui.partstack.topLeft";
+	public static final String ISSUE_EXPLORER = "org.jboss.tools.windup.ui.explorer";
 	public static final String EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer";
 	private static final String NAVIGATOR = "org.eclipse.ui.views.ResourceNavigator";
 	
@@ -58,8 +59,9 @@ public class WindupPerspective {
 	
 	private void initTopLeft(MPerspective perspective) {
 		MPartStack stack = (MPartStack)modelService.find(TOP_LEFT, perspective);
-		MPlaceholder placeholder = createPlaceholder(stack, EXPLORER);
+		MPlaceholder placeholder = createPlaceholder(stack, ISSUE_EXPLORER);
 		stack.setSelectedElement(placeholder);
+		createPlaceholder(stack, EXPLORER);
 		createPlaceholder(stack, NAVIGATOR);
 	}
 	

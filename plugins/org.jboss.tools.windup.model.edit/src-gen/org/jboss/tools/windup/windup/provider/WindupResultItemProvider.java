@@ -63,6 +63,7 @@ public class WindupResultItemProvider
 			super.getPropertyDescriptors(object);
 
 			addExecutionResultsPropertyDescriptor(object);
+			addIssuesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -85,6 +86,28 @@ public class WindupResultItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Issues feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIssuesPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_WindupResult_issues_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_WindupResult_issues_feature", "_UI_WindupResult_type"),
+				 WindupPackage.eINSTANCE.getWindupResult_Issues(),
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}

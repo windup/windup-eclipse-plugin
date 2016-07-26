@@ -13,8 +13,11 @@ import org.eclipse.emf.ecore.EValidator;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.NamedElement;
 import org.jboss.tools.windup.windup.Parameter;
 import org.jboss.tools.windup.windup.Parameterized;
@@ -24,6 +27,8 @@ import org.jboss.tools.windup.windup.WindupPackage;
 import org.jboss.tools.windup.windup.WindupResult;
 
 import org.jboss.tools.windup.windup.util.WindupValidator;
+
+import org.jboss.windup.reporting.model.Severity;
 
 import org.jboss.windup.tooling.ExecutionResults;
 
@@ -88,7 +93,35 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass issueEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass hintEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass classificationEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EDataType windupExecutionResultsEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType severityEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -336,8 +369,89 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getWindupResult_Issues() {
+		return (EReference)windupResultEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getIssue() {
+		return issueEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIssue_Uri() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIssue_ElementId() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIssue_IssueId() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIssue_Severity() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getHint() {
+		return hintEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getClassification() {
+		return classificationEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getSeverity() {
+		return severityEDataType;
 	}
 
 	/**
@@ -393,9 +507,21 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		windupResultEClass = createEClass(WINDUP_RESULT);
 		createEAttribute(windupResultEClass, WINDUP_RESULT__EXECUTION_RESULTS);
+		createEReference(windupResultEClass, WINDUP_RESULT__ISSUES);
+
+		issueEClass = createEClass(ISSUE);
+		createEAttribute(issueEClass, ISSUE__URI);
+		createEAttribute(issueEClass, ISSUE__ELEMENT_ID);
+		createEAttribute(issueEClass, ISSUE__ISSUE_ID);
+		createEAttribute(issueEClass, ISSUE__SEVERITY);
+
+		hintEClass = createEClass(HINT);
+
+		classificationEClass = createEClass(CLASSIFICATION);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
+		severityEDataType = createEDataType(SEVERITY);
 	}
 
 	/**
@@ -430,6 +556,9 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		parameterEClass.getESuperTypes().add(this.getNamedElement());
 		parameterizedEClass.getESuperTypes().add(this.getNamedElement());
 		inputEClass.getESuperTypes().add(this.getNamedElement());
+		issueEClass.getESuperTypes().add(this.getNamedElement());
+		hintEClass.getESuperTypes().add(this.getIssue());
+		classificationEClass.getESuperTypes().add(this.getIssue());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(namedElementEClass, NamedElement.class, "NamedElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -465,9 +594,21 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		initEClass(windupResultEClass, WindupResult.class, "WindupResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getWindupResult_ExecutionResults(), this.getWindupExecutionResults(), "executionResults", null, 0, 1, WindupResult.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getWindupResult_Issues(), this.getIssue(), null, "issues", null, 0, -1, WindupResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(issueEClass, Issue.class, "Issue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getIssue_Uri(), ecorePackage.getEString(), "uri", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_IssueId(), ecorePackage.getEString(), "issueId", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_Severity(), this.getSeverity(), "severity", null, 0, 1, Issue.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(hintEClass, Hint.class, "Hint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(classificationEClass, Classification.class, "Classification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(severityEDataType, Severity.class, "Severity", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

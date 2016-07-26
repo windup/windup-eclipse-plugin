@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.jboss.tools.windup.model.edit;singleton:=true
 Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: org.jboss.tools.windup.windup.provider.WindupEditPlugin$Implementation
+Bundle-Activator: org.jboss.tools.windup.model.edit.domain.WindupEditPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -18,5 +18,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore.edit,
  org.eclipse.emf.edit.ui,
  com.google.guava,
- org.jboss.tools.windup.runtime
+ org.jboss.tools.windup.runtime,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.ui.di,
+ org.eclipse.jdt.core
 Bundle-ActivationPolicy: lazy

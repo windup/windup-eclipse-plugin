@@ -14,7 +14,7 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLET
 
 import javax.inject.Inject;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -22,7 +22,9 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 
 /**
  * Service for view related functionality.
@@ -31,6 +33,7 @@ public class ViewService {
 
 	@Inject private EPartService partService;
 	@Inject private MApplication application;
+	@Inject private ModelService modelService;
 	
 	/**
 	 * @return the activated {@link WindupReportView}.
@@ -45,7 +48,8 @@ public class ViewService {
 	
 	@Inject
 	@Optional
-	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ILaunchConfiguration configuration) {
-		activateWindupReportView().updateConfiguration(configuration);
+	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
+		String url = modelService.getGeneratedReportHomeLocation(configuration).toOSString();
+		activateWindupReportView().showReport(new Path(url), true);
 	}
 }

@@ -19,6 +19,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 public class NewWindupConfigurationHandler {
 	@Execute
 	public void run(ModelService modelService) {
-		modelService.createConfiguration();
+		System.out.println("NewWindupConfigurationHandler...");
+		//modelService.createConfiguration();
 	}
 }

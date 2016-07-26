@@ -10,20 +10,25 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
+import javax.inject.Inject;
+
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.launch.input.WindupInputTab;
 
 /**
  * The group of Windup launch configuration tabs.
  */
 public class WindupLaunchGroup extends AbstractLaunchConfigurationTabGroup {
+	
+	@Inject private ModelService modelService;
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new WindupInputTab()
+			new WindupInputTab(modelService)
 		};
 		setTabs(tabs);
 	}

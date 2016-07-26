@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -33,6 +34,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Input;
+import org.jboss.tools.windup.windup.WindupFactory;
 
 /**
  * The tab where the user specifies the input to analyze by Windup.
@@ -42,6 +47,13 @@ public class WindupInputTab extends AbstractJavaMainTab {
 	
 	private static final String ID = "org.jboss.tools.windup.ui.launch.WindupSourceTab";
 
+	private ModelService modelService;
+	private ConfigurationElement configuration;
+	
+	public WindupInputTab(ModelService modelService) {
+		this.modelService = modelService;
+	}
+	
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -54,19 +66,28 @@ public class WindupInputTab extends AbstractJavaMainTab {
 	}
 	
 	@Override
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+	public void setDefaults(ILaunchConfigurationWorkingCopy launchConfig) {
+		initializeConfiguration(launchConfig);
 		IJavaElement javaElement = getContext();
 		if (javaElement != null) {
-			initializeJavaProject(javaElement, configuration);
+			initializeJavaProject(javaElement, launchConfig);
 		}
 		else {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, DEFAULT);
+			launchConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, DEFAULT);
 		}
 	}
-
+	
 	@Override
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
+	public void performApply(ILaunchConfigurationWorkingCopy launchConfig) {
+		configuration.setName(launchConfig.getName());
+		configuration.getInputs().clear();
+		if (getJavaProject() != null) {
+			URI uri = URI.createPlatformPluginURI(getJavaProject().getProject().getFullPath().toString(), false);
+			Input input = WindupFactory.eINSTANCE.createInput();
+			input.setUri(uri.toString());
+			configuration.getInputs().add(input);
+		}
+		launchConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
 	}
 
 	@Override
@@ -80,7 +101,7 @@ public class WindupInputTab extends AbstractJavaMainTab {
 	}
 
 	@Override
-	public boolean isValid(ILaunchConfiguration config) {
+	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
 		String name = fProjText.getText().trim();
@@ -109,6 +130,15 @@ public class WindupInputTab extends AbstractJavaMainTab {
 	}
 	
 	@Override
-	public void initializeFrom(ILaunchConfiguration config) {
+	public void initializeFrom(ILaunchConfiguration launchConfig) {
+		initializeConfiguration(launchConfig);
+		super.initializeFrom(launchConfig);
+	}
+	
+	private void initializeConfiguration(ILaunchConfiguration launchConfig) {
+		this.configuration = modelService.findConfiguration(launchConfig.getName());
+		if (configuration == null) {
+			this.configuration = modelService.createConfiguration(launchConfig.getName());
+		}
 	}
 }

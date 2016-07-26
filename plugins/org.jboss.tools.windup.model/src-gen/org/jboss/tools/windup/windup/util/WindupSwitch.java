@@ -113,6 +113,29 @@ public class WindupSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case WindupPackage.ISSUE: {
+				Issue issue = (Issue)theEObject;
+				T result = caseIssue(issue);
+				if (result == null) result = caseNamedElement(issue);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case WindupPackage.HINT: {
+				Hint hint = (Hint)theEObject;
+				T result = caseHint(hint);
+				if (result == null) result = caseIssue(hint);
+				if (result == null) result = caseNamedElement(hint);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case WindupPackage.CLASSIFICATION: {
+				Classification classification = (Classification)theEObject;
+				T result = caseClassification(classification);
+				if (result == null) result = caseIssue(classification);
+				if (result == null) result = caseNamedElement(classification);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -219,6 +242,51 @@ public class WindupSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseWindupResult(WindupResult object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Issue</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Issue</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseIssue(Issue object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Hint</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Hint</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseHint(Hint object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Classification</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Classification</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseClassification(Classification object) {
 		return null;
 	}
 

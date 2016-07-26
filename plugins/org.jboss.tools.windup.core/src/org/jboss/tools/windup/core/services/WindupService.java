@@ -40,7 +40,7 @@ import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
 import org.jboss.tools.windup.core.internal.Messages;
-import org.jboss.tools.windup.core.internal.utils.FileUtils;
+import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
@@ -168,25 +168,25 @@ public class WindupService
     	return generateGraph(project, null);
     }
     
-    public IStatus generateGraph(ConfigurationElement configuration) {
-        IProgressMonitor progress = new NullProgressMonitor();
-
-        // start the task
-        progress.beginTask(Messages.generate_windup_reports, IProgressMonitor.UNKNOWN);
+    public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
+        progress.subTask(Messages.generate_windup_reports);
         IStatus status = null;
 
         try
         {
+        	progress.subTask(Messages.startingWindup);
             WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
             ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
         	
-            IPath outputPath = modelService.getGeneratedReportLocation(configuration);
+            IPath outputPath = modelService.getGeneratedReportBaseLocation(configuration);
             File outputDir = outputPath.toFile();
 
-            // clear out existing report
+            // clear out eChexisting report
             progress.subTask(Messages.removing_old_report);
             FileUtils.delete(outputDir, true);
             
+            progress.subTask(Messages.generate_windup_reports);
+
             /*ExecutionBuilderSetOptions options = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
             	.setInput(getInputPath(configuration.getInputs().get(0)))
             	.setOutput(outputDir.toPath())
@@ -221,11 +221,6 @@ public class WindupService
             WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
             result.setExecutionResults(results);
             configuration.setWindupResult(result);
-            
-            List<Hint> hints = Lists.newArrayList(result.getExecutionResults().getHints());
-			List<Classification> classifications = Lists.newArrayList(result.getExecutionResults().getClassifications());
-			List<ReportLink> links = Lists.newArrayList(result.getExecutionResults().getReportLinks());
-			System.out.println();
             
             broker.post(WindupConstants.WINDUP_RUN_COMPLETED, configuration);
             status = Status.OK_STATUS;

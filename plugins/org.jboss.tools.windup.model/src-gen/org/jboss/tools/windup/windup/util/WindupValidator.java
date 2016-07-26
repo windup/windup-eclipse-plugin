@@ -13,6 +13,8 @@ import org.eclipse.emf.ecore.util.EObjectValidator;
 
 import org.jboss.tools.windup.windup.*;
 
+import org.jboss.windup.reporting.model.Severity;
+
 import org.jboss.windup.tooling.ExecutionResults;
 
 /**
@@ -109,8 +111,16 @@ public class WindupValidator extends EObjectValidator {
 				return validateInput((Input)value, diagnostics, context);
 			case WindupPackage.WINDUP_RESULT:
 				return validateWindupResult((WindupResult)value, diagnostics, context);
+			case WindupPackage.ISSUE:
+				return validateIssue((Issue)value, diagnostics, context);
+			case WindupPackage.HINT:
+				return validateHint((Hint)value, diagnostics, context);
+			case WindupPackage.CLASSIFICATION:
+				return validateClassification((Classification)value, diagnostics, context);
 			case WindupPackage.WINDUP_EXECUTION_RESULTS:
 				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
+			case WindupPackage.SEVERITY:
+				return validateSeverity((Severity)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -244,7 +254,73 @@ public class WindupValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean validateIssue(Issue issue, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment(issue, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(issue, diagnostics, context);
+		if (result || diagnostics != null) result &= validateNamedElement_validate(issue, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateHint(Hint hint, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment(hint, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(hint, diagnostics, context);
+		if (result || diagnostics != null) result &= validateNamedElement_validate(hint, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateClassification(Classification classification, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment(classification, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(classification, diagnostics, context);
+		if (result || diagnostics != null) result &= validateNamedElement_validate(classification, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean validateWindupExecutionResults(ExecutionResults windupExecutionResults, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateSeverity(Severity severity, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 
