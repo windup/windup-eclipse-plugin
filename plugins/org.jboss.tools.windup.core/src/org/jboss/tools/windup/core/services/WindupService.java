@@ -11,7 +11,6 @@
 package org.jboss.tools.windup.core.services;
 
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +23,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -41,13 +39,11 @@ import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.utils.FileUtils;
+import org.jboss.tools.windup.core.utils.ResourceUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.Input;
-import org.jboss.tools.windup.windup.WindupFactory;
-import org.jboss.tools.windup.windup.WindupResult;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -181,7 +177,7 @@ public class WindupService
             IPath outputPath = modelService.getGeneratedReportBaseLocation(configuration);
             File outputDir = outputPath.toFile();
 
-            // clear out eChexisting report
+            // clear out existing report
             progress.subTask(Messages.removing_old_report);
             FileUtils.delete(outputDir, true);
             
@@ -208,9 +204,9 @@ public class WindupService
             } catch (Exception e) {
             	WindupCorePlugin.log(e);
             }*/
-            
+
             ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
-                    .setInput(getInputPath(configuration.getInputs().get(0)))
+                    .setInput(ResourceUtils.computePath(configuration.getInputs().get(0).getUri()))
                     .setOutput(outputDir.toPath())
                     .setProgressMonitor(windupProgressMonitor)
                     .setOption(SourceModeOption.NAME, true)
@@ -218,10 +214,7 @@ public class WindupService
                     .ignore("\\.class$")
                     .execute();
             
-            WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
-            result.setExecutionResults(results);
-            configuration.setWindupResult(result);
-            
+            modelService.populateConfiguration(configuration, results);
             broker.post(WindupConstants.WINDUP_RUN_COMPLETED, configuration);
             status = Status.OK_STATUS;
         }
@@ -237,19 +230,6 @@ public class WindupService
         }
 
         return status;
-    }
-    
-    private Path getInputPath(Input input) {
-    	URL resUrl;
-		try {
-			resUrl = new URL(input.getUri().replace("platform:/plugin", "platform:/resource"));
-			URL url = FileLocator.toFileURL(resUrl);
-			File temp = new File(url.toURI());
-			return temp.toPath();
-		} catch (Exception e) {
-			WindupCorePlugin.log(e);
-		}
-		return null;
     }
     
     /**

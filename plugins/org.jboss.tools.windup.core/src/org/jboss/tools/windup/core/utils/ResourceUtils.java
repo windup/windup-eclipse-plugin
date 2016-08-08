@@ -8,8 +8,10 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.util;
+package org.jboss.tools.windup.core.utils;
 
+import java.io.File;
+import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,29 +21,19 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
+import org.jboss.tools.windup.core.WindupCorePlugin;
 
 /**
  * Utility for working with the Eclipse workspace resources.
  */
 public class ResourceUtils {
 
-	/**
-	 * Returns the {@link IProject} associated with the given editor's input.
-	 */
-	public static IProject getProjectFromEditor(IEditorPart editor) {
-		IEditorInput input = editor.getEditorInput();
-		if (!(input instanceof IFileEditorInput)) {
-			return null;
-		}
-		return ((IFileEditorInput)input).getFile().getProject();
-	}
-	
 	/**
 	 * Returns a list of {@link IProject}s associated with the given selection.
 	 */
@@ -68,20 +60,33 @@ public class ResourceUtils {
 	}
 	
 	/**
-	 * @return the platform URI path.
-	 */
-	public static String getProjectURI(IResource resource) {
-		return String.format("platform:/plugin/%s/%s", 
-				resource.getProject().getName(), 
-				resource.getProjectRelativePath().toString());
-	}
-	
-	/**
 	 * @return the project in the workspace matching the specified name.
 	 */
 	public static IProject findProject(String projectName) {
 		return Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(proj -> {
 			return Collator.getInstance().equals(proj.getName(), projectName);
 		}).findFirst().get();
+	}
+	
+	public static IResource findResource(String uriString) {
+		URI uri = URI.createURI(uriString);
+		Path path = new Path(uri.toPlatformString(false));
+		return ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+	}
+	
+	public static URI createPlatformPluginURI(IResource resource) {
+		return URI.createPlatformPluginURI(resource.getFullPath().toString(), false);
+	}
+	
+	public static java.nio.file.Path computePath(String platformPluginUri) {
+		try {
+			URL resUrl = new URL(platformPluginUri.replace("platform:/plugin", "platform:/resource"));
+			URL url = FileLocator.toFileURL(resUrl);
+			File temp = new File(url.toURI());
+			return temp.toPath();
+		} catch (Exception e) {
+			WindupCorePlugin.log(e);
+		}
+		return null;
 	}
 }

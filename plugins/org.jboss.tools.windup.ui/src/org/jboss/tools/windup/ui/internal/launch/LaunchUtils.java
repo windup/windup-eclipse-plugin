@@ -10,14 +10,13 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.*;
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-
+import static org.jboss.tools.windup.core.utils.ResourceUtils.getProjectsFromSelection;
+import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
+import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_TYPE;
 import static org.jboss.tools.windup.ui.internal.Messages.errorConfiguringWindup;
 import static org.jboss.tools.windup.ui.internal.Messages.selectExistinConfiguration;
 import static org.jboss.tools.windup.ui.internal.Messages.selectLaunchConfiguration;
-import static org.jboss.tools.windup.ui.internal.util.ResourceUtils.getProjectFromEditor;
-import static org.jboss.tools.windup.ui.internal.util.ResourceUtils.getProjectsFromSelection;
 
 import java.text.Collator;
 import java.util.List;
@@ -34,7 +33,9 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 
@@ -51,8 +52,16 @@ public class LaunchUtils {
 	}
 	
 	public static void launch(IEditorPart editor, String mode) {
-		IProject project = getProjectFromEditor(editor).getProject();
+		IProject project = LaunchUtils.getProjectFromEditor(editor).getProject();
 		launch(project, mode);
+	}
+	
+	public static IProject getProjectFromEditor(IEditorPart editor) {
+		IEditorInput input = editor.getEditorInput();
+		if (!(input instanceof IFileEditorInput)) {
+			return null;
+		}
+		return ((IFileEditorInput)input).getFile().getProject();
 	}
 	
 	private static void launch(IProject project, String mode) {

@@ -15,7 +15,6 @@ import static org.jboss.tools.windup.ui.internal.Messages.windupInput;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -29,6 +28,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.jboss.tools.windup.core.utils.ResourceUtils;
 import org.jboss.tools.windup.ui.internal.editor.AbstractSection;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.WindupFactory;
@@ -83,9 +83,7 @@ public class InputSection extends AbstractSection {
 	 */
 	private void initCurrentSelection() {
 		for (Input input : configuration.getInputs()) {
-			URI uri = URI.createURI(input.getUri());
-			Path path = new Path(uri.toPlatformString(false));
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			IResource resource = ResourceUtils.findResource(input.getUri());
 			treeViewer.setSubtreeChecked(resource, true);
 		}
 	}
@@ -123,7 +121,7 @@ public class InputSection extends AbstractSection {
 			IResource resource = (IResource)selection;
 			IResource checkedParent = getCheckedParent(resource);
 			resource = checkedParent != null ? checkedParent : resource;
-			URI uri = URI.createPlatformPluginURI(resource.getFullPath().toString(), false);
+			URI uri = ResourceUtils.createPlatformPluginURI(resource);
 			boolean exists = configuration.getInputs().stream().anyMatch(input -> {
 				return Objects.equal(input.getUri(), uri.toString());
 			});

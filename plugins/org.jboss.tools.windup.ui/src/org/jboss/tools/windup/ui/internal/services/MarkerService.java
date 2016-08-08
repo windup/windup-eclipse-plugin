@@ -10,15 +10,27 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
+import static org.jboss.tools.windup.core.utils.WindupMarker.CLASSIFICATION;
+import static org.jboss.tools.windup.core.utils.WindupMarker.COLUMN;
+import static org.jboss.tools.windup.core.utils.WindupMarker.DESCRIPTION;
+import static org.jboss.tools.windup.core.utils.WindupMarker.EFFORT;
 import static org.jboss.tools.windup.core.utils.WindupMarker.ELEMENT_ID;
+import static org.jboss.tools.windup.core.utils.WindupMarker.HINT;
+import static org.jboss.tools.windup.core.utils.WindupMarker.LENGTH;
+import static org.jboss.tools.windup.core.utils.WindupMarker.LINE;
+import static org.jboss.tools.windup.core.utils.WindupMarker.RULE_ID;
+import static org.jboss.tools.windup.core.utils.WindupMarker.SOURCE_SNIPPET;
+import static org.jboss.tools.windup.core.utils.WindupMarker.TITLE;
+import static org.jboss.tools.windup.core.utils.WindupMarker.URI_ID;
+import static org.jboss.tools.windup.core.utils.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.core.utils.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
 import static org.jboss.tools.windup.core.utils.WindupMarker.WINDUP_HINT_MARKER_ID;
 import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_ATTACHED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -28,88 +40,95 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
+import org.jboss.tools.windup.core.utils.ResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
+import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
-import org.jboss.windup.tooling.data.Classification;
-import org.jboss.windup.tooling.data.Hint;
+import org.jboss.tools.windup.windup.Issue;
 
-import com.google.common.collect.Sets;
+import com.google.inject.Singleton;
 
 /**
  * Service for annotating eclipse {@link IResource}s with Windup's generated hints and classifications.
  */
+@Singleton
+@Creatable
 public class MarkerService {
 	
 	@Inject private IEventBroker broker;
 	
 	@Inject
 	@Optional
-	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
+	private void updateMarkers(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
 		try {
-			deleteOldMarkers(configuration);
+			deleteWindpuMarkers(configuration);
 			populateHints(configuration);
-			populateClassifications(configuration);
-			broker.post(MARKERS_ATTACHED, true);
+			broker.post(MARKERS_CHANGED, true);
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
 	}
 	
 	private void populateHints(ConfigurationElement configuration) throws CoreException {
-		Set<String> paths = Sets.newHashSet();
-		for (Hint hint : configuration.getWindupResult().getExecutionResults().getHints()) {
-			String absolutePath = hint.getFile().getAbsolutePath();
+		for (Issue issue : configuration.getWindupResult().getIssues()) {
+			String absolutePath = issue.getFileAbsolutePath();
 			IFile resource = getResource(absolutePath);
-			if (paths.add(absolutePath)) {
-                resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
-			}
-			IMarker marker = resource.createMarker(WINDUP_HINT_MARKER_ID);
+			String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
+			IMarker marker = resource.createMarker(type);
 			IJavaElement element = JavaCore.create(resource);
 			if (element != null) {
 				marker.setAttribute(ELEMENT_ID, element.getHandleIdentifier());
 			}
-			marker.setAttribute(IMarker.MESSAGE, hint.getHint());
-			marker.setAttribute(IMarker.SEVERITY, MarkerUtil.convertSeverity(hint.getSeverity()));
-			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+			marker.setAttribute(URI_ID, EcoreUtil.getURI(issue).toString());
+			marker.setAttribute(IMarker.SEVERITY, MarkerUtil.convertSeverity(issue.getSeverity()));
+			marker.setAttribute(SEVERITY, issue.getSeverity());
+            marker.setAttribute(RULE_ID, issue.getRuleId());
+            marker.setAttribute(EFFORT, issue.getEffort());
+			
+			if (issue instanceof Hint) {
+				Hint hint = (Hint)issue;
+				marker.setAttribute(IMarker.MESSAGE, hint.getHint());
+				marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+				
+				marker.setAttribute(TITLE, hint.getTitle());
+				marker.setAttribute(HINT, hint.getHint());
+				marker.setAttribute(LINE, hint.getLineNumber());
+				marker.setAttribute(COLUMN, hint.getColumn());
+				marker.setAttribute(LENGTH, hint.getLength());
+				marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
+				
+				populateLinePosition(marker, hint.getLineNumber(), new File(hint.getFileAbsolutePath()));
+			}
+			
+			else {
+				Classification classification = (Classification)issue;
+				marker.setAttribute(IMarker.MESSAGE, classification.getClassification());
+				marker.setAttribute(CLASSIFICATION, classification.getClassification());
+				marker.setAttribute(DESCRIPTION, classification.getDescription());
+				
+				marker.setAttribute(IMarker.LINE_NUMBER, 1);
+				marker.setAttribute(IMarker.CHAR_START, 0);
+				marker.setAttribute(IMarker.CHAR_END, 0);
+			}
+			
             marker.setAttribute(IMarker.USER_EDITABLE, true);
-            populateLinePosition(marker, hint);
 		}
 	}
 	
-	private void populateClassifications(ConfigurationElement configuration) throws CoreException {
-		Set<String> paths = Sets.newHashSet();
-		for (Classification classification : configuration.getWindupResult().getExecutionResults().getClassifications()) {
-			String absolutePath = classification.getFile().getAbsolutePath();
-			IFile resource = getResource(absolutePath);
-			if (paths.add(absolutePath)) {
-                //resource.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
-			}
-			IMarker marker = resource.createMarker(WINDUP_CLASSIFICATION_MARKER_ID);
-			IJavaElement element = JavaCore.create(resource);
-			if (element != null) {
-				//marker.setAttribute(ELEMENT_ID, element.getHandleIdentifier());
-			}
-			marker.setAttribute(IMarker.SEVERITY, MarkerUtil.convertSeverity(classification.getSeverity()));
-			marker.setAttribute(IMarker.LINE_NUMBER, 1);
-			marker.setAttribute(IMarker.CHAR_START, 0);
-			marker.setAttribute(IMarker.CHAR_END, 0);
-		}
-	}
-	
-	private void deleteOldMarkers(ConfigurationElement configuration) throws CoreException {
+	public void deleteWindpuMarkers(ConfigurationElement configuration) throws CoreException {
 		for (Input input : configuration.getInputs()) {
-			URI uri = URI.createURI(input.getUri());
-			Path path = new Path(uri.toPlatformString(false));
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			IResource resource = ResourceUtils.findResource(input.getUri());
 			resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
 			resource.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
 		}
@@ -119,8 +138,8 @@ public class MarkerService {
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(absolutePath));
 	}
 	
-	private void populateLinePosition(IMarker marker, Hint hint) {
-		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(hint.getFile()))) {
+	private void populateLinePosition(IMarker marker, int lineNumber, File file) {
+		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
 			int currentLine = 1;
             int pos = 0;
             int currentByte = 0;
@@ -138,7 +157,7 @@ public class MarkerService {
                         break;
                     }
                 }
-                if (currentLine == hint.getLineNumber() && startPos == -1) {
+                if (currentLine == lineNumber && startPos == -1) {
                     startPos = pos;
                 }
                 lastByte = currentByte;

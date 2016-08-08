@@ -16,24 +16,24 @@ import org.eclipse.core.resources.IMarker;
 import org.jboss.windup.reporting.model.Severity;
 
 /**
- * Represents a project grouping.
+ * Represents a severity grouping.
  */
 public class SeverityGroupNode extends IssueGroupNode<Severity> {
 
-	private Severity severity;
+	private Severity element;
 	
-	public SeverityGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, Severity severity) {
+	public SeverityGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, Severity element) {
 		super(parent, issues);
-		this.severity = severity;
+		this.element = element;
 	}
 	
 	@Override
 	public String getLabel() {
-		return severity.toString();
+		return element.toString();
 	}
 	
 	@Override
 	public Severity getType() {
-		return severity;
+		return element;
 	}
 }

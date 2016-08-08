@@ -2,7 +2,9 @@
  */
 package org.jboss.tools.windup.windup;
 
-import org.jboss.windup.reporting.model.Severity;
+import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -13,43 +15,19 @@ import org.jboss.windup.reporting.model.Severity;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.jboss.tools.windup.windup.Issue#getUri <em>Uri</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getElementId <em>Element Id</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.Issue#getIssueId <em>Issue Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getLinks <em>Links</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getFileAbsolutePath <em>File Absolute Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getSeverity <em>Severity</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getRuleId <em>Rule Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getEffort <em>Effort</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
  * @model
  * @generated
  */
-public interface Issue extends NamedElement {
-	/**
-	 * Returns the value of the '<em><b>Uri</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Uri</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Uri</em>' attribute.
-	 * @see #setUri(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Uri()
-	 * @model
-	 * @generated
-	 */
-	String getUri();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getUri <em>Uri</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Uri</em>' attribute.
-	 * @see #getUri()
-	 * @generated
-	 */
-	void setUri(String value);
-
+public interface Issue extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -77,30 +55,46 @@ public interface Issue extends NamedElement {
 	void setElementId(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Issue Id</b></em>' attribute.
+	 * Returns the value of the '<em><b>Links</b></em>' containment reference list.
+	 * The list contents are of type {@link org.jboss.tools.windup.windup.Link}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Issue Id</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Links</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Issue Id</em>' attribute.
-	 * @see #setIssueId(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_IssueId()
+	 * @return the value of the '<em>Links</em>' containment reference list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Links()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	EList<Link> getLinks();
+
+	/**
+	 * Returns the value of the '<em><b>File Absolute Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>File Absolute Path</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>File Absolute Path</em>' attribute.
+	 * @see #setFileAbsolutePath(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_FileAbsolutePath()
 	 * @model
 	 * @generated
 	 */
-	String getIssueId();
+	String getFileAbsolutePath();
 
 	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getIssueId <em>Issue Id</em>}' attribute.
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getFileAbsolutePath <em>File Absolute Path</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Issue Id</em>' attribute.
-	 * @see #getIssueId()
+	 * @param value the new value of the '<em>File Absolute Path</em>' attribute.
+	 * @see #getFileAbsolutePath()
 	 * @generated
 	 */
-	void setIssueId(String value);
+	void setFileAbsolutePath(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Severity</b></em>' attribute.
@@ -111,12 +105,12 @@ public interface Issue extends NamedElement {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Severity</em>' attribute.
-	 * @see #setSeverity(Severity)
+	 * @see #setSeverity(String)
 	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Severity()
-	 * @model dataType="org.jboss.tools.windup.windup.Severity" transient="true"
+	 * @model transient="true"
 	 * @generated
 	 */
-	Severity getSeverity();
+	String getSeverity();
 
 	/**
 	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getSeverity <em>Severity</em>}' attribute.
@@ -126,6 +120,58 @@ public interface Issue extends NamedElement {
 	 * @see #getSeverity()
 	 * @generated
 	 */
-	void setSeverity(Severity value);
+	void setSeverity(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Rule Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Rule Id</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Rule Id</em>' attribute.
+	 * @see #setRuleId(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_RuleId()
+	 * @model
+	 * @generated
+	 */
+	String getRuleId();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getRuleId <em>Rule Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Rule Id</em>' attribute.
+	 * @see #getRuleId()
+	 * @generated
+	 */
+	void setRuleId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Effort</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Effort</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Effort</em>' attribute.
+	 * @see #setEffort(int)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Effort()
+	 * @model
+	 * @generated
+	 */
+	int getEffort();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getEffort <em>Effort</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Effort</em>' attribute.
+	 * @see #getEffort()
+	 * @generated
+	 */
+	void setEffort(int value);
 
 } // Issue

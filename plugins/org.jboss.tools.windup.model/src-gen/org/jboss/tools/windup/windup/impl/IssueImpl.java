@@ -2,16 +2,25 @@
  */
 package org.jboss.tools.windup.windup.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.jboss.tools.windup.windup.Issue;
+import org.jboss.tools.windup.windup.Link;
 import org.jboss.tools.windup.windup.WindupPackage;
-
-import org.jboss.windup.reporting.model.Severity;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,35 +30,17 @@ import org.jboss.windup.reporting.model.Severity;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getUri <em>Uri</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getElementId <em>Element Id</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getIssueId <em>Issue Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getLinks <em>Links</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getFileAbsolutePath <em>File Absolute Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getSeverity <em>Severity</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getRuleId <em>Rule Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getEffort <em>Effort</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class IssueImpl extends NamedElementImpl implements Issue {
-	/**
-	 * The default value of the '{@link #getUri() <em>Uri</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getUri()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String URI_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getUri() <em>Uri</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getUri()
-	 * @generated
-	 * @ordered
-	 */
-	protected String uri = URI_EDEFAULT;
-
+public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	/**
 	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -71,24 +62,34 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getIssueId() <em>Issue Id</em>}' attribute.
+	 * The cached value of the '{@link #getLinks() <em>Links</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getIssueId()
+	 * @see #getLinks()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String ISSUE_ID_EDEFAULT = null;
+	protected EList<Link> links;
 
 	/**
-	 * The cached value of the '{@link #getIssueId() <em>Issue Id</em>}' attribute.
+	 * The default value of the '{@link #getFileAbsolutePath() <em>File Absolute Path</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getIssueId()
+	 * @see #getFileAbsolutePath()
 	 * @generated
 	 * @ordered
 	 */
-	protected String issueId = ISSUE_ID_EDEFAULT;
+	protected static final String FILE_ABSOLUTE_PATH_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getFileAbsolutePath() <em>File Absolute Path</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFileAbsolutePath()
+	 * @generated
+	 * @ordered
+	 */
+	protected String fileAbsolutePath = FILE_ABSOLUTE_PATH_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getSeverity() <em>Severity</em>}' attribute.
@@ -98,7 +99,7 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Severity SEVERITY_EDEFAULT = null;
+	protected static final String SEVERITY_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getSeverity() <em>Severity</em>}' attribute.
@@ -108,7 +109,47 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * @generated
 	 * @ordered
 	 */
-	protected Severity severity = SEVERITY_EDEFAULT;
+	protected String severity = SEVERITY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getRuleId() <em>Rule Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRuleId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String RULE_ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getRuleId() <em>Rule Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRuleId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String ruleId = RULE_ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getEffort() <em>Effort</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEffort()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int EFFORT_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getEffort() <em>Effort</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEffort()
+	 * @generated
+	 * @ordered
+	 */
+	protected int effort = EFFORT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -127,27 +168,6 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	@Override
 	protected EClass eStaticClass() {
 		return WindupPackage.eINSTANCE.getIssue();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getUri() {
-		return uri;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setUri(String newUri) {
-		String oldUri = uri;
-		uri = newUri;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__URI, oldUri, uri));
 	}
 
 	/**
@@ -176,8 +196,11 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getIssueId() {
-		return issueId;
+	public EList<Link> getLinks() {
+		if (links == null) {
+			links = new EObjectContainmentEList.Resolving<Link>(Link.class, this, WindupPackage.ISSUE__LINKS);
+		}
+		return links;
 	}
 
 	/**
@@ -185,11 +208,20 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setIssueId(String newIssueId) {
-		String oldIssueId = issueId;
-		issueId = newIssueId;
+	public String getFileAbsolutePath() {
+		return fileAbsolutePath;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setFileAbsolutePath(String newFileAbsolutePath) {
+		String oldFileAbsolutePath = fileAbsolutePath;
+		fileAbsolutePath = newFileAbsolutePath;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__ISSUE_ID, oldIssueId, issueId));
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__FILE_ABSOLUTE_PATH, oldFileAbsolutePath, fileAbsolutePath));
 	}
 
 	/**
@@ -197,7 +229,7 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Severity getSeverity() {
+	public String getSeverity() {
 		return severity;
 	}
 
@@ -206,8 +238,8 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSeverity(Severity newSeverity) {
-		Severity oldSeverity = severity;
+	public void setSeverity(String newSeverity) {
+		String oldSeverity = severity;
 		severity = newSeverity;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__SEVERITY, oldSeverity, severity));
@@ -218,17 +250,77 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getRuleId() {
+		return ruleId;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setRuleId(String newRuleId) {
+		String oldRuleId = ruleId;
+		ruleId = newRuleId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__RULE_ID, oldRuleId, ruleId));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public int getEffort() {
+		return effort;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setEffort(int newEffort) {
+		int oldEffort = effort;
+		effort = newEffort;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__EFFORT, oldEffort, effort));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case WindupPackage.ISSUE__LINKS:
+				return ((InternalEList<?>)getLinks()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case WindupPackage.ISSUE__URI:
-				return getUri();
 			case WindupPackage.ISSUE__ELEMENT_ID:
 				return getElementId();
-			case WindupPackage.ISSUE__ISSUE_ID:
-				return getIssueId();
+			case WindupPackage.ISSUE__LINKS:
+				return getLinks();
+			case WindupPackage.ISSUE__FILE_ABSOLUTE_PATH:
+				return getFileAbsolutePath();
 			case WindupPackage.ISSUE__SEVERITY:
 				return getSeverity();
+			case WindupPackage.ISSUE__RULE_ID:
+				return getRuleId();
+			case WindupPackage.ISSUE__EFFORT:
+				return getEffort();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -238,20 +330,28 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case WindupPackage.ISSUE__URI:
-				setUri((String)newValue);
-				return;
 			case WindupPackage.ISSUE__ELEMENT_ID:
 				setElementId((String)newValue);
 				return;
-			case WindupPackage.ISSUE__ISSUE_ID:
-				setIssueId((String)newValue);
+			case WindupPackage.ISSUE__LINKS:
+				getLinks().clear();
+				getLinks().addAll((Collection<? extends Link>)newValue);
+				return;
+			case WindupPackage.ISSUE__FILE_ABSOLUTE_PATH:
+				setFileAbsolutePath((String)newValue);
 				return;
 			case WindupPackage.ISSUE__SEVERITY:
-				setSeverity((Severity)newValue);
+				setSeverity((String)newValue);
+				return;
+			case WindupPackage.ISSUE__RULE_ID:
+				setRuleId((String)newValue);
+				return;
+			case WindupPackage.ISSUE__EFFORT:
+				setEffort((Integer)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -265,17 +365,23 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case WindupPackage.ISSUE__URI:
-				setUri(URI_EDEFAULT);
-				return;
 			case WindupPackage.ISSUE__ELEMENT_ID:
 				setElementId(ELEMENT_ID_EDEFAULT);
 				return;
-			case WindupPackage.ISSUE__ISSUE_ID:
-				setIssueId(ISSUE_ID_EDEFAULT);
+			case WindupPackage.ISSUE__LINKS:
+				getLinks().clear();
+				return;
+			case WindupPackage.ISSUE__FILE_ABSOLUTE_PATH:
+				setFileAbsolutePath(FILE_ABSOLUTE_PATH_EDEFAULT);
 				return;
 			case WindupPackage.ISSUE__SEVERITY:
 				setSeverity(SEVERITY_EDEFAULT);
+				return;
+			case WindupPackage.ISSUE__RULE_ID:
+				setRuleId(RULE_ID_EDEFAULT);
+				return;
+			case WindupPackage.ISSUE__EFFORT:
+				setEffort(EFFORT_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -289,14 +395,18 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case WindupPackage.ISSUE__URI:
-				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case WindupPackage.ISSUE__ELEMENT_ID:
 				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
-			case WindupPackage.ISSUE__ISSUE_ID:
-				return ISSUE_ID_EDEFAULT == null ? issueId != null : !ISSUE_ID_EDEFAULT.equals(issueId);
+			case WindupPackage.ISSUE__LINKS:
+				return links != null && !links.isEmpty();
+			case WindupPackage.ISSUE__FILE_ABSOLUTE_PATH:
+				return FILE_ABSOLUTE_PATH_EDEFAULT == null ? fileAbsolutePath != null : !FILE_ABSOLUTE_PATH_EDEFAULT.equals(fileAbsolutePath);
 			case WindupPackage.ISSUE__SEVERITY:
 				return SEVERITY_EDEFAULT == null ? severity != null : !SEVERITY_EDEFAULT.equals(severity);
+			case WindupPackage.ISSUE__RULE_ID:
+				return RULE_ID_EDEFAULT == null ? ruleId != null : !RULE_ID_EDEFAULT.equals(ruleId);
+			case WindupPackage.ISSUE__EFFORT:
+				return effort != EFFORT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -311,14 +421,16 @@ public class IssueImpl extends NamedElementImpl implements Issue {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (uri: ");
-		result.append(uri);
-		result.append(", elementId: ");
+		result.append(" (elementId: ");
 		result.append(elementId);
-		result.append(", issueId: ");
-		result.append(issueId);
+		result.append(", fileAbsolutePath: ");
+		result.append(fileAbsolutePath);
 		result.append(", severity: ");
 		result.append(severity);
+		result.append(", ruleId: ");
+		result.append(ruleId);
+		result.append(", effort: ");
+		result.append(effort);
 		result.append(')');
 		return result.toString();
 	}

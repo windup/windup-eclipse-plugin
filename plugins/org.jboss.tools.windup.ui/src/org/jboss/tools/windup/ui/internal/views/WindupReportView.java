@@ -46,8 +46,8 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.Utils;
 
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+import static org.jboss.tools.windup.core.utils.ResourceUtils.findProject;
 import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
-import static org.jboss.tools.windup.ui.internal.util.ResourceUtils.findProject;
 
 /**
  * <p>

@@ -16,14 +16,16 @@ package org.jboss.tools.windup.model.domain;
 public interface WindupConstants {
 
 	/**
-	 * Windup launch type ID.
+	 * Windup launch configuration IDs.
 	 */
 	String LAUNCH_TYPE = "org.jboss.tools.windup.ui.WindupLaunchConfigurationType";
+	String LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.run";
 	
 	/**
 	 * Projects launch configuration attribute.
 	 */
 	String DEFAULT = "";
+	String DEFAULT_RULE_ID = "unknown rule";
 	
 	/**
 	 * Launch Events
@@ -40,7 +42,9 @@ public interface WindupConstants {
 	 */
 	String ACTIVE_CONFIG = "windup/config/selected";
 	String SYNCH = "windup/config/synch";
-	String MARKERS_ATTACHED = "windup/issue/markers";
+	String MARKERS_CHANGED = "windup/issue/markers";
+	String GROUPS_CHANGED = "windup/issue/groups";
+	
 	
 	/**
 	 * Model Events

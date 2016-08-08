@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.core.utils.WindupMarker.*;
+import static org.jboss.tools.windup.core.utils.WindupMarker.ELEMENT_ID;
 
 import java.util.List;
 
@@ -56,16 +56,31 @@ public class MarkerUtil {
         return null;
     }
 	
-	public static int convertSeverity(Severity severity) {
-		if (severity == null)
+	public static int convertSeverity(String severity) {
+		if (severity == null) {
 			return IMarker.SEVERITY_WARNING;
-		switch (severity) {
-			case MANDATORY:
-				return IMarker.SEVERITY_ERROR;
-			case OPTIONAL:
-				return IMarker.SEVERITY_WARNING;
-			default:
-				return IMarker.SEVERITY_ERROR;
 		}
+		if (severity.equals(Severity.MANDATORY.toString())) {
+			return IMarker.SEVERITY_ERROR;
+		}
+		else if (severity.equals(Severity.OPTIONAL.toString())) {
+			return IMarker.SEVERITY_WARNING;
+		}
+		else {
+			return IMarker.SEVERITY_ERROR;
+		}
+	}
+	
+	public static Severity getSeverity(String severity) {
+		if (severity.equals(Severity.MANDATORY.toString())) {
+			return Severity.MANDATORY;
+		}
+		else if (severity.equals(Severity.OPTIONAL.toString())) {
+			return Severity.OPTIONAL;
+		}
+		else if (severity.equals(Severity.POTENTIAL)) {
+			return Severity.POTENTIAL;
+		}
+		return Severity.MANDATORY;
 	}
 }

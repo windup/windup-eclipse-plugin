@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
  */
 public class NameUtil {
 	
-	private static final String CONFIGURATION_ELEMENT_PREFIX = "Run_configuration";
+	public static final String CONFIGURATION_ELEMENT_PREFIX = "Run_configuration";
 	
     private static Pattern namePattern = Pattern.compile("([a-zA-Z_]*)([0-9]+)");
 

@@ -10,29 +10,81 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.eclipse.core.resources.IMarker.SEVERITY_ERROR;
-import static org.eclipse.core.resources.IMarker.SEVERITY_WARNING;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_ERROR;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_INFO;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_ERROR;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_INFO;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_WARNING;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_WARNING;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 
+import java.util.Map;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
+
+import com.google.common.collect.Maps;
 
 /**
  * The label provider for the Windup explorer.
  */
 public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorProvider {
-
+	
+	private Map<String, Image> imageCache = Maps.newHashMap();
+	
+	private static final Image ERROR;
+	private static final Image ERROR_QUICKFIX;
+	private static final Image WARNING;
+	private static final Image WARNING_QUICKFIX;
+	private static final Image INFO;
+	private static final Image INFO_QUICKFIX;
+	private static final Image RULE;
+	
+	static {
+		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
+		ERROR = imageRegistry.get(IMG_ERROR);
+		ERROR_QUICKFIX = imageRegistry.get(IMG_QUICKFIX_ERROR);
+		WARNING = imageRegistry.get(IMG_WARNING);
+		WARNING_QUICKFIX = imageRegistry.get(IMG_QUICKFIX_WARNING);
+		INFO = imageRegistry.get(IMG_INFO);
+		INFO_QUICKFIX = imageRegistry.get(IMG_QUICKFIX_INFO);
+		RULE = imageRegistry.get(IMG_RULE);
+	}
+	
 	private WorkbenchLabelProvider workbenchProvider = new WorkbenchLabelProvider();
 	
 	@Override
 	public Image getImage(Object element) {
+		if (element instanceof SeverityGroupNode) {
+			SeverityGroupNode node = (SeverityGroupNode)element;
+			Image image = null;
+			switch (node.getType()) {
+				case MANDATORY: {
+					image = ERROR;
+					break;
+				}
+				case OPTIONAL: {
+					image = INFO;
+					break;
+				}
+				case POTENTIAL: {
+					image = WARNING;
+				}
+			}
+			return image;
+		}
+		if (element instanceof RuleGroupNode) {
+			return RULE;
+		}
 		if (element instanceof ProjectGroupNode ||
 				element instanceof PackageGroupNode ||
 					element instanceof ClassGroupNode) {
@@ -40,10 +92,23 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 			return workbenchProvider.getImage(node.getType());
 		}
 		if (element instanceof IssueNode) {
-			switch (((IssueNode)element).getSeverity()) {
-				case SEVERITY_ERROR: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR);
-				case SEVERITY_WARNING: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_WARNING);
+			IssueNode issue = (IssueNode)element;
+			boolean hasQuickFix = issue.hasQuickFix();
+			Image result = null;
+			switch (issue.getSeverity()) {
+				case IMarker.SEVERITY_ERROR: {
+					result = hasQuickFix ? ERROR_QUICKFIX : ERROR;
+					break;
+				}
+				case IMarker.SEVERITY_WARNING: {
+					result = hasQuickFix ? WARNING_QUICKFIX : WARNING;
+					break;
+				}
+				default: {
+					result = hasQuickFix ? INFO_QUICKFIX : INFO;
+				}
 			}
+			return result;
 		}
 		return null;
 	}
@@ -67,6 +132,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 
 	@Override
 	public void dispose() {
+		imageCache.values().stream().forEach(i -> i.dispose());
 	}
 
 	@Override

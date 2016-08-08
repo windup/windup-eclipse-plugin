@@ -10,7 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.*;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
 
 import javax.inject.Inject;
 
@@ -18,25 +19,25 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.windup.ConfigurationElement;
 
 /**
  * Explorer view for displaying and navigating Windup issues, classifications, etc. 
  */
 public class IssueExplorer extends CommonNavigator {
 	
-	@Inject
-	private IEclipseContext context;
-	
+	@Inject private IEclipseContext context;
+
 	@Override
 	public void createPartControl(Composite aParent) {
 		super.createPartControl(aParent);
@@ -45,21 +46,44 @@ public class IssueExplorer extends CommonNavigator {
 			StructuredSelection ss = (StructuredSelection)e.getSelection();
 			if (ss.size() == 1) {
 				Object selection = ss.getFirstElement();
+				IMarker type = null;
 				if (selection instanceof IssueNode) {
-					context.set(IMarker.class, ((IssueNode)selection).getType());
+					type = ((IssueNode)selection).getType();
 				}
+				context.set(IMarker.class, type);
+			}
+		});
+		context.get(MApplication.class).getContext().set(IssueExplorerService.class, 
+				new IssueExplorerService() {
+			@Override
+			public TreeViewer getViewer() {
+				return getCommonViewer();
 			}
 		});
 	}
 	
 	@Inject
 	@Optional
-	private void activeWindupReportView(@UIEventTopic(MARKERS_ATTACHED) boolean attached) {
+	private void activeWindupReportView(@UIEventTopic(MARKERS_CHANGED) boolean changed) {
+		refresh();
+	}
+	
+	@Inject
+	@Optional
+	private void refresh(@UIEventTopic(GROUPS_CHANGED) boolean changed) {
+		refresh();
+		// TODO: restore previously expanded nodes, selection, scrolls, etc.
+		getCommonViewer().expandAll();
+	}
+	
+	private void refresh() {
 		if (getCommonViewer() != null && !getCommonViewer().getTree().isDisposed()) {
 			getCommonViewer().refresh(true);
 		}
+		// TODO: after memento is integrated, re-set to current selection.
+		context.set(IMarker.class, null);
 	}
-	
+
 	private class OpenIssueListener implements IDoubleClickListener {
 		@Override
 		public void doubleClick(DoubleClickEvent event) {
@@ -77,5 +101,9 @@ public class IssueExplorer extends CommonNavigator {
 				}
 			}
 		}
+	}
+	
+	public static interface IssueExplorerService {
+		TreeViewer getViewer();
 	}
 }

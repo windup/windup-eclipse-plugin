@@ -50,6 +50,6 @@ public class ViewService {
 	@Optional
 	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
 		String url = modelService.getGeneratedReportHomeLocation(configuration).toOSString();
-		activateWindupReportView().showReport(new Path(url), true);
+		//activateWindupReportView().showReport(new Path(url), true);
 	}
 }

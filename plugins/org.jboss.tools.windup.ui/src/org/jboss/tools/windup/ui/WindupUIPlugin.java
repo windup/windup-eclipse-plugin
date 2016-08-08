@@ -44,6 +44,17 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_JRE = "icons/module_view.png"; //$NON-NLS-1$
     public static final String IMG_SEARCH = "icons/search.png"; //$NON-NLS-1$
     
+    public static final String IMG_ERROR = "icons/error.png"; //$NON-NLS-1$
+    public static final String IMG_WARNING = "icons/warning.png"; //$NON-NLS-1$
+    public static final String IMG_INFO = "icons/info.gif"; //$NON-NLS-1$
+    public static final String IMG_QUICKFIX_ERROR = "icons/quickfix_error.png"; //$NON-NLS-1$
+    public static final String IMG_QUICKFIX_WARNING = "icons/quickfix_warning.png"; //$NON-NLS-1$
+    public static final String IMG_QUICKFIX_INFO = "icons/quickfix_info.png"; //$NON-NLS-1$
+    public static final String IMG_RULE = "icons/rule.gif"; //$NON-NLS-1$
+    public static final String IMG_SEVERITY = "icons/severity.png"; //$NON-NLS-1$
+    public static final String IMG_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
+    
+    
     // The shared instance
     private static WindupUIPlugin plugin;
     
@@ -139,6 +150,15 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_WINDUP, createImageDescriptor(IMG_WINDUP));
 		reg.put(IMG_JRE, createImageDescriptor(IMG_JRE));
 		reg.put(IMG_SEARCH, createImageDescriptor(IMG_SEARCH));
+		reg.put(IMG_ERROR, createImageDescriptor(IMG_ERROR));
+		reg.put(IMG_WARNING, createImageDescriptor(IMG_WARNING));
+		reg.put(IMG_INFO, createImageDescriptor(IMG_INFO));
+		reg.put(IMG_QUICKFIX_ERROR, createImageDescriptor(IMG_QUICKFIX_ERROR));
+		reg.put(IMG_QUICKFIX_WARNING, createImageDescriptor(IMG_QUICKFIX_WARNING));
+		reg.put(IMG_QUICKFIX_INFO, createImageDescriptor(IMG_QUICKFIX_INFO));
+		reg.put(IMG_RULE, createImageDescriptor(IMG_RULE));
+		reg.put(IMG_SEVERITY, createImageDescriptor(IMG_SEVERITY));
+		reg.put(IMG_EXPANDALL, createImageDescriptor(IMG_EXPANDALL));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

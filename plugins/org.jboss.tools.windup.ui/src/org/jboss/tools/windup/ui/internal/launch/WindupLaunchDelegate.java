@@ -15,6 +15,7 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLET
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -39,6 +40,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) {
 		ConfigurationElement configuration = modelService.findConfiguration(config.getName());
+		Assert.isNotNull(configuration);
 		Job job = new Job(NLS.bind(Messages.generate_windup_report_for, configuration.getName())) {
             @Override
             protected IStatus run(IProgressMonitor monitor) {

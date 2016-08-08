@@ -40,6 +40,10 @@ import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
+import org.jboss.tools.windup.windup.WindupResult;
+import org.jboss.windup.tooling.ExecutionResults;
+import org.jboss.windup.tooling.data.Hint;
+import org.jboss.windup.tooling.data.Link;
 
 import com.google.common.base.Objects;
 
@@ -165,11 +169,12 @@ public class ModelService {
 		return Activator.getDefault().getStateLocation().append("windup.xmi").toFile();
 	}
 	
-	public void deleteConfiguration(String name) {
+	public ConfigurationElement findConfigurationElement(String name) {
 		Optional<ConfigurationElement> configuration = model.getConfigurationElements().stream().filter(c -> Objects.equal(name, c.getName())).findFirst();
 		if (configuration.isPresent()) {
-			deleteConfiguration(configuration.get());
+			return configuration.get();
 		}
+		return null;
 	}
 	
 	public void deleteConfiguration(ConfigurationElement configuration) {
@@ -211,5 +216,40 @@ public class ModelService {
 	
 	public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration) {
 		return reportsDir.append(configuration.getName().replaceAll("\\s+", "").concat(File.separator));
+	}
+	
+	/**
+	 * Populates the configuration element with the execution results.
+	 * 
+	 * NOTE: We might be able to remove this duplication if/when we
+	 * can restore the Windup execution graph.
+	 */
+	public void populateConfiguration(ConfigurationElement configuration, ExecutionResults results) {
+		WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
+        result.setExecutionResults(results);
+        configuration.setWindupResult(result);
+        for (Hint wHint : results.getHints()) {
+        	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
+        	result.getIssues().add(hint);
+
+        	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
+        	hint.setSeverity(wHint.getSeverity().toString());
+        	hint.setRuleId(wHint.getRuleID());
+        	hint.setEffort(wHint.getEffort());
+        	
+        	hint.setTitle(wHint.getTitle());
+        	hint.setHint(wHint.getHint());
+        	hint.setLineNumber(wHint.getLineNumber());
+        	hint.setColumn(wHint.getColumn());
+        	hint.setLength(wHint.getLength());
+        	hint.setSourceSnippet(wHint.getSourceSnippit());
+        
+        	for (Link wLink : wHint.getLinks()) {
+        		org.jboss.tools.windup.windup.Link link = WindupFactory.eINSTANCE.createLink();
+        		link.setDescription(wLink.getDescription());
+        		link.setUrl(wLink.getUrl());
+        		hint.getLinks().add(link);
+        	}
+        }
 	}
 }

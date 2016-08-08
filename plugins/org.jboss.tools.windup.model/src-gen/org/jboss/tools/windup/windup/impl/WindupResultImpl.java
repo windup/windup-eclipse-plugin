@@ -6,15 +6,17 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.WindupPackage;
 import org.jboss.tools.windup.windup.WindupResult;
@@ -57,7 +59,7 @@ public class WindupResultImpl extends MinimalEObjectImpl.Container implements Wi
 	protected ExecutionResults executionResults = EXECUTION_RESULTS_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getIssues() <em>Issues</em>}' reference list.
+	 * The cached value of the '{@link #getIssues() <em>Issues</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIssues()
@@ -113,9 +115,23 @@ public class WindupResultImpl extends MinimalEObjectImpl.Container implements Wi
 	 */
 	public EList<Issue> getIssues() {
 		if (issues == null) {
-			issues = new EObjectResolvingEList<Issue>(Issue.class, this, WindupPackage.WINDUP_RESULT__ISSUES);
+			issues = new EObjectContainmentEList.Resolving<Issue>(Issue.class, this, WindupPackage.WINDUP_RESULT__ISSUES);
 		}
 		return issues;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case WindupPackage.WINDUP_RESULT__ISSUES:
+				return ((InternalEList<?>)getIssues()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

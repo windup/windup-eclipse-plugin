@@ -56,6 +56,7 @@
     <elements xsi:type="basic:Part" xmi:id="_jbGBUEYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.part.windupEditor" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.WindupEditor" label="Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" closeable="true">
       <toolbar xmi:id="_qIuW8EYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.toolbar.0"/>
     </elements>
+    <elements xsi:type="basic:Part" xmi:id="_tn0BYFN6EeaimsGfu-ZPRw" elementId="org.jboss.tools.windup.ui.issue.details" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.issues.IssueDetailsView" label="%view.issueDetails" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="%view.issueDetails"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_jfaZUECHEeaIZs9YJVekXg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_mXO7AECHEeaIZs9YJVekXg" elementId="org.jboss.tools.windup.ui.addon.viewService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.ViewService"/>

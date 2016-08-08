@@ -116,7 +116,6 @@ public class WindupSwitch<T> extends Switch<T> {
 			case WindupPackage.ISSUE: {
 				Issue issue = (Issue)theEObject;
 				T result = caseIssue(issue);
-				if (result == null) result = caseNamedElement(issue);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -124,7 +123,6 @@ public class WindupSwitch<T> extends Switch<T> {
 				Hint hint = (Hint)theEObject;
 				T result = caseHint(hint);
 				if (result == null) result = caseIssue(hint);
-				if (result == null) result = caseNamedElement(hint);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -132,7 +130,12 @@ public class WindupSwitch<T> extends Switch<T> {
 				Classification classification = (Classification)theEObject;
 				T result = caseClassification(classification);
 				if (result == null) result = caseIssue(classification);
-				if (result == null) result = caseNamedElement(classification);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case WindupPackage.LINK: {
+				Link link = (Link)theEObject;
+				T result = caseLink(link);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -287,6 +290,21 @@ public class WindupSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseClassification(Classification object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Link</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Link</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLink(Link object) {
 		return null;
 	}
 

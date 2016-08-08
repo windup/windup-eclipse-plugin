@@ -53,7 +53,7 @@ public interface WindupResult extends EObject {
 	void setExecutionResults(ExecutionResults value);
 
 	/**
-	 * Returns the value of the '<em><b>Issues</b></em>' reference list.
+	 * Returns the value of the '<em><b>Issues</b></em>' containment reference list.
 	 * The list contents are of type {@link org.jboss.tools.windup.windup.Issue}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -61,9 +61,9 @@ public interface WindupResult extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Issues</em>' reference list.
+	 * @return the value of the '<em>Issues</em>' containment reference list.
 	 * @see org.jboss.tools.windup.windup.WindupPackage#getWindupResult_Issues()
-	 * @model
+	 * @model containment="true" resolveProxies="true"
 	 * @generated
 	 */
 	EList<Issue> getIssues();

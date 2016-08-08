@@ -10,11 +10,13 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.ui.internal.explorer.MarkerUtil.*;
-import static org.jboss.tools.windup.core.utils.WindupMarker.*;
+import static org.jboss.tools.windup.core.utils.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
+import static org.jboss.tools.windup.core.utils.WindupMarker.WINDUP_HINT_MARKER_ID;
+import static org.jboss.tools.windup.ui.internal.explorer.MarkerUtil.getMarkers;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IMarker;
@@ -23,10 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.jboss.tools.windup.ui.internal.explorer.Group.ClassGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.IssueGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.PackageGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.ProjectGroup;
+import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 
 import com.google.common.collect.Lists;
 
@@ -37,17 +36,8 @@ import com.google.common.collect.Lists;
 @Creatable
 public class IssueExplorerContentService {
 	
-	private static ProjectGroup projectGroup; 
-	static {
-		// TODO: allow user to specify the order and visibility
-		projectGroup = new ProjectGroup(null);
-		PackageGroup packageGroup = new PackageGroup(projectGroup);
-		ClassGroup classGroup = new ClassGroup(packageGroup);
-		IssueGroup issueGroup = new IssueGroup(classGroup);
-	}
+	@Inject private IssueGroupService groupService;
 	
-	private Group<?, ?> root = projectGroup;
-
 	public boolean hasChildren(Object element) {
 		if (element instanceof IssueGroupNode) {
 			return !((IssueGroupNode<?>)element).getChildren().isEmpty();
@@ -89,7 +79,7 @@ public class IssueExplorerContentService {
 	}
 	
 	private Object[] createNodeGroups(List<IMarker> markers) {
-		List<IssueGroupNode<?>> nodes = root.createGroupNodes(markers);
+		List<IssueGroupNode<?>> nodes = groupService.getRoot().createGroupNodes(markers);
 		return nodes.toArray(new IssueGroupNode[nodes.size()]);
 	}
 }

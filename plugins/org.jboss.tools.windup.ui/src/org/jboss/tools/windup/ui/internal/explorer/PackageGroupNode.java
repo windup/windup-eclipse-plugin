@@ -29,9 +29,12 @@ public class PackageGroupNode extends IssueGroupNode<IPackageFragment> {
 	
 	@Override
 	public String getLabel() {
-		String name = element.getElementName();
-        if (name == null || name.length() == 0) {
-            name = "default package";
+		String name = "unknown package";
+        if (element != null) {
+        	String temp = element.getElementName();
+        	if (temp != null && temp.length() != 0) {
+        		name = temp;
+        	}
         }
         return name;
 	}

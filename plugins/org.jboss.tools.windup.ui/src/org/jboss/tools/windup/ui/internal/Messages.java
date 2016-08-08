@@ -100,8 +100,24 @@ public class Messages extends NLS
     public static String issuesTab;
     public static String issuesTabTitle;
     
+    public static String issueLabelTitle;
+    public static String issueLabelHint;
+    public static String issueLabelSeverity;
+    public static String issueLabelEffort;
+    public static String issueLabelRuleId;
+    public static String issueLabelInfo;
+    public static String issueLabelSource;
+    
+    // Issue Details
+    public static String noIssueDetails;
+    
+    public static String severityError;
+    public static String severityWarning;
+    
     // Editor
     public static String windupEditorTitle;
+    
+    
     
     static
     {

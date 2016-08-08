@@ -153,6 +153,39 @@
             </command>
          </toolbar>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.jboss.tools.windup.ui.explorer?after=additions">
+         <command
+               commandId="org.jboss.tools.windup.ui.expandIssuesCommand"
+               icon="icons/expandall.png"
+               style="push">
+         </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.createRunConfiguration"
+               icon="icons/windup.png"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.jboss.tools.windup.ui.explorer?after=additions">
+         <menu
+               label="Group By">
+            <command
+                  commandId="org.jboss.tools.windup.ui.groupBySeverity"
+                  icon="icons/severity.png"
+                  label="Severity"
+                  style="toggle">
+            </command>
+            <command
+                  commandId="org.jboss.tools.windup.ui.groupByRule"
+                  icon="icons/rule.gif"
+                  label="Migration Rule"
+                  style="toggle">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -160,6 +193,34 @@
             defaultHandler="org.jboss.tools.windup.ui.internal.editor.OpenWindupEditorHandler"
             id="org.jboss.tools.windup.ui.command.showWindup"
             name="Open Windup">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.internal.editor.CreateRunConfigurationHandler"
+            id="org.jboss.tools.windup.ui.createRunConfiguration"
+            name="Create Windup Run Configuration">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupBySeverity"
+            id="org.jboss.tools.windup.ui.groupBySeverity"
+            name="Group By Severity">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByType"
+            id="org.jboss.tools.windup.ui.groupByRule"
+            name="Group By Rule">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$ExpandIssuesHandler"
+            id="org.jboss.tools.windup.ui.expandIssuesCommand"
+            name="Expand Issues">
       </command>
    </extension>
     <extension
@@ -218,7 +279,7 @@
                    value="true">
              </property>
              <property
-                   name="org.eclipse.ui.navigator.hideCollapseAllAction"
+                   name="org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"
                    value="true">
              </property>
           </options>
@@ -245,6 +306,9 @@
              targetID="*">
           <viewShortcut
                 id="org.jboss.tools.windup.ui.explorer">
+          </viewShortcut>
+          <viewShortcut
+                id="org.jboss.tools.windup.ui.issue.details">
           </viewShortcut>
        </perspectiveExtension>
     </extension>

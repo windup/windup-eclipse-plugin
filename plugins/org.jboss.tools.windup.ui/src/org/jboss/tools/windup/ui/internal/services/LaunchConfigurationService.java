@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.internal.services;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
@@ -32,11 +34,13 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import com.google.common.base.Objects;
 
 /**
- * Service to listening to {@link ILaunchConfiguration} events. 
+ * Service for listening to {@link ILaunchConfiguration} events. 
  */
 public class LaunchConfigurationService implements ILaunchConfigurationListener {
 	
 	@Inject private ModelService modelService;
+	@Inject private MarkerService markerService;
+	@Inject private IEventBroker broker;
 
 	@PostConstruct
 	private void init() {
@@ -57,7 +61,14 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration launchConfig) {
-		modelService.deleteConfiguration(launchConfig.getName());
+		ConfigurationElement configuration = modelService.findConfiguration(launchConfig.getName());
+		try {
+			markerService.deleteWindpuMarkers(configuration);
+			broker.post(MARKERS_CHANGED, true);
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		modelService.deleteConfiguration(configuration);
 	}
 	
 	private boolean isWindupConfig(ILaunchConfiguration launchConfig) {
