@@ -27,7 +27,7 @@ import org.jboss.tools.test.util.TestProjectProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class WindupValidatorTest extends WindupTest
 {

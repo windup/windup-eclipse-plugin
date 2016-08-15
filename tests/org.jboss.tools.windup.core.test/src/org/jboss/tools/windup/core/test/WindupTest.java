@@ -19,16 +19,24 @@ import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.junit.Before;
 
+import org.junit.Assert;
+
 public class WindupTest {
 	
 	@Inject	protected WindupService windupService;
 	
 	@Before
 	public void setup() {
+		if ( getContext() == null ) {
+			Assert.fail("Could not get Eclipse workbench as a context for running tests!");
+		}
 		ContextInjectionFactory.inject(this, getContext());
 	}
 	
 	private IEclipseContext getContext() {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return null;
+		}
 		return PlatformUI.getWorkbench().getService(MApplication.class).getContext().getActiveLeaf();
 	}
 }
