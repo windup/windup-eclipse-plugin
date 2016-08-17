@@ -39,15 +39,18 @@ import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.utils.FileUtils;
-import org.jboss.tools.windup.core.utils.ResourceUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Input;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.TargetOption;
+import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.tooling.ExecutionBuilder;
+import org.jboss.windup.tooling.ExecutionBuilderSetOptions;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
@@ -165,56 +168,39 @@ public class WindupService
     }
     
     public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
-        progress.subTask(Messages.generate_windup_reports);
+    	progress.subTask(Messages.startingWindup);
+    	modelService.synch(configuration);
+    	IPath basePath = modelService.getGeneratedReportsBaseLocation(configuration);
+    	File baseOutputDir = basePath.toFile();
+
+    	progress.subTask(Messages.removing_old_report);
+        FileUtils.delete(baseOutputDir, true);
         IStatus status = null;
-
-        try
-        {
-        	progress.subTask(Messages.startingWindup);
-            WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
-            ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
-        	
-            IPath outputPath = modelService.getGeneratedReportBaseLocation(configuration);
-            File outputDir = outputPath.toFile();
-
-            // clear out existing report
-            progress.subTask(Messages.removing_old_report);
-            FileUtils.delete(outputDir, true);
-            
-            progress.subTask(Messages.generate_windup_reports);
-
-            /*ExecutionBuilderSetOptions options = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
-            	.setInput(getInputPath(configuration.getInputs().get(0)))
-            	.setOutput(outputDir.toPath())
-            	.setProgressMonitor(windupProgressMonitor);
-            
-            options.setOption(SourceModeOption.NAME, true);
-        	options.setOption(TargetOption.NAME, Lists.newArrayList("eap"));
+        try {
+        	for (Input input : configuration.getInputs()) {
+        		WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
+                ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
             	
-            for (int i = 1; i < configuration.getInputs().size(); i++) {
-            	Input input = configuration.getInputs().get(i);
-            	options.setOption(InputPathOption.NAME, getInputPath(input));
-            }
-            
-            try {
-            	ExecutionResults results = options.ignore("\\.class$").execute();
-            	WindupResult windupResult = WindupFactory.eINSTANCE.createWindupResult();
-                windupResult.setExecutionResults(results);
-                configuration.setWindupResult(windupResult);
-            } catch (Exception e) {
-            	WindupCorePlugin.log(e);
-            }*/
+                Path projectPath = WorkspaceResourceUtils.computePath(input.getUri());
+                progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, input.getName()), IProgressMonitor.UNKNOWN);
+                
+                IPath outputPath = modelService.getGeneratedReportBaseLocation(configuration, input);
+                ExecutionBuilderSetOptions options = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
+                        .setInput(projectPath)
+                        .setOutput(outputPath.toFile().toPath())
+                        .setProgressMonitor(windupProgressMonitor)
+                        .setOption(SourceModeOption.NAME, true)
+                        .setOption(TargetOption.NAME, Lists.newArrayList("eap"));
+                        
+                if (!configuration.getPackages().isEmpty()) {
+                	options.setOption(ScanPackagesOption.NAME, configuration.getPackages());
+                }
+                
+                ExecutionResults results = options.ignore("\\.class$").execute();
 
-            ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
-                    .setInput(ResourceUtils.computePath(configuration.getInputs().get(0).getUri()))
-                    .setOutput(outputDir.toPath())
-                    .setProgressMonitor(windupProgressMonitor)
-                    .setOption(SourceModeOption.NAME, true)
-                    .setOption(TargetOption.NAME, Lists.newArrayList("eap"))
-                    .ignore("\\.class$")
-                    .execute();
-            
-            modelService.populateConfiguration(configuration, results);
+                modelService.populateConfiguration(input, results);
+        	}
+
             broker.post(WindupConstants.WINDUP_RUN_COMPLETED, configuration);
             status = Status.OK_STATUS;
         }

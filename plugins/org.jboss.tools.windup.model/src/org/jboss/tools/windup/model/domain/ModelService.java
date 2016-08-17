@@ -14,15 +14,21 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -35,9 +41,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.jboss.tools.windup.model.Activator;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Input;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupResult;
@@ -177,6 +186,11 @@ public class ModelService {
 		return null;
 	}
 	
+	public Issue findIssue(IMarker marker) {
+		URI uri = URI.createURI(marker.getAttribute(WindupMarker.URI_ID, ""));
+		return (Issue)getModel().eResource().getEObject(uri.fragment());
+	}
+	
 	public void deleteConfiguration(ConfigurationElement configuration) {
 		EcoreUtil.delete(configuration);
 		broker.post(CONFIG_DELETED, configuration);
@@ -186,10 +200,67 @@ public class ModelService {
 		ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
 		configuration.setName(name);
 		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
-		configuration.setGeneratedReportLocation(getGeneratedReportBaseLocation(configuration).toOSString());
+		configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
 		configuration.setSourceMode(true);
 		model.getConfigurationElements().add(configuration);
 		return configuration;
+	}
+	
+	public void createInput(ConfigurationElement configuration, List<IProject> projects) {
+		projects.forEach(project -> {
+			Input input = WindupFactory.eINSTANCE.createInput();
+			URI uri = WorkspaceResourceUtils.createPlatformPluginURI(project.getFullPath());
+			input.setName(project.getName());
+			input.setUri(uri.toString());
+			configuration.getInputs().add(input);
+		});
+	}
+	
+	public void deleteInput(ConfigurationElement configuration, List<IProject> projects) {
+		projects.forEach(project -> {
+			Optional<Input> input = configuration.getInputs().stream().filter(i -> {
+				return i.getName().equals(project.getName());
+			}).findFirst();
+			if (input.isPresent()) {
+				EcoreUtil.delete(input.get());
+			}
+		});
+		for (IPackageFragment fragment : ConfigurationResourceUtil.getCurrentPackages(configuration)) {
+			if (projects.contains(fragment.getJavaProject().getProject())) {
+				URI uri = WorkspaceResourceUtils.createPlatformPluginURI(fragment.getPath());
+				configuration.getPackages().remove(uri.toString());
+			}
+		}
+	}
+	
+	public void addPackages(ConfigurationElement configuration, List<IPackageFragment> packages) {
+		List<String> uris = packages.stream().map(p -> {
+			return WorkspaceResourceUtils.createPlatformPluginURI(p.getPath()).toString();
+		}).collect(Collectors.toList());
+		configuration.getPackages().addAll(uris);
+	}
+	
+	public void removePackages(ConfigurationElement configuration, List<IPackageFragment> packages) {
+		List<String> uris = packages.stream().map(p -> {
+			return WorkspaceResourceUtils.createPlatformPluginURI(p.getPath()).toString();
+		}).collect(Collectors.toList());
+		configuration.getPackages().removeAll(uris);
+	}
+	
+	public void synch(ConfigurationElement configuration) {
+		for (Iterator<String> iter = configuration.getPackages().iterator(); iter.hasNext();) {
+			IResource resource = (IResource)WorkspaceResourceUtils.findResource(iter.next());
+			if (resource == null || !resource.exists()) {
+				iter.remove();
+			}
+		}
+		for (Iterator<Input> iter = configuration.getInputs().iterator(); iter.hasNext();) {
+			Input input = iter.next();
+			IResource resource = WorkspaceResourceUtils.findResource(input.getUri());
+			if (resource == null || !resource.exists()) {
+				iter.remove();
+			}
+		}
 	}
 	
 	public void addDirtyListener(Consumer<Boolean> runner) {
@@ -210,12 +281,21 @@ public class ModelService {
 		return found.isPresent() ? found.get() : null;
 	}
 	
-	public IPath getGeneratedReportHomeLocation(ConfigurationElement configuration) {
-		return new Path(configuration.getGeneratedReportLocation().concat(PROJECT_REPORT_HOME_PAGE));
+	public IPath getGeneratedReportHomeLocation(Input input) {
+		return new Path(input.getGeneratedReportLocation().concat(PROJECT_REPORT_HOME_PAGE));
 	}
 	
-	public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration) {
-		return reportsDir.append(configuration.getName().replaceAll("\\s+", "").concat(File.separator));
+	public IPath getGeneratedReportsBaseLocation(ConfigurationElement configuration) {
+		String path = configuration.getName().replaceAll("\\s+", "");
+		path = path.concat(File.separator);
+		return reportsDir.append(path);
+	}
+	
+	public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration, Input input) {
+		IPath path = getGeneratedReportsBaseLocation(configuration);
+		path = path.append(input.getName());
+		path = path.append(File.separator);
+		return path;
 	}
 	
 	/**
@@ -224,10 +304,10 @@ public class ModelService {
 	 * NOTE: We might be able to remove this duplication if/when we
 	 * can restore the Windup execution graph.
 	 */
-	public void populateConfiguration(ConfigurationElement configuration, ExecutionResults results) {
-		WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
+	public void populateConfiguration(Input input, ExecutionResults results) {
+    	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
-        configuration.setWindupResult(result);
+        input.setWindupResult(result);
         for (Hint wHint : results.getHints()) {
         	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
         	result.getIssues().add(hint);

@@ -25,6 +25,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -51,6 +52,7 @@ public class OptionsSections extends AbstractSection {
 		bindingContext.bindValue(WidgetProperties.selection().observe(sourceButton),
 				EMFProperties.value(WindupPackage.eINSTANCE.getConfigurationElement_SourceMode()).
 					observe(configuration));
+		sourceButton.setEnabled(false);
 		
 		
 		container = toolkit.createComposite(parent);
@@ -58,12 +60,13 @@ public class OptionsSections extends AbstractSection {
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(container);
 		createLabel(container, generatedReportLocation);
 		
-		Text outputLocationText = toolkit.createText(container, configuration.getGeneratedReportLocation());
+		Text outputLocationText = toolkit.createText(container, configuration.getGeneratedReportsLocation());
 		outputLocationText.setEditable(false);
+		outputLocationText.setBackground(Display.getDefault().getActiveShell().getBackground());
 		GridDataFactory.fillDefaults().grab(true, false).hint(400, SWT.DEFAULT).applyTo(outputLocationText);
 		
 		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(outputLocationText),
-				EMFProperties.value(WindupPackage.eINSTANCE.getConfigurationElement_GeneratedReportLocation()).
+				EMFProperties.value(WindupPackage.eINSTANCE.getConfigurationElement_GeneratedReportsLocation()).
 					observe(configuration));
 		
 		Button reportLocationButton = toolkit.createButton(container, browseLabel, SWT.PUSH);
@@ -77,10 +80,11 @@ public class OptionsSections extends AbstractSection {
 				if(filename != null) {
 					IPath path = new Path(filename);
 					if (path != null) {
-						configuration.setGeneratedReportLocation(path.toString());
+						configuration.setGeneratedReportsLocation(path.toString());
 					}
 				}
 			}
 		});
+		reportLocationButton.setEnabled(false);
 	}
 }

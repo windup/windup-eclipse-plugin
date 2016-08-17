@@ -142,24 +142,61 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="org.jboss.tools.windup.ui.toolbar1">
-            <command
-                  commandId="org.jboss.tools.windup.ui.command.showWindup"
-                  icon="icons/windup.png"
-                  style="push"
-                  tooltip="Open Windup">
-            </command>
-         </toolbar>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
             locationURI="toolbar:org.jboss.tools.windup.ui.explorer?after=additions">
          <command
                commandId="org.jboss.tools.windup.ui.expandIssuesCommand"
                icon="icons/expandall.png"
                style="push">
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separatorExplorer3"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.groupByProject"
+               icon="icons/project.png"
+               style="toggle"
+               tooltip="Group By Project">
+         </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.groupByPackage"
+               icon="icons/package.png"
+               label="Package"
+               style="toggle"
+               tooltip="Group By Package">
+         </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.groupByFile"
+               icon="icons/file.png"
+               label="File"
+               style="toggle"
+               tooltip="Group By File">
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separator4"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.groupBySeverity"
+               icon="icons/errorwarning.png"
+               label="Severity"
+               style="toggle">
+         </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.groupByRule"
+               icon="icons/rule.gif"
+               label="Migration Rule"
+               style="toggle">
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separatorExplorer1"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.deleteAllIssues"
+               icon="icons/deleteAllMarkers.png"
+               style="push"
+               tooltip="Delete all issues">
          </command>
          <command
                commandId="org.jboss.tools.windup.ui.createRunConfiguration"
@@ -170,21 +207,116 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:org.jboss.tools.windup.ui.explorer?after=additions">
-         <menu
-               label="Group By">
-            <command
-                  commandId="org.jboss.tools.windup.ui.groupBySeverity"
-                  icon="icons/severity.png"
-                  label="Severity"
-                  style="toggle">
-            </command>
-            <command
-                  commandId="org.jboss.tools.windup.ui.groupByRule"
-                  icon="icons/rule.gif"
-                  label="Migration Rule"
-                  style="toggle">
-            </command>
-         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.jboss.tools.windup.ui.explorer?after=additions">
+         <command
+               commandId="org.jboss.tools.windup.ui.issueDetails"
+               label="Issue Details"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <instanceof
+                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.markIssueFixed"
+               icon="icons/fixedIssue.png"
+               label="Mark as Fixed"
+               style="push"
+               tooltip="Mark issue as fixed.">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="+">
+                  </count>
+                  <iterate>
+                     <instanceof
+                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                     </instanceof>
+                     <test
+                           property="org.jboss.tools.windup.ui.isFixed"
+                           value="false">
+                     </test>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.previewQuickFix"
+               label="Preview Quick Fix"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <instanceof
+                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                     </instanceof>
+                     <test
+                           property="org.jboss.tools.windup.ui.hasQuickFix">
+                     </test></iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.quickFixIssue"
+               label="Apply Quick Fix"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="+">
+                  </count>
+                  <iterate>
+                     <instanceof
+                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                     </instanceof>
+                     <test
+                           property="org.jboss.tools.windup.ui.hasQuickFix">
+                     </test>
+                  </iterate></and>
+            </visibleWhen>
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separator3"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.deleteIssue"
+               icon="icons/delete_config.png"
+               label="Delete"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <iterate
+                        operator="or">
+                     <instanceof
+                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -209,7 +341,7 @@
          </state>
       </command>
       <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByType"
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByRule"
             id="org.jboss.tools.windup.ui.groupByRule"
             name="Group By Rule">
          <state
@@ -221,6 +353,63 @@
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$ExpandIssuesHandler"
             id="org.jboss.tools.windup.ui.expandIssuesCommand"
             name="Expand Issues">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$IssueQuickFixHandler"
+            id="org.jboss.tools.windup.ui.quickFixIssue"
+            name="Quick Fix Issue">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$MarkIssueFixedHandler"
+            id="org.jboss.tools.windup.ui.markIssueFixed"
+            name="Mark Issue Fixed">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$PreviewQuickFixHandler"
+            id="org.jboss.tools.windup.ui.previewQuickFix"
+            name="Preview Quick Fix">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$DeleteIssueHandler"
+            id="org.jboss.tools.windup.ui.deleteIssue"
+            name="Delete Issue">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$ViewIssueDetailsHandler"
+            id="org.jboss.tools.windup.ui.issueDetails"
+            name="Issue Details">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$DeleteAllIssuesHandler"
+            id="org.jboss.tools.windup.ui.deleteAllIssues"
+            name="Delete All Issues">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByProject"
+            id="org.jboss.tools.windup.ui.groupByProject"
+            name="Group By Project">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByPackage"
+            id="org.jboss.tools.windup.ui.groupByPackage"
+            name="Group By Package">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByFile"
+            id="org.jboss.tools.windup.ui.groupByFile"
+            name="Group By File">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
    </extension>
     <extension
@@ -255,18 +444,6 @@
                    type="org.jboss.tools.windup.windup.Issue">
              </adapt>
           </triggerPoints>
-          <actionProvider
-                class="org.jboss.tools.windup.ui.internal.explorer.IssueActionProvider"
-                priority="highest">
-             <enablement>
-                <or>
-                   <adapt
-                         type="org.eclipse.core.resources.IResource">
-                   </adapt>
-                   <adapt
-                         type="org.jboss.tools.windup.ui.internal.explorer.IssueGroupNode">
-                   </adapt></or></enablement>
-          </actionProvider>
        </navigatorContent>
     </extension>
     <extension
@@ -311,5 +488,15 @@
                 id="org.jboss.tools.windup.ui.issue.details">
           </viewShortcut>
        </perspectiveExtension>
+    </extension>
+    <extension
+          point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="org.jboss.tools.windup.ui.internal.explorer.IssueExplorerPropertyTesters$QuickFixPropertyTester"
+             id="org.jboss.tools.windup.ui.hasQuickFixTester"
+             namespace="org.jboss.tools.windup.ui"
+             properties="hasQuickFix, isFixed"
+             type="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+       </propertyTester>
     </extension>
 </plugin>

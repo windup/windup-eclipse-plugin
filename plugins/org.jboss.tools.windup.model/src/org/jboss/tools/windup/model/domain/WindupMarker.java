@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.core.utils;
+package org.jboss.tools.windup.model.domain;
 
 /**
  * Eclipse marker IDs for Windup.
@@ -23,9 +23,9 @@ public interface WindupMarker {
 	 */
 	static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
 
+	static final String CONFIGURATION_ID = "CONFIGURATION_ID";
 	static final String URI_ID = "URI_ID";
 	static final String ELEMENT_ID = "ELEMENT_ID"; //$NON-NLS-1$
-	static final String ISSUE_ID = "ISSUE_ID"; //$NON-NLS-1$
 	
 	static final String TITLE = "TITLE_ID";
 	static final String HINT = "HINT_ID";

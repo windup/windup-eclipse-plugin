@@ -30,7 +30,7 @@ import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.ValidatorMessage;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.services.WindupService;
-import org.jboss.tools.windup.core.utils.WindupMarker;
+import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.tooling.data.Classification;

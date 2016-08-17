@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.tools.windup.model.domain.WindupConstants;
@@ -28,7 +29,6 @@ import org.jboss.tools.windup.ui.internal.explorer.Group.PackageGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.ProjectGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.RuleGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.SeverityGroup;
-import org.jboss.windup.reporting.model.Severity;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -40,22 +40,35 @@ public class IssueGroupService {
 	
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupUIPlugin.PLUGIN_ID);
 
+	private static final String GROUP_BY_PROJECT = "GROUP_BY_PROJECT"; //$NON-NLS-1$
+	private static final String GROUP_BY_PACKAGE = "GROUP_BY_PACKAGE"; //$NON-NLS-1$
+	private static final String GROUP_BY_FILE = "GROUP_BY_FILE"; //$NON-NLS-1$
 	private static final String GROUP_BY_SEVERITY = "GROUP_BY_SEVERITY"; //$NON-NLS-1$
 	private static final String GROUP_BY_RULE = "GROUP_BY_RULE"; //$NON-NLS-1$
 	
+	private boolean groupByProject;
+	private boolean groupByPackage;
+	private boolean groupByFile;
 	private boolean groupBySeverity;
 	private boolean groupByRule;
 	
+	@Inject private IEclipseContext context;
 	@Inject	private IEventBroker broker;
 	
 	@PostConstruct
 	private void start() {
+		this.groupByProject = preferences.getBoolean(GROUP_BY_PROJECT, false);
+		this.groupByPackage = preferences.getBoolean(GROUP_BY_PROJECT, false);
+		this.groupByFile = preferences.getBoolean(GROUP_BY_FILE, false);
 		this.groupBySeverity = preferences.getBoolean(GROUP_BY_SEVERITY, false);
 		this.groupByRule = preferences.getBoolean(GROUP_BY_RULE, false);
 	}
 	
 	@PreDestroy
 	private void save() {
+		preferences.putBoolean(GROUP_BY_PROJECT, groupByProject);
+		preferences.putBoolean(GROUP_BY_PACKAGE, groupByPackage);
+		preferences.putBoolean(GROUP_BY_FILE, groupByFile);
 		preferences.putBoolean(GROUP_BY_SEVERITY, groupBySeverity);
 		preferences.putBoolean(GROUP_BY_RULE, groupByRule);
 		try {
@@ -65,13 +78,28 @@ public class IssueGroupService {
 		}
 	}
 	
+	public void setGroupByProject(boolean groupByProject) {
+		this.groupByProject = groupByProject;
+		notifyChanged();
+	}
+	
+	public void setGroupByPackage(boolean groupByPackage) {
+		this.groupByPackage = groupByPackage;
+		notifyChanged();
+	}
+	
+	public void setGroupByFile(boolean groupByFile) {
+		this.groupByFile = groupByFile;
+		notifyChanged();
+	}
+	
 	public void setGroupBySeverity(boolean groupBySeverity) {
 		this.groupBySeverity = groupBySeverity;
 		notifyChanged();
 	}
 	
-	public void setGroupByType(boolean groupByType) {
-		this.groupByRule = groupByType;
+	public void setGroupByRule(boolean groupByRule) {
+		this.groupByRule = groupByRule;
 		notifyChanged();
 	}
 	
@@ -81,35 +109,36 @@ public class IssueGroupService {
 	}
 	
 	public Group<?, ?> getRoot() {
-		Group<?, ?> root = new ProjectGroup(null);
-		PackageGroup packageGroup = new PackageGroup(root);
-		ClassGroup classGroup = new ClassGroup(packageGroup);
-		SeverityGroup mandatoryGroup = null;
-		SeverityGroup potentialGroup = null;
-		SeverityGroup optionalGroup = null;
+		
+		Group<?, ?> parent = null;
+		
+		if (groupByProject) {
+			parent = new ProjectGroup(parent, context);
+		}
+		
+		if (groupByPackage) {
+			parent = new PackageGroup(parent, context);
+		}
+		
+		if (groupByFile) {
+			parent = new ClassGroup(parent, context);
+		}
+		
 		if (groupBySeverity) {
-			mandatoryGroup = new SeverityGroup(classGroup, Severity.MANDATORY);
-			potentialGroup = new SeverityGroup(classGroup, Severity.POTENTIAL);
-			optionalGroup = new SeverityGroup(classGroup, Severity.OPTIONAL);
+			parent = new SeverityGroup(parent, context);
 			if (!groupByRule) {
-				new IssueGroup(mandatoryGroup);
-				new IssueGroup(potentialGroup);
-				new IssueGroup(optionalGroup);
+				parent = new IssueGroup(parent, context);
 			}
 		}
+		
 		if (groupByRule) {
-			if (groupBySeverity) {
-				new IssueGroup(new RuleGroup(mandatoryGroup));
-				new IssueGroup(new RuleGroup(potentialGroup));
-				new IssueGroup (new RuleGroup(optionalGroup));
-			}
-			else {
-				new IssueGroup(new RuleGroup(classGroup));
-			}
+			parent = new IssueGroup(new RuleGroup(parent, context), context);
 		}
+		 
 		if (!groupBySeverity && !groupByRule) {
-			new IssueGroup(classGroup);
+			parent = new IssueGroup(parent, context);
 		}
-		return root;
+		
+		return parent.getRoot();
 	}
 }

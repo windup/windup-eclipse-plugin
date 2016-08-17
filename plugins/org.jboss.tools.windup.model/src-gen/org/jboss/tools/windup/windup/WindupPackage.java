@@ -197,31 +197,13 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__INPUTS = PARAMETERIZED_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Windup Result</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONFIGURATION_ELEMENT__WINDUP_RESULT = PARAMETERIZED_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Windup Home</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__WINDUP_HOME = PARAMETERIZED_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION = PARAMETERIZED_FEATURE_COUNT + 3;
+	int CONFIGURATION_ELEMENT__WINDUP_HOME = PARAMETERIZED_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Source Mode</b></em>' attribute.
@@ -230,7 +212,25 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__SOURCE_MODE = PARAMETERIZED_FEATURE_COUNT + 4;
+	int CONFIGURATION_ELEMENT__SOURCE_MODE = PARAMETERIZED_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Generated Reports Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION = PARAMETERIZED_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Packages</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__PACKAGES = PARAMETERIZED_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
@@ -380,13 +380,31 @@ public interface WindupPackage extends EPackage {
 	int INPUT__URI = NAMED_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Windup Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT__WINDUP_RESULT = NAMED_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INPUT__GENERATED_REPORT_LOCATION = NAMED_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>Input</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 1;
+	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -517,13 +535,22 @@ public interface WindupPackage extends EPackage {
 	int ISSUE__EFFORT = 5;
 
 	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__FIXED = 6;
+
+	/**
 	 * The number of structural features of the '<em>Issue</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ISSUE_FEATURE_COUNT = 6;
+	int ISSUE_FEATURE_COUNT = 7;
 
 	/**
 	 * The number of operations of the '<em>Issue</em>' class.
@@ -597,6 +624,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int HINT__EFFORT = ISSUE__EFFORT;
+
+	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__FIXED = ISSUE__FIXED;
 
 	/**
 	 * The feature id for the '<em><b>Title</b></em>' attribute.
@@ -733,6 +769,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION__EFFORT = ISSUE__EFFORT;
+
+	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__FIXED = ISSUE__FIXED;
 
 	/**
 	 * The feature id for the '<em><b>Classification</b></em>' attribute.
@@ -880,17 +925,6 @@ public interface WindupPackage extends EPackage {
 	EReference getConfigurationElement_Inputs();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Windup Result</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult()
-	 * @see #getConfigurationElement()
-	 * @generated
-	 */
-	EReference getConfigurationElement_WindupResult();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupHome <em>Windup Home</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -902,17 +936,6 @@ public interface WindupPackage extends EPackage {
 	EAttribute getConfigurationElement_WindupHome();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportLocation <em>Generated Report Location</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Generated Report Location</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportLocation()
-	 * @see #getConfigurationElement()
-	 * @generated
-	 */
-	EAttribute getConfigurationElement_GeneratedReportLocation();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode <em>Source Mode</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -922,6 +945,28 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getConfigurationElement_SourceMode();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generated Reports Location</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_GeneratedReportsLocation();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Packages</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getPackages()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_Packages();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -1006,6 +1051,28 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getInput_Uri();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.Input#getWindupResult <em>Windup Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Windup Result</em>'.
+	 * @see org.jboss.tools.windup.windup.Input#getWindupResult()
+	 * @see #getInput()
+	 * @generated
+	 */
+	EReference getInput_WindupResult();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Input#getGeneratedReportLocation <em>Generated Report Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generated Report Location</em>'.
+	 * @see org.jboss.tools.windup.windup.Input#getGeneratedReportLocation()
+	 * @see #getInput()
+	 * @generated
+	 */
+	EAttribute getInput_GeneratedReportLocation();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.WindupResult <em>Result</em>}'.
@@ -1114,6 +1181,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIssue_Effort();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#isFixed <em>Fixed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Fixed</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#isFixed()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_Fixed();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.

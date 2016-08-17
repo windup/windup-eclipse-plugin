@@ -49,8 +49,9 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			super.getPropertyDescriptors(object);
 
 			addWindupHomePropertyDescriptor(object);
-			addGeneratedReportLocationPropertyDescriptor(object);
 			addSourceModePropertyDescriptor(object);
+			addGeneratedReportsLocationPropertyDescriptor(object);
+			addPackagesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -69,28 +70,6 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 				 getString("_UI_ConfigurationElement_windupHome_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_windupHome_feature", "_UI_ConfigurationElement_type"),
 				 WindupPackage.eINSTANCE.getConfigurationElement_WindupHome(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Generated Report Location feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addGeneratedReportLocationPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ConfigurationElement_generatedReportLocation_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generatedReportLocation_feature", "_UI_ConfigurationElement_type"),
-				 WindupPackage.eINSTANCE.getConfigurationElement_GeneratedReportLocation(),
 				 true,
 				 false,
 				 false,
@@ -122,6 +101,50 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
+	 * This adds a property descriptor for the Generated Reports Location feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addGeneratedReportsLocationPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_generatedReportsLocation_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generatedReportsLocation_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_GeneratedReportsLocation(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Packages feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addPackagesPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_packages_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_packages_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_Packages(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -134,7 +157,6 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(WindupPackage.eINSTANCE.getConfigurationElement_Inputs());
-			childrenFeatures.add(WindupPackage.eINSTANCE.getConfigurationElement_WindupResult());
 		}
 		return childrenFeatures;
 	}
@@ -191,12 +213,12 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 
 		switch (notification.getFeatureID(ConfigurationElement.class)) {
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME:
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION:
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
+			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
-			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -218,11 +240,6 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			(createChildParameter
 				(WindupPackage.eINSTANCE.getConfigurationElement_Inputs(),
 				 WindupFactory.eINSTANCE.createInput()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(WindupPackage.eINSTANCE.getConfigurationElement_WindupResult(),
-				 WindupFactory.eINSTANCE.createWindupResult()));
 	}
 
 }

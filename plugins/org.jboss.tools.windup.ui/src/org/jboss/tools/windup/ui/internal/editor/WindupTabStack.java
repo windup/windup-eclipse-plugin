@@ -15,14 +15,15 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.WINDUP_RUN_COM
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.issues.WindupIssuesTab;
 import org.jboss.tools.windup.ui.internal.editor.launch.WindupConfigurationTab;
 import org.jboss.tools.windup.ui.internal.editor.report.WindupReportTab;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.WindupResult;
 
 import com.google.common.base.Objects;
 
@@ -55,12 +56,16 @@ public class WindupTabStack extends TabStack {
 	}
 	
 	private void updateTabs() {
-		WindupResult result = configuration.getWindupResult();
-		if (result != null) {
-			if (issuesTab == null && reportTab == null) {
-				this.reportTab = addTab(WindupReportTab.class);
-				this.issuesTab = addTab(WindupIssuesTab.class);
-			}
+		if (issuesTab == null && reportTab == null) {
+			this.reportTab = addTab(WindupReportTab.class);
+			this.issuesTab = addTab(WindupIssuesTab.class);
+		}
+	}
+	
+	public void focus() {
+		for (TabWrapper wrapper : tabs.values()) {
+			ContextInjectionFactory.invoke(wrapper.getObject(), 
+					Focus.class, wrapper.getContext(), null);
 		}
 	}
 }

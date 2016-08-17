@@ -10,8 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.core.utils.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
-import static org.jboss.tools.windup.core.utils.WindupMarker.WINDUP_HINT_MARKER_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
 import static org.jboss.tools.windup.ui.internal.explorer.MarkerUtil.getMarkers;
 
 import java.util.List;

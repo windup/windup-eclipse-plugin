@@ -62,12 +62,8 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration launchConfig) {
 		ConfigurationElement configuration = modelService.findConfiguration(launchConfig.getName());
-		try {
-			markerService.deleteWindpuMarkers(configuration);
-			broker.post(MARKERS_CHANGED, true);
-		} catch (CoreException e) {
-			WindupUIPlugin.log(e);
-		}
+		markerService.deleteWindpuMarkers();
+		broker.post(MARKERS_CHANGED, true);
 		modelService.deleteConfiguration(configuration);
 	}
 	
@@ -87,6 +83,6 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Inject
 	@Optional
 	private void configDeleted(@UIEventTopic(CONFIG_DELETED) ConfigurationElement configuration) {
-        FileUtils.delete(new Path(configuration.getGeneratedReportLocation()).toFile(), true);
+        FileUtils.delete(new Path(configuration.getGeneratedReportsLocation()).toFile(), true);
 	}
 }

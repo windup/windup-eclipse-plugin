@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.core.utils.WindupMarker.ELEMENT_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.ELEMENT_ID;
 
 import java.util.List;
 

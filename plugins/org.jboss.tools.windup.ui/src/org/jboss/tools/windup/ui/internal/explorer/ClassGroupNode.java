@@ -13,7 +13,11 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 
 /**
  * Represents a class grouping.
@@ -34,6 +38,17 @@ public class ClassGroupNode extends IssueGroupNode<IJavaElement> {
 	
 	@Override
 	public IJavaElement getType() {
+		if (element instanceof ICompilationUnit) {
+			ICompilationUnit unit = (ICompilationUnit) element;
+			try {
+				IType[] types = unit.getTypes();
+				if (types != null && types.length > 0) {
+					return types[0];
+				}
+			} catch (JavaModelException e) {
+				WindupUIPlugin.log(e);
+			}
+		}
 		return element;
 	}
 }

@@ -10,13 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_ERROR;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_INFO;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_ERROR;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_INFO;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_WARNING;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_WARNING;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.*;
 
 import java.util.Map;
 
@@ -46,6 +40,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 	private static final Image WARNING;
 	private static final Image WARNING_QUICKFIX;
 	private static final Image INFO;
+	private static final Image FIXED;
 	private static final Image INFO_QUICKFIX;
 	private static final Image RULE;
 	
@@ -58,6 +53,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 		INFO = imageRegistry.get(IMG_INFO);
 		INFO_QUICKFIX = imageRegistry.get(IMG_QUICKFIX_INFO);
 		RULE = imageRegistry.get(IMG_RULE);
+		FIXED = imageRegistry.get(IMG_FIXED);
 	}
 	
 	private WorkbenchLabelProvider workbenchProvider = new WorkbenchLabelProvider();
@@ -94,18 +90,19 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 		if (element instanceof IssueNode) {
 			IssueNode issue = (IssueNode)element;
 			boolean hasQuickFix = issue.hasQuickFix();
+			boolean isFixed = issue.isFixed();
 			Image result = null;
 			switch (issue.getSeverity()) {
 				case IMarker.SEVERITY_ERROR: {
-					result = hasQuickFix ? ERROR_QUICKFIX : ERROR;
+					result = isFixed ? FIXED : hasQuickFix ? ERROR_QUICKFIX : ERROR;
 					break;
 				}
 				case IMarker.SEVERITY_WARNING: {
-					result = hasQuickFix ? WARNING_QUICKFIX : WARNING;
+					result = isFixed ? FIXED : hasQuickFix ? WARNING_QUICKFIX : WARNING;
 					break;
 				}
 				default: {
-					result = hasQuickFix ? INFO_QUICKFIX : INFO;
+					result = isFixed ? FIXED : hasQuickFix ? INFO_QUICKFIX : INFO;
 				}
 			}
 			return result;

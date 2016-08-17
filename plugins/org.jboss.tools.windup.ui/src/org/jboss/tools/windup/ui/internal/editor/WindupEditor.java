@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -58,6 +59,7 @@ public class WindupEditor {
 	@Inject private Composite container;
 	@Inject private IEclipseContext context;
 	@Inject private IMenuService menuService;
+	@Inject private ModelService modelService;
 	
 	private Composite stackComposite;
 	private Composite gettingStartedComposite;
@@ -107,7 +109,7 @@ public class WindupEditor {
 		int right = preferences.getInt(SASH_RIGHT, SASH_RIGHT_DEFAULT);
 		
 		sash.setWeights(new int[]{left, right});
-		
+				
 		toolkit.decorateFormHeading(form);
 		toolkit.paintBordersFor(form.getBody());
 	}
@@ -144,13 +146,16 @@ public class WindupEditor {
 	private void updateDetails(@UIEventTopic(ACTIVE_CONFIG) ConfigurationElement configuration) {
 		WindupTabStack stack = null; 
 		if (configuration != null) {
+			modelService.synch(configuration);
 			stack = tabStack.get(configuration);
 			if (stack == null) {
 				IEclipseContext child = context.createChild();
 				child.set(ConfigurationElement.class, configuration);
 				stack = createChild(WindupTabStack.class, stackComposite, child);
 				tabStack.put(configuration, stack);
+				
 			}
+			stack.focus();
 		}
 		Composite top = stack != null ? stack.getControl() : gettingStartedComposite;
 		((StackLayout)stackComposite.getLayout()).topControl = top;

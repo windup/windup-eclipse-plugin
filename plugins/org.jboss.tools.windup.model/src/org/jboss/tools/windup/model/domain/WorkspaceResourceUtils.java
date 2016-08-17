@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.core.utils;
+package org.jboss.tools.windup.model.domain;
 
 import java.io.File;
 import java.net.URL;
@@ -23,16 +23,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.jboss.tools.windup.core.WindupCorePlugin;
+import org.jboss.tools.windup.model.Activator;
 
 /**
  * Utility for working with the Eclipse workspace resources.
  */
-public class ResourceUtils {
+public class WorkspaceResourceUtils {
 
 	/**
 	 * Returns a list of {@link IProject}s associated with the given selection.
@@ -74,8 +75,8 @@ public class ResourceUtils {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 	}
 	
-	public static URI createPlatformPluginURI(IResource resource) {
-		return URI.createPlatformPluginURI(resource.getFullPath().toString(), false);
+	public static URI createPlatformPluginURI(IPath path) {
+		return URI.createPlatformPluginURI(path.toString(), false);
 	}
 	
 	public static java.nio.file.Path computePath(String platformPluginUri) {
@@ -85,7 +86,7 @@ public class ResourceUtils {
 			File temp = new File(url.toURI());
 			return temp.toPath();
 		} catch (Exception e) {
-			WindupCorePlugin.log(e);
+			Activator.log(e);
 		}
 		return null;
 	}

@@ -32,7 +32,7 @@ import com.google.common.collect.Maps;
  */
 public class TabStack {
 
-	private Map<CTabItem, TabWrapper> tabs = Maps.newHashMap();
+	protected Map<CTabItem, TabWrapper> tabs = Maps.newHashMap();
 	
 	@Inject private IEclipseContext context;
 	@Inject private FormToolkit toolkit;

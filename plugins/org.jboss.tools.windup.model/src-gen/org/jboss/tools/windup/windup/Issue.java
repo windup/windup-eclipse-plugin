@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getSeverity <em>Severity</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getRuleId <em>Rule Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getEffort <em>Effort</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#isFixed <em>Fixed</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
@@ -173,5 +174,31 @@ public interface Issue extends EObject {
 	 * @generated
 	 */
 	void setEffort(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Fixed</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Fixed</em>' attribute.
+	 * @see #setFixed(boolean)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Fixed()
+	 * @model
+	 * @generated
+	 */
+	boolean isFixed();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#isFixed <em>Fixed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Fixed</em>' attribute.
+	 * @see #isFixed()
+	 * @generated
+	 */
+	void setFixed(boolean value);
 
 } // Issue

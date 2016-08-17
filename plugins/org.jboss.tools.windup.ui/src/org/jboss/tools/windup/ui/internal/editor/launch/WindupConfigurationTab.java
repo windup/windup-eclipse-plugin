@@ -14,6 +14,8 @@ import static org.jboss.tools.windup.ui.internal.Messages.launchTab;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -24,6 +26,10 @@ import org.jboss.tools.windup.ui.internal.editor.WindupFormTab;
  * The page for configuring Windup.
  */
 public class WindupConfigurationTab extends WindupFormTab {
+	
+	private InputProjectsSection projectSection;
+	private InputPackagesSection packageSection;
+	
 	
 	@Override
 	protected void createFormContent(Composite parent) {
@@ -47,7 +53,9 @@ public class WindupConfigurationTab extends WindupFormTab {
 		Composite options = createContainer(parent);
 		ContextInjectionFactory.make(OptionsSections.class, createChildContext(options));
 		Composite input = createContainer(parent);
-		ContextInjectionFactory.make(InputSection.class, createChildContext(input));
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(input);
+		projectSection = ContextInjectionFactory.make(InputProjectsSection.class, createChildContext(input));
+		packageSection = ContextInjectionFactory.make(InputPackagesSection.class, createChildContext(input));
 		
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 10;
@@ -75,5 +83,11 @@ public class WindupConfigurationTab extends WindupFormTab {
 		input.setLayoutData(data);
 		
 		form.layout(true, true);
+	}
+	
+	@Focus
+	private void focus() {
+		projectSection.focus();
+		packageSection.focus();
 	}
 }

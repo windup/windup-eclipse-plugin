@@ -14,7 +14,6 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLET
 
 import javax.inject.Inject;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -49,7 +48,7 @@ public class ViewService {
 	@Inject
 	@Optional
 	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
-		String url = modelService.getGeneratedReportHomeLocation(configuration).toOSString();
+		//String url = modelService.getGeneratedReportHomeLocation(configuration).toOSString();
 		//activateWindupReportView().showReport(new Path(url), true);
 	}
 }

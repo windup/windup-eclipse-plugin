@@ -10,26 +10,30 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_DELETED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Explorer view for displaying and navigating Windup issues, classifications, etc. 
@@ -37,6 +41,17 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 public class IssueExplorer extends CommonNavigator {
 	
 	@Inject private IEclipseContext context;
+	@Inject private IEventBroker broker;
+	
+	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
+		@Override
+		public void expandAll() {
+			getCommonViewer().expandAll();
+		}
+		public void refresh() {
+			getCommonViewer().refresh();
+		}
+	};
 
 	@Override
 	public void createPartControl(Composite aParent) {
@@ -53,28 +68,44 @@ public class IssueExplorer extends CommonNavigator {
 				context.set(IMarker.class, type);
 			}
 		});
-		context.get(MApplication.class).getContext().set(IssueExplorerService.class, 
-				new IssueExplorerService() {
-			@Override
-			public TreeViewer getViewer() {
-				return getCommonViewer();
-			}
-		});
+		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
+		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
+		broker.subscribe(ISSUE_CHANGED, issueChangedHandler);
+		broker.subscribe(ISSUE_DELETED, issueDeletedHandler);
+		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 	}
 	
-	@Inject
-	@Optional
-	private void activeWindupReportView(@UIEventTopic(MARKERS_CHANGED) boolean changed) {
-		refresh();
-	}
+	private EventHandler markersChangedHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			refresh();
+		}
+	};
 	
-	@Inject
-	@Optional
-	private void refresh(@UIEventTopic(GROUPS_CHANGED) boolean changed) {
-		refresh();
-		// TODO: restore previously expanded nodes, selection, scrolls, etc.
-		getCommonViewer().expandAll();
-	}
+	private EventHandler issueChangedHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			Display.getDefault().asyncExec(() -> {
+				getCommonViewer().refresh(event.getProperty(EVENT_ISSUE), true);
+			});
+		}
+	};
+	
+	private EventHandler issueDeletedHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			getCommonViewer().remove(event.getProperty(EVENT_ISSUE));
+		}
+	};
+	
+	private EventHandler groupsChangedHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			refresh();
+			// TODO: restore previously expanded nodes, selection, scrolls, etc.
+			getCommonViewer().expandAll();
+		}
+	};
 	
 	private void refresh() {
 		if (getCommonViewer() != null && !getCommonViewer().getTree().isDisposed()) {
@@ -103,7 +134,21 @@ public class IssueExplorer extends CommonNavigator {
 		}
 	}
 	
+	private IEclipseContext getServiceContext() {
+		return context.get(MApplication.class).getContext();
+	}
+	
 	public static interface IssueExplorerService {
-		TreeViewer getViewer();
+		void expandAll();
+		void refresh();
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		broker.unsubscribe(markersChangedHandler);
+		broker.unsubscribe(issueChangedHandler);
+		broker.unsubscribe(issueDeletedHandler);
+		broker.unsubscribe(groupsChangedHandler);
 	}
 }

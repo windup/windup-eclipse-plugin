@@ -10,13 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.issues;
 
-import static org.jboss.tools.windup.core.utils.WindupMarker.EFFORT;
-import static org.jboss.tools.windup.core.utils.WindupMarker.HINT;
-import static org.jboss.tools.windup.core.utils.WindupMarker.RULE_ID;
-import static org.jboss.tools.windup.core.utils.WindupMarker.SEVERITY;
-import static org.jboss.tools.windup.core.utils.WindupMarker.SOURCE_SNIPPET;
-import static org.jboss.tools.windup.core.utils.WindupMarker.TITLE;
-import static org.jboss.tools.windup.core.utils.WindupMarker.URI_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.EFFORT;
+import static org.jboss.tools.windup.model.domain.WindupMarker.HINT;
+import static org.jboss.tools.windup.model.domain.WindupMarker.RULE_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
+import static org.jboss.tools.windup.model.domain.WindupMarker.SOURCE_SNIPPET;
+import static org.jboss.tools.windup.model.domain.WindupMarker.TITLE;
 import static org.jboss.tools.windup.ui.internal.Messages.issueLabelEffort;
 import static org.jboss.tools.windup.ui.internal.Messages.issueLabelHint;
 import static org.jboss.tools.windup.ui.internal.Messages.issueLabelInfo;
@@ -36,7 +35,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
@@ -62,6 +60,8 @@ import com.google.common.collect.Lists;
  * View for displaying the details of an Issue.
  */
 public class IssueDetailsView {
+	
+	public static final String ID = "org.jboss.tools.windup.ui.issue.details";
 	
 	private FormToolkit toolkit;
 	private DetailsComposite detailsComposite;
@@ -101,12 +101,11 @@ public class IssueDetailsView {
 	}
 	
 	@Inject
-	private void showIssueDetails(@Optional IMarker marker) {
+	public void showIssueDetails(@Optional IMarker marker) {
 		if (detailsComposite != null && !detailsComposite.isDisposed()) {
 			Composite top = placeholder;
 			if (marker != null) {
-				URI uri = URI.createURI(marker.getAttribute(URI_ID, ""));
-				Issue issue = (Issue)modelService.getModel().eResource().getEObject(uri.fragment());
+				Issue issue = modelService.findIssue(marker);
 				if (issue != null) {
 					detailsComposite.setIssue(marker, issue);
 					top = detailsComposite;

@@ -1,6 +1,6 @@
 package org.jboss.tools.windup.ui.internal.markers;
 
-import static org.jboss.tools.windup.core.utils.WindupMarker.*;
+import static org.jboss.tools.windup.model.domain.WindupMarker.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

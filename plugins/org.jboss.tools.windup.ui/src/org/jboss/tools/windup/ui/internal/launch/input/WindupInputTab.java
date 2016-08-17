@@ -10,45 +10,60 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch.input;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
-import static org.jboss.tools.windup.ui.internal.Messages.applicationsToMigrate;
+import static org.jboss.tools.windup.model.domain.ConfigurationResourceUtil.computePackages;
+import static org.jboss.tools.windup.model.domain.ConfigurationResourceUtil.getCurrentPackages;
+import static org.jboss.tools.windup.model.domain.ConfigurationResourceUtil.getCurrentProjects;
+import static org.jboss.tools.windup.ui.internal.Messages.inputProjectsDescription;
 import static org.jboss.tools.windup.ui.internal.Messages.inputTabName;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab;
-import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.launch.FilteredListDialog;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.Input;
-import org.jboss.tools.windup.windup.WindupFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * The tab where the user specifies the input to analyze by Windup.
  */
 @SuppressWarnings("restriction")
-public class WindupInputTab extends AbstractJavaMainTab {
+public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	
 	private static final String ID = "org.jboss.tools.windup.ui.launch.WindupSourceTab";
 
 	private ModelService modelService;
 	private ConfigurationElement configuration;
+	
+	private TableViewer projectsTable;
+	private TableViewer packagesTable;
 	
 	public WindupInputTab(ModelService modelService) {
 		this.modelService = modelService;
@@ -59,35 +74,149 @@ public class WindupInputTab extends AbstractJavaMainTab {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		createProjectEditor(container);
+		createProjectsGroup(container);
+		createPackagesGroup(container);
 		createVerticalSpacer(container, 1);
 		super.setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, ID);
 	}
 	
+	private void createProjectsGroup(Composite parent) {
+		Group group = SWTFactory.createGroup(parent, Messages.windupProjects+":", 2, 1, GridData.FILL_BOTH);
+		GridDataFactory.fillDefaults().grab(true, true).hint(70, 100).applyTo(group);
+		projectsTable = new TableViewer(group, SWT.BORDER|SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(projectsTable.getTable());
+		projectsTable.setLabelProvider(new WorkbenchLabelProvider());
+		projectsTable.setContentProvider(ArrayContentProvider.getInstance());
+		createProjectsButtonBar(group, projectsTable);
+	}
+	
+	private void reloadProjectsTable() {
+		projectsTable.setInput(getCurrentProjects(configuration));
+	}
+	
+	private void reloadPackagesTable() {
+		packagesTable.setInput(getCurrentPackages(configuration));
+	}
+	
+	private void createProjectsButtonBar(Composite parent, TableViewer table) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).applyTo(container);
+		GridDataFactory.fillDefaults().grab(false, true).applyTo(container);
+		
+		Button addButton = new Button(container, SWT.PUSH);
+		addButton.setText(Messages.windupAdd);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(addButton);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				List<IProject> projects = Lists.newArrayList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+				projects.removeAll(Lists.newArrayList(getCurrentProjects(configuration)));
+				FilteredListDialog dialog = new FilteredListDialog(parent.getShell(), new WorkbenchLabelProvider());
+				dialog.setMultipleSelection(true);
+				dialog.setMessage(Messages.windupProjectsSelect);
+				dialog.setElements(projects.toArray(new IProject[projects.size()]));
+				dialog.setTitle(Messages.windupProjects);
+				dialog.setHelpAvailable(false);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					Object[] selected = (Object[])dialog.getResult();
+					if (selected.length > 0) {
+						List<IProject> newProjects = Lists.newArrayList();
+						Arrays.stream(selected).forEach(p -> newProjects.add((IProject)p));
+						modelService.createInput(configuration, newProjects);
+						reloadProjectsTable();
+					}
+				}
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		Button removeButton = new Button(container, SWT.PUSH);
+		removeButton.setText(Messages.windupRemove);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(removeButton);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ISelection selection = projectsTable.getSelection();
+				if (!selection.isEmpty()) {
+					StructuredSelection ss = (StructuredSelection)selection;
+					List<IProject> projects = (List<IProject>)ss.toList();
+					modelService.deleteInput(configuration, projects);
+					modelService.synch(configuration);
+					reloadProjectsTable();
+					reloadPackagesTable();
+				}
+			}
+		});
+	}
+	
+	private void createPackagesGroup(Composite parent) {
+		Group group = SWTFactory.createGroup(parent, Messages.windupPackages+":", 2, 1, GridData.FILL_BOTH);
+		GridDataFactory.fillDefaults().grab(true, true).hint(70, 100).applyTo(group);
+		packagesTable = new TableViewer(group, SWT.BORDER|SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(packagesTable.getTable());
+		packagesTable.setLabelProvider(new WorkbenchLabelProvider());
+		packagesTable.setContentProvider(ArrayContentProvider.getInstance());
+		createPackagesButtonBar(group, packagesTable);
+	}
+	
+	private void createPackagesButtonBar(Composite parent, TableViewer table) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).applyTo(container);
+		GridDataFactory.fillDefaults().grab(false, true).applyTo(container);
+		
+		Button addButton = new Button(container, SWT.PUSH);
+		addButton.setText(Messages.windupAdd);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(addButton);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FilteredListDialog dialog = new FilteredListDialog(parent.getShell(), new WorkbenchLabelProvider());
+				dialog.setMultipleSelection(true);
+				dialog.setMessage(Messages.windupPackagesSelect);
+				dialog.setElements(computePackages(configuration));
+				dialog.setTitle(Messages.windupPackages);
+				dialog.setHelpAvailable(false);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					Object[] selected = (Object[])dialog.getResult();
+					if (selected.length > 0) {
+						List<IPackageFragment> packages = Lists.newArrayList();
+						Arrays.stream(selected).forEach(p -> packages.add((IPackageFragment)p));
+						modelService.addPackages(configuration, packages);
+						reloadPackagesTable();
+					}
+				}
+			}
+		});
+		
+		Button removeButton = new Button(container, SWT.PUSH);
+		removeButton.setText(Messages.windupRemove);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(removeButton);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ISelection selection = table.getSelection();
+				if (!selection.isEmpty()) {
+					StructuredSelection ss = (StructuredSelection)selection;
+					modelService.removePackages(configuration, (List<IPackageFragment>)ss.toList());
+					reloadPackagesTable();
+				}
+			}
+		});
+	}
+	
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy launchConfig) {
 		initializeConfiguration(launchConfig);
-		IJavaElement javaElement = getContext();
-		if (javaElement != null) {
-			initializeJavaProject(javaElement, launchConfig);
-		}
-		else {
-			launchConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, DEFAULT);
-		}
 	}
 	
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy launchConfig) {
 		configuration.setName(launchConfig.getName());
-		configuration.getInputs().clear();
-		if (getJavaProject() != null) {
-			URI uri = URI.createPlatformPluginURI(getJavaProject().getProject().getFullPath().toString(), false);
-			Input input = WindupFactory.eINSTANCE.createInput();
-			input.setUri(uri.toString());
-			configuration.getInputs().add(input);
-		}
-		launchConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
 	}
 
 	@Override
@@ -104,26 +233,8 @@ public class WindupInputTab extends AbstractJavaMainTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		String name = fProjText.getText().trim();
-		if (name.length() == 0) {
-			setErrorMessage(applicationsToMigrate);
-			return false;
-		}
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IStatus status = workspace.validateName(name, IResource.PROJECT);
-		if (status.isOK()) {
-			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (!project.exists()) {
-				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {name})); 
-				return false;
-			}
-			if (!project.isOpen()) {
-				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {name})); 
-				return false;
-			}
-		}
-		else {
-			setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
+		if (configuration.getInputs().isEmpty()) {
+			setErrorMessage(inputProjectsDescription);
 			return false;
 		}
 		return true;
@@ -132,7 +243,6 @@ public class WindupInputTab extends AbstractJavaMainTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration launchConfig) {
 		initializeConfiguration(launchConfig);
-		super.initializeFrom(launchConfig);
 	}
 	
 	private void initializeConfiguration(ILaunchConfiguration launchConfig) {
@@ -140,5 +250,7 @@ public class WindupInputTab extends AbstractJavaMainTab {
 		if (configuration == null) {
 			this.configuration = modelService.createConfiguration(launchConfig.getName());
 		}
+		reloadProjectsTable();
+		reloadPackagesTable();
 	}
 }

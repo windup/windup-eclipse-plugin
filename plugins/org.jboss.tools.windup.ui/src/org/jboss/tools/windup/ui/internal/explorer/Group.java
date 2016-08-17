@@ -10,14 +10,17 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
+import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT_RULE_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.RULE_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.ui.internal.explorer.MarkerUtil.findJavaElementForMarker;
-import static org.jboss.tools.windup.model.domain.WindupConstants.*;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
@@ -25,25 +28,42 @@ import org.jboss.windup.reporting.model.Severity;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-
-import static org.jboss.tools.windup.core.utils.WindupMarker.*;
 
 public abstract class Group<T, E extends IssueGroupNode<?>> {
 
 	private List<Group<?, ?>> children = Lists.newArrayList();
 	private Group<?, ?> parent;
-
+	private IEclipseContext context;
+	
 	public Group(Group<?, ?> parent) {
 		this.parent = parent;
 		if (parent != null) {
 			this.parent.children.add(this);
 		}
 	}
+	
+	public Group(Group<?, ?> parent, IEclipseContext context) {
+		this(parent);
+		this.context = context;
+	}
 		
 	public List<IssueGroupNode<?>> createGroupNodes(List<IMarker> markers) {
 		return createGroupNodesHelper(null, markers);
+	}
+	
+	public IEclipseContext getContext() {
+		if (context == null && parent != null) {
+			return parent.getContext();
+		}
+		return context;
+	}
+	
+	public Group<?, ?> getRoot() {
+		if (parent != null) {
+			return parent.getRoot();
+		}
+		return this;
 	}
 	
 	private List<IssueGroupNode<?>> createGroupNodesHelper(IssueGroupNode<?> parent, List<IMarker> markers) {
@@ -57,7 +77,7 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		});
 		for (T id : groups.keySet()) {
 			List<IMarker> groupMarkers = Lists.newArrayList(groups.get(id));
-			E node = createGroupNode(parent, id, groupMarkers);
+			E node = createGroupNode(parent, id, groupMarkers, getContext().createChild());
 			if (!children.isEmpty()) {
 				List<IssueGroupNode<?>> nodeChildren = Lists.newArrayList();
 				for (Group<?, ?> child : children) {
@@ -74,8 +94,8 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 	}
 	
 	public static class ProjectGroup extends Group<IProject, ProjectGroupNode> {
-		public ProjectGroup(Group<?, ?> parent) {
-			super(parent);
+		public ProjectGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
 		}
 
 		@Override
@@ -84,14 +104,14 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 		
 		@Override
-		protected ProjectGroupNode createGroupNode(IssueGroupNode<?> parent, IProject identifier, List<IMarker> markers) {
+		protected ProjectGroupNode createGroupNode(IssueGroupNode<?> parent, IProject identifier, List<IMarker> markers, IEclipseContext context) {
 			return new ProjectGroupNode(parent, markers, identifier);
 		}
 	}
 	
 	public static class PackageGroup extends Group<IPackageFragment, PackageGroupNode> {
-		public PackageGroup(Group<?, ?> parent) {
-			super(parent);
+		public PackageGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
 		}
 		
 		@Override
@@ -107,14 +127,14 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 		
 		@Override
-		protected PackageGroupNode createGroupNode(IssueGroupNode<?> parent, IPackageFragment identifier, List<IMarker> markers) {
+		protected PackageGroupNode createGroupNode(IssueGroupNode<?> parent, IPackageFragment identifier, List<IMarker> markers, IEclipseContext context) {
 			return new PackageGroupNode(parent, markers, identifier);
 		}
 	}
 	
 	public static class ClassGroup extends Group<IJavaElement, ClassGroupNode> {
-		public ClassGroup(Group<?, ?> parent) {
-			super(parent);
+		public ClassGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
 		}
 		
 		@Override
@@ -127,14 +147,14 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 
 		@Override
-		protected ClassGroupNode createGroupNode(IssueGroupNode<?> parent, IJavaElement identifier, List<IMarker> markers) {
+		protected ClassGroupNode createGroupNode(IssueGroupNode<?> parent, IJavaElement identifier, List<IMarker> markers, IEclipseContext context) {
 			return new ClassGroupNode(parent, markers, identifier);
 		}
 	}
 	
 	public static class IssueGroup extends Group<IMarker, IssueNode> {
-		public IssueGroup(Group<?, ?> parent) {
-			super(parent);
+		public IssueGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
 		}
 		
 		@Override
@@ -143,38 +163,35 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 		
 		@Override
-		protected IssueNode createGroupNode(IssueGroupNode<?> parent, IMarker identifier, List<IMarker> markers) {
-			return new IssueNode(parent, identifier);
+		protected IssueNode createGroupNode(IssueGroupNode<?> parent, IMarker identifier, List<IMarker> markers, IEclipseContext context) {
+			context.set(IssueGroupNode.class, parent);
+			context.set(IMarker.class, identifier);
+			return create(IssueNode.class, context);
 		}
 	}
 	
 	public static class SeverityGroup extends Group<Severity, SeverityGroupNode> {
-		private Severity identifier;
-		public SeverityGroup(Group<?, ?> parent, Severity severity) {
-			super(parent);
-			this.identifier = severity;
+
+		public SeverityGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
 		}
 		
 		@Override
 		protected Severity findIdentifier(IMarker marker) {
 			String severity = marker.getAttribute(SEVERITY, Severity.POTENTIAL.toString());
-			Severity markerSeverity = MarkerUtil.getSeverity(severity);
-			if (markerSeverity.equals(this.identifier)) {
-				return identifier;
-			}
-			return null;
+			return MarkerUtil.getSeverity(severity);
 		}
 		
 		@Override
-		protected SeverityGroupNode createGroupNode(IssueGroupNode<?> parent, Severity identifier, List<IMarker> markers) {
+		protected SeverityGroupNode createGroupNode(IssueGroupNode<?> parent, Severity identifier, List<IMarker> markers, IEclipseContext context) {
 			return new SeverityGroupNode(parent, markers, identifier);
 		}
 	}
 	
 	public static class RuleGroup extends Group<String, RuleGroupNode> {
 		
-		public RuleGroup(Group<?, ?> parent) {
-			super(parent);
+		public RuleGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
 		}
 		
 		@Override
@@ -183,11 +200,15 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 		
 		@Override
-		protected RuleGroupNode createGroupNode(IssueGroupNode<?> parent, String identifier, List<IMarker> markers) {
+		protected RuleGroupNode createGroupNode(IssueGroupNode<?> parent, String identifier, List<IMarker> markers, IEclipseContext context) {
 			return new RuleGroupNode(parent, markers, identifier);
 		}
 	}
 	
 	protected abstract T findIdentifier(IMarker marker);
-	protected abstract E createGroupNode(IssueGroupNode<?> parent, T identifier, List<IMarker> markers);
+	protected abstract E createGroupNode(IssueGroupNode<?> parent, T identifier, List<IMarker> markers, IEclipseContext context);
+	@SuppressWarnings("hiding")
+	protected <T> T create(Class<T> clazz, IEclipseContext context) {
+		return ContextInjectionFactory.make(clazz, context);
+	}
 }

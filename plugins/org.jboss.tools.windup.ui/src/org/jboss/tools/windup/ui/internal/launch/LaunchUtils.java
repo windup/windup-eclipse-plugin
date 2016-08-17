@@ -11,7 +11,7 @@
 package org.jboss.tools.windup.ui.internal.launch;
 
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-import static org.jboss.tools.windup.core.utils.ResourceUtils.getProjectsFromSelection;
+import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.getProjectsFromSelection;
 import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
 import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_TYPE;
 import static org.jboss.tools.windup.ui.internal.Messages.errorConfiguringWindup;

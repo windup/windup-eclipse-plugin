@@ -242,26 +242,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getConfigurationElement_WindupResult() {
-		return (EReference)configurationElementEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getConfigurationElement_WindupHome() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getConfigurationElement_GeneratedReportLocation() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -270,6 +252,24 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	public EAttribute getConfigurationElement_SourceMode() {
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationElement_GeneratedReportsLocation() {
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationElement_Packages() {
 		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -343,6 +343,24 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EAttribute getInput_Uri() {
 		return (EAttribute)inputEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInput_WindupResult() {
+		return (EReference)inputEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getInput_GeneratedReportLocation() {
+		return (EAttribute)inputEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -433,6 +451,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EAttribute getIssue_Effort() {
 		return (EAttribute)issueEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIssue_Fixed() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -595,10 +622,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		configurationElementEClass = createEClass(CONFIGURATION_ELEMENT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__INPUTS);
-		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__WINDUP_RESULT);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__WINDUP_HOME);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__SOURCE_MODE);
+		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION);
+		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__PACKAGES);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -611,6 +638,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		inputEClass = createEClass(INPUT);
 		createEAttribute(inputEClass, INPUT__URI);
+		createEReference(inputEClass, INPUT__WINDUP_RESULT);
+		createEAttribute(inputEClass, INPUT__GENERATED_REPORT_LOCATION);
 
 		windupResultEClass = createEClass(WINDUP_RESULT);
 		createEAttribute(windupResultEClass, WINDUP_RESULT__EXECUTION_RESULTS);
@@ -623,6 +652,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(issueEClass, ISSUE__SEVERITY);
 		createEAttribute(issueEClass, ISSUE__RULE_ID);
 		createEAttribute(issueEClass, ISSUE__EFFORT);
+		createEAttribute(issueEClass, ISSUE__FIXED);
 
 		hintEClass = createEClass(HINT);
 		createEAttribute(hintEClass, HINT__TITLE);
@@ -694,10 +724,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		initEClass(configurationElementEClass, ConfigurationElement.class, "ConfigurationElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getConfigurationElement_Inputs(), this.getInput(), null, "inputs", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getConfigurationElement_WindupResult(), this.getWindupResult(), null, "windupResult", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_WindupHome(), ecorePackage.getEString(), "windupHome", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_GeneratedReportLocation(), ecorePackage.getEString(), "generatedReportLocation", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_SourceMode(), ecorePackage.getEBoolean(), "sourceMode", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationElement_GeneratedReportsLocation(), ecorePackage.getEString(), "generatedReportsLocation", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationElement_Packages(), ecorePackage.getEString(), "packages", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -710,6 +740,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		initEClass(inputEClass, Input.class, "Input", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getInput_Uri(), ecorePackage.getEString(), "uri", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getInput_WindupResult(), this.getWindupResult(), null, "windupResult", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getInput_GeneratedReportLocation(), ecorePackage.getEString(), "generatedReportLocation", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(windupResultEClass, WindupResult.class, "WindupResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getWindupResult_ExecutionResults(), this.getWindupExecutionResults(), "executionResults", null, 0, 1, WindupResult.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -722,6 +754,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getIssue_Severity(), ecorePackage.getEString(), "severity", null, 0, 1, Issue.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_RuleId(), ecorePackage.getEString(), "ruleId", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_Effort(), ecorePackage.getEInt(), "effort", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_Fixed(), ecorePackage.getEBoolean(), "fixed", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(hintEClass, Hint.class, "Hint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getHint_Title(), ecorePackage.getEString(), "title", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

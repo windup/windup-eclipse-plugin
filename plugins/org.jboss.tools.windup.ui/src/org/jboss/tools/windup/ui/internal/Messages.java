@@ -67,8 +67,10 @@ public class Messages extends NLS
     public static String launchTabTitle;
     public static String launchName;
     
-    public static String windupInput;
-    public static String inputDescription;
+    public static String inputProjects;
+    public static String inputProjectsDescription;
+    public static String inputPackages;
+    public static String inputPackagesDescription;
     
     public static String generate_windup_report_for;
     
@@ -92,6 +94,13 @@ public class Messages extends NLS
     public static String windupOptions;
     public static String optionsDescription;
     
+    public static String windupProjects;
+    public static String windupPackages;
+    public static String windupAdd;
+    public static String windupRemove;
+    public static String windupProjectsSelect;
+    public static String windupPackagesSelect;
+    
     public static String generatedReportLocation;
     public static String browseLabel;
     public static String generatedReportLocationSearch;
@@ -113,6 +122,12 @@ public class Messages extends NLS
     
     public static String severityError;
     public static String severityWarning;
+
+    public static String operationError;
+    public static String issueDeleteError;
+    
+    // Compare
+    public static String resourceCompareTwoWayTooltip;
     
     // Editor
     public static String windupEditorTitle;

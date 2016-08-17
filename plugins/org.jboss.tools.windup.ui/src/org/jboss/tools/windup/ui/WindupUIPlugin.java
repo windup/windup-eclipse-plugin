@@ -53,7 +53,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_RULE = "icons/rule.gif"; //$NON-NLS-1$
     public static final String IMG_SEVERITY = "icons/severity.png"; //$NON-NLS-1$
     public static final String IMG_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
-    
+    public static final String IMG_FIXED = "icons/fixedIssue.png"; //"icons/issueFixed.png"; //$NON-NLS-1$
+    public static final String IMG_DELETE_ALL = "icons/deleteAllMarkers.png"; //$NON-NLS-1$
     
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -159,6 +160,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_RULE, createImageDescriptor(IMG_RULE));
 		reg.put(IMG_SEVERITY, createImageDescriptor(IMG_SEVERITY));
 		reg.put(IMG_EXPANDALL, createImageDescriptor(IMG_EXPANDALL));
+		reg.put(IMG_FIXED, createImageDescriptor(IMG_FIXED));
+		reg.put(IMG_DELETE_ALL, createImageDescriptor(IMG_DELETE_ALL));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

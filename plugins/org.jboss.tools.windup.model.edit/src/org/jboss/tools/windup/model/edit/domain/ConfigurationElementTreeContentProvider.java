@@ -86,7 +86,7 @@ public class ConfigurationElementTreeContentProvider extends AdapterFactoryConte
 	}
 	
 	private Object[] getChildren(ConfigurationElement configuration) {
-		WindupResult windupResult = configuration.getWindupResult();
+		/*WindupResult windupResult = configuration.getWindupResult();
 		if (windupResult != null && windupResult.getExecutionResults() != null) {
 			List<Object> children = Lists.newArrayList();
 			children.add(windupResult);
@@ -96,8 +96,9 @@ public class ConfigurationElementTreeContentProvider extends AdapterFactoryConte
 				IJavaElement parent = element.getParent();
 			}
 			return children.toArray(new Object[children.size()]);
-		}
+		}*/
 		return new Object[0];
+		
 	}
 	
 	@Override

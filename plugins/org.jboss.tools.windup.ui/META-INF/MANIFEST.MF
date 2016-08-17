@@ -50,7 +50,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.navigator.resources,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- org.jboss.tools.common.ui
+ org.jboss.tools.common.ui,
+ org.eclipse.osgi.services,
+ org.eclipse.compare,
+ com.ibm.icu,
+ org.eclipse.ui.editors
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,

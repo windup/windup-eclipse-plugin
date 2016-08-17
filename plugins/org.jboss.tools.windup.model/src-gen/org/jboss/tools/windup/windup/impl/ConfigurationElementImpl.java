@@ -14,13 +14,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.WindupPackage;
-import org.jboss.tools.windup.windup.WindupResult;
 
 /**
  * <!-- begin-user-doc -->
@@ -31,10 +31,10 @@ import org.jboss.tools.windup.windup.WindupResult;
  * </p>
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getInputs <em>Inputs</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupResult <em>Windup Result</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupHome <em>Windup Home</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isSourceMode <em>Source Mode</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getPackages <em>Packages</em>}</li>
  * </ul>
  *
  * @generated
@@ -49,16 +49,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<Input> inputs;
-
-	/**
-	 * The cached value of the '{@link #getWindupResult() <em>Windup Result</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getWindupResult()
-	 * @generated
-	 * @ordered
-	 */
-	protected WindupResult windupResult;
 
 	/**
 	 * The default value of the '{@link #getWindupHome() <em>Windup Home</em>}' attribute.
@@ -81,26 +71,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	protected String windupHome = WINDUP_HOME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getGeneratedReportLocation() <em>Generated Report Location</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGeneratedReportLocation()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String GENERATED_REPORT_LOCATION_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getGeneratedReportLocation() <em>Generated Report Location</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGeneratedReportLocation()
-	 * @generated
-	 * @ordered
-	 */
-	protected String generatedReportLocation = GENERATED_REPORT_LOCATION_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #isSourceMode() <em>Source Mode</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -119,6 +89,36 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected boolean sourceMode = SOURCE_MODE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getGeneratedReportsLocation() <em>Generated Reports Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGeneratedReportsLocation()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String GENERATED_REPORTS_LOCATION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getGeneratedReportsLocation() <em>Generated Reports Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGeneratedReportsLocation()
+	 * @generated
+	 * @ordered
+	 */
+	protected String generatedReportsLocation = GENERATED_REPORTS_LOCATION_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getPackages() <em>Packages</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPackages()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> packages;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -156,72 +156,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WindupResult getWindupResult() {
-		if (windupResult != null && windupResult.eIsProxy()) {
-			InternalEObject oldWindupResult = (InternalEObject)windupResult;
-			windupResult = (WindupResult)eResolveProxy(oldWindupResult);
-			if (windupResult != oldWindupResult) {
-				InternalEObject newWindupResult = (InternalEObject)windupResult;
-				NotificationChain msgs = oldWindupResult.eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, null);
-				if (newWindupResult.eInternalContainer() == null) {
-					msgs = newWindupResult.eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, msgs);
-				}
-				if (msgs != null) msgs.dispatch();
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, oldWindupResult, windupResult));
-			}
-		}
-		return windupResult;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public WindupResult basicGetWindupResult() {
-		return windupResult;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetWindupResult(WindupResult newWindupResult, NotificationChain msgs) {
-		WindupResult oldWindupResult = windupResult;
-		windupResult = newWindupResult;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, oldWindupResult, newWindupResult);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setWindupResult(WindupResult newWindupResult) {
-		if (newWindupResult != windupResult) {
-			NotificationChain msgs = null;
-			if (windupResult != null)
-				msgs = ((InternalEObject)windupResult).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, msgs);
-			if (newWindupResult != null)
-				msgs = ((InternalEObject)newWindupResult).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, msgs);
-			msgs = basicSetWindupResult(newWindupResult, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, newWindupResult, newWindupResult));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getWindupHome() {
 		return windupHome;
 	}
@@ -236,27 +170,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		windupHome = newWindupHome;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME, oldWindupHome, windupHome));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getGeneratedReportLocation() {
-		return generatedReportLocation;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setGeneratedReportLocation(String newGeneratedReportLocation) {
-		String oldGeneratedReportLocation = generatedReportLocation;
-		generatedReportLocation = newGeneratedReportLocation;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION, oldGeneratedReportLocation, generatedReportLocation));
 	}
 
 	/**
@@ -285,13 +198,44 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getGeneratedReportsLocation() {
+		return generatedReportsLocation;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setGeneratedReportsLocation(String newGeneratedReportsLocation) {
+		String oldGeneratedReportsLocation = generatedReportsLocation;
+		generatedReportsLocation = newGeneratedReportsLocation;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION, oldGeneratedReportsLocation, generatedReportsLocation));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<String> getPackages() {
+		if (packages == null) {
+			packages = new EDataTypeUniqueEList<String>(String.class, this, WindupPackage.CONFIGURATION_ELEMENT__PACKAGES);
+		}
+		return packages;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
 				return ((InternalEList<?>)getInputs()).basicRemove(otherEnd, msgs);
-			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
-				return basicSetWindupResult(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -306,15 +250,14 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		switch (featureID) {
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
 				return getInputs();
-			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
-				if (resolve) return getWindupResult();
-				return basicGetWindupResult();
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME:
 				return getWindupHome();
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION:
-				return getGeneratedReportLocation();
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				return isSourceMode();
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
+				return getGeneratedReportsLocation();
+			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
+				return getPackages();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -332,17 +275,18 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getInputs().clear();
 				getInputs().addAll((Collection<? extends Input>)newValue);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
-				setWindupResult((WindupResult)newValue);
-				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME:
 				setWindupHome((String)newValue);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION:
-				setGeneratedReportLocation((String)newValue);
-				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				setSourceMode((Boolean)newValue);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
+				setGeneratedReportsLocation((String)newValue);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
+				getPackages().clear();
+				getPackages().addAll((Collection<? extends String>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -359,17 +303,17 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
 				getInputs().clear();
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
-				setWindupResult((WindupResult)null);
-				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME:
 				setWindupHome(WINDUP_HOME_EDEFAULT);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION:
-				setGeneratedReportLocation(GENERATED_REPORT_LOCATION_EDEFAULT);
-				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				setSourceMode(SOURCE_MODE_EDEFAULT);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
+				setGeneratedReportsLocation(GENERATED_REPORTS_LOCATION_EDEFAULT);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
+				getPackages().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -385,14 +329,14 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		switch (featureID) {
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
 				return inputs != null && !inputs.isEmpty();
-			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
-				return windupResult != null;
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME:
 				return WINDUP_HOME_EDEFAULT == null ? windupHome != null : !WINDUP_HOME_EDEFAULT.equals(windupHome);
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORT_LOCATION:
-				return GENERATED_REPORT_LOCATION_EDEFAULT == null ? generatedReportLocation != null : !GENERATED_REPORT_LOCATION_EDEFAULT.equals(generatedReportLocation);
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				return sourceMode != SOURCE_MODE_EDEFAULT;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
+				return GENERATED_REPORTS_LOCATION_EDEFAULT == null ? generatedReportsLocation != null : !GENERATED_REPORTS_LOCATION_EDEFAULT.equals(generatedReportsLocation);
+			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
+				return packages != null && !packages.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -409,10 +353,12 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (windupHome: ");
 		result.append(windupHome);
-		result.append(", generatedReportLocation: ");
-		result.append(generatedReportLocation);
 		result.append(", sourceMode: ");
 		result.append(sourceMode);
+		result.append(", generatedReportsLocation: ");
+		result.append(generatedReportsLocation);
+		result.append(", packages: ");
+		result.append(packages);
 		result.append(')');
 		return result.toString();
 	}

@@ -14,10 +14,10 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getInputs <em>Inputs</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupHome <em>Windup Home</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode <em>Source Mode</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -40,32 +40,6 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<Input> getInputs();
-
-	/**
-	 * Returns the value of the '<em><b>Windup Result</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Windup Result</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Windup Result</em>' containment reference.
-	 * @see #setWindupResult(WindupResult)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_WindupResult()
-	 * @model containment="true" resolveProxies="true"
-	 * @generated
-	 */
-	WindupResult getWindupResult();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Windup Result</em>' containment reference.
-	 * @see #getWindupResult()
-	 * @generated
-	 */
-	void setWindupResult(WindupResult value);
 
 	/**
 	 * Returns the value of the '<em><b>Windup Home</b></em>' attribute.
@@ -94,32 +68,6 @@ public interface ConfigurationElement extends Parameterized {
 	void setWindupHome(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Generated Report Location</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Generated Report Location</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Generated Report Location</em>' attribute.
-	 * @see #setGeneratedReportLocation(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GeneratedReportLocation()
-	 * @model
-	 * @generated
-	 */
-	String getGeneratedReportLocation();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportLocation <em>Generated Report Location</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Generated Report Location</em>' attribute.
-	 * @see #getGeneratedReportLocation()
-	 * @generated
-	 */
-	void setGeneratedReportLocation(String value);
-
-	/**
 	 * Returns the value of the '<em><b>Source Mode</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -144,5 +92,47 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setSourceMode(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Generated Reports Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Generated Reports Location</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Generated Reports Location</em>' attribute.
+	 * @see #setGeneratedReportsLocation(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GeneratedReportsLocation()
+	 * @model
+	 * @generated
+	 */
+	String getGeneratedReportsLocation();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Generated Reports Location</em>' attribute.
+	 * @see #getGeneratedReportsLocation()
+	 * @generated
+	 */
+	void setGeneratedReportsLocation(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Packages</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Packages</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Packages</em>' attribute list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_Packages()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getPackages();
 
 } // ConfigurationElement

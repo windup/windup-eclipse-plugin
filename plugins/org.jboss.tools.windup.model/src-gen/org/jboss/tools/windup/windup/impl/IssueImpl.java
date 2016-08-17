@@ -36,6 +36,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getSeverity <em>Severity</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getRuleId <em>Rule Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getEffort <em>Effort</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isFixed <em>Fixed</em>}</li>
  * </ul>
  *
  * @generated
@@ -150,6 +151,26 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * @ordered
 	 */
 	protected int effort = EFFORT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isFixed() <em>Fixed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isFixed()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean FIXED_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isFixed() <em>Fixed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isFixed()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean fixed = FIXED_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -292,6 +313,27 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isFixed() {
+		return fixed;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setFixed(boolean newFixed) {
+		boolean oldFixed = fixed;
+		fixed = newFixed;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__FIXED, oldFixed, fixed));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -321,6 +363,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return getRuleId();
 			case WindupPackage.ISSUE__EFFORT:
 				return getEffort();
+			case WindupPackage.ISSUE__FIXED:
+				return isFixed();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -353,6 +397,9 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__EFFORT:
 				setEffort((Integer)newValue);
 				return;
+			case WindupPackage.ISSUE__FIXED:
+				setFixed((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -383,6 +430,9 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__EFFORT:
 				setEffort(EFFORT_EDEFAULT);
 				return;
+			case WindupPackage.ISSUE__FIXED:
+				setFixed(FIXED_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -407,6 +457,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return RULE_ID_EDEFAULT == null ? ruleId != null : !RULE_ID_EDEFAULT.equals(ruleId);
 			case WindupPackage.ISSUE__EFFORT:
 				return effort != EFFORT_EDEFAULT;
+			case WindupPackage.ISSUE__FIXED:
+				return fixed != FIXED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -431,6 +483,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 		result.append(ruleId);
 		result.append(", effort: ");
 		result.append(effort);
+		result.append(", fixed: ");
+		result.append(fixed);
 		result.append(')');
 		return result.toString();
 	}

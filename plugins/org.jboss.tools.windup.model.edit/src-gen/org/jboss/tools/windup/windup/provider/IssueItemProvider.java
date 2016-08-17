@@ -68,6 +68,7 @@ public class IssueItemProvider
 			addSeverityPropertyDescriptor(object);
 			addRuleIdPropertyDescriptor(object);
 			addEffortPropertyDescriptor(object);
+			addFixedPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -183,6 +184,28 @@ public class IssueItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Fixed feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addFixedPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_fixed_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_fixed_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_Fixed(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -255,6 +278,7 @@ public class IssueItemProvider
 			case WindupPackage.ISSUE__SEVERITY:
 			case WindupPackage.ISSUE__RULE_ID:
 			case WindupPackage.ISSUE__EFFORT:
+			case WindupPackage.ISSUE__FIXED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.ISSUE__LINKS:

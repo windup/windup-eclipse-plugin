@@ -44,7 +44,11 @@ public interface WindupConstants {
 	String SYNCH = "windup/config/synch";
 	String MARKERS_CHANGED = "windup/issue/markers";
 	String GROUPS_CHANGED = "windup/issue/groups";
+	String INPUT_CHANGED = "windup/configuration/input";
+	String ISSUE_CHANGED = "windup/issues/changed";
+	String ISSUE_DELETED = "windup/issues/deleted";
 	
+	String EVENT_ISSUE = "data";
 	
 	/**
 	 * Model Events

@@ -100,6 +100,7 @@ public class GeneralInfoSection extends AbstractSection {
 		Combo jreCombo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(jreCombo);
 		jreCombo.setVisibleItemCount(30);
+		jreCombo.setEnabled(false);
 		
 		Button jreButton = toolkit.createButton(container, searchJRE, SWT.PUSH);
 		jreButton.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(IMG_SEARCH));
@@ -123,6 +124,7 @@ public class GeneralInfoSection extends AbstractSection {
 				}
 			}
 		});
+		jreButton.setEnabled(false);
 		populateJREs(jreCombo);
 		jreCombo.select(0);
 	}

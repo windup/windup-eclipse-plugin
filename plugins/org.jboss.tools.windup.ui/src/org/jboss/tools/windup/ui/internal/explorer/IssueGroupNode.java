@@ -10,9 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.jboss.tools.windup.model.domain.WindupConstants;
 
 import com.google.common.collect.Lists;
 
@@ -53,6 +56,12 @@ public abstract class IssueGroupNode<T> {
 	
 	public void setChildren(List<IssueGroupNode<?>> children) {
 		this.children = children;
+	}
+	
+	protected Dictionary<String, Object> createData() {
+		Dictionary<String, Object> props = new Hashtable<String, Object>();
+		props.put(WindupConstants.EVENT_ISSUE, this);
+		return props;
 	}
 	
 	public abstract String getLabel();

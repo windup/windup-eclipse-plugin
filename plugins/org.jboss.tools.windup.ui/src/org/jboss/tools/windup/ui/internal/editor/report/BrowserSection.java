@@ -45,10 +45,10 @@ public class BrowserSection extends AbstractSection {
 	@Inject
 	@Optional
 	private void updateDynamicTabs(@UIEventTopic(WINDUP_RUN_COMPLETED) ConfigurationElement configuration) {
-		WindupResult result = configuration.getWindupResult();
+		/*WindupResult result = configuration.getWindupResult();
 		if (Objects.equal(this.configuration, configuration) && result != null) {
 			loadReport();
-		}
+		}*/
 	}
 	
 	private void loadReport() {
