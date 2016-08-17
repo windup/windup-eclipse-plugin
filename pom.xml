@@ -6,6 +6,7 @@
         <groupId>org.jboss.tools</groupId>
         <artifactId>parent</artifactId>
         <version>4.4.1.Alpha1-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <artifactId>windup</artifactId>

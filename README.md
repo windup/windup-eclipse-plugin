@@ -31,6 +31,10 @@ At any time, you can pull changes from the upstream and merge them onto your mas
 The general idea is to keep your 'master' branch in-sync with the
 'upstream/master'.
 
+## Setup your environment
+
+Setup your local environment with Maven 3.2.x+. See the [Maven local settings.xml](https://developer.jboss.org/wiki/MavenGettingStarted-Developers) for set up of jboss.org repository.
+
 ## Building
 
 This project depends on [jbosstools-base](https://github.com/jbosstools/jbosstools-base) and [jbosstools-forge](https://github.com/jbosstools/jbosstools-forge). 
