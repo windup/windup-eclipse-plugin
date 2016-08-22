@@ -12,6 +12,10 @@ package org.jboss.tools.windup.ui.internal.explorer;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -23,8 +27,14 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.DiffDialog.QuickFixTempProject;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerService;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
@@ -101,6 +111,7 @@ public class IssueExplorerHandlers {
 	}
 	
 	private abstract static class AbstractIssueHanlder extends AbstractHandler {
+		@Inject protected IEventBroker broker;
 		protected IssueNode getIssueNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			return (IssueNode)selection.getFirstElement();
@@ -110,7 +121,10 @@ public class IssueExplorerHandlers {
 	public static class MarkIssueFixedHandler extends AbstractIssueHanlder {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			getIssueNode(event).markAsFixed();
+			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
+			for (Object selected : ((StructuredSelection)selection).toList()) {
+				((IssueNode)selected).markAsFixed();				
+			}
 			return null;
 		}
 	}
@@ -127,12 +141,41 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	private static void applyFix(IResource resource) {
+	private static IResource getCompareResource(IResource resource, String quickFix) {
+		QuickFixTempProject project = new QuickFixTempProject();
+		return project.createResource(quickFix);
+	}
+
+	private static void applyFix(IResource left, IResource right) {
+		File leftFile = left.getLocation().toFile();
+		File rightFile = right.getLocation().toFile();
+		try {
+			FileOutputStream outputFile = new FileOutputStream(leftFile, false);
+			FileInputStream inputFile = new FileInputStream(rightFile);
+			byte[] buffer = new byte[1024];
+			int length;
+			while((length = inputFile.read(buffer)) > 0) {
+				outputFile.write(buffer, 0, length);
+			}
+			outputFile.close();
+			inputFile.close();
+			left.refreshLocal(IResource.DEPTH_ZERO, null);
+		} catch (Exception e) {
+			WindupUIPlugin.log(e);
+		}
 	}
 	
 	public static class PreviewQuickFixHandler extends AbstractIssueHanlder {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
+			IssueNode node = getIssueNode(event);
+			IResource left = node.getType().getResource();
+			IResource right = getCompareResource(left, node.getQuickFix());
+			Shell shell = Display.getCurrent().getActiveShell();
+			DiffDialog dialog = new DiffDialog(shell, left, right);
+			if (dialog.open() == IssueConstants.APPLY_FIX) {
+				applyFix(left, right);
+			}
 			return null;
 		}
 	}
@@ -140,9 +183,14 @@ public class IssueExplorerHandlers {
 	public static class IssueQuickFixHandler extends AbstractIssueHanlder {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			IssueNode node = getIssueNode(event);
-			applyFix(node.getType().getResource());
-			node.markAsFixed();
+			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
+			for (Object selected : ((StructuredSelection)selection).toList()) {
+				IssueNode node = (IssueNode)selected;
+				IResource left = node.getType().getResource();
+				IResource right = getCompareResource(left, node.getQuickFix());
+				applyFix(left, right);
+				node.markAsFixed();
+			}
 			return null;
 		}
 	}
@@ -150,7 +198,11 @@ public class IssueExplorerHandlers {
 	public static class DeleteIssueHandler extends AbstractIssueHanlder {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			getIssueNode(event).delete();
+			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
+			for (Object selected : ((StructuredSelection)selection).toList()) {
+				((IssueNode)selected).delete();
+			}
+			broker.send(WindupConstants.MARKERS_CHANGED, true);
 			return null;
 		}
 	}

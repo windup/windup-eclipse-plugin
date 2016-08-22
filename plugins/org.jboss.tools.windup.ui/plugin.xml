@@ -274,6 +274,10 @@
                      </instanceof>
                      <test
                            property="org.jboss.tools.windup.ui.hasQuickFix">
+                     </test>
+                     <test
+                           property="org.jboss.tools.windup.ui.isFixed"
+                           value="false">
                      </test></iterate>
                </and>
             </visibleWhen>
@@ -293,6 +297,10 @@
                      </instanceof>
                      <test
                            property="org.jboss.tools.windup.ui.hasQuickFix">
+                     </test>
+                     <test
+                           property="org.jboss.tools.windup.ui.isFixed"
+                           value="false">
                      </test>
                   </iterate></and>
             </visibleWhen>

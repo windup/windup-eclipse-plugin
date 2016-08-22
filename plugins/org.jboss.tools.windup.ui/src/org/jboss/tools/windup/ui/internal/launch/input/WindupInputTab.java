@@ -92,11 +92,15 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void reloadProjectsTable() {
-		projectsTable.setInput(getCurrentProjects(configuration));
+		if (projectsTable != null) {
+			projectsTable.setInput(getCurrentProjects(configuration));
+		}
 	}
 	
 	private void reloadPackagesTable() {
-		packagesTable.setInput(getCurrentPackages(configuration));
+		if (packagesTable != null) {
+			packagesTable.setInput(getCurrentPackages(configuration));
+		}
 	}
 	
 	private void createProjectsButtonBar(Composite parent, TableViewer table) {

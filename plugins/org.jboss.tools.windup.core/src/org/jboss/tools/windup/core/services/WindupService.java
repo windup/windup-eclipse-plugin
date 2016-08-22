@@ -197,16 +197,15 @@ public class WindupService
                 }
                 
                 ExecutionResults results = options.ignore("\\.class$").execute();
-
                 modelService.populateConfiguration(input, results);
         	}
-
+        	modelService.save();
             broker.post(WindupConstants.WINDUP_RUN_COMPLETED, configuration);
             status = Status.OK_STATUS;
         }
         catch (Exception e)
         {
-        	System.out.println(e.getMessage());
+        	WindupCorePlugin.log(e);
             throw new RuntimeException(e);
         }
         finally

@@ -37,6 +37,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getRuleId <em>Rule Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getEffort <em>Effort</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isFixed <em>Fixed</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getQuickFix <em>Quick Fix</em>}</li>
  * </ul>
  *
  * @generated
@@ -171,6 +172,26 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * @ordered
 	 */
 	protected boolean fixed = FIXED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getQuickFix() <em>Quick Fix</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getQuickFix()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String QUICK_FIX_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getQuickFix() <em>Quick Fix</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getQuickFix()
+	 * @generated
+	 * @ordered
+	 */
+	protected String quickFix = QUICK_FIX_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -334,6 +355,27 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getQuickFix() {
+		return quickFix;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setQuickFix(String newQuickFix) {
+		String oldQuickFix = quickFix;
+		quickFix = newQuickFix;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__QUICK_FIX, oldQuickFix, quickFix));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -365,6 +407,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return getEffort();
 			case WindupPackage.ISSUE__FIXED:
 				return isFixed();
+			case WindupPackage.ISSUE__QUICK_FIX:
+				return getQuickFix();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -400,6 +444,9 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__FIXED:
 				setFixed((Boolean)newValue);
 				return;
+			case WindupPackage.ISSUE__QUICK_FIX:
+				setQuickFix((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -433,6 +480,9 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__FIXED:
 				setFixed(FIXED_EDEFAULT);
 				return;
+			case WindupPackage.ISSUE__QUICK_FIX:
+				setQuickFix(QUICK_FIX_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -459,6 +509,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return effort != EFFORT_EDEFAULT;
 			case WindupPackage.ISSUE__FIXED:
 				return fixed != FIXED_EDEFAULT;
+			case WindupPackage.ISSUE__QUICK_FIX:
+				return QUICK_FIX_EDEFAULT == null ? quickFix != null : !QUICK_FIX_EDEFAULT.equals(quickFix);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -485,6 +537,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 		result.append(effort);
 		result.append(", fixed: ");
 		result.append(fixed);
+		result.append(", quickFix: ");
+		result.append(quickFix);
 		result.append(')');
 		return result.toString();
 	}

@@ -13,7 +13,6 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_DELETED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
 import javax.inject.Inject;
@@ -31,6 +30,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -42,6 +42,7 @@ public class IssueExplorer extends CommonNavigator {
 	
 	@Inject private IEclipseContext context;
 	@Inject private IEventBroker broker;
+	@Inject private ModelService modelService;
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
 		@Override
@@ -71,7 +72,6 @@ public class IssueExplorer extends CommonNavigator {
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
 		broker.subscribe(ISSUE_CHANGED, issueChangedHandler);
-		broker.subscribe(ISSUE_DELETED, issueDeletedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 	}
 	
@@ -79,6 +79,8 @@ public class IssueExplorer extends CommonNavigator {
 		@Override
 		public void handleEvent(Event event) {
 			refresh();
+			// TODO: restore previously expanded nodes, selection, scrolls, etc.
+			getCommonViewer().expandAll();
 		}
 	};
 	
@@ -88,13 +90,6 @@ public class IssueExplorer extends CommonNavigator {
 			Display.getDefault().asyncExec(() -> {
 				getCommonViewer().refresh(event.getProperty(EVENT_ISSUE), true);
 			});
-		}
-	};
-	
-	private EventHandler issueDeletedHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			getCommonViewer().remove(event.getProperty(EVENT_ISSUE));
 		}
 	};
 	
@@ -148,7 +143,7 @@ public class IssueExplorer extends CommonNavigator {
 		super.dispose();
 		broker.unsubscribe(markersChangedHandler);
 		broker.unsubscribe(issueChangedHandler);
-		broker.unsubscribe(issueDeletedHandler);
 		broker.unsubscribe(groupsChangedHandler);
+		modelService.save();
 	}
 }

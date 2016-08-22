@@ -117,6 +117,17 @@ public class Messages extends NLS
     public static String issueLabelInfo;
     public static String issueLabelSource;
     
+    public static String ComparePreviewer_original_source;
+    public static String ComparePreviewer_migrated_source;
+    public static String ComparePreviewer_donePreviewFix;
+    public static String ComparePreviewer_applyFix;
+    
+    public static String ComparePreviewer_errorTitle;
+    public static String ComparePreviewer_errorMessage;
+    
+    public static String launchErrorTitle;
+    public static String launchErrorMessage;
+    
     // Issue Details
     public static String noIssueDetails;
     

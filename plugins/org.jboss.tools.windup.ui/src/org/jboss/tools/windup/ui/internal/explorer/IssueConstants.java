@@ -14,6 +14,12 @@ package org.jboss.tools.windup.ui.internal.explorer;
  * Constants associated with Issues.
  */
 public interface IssueConstants {
-	static String ISSUE_ID = "WINDUP_ISSUE_ID";
-	static String ELEMENT_ID = "ELEMENT_ID";
+	String ISSUE_ID = "WINDUP_ISSUE_ID";
+	String ELEMENT_ID = "ELEMENT_ID";
+	
+	/**
+	 * Preview Quick Fix
+	 */
+	int OK = 1;
+	int APPLY_FIX = 2;
 }

@@ -54,7 +54,7 @@ public class IssueNode extends IssueGroupNode<IMarker> {
 	
 	@Override
 	public String getLabel() {
-		return marker.getAttribute(TITLE, "unknown issue");
+		return marker.getAttribute(TITLE, "unknown issue"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -65,6 +65,10 @@ public class IssueNode extends IssueGroupNode<IMarker> {
 	public int getSeverity() {
 		String severity = marker.getAttribute(SEVERITY, Severity.OPTIONAL.toString());
 		return MarkerUtil.convertSeverity(severity);
+	}
+	
+	public String getQuickFix() {
+		return issue.getQuickFix();
 	}
 	
 	public boolean hasQuickFix() {
@@ -94,6 +98,5 @@ public class IssueNode extends IssueGroupNode<IMarker> {
 			MessageDialog.open(MessageDialog.ERROR, Display.getDefault().getActiveShell(), 
 					operationError, issueDeleteError, SWT.NONE);
 		}
-		broker.post(WindupConstants.ISSUE_DELETED, createData());
 	}
 }

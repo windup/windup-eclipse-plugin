@@ -69,6 +69,7 @@ public class IssueItemProvider
 			addRuleIdPropertyDescriptor(object);
 			addEffortPropertyDescriptor(object);
 			addFixedPropertyDescriptor(object);
+			addQuickFixPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -206,6 +207,28 @@ public class IssueItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Quick Fix feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addQuickFixPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_quickFix_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_quickFix_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_QuickFix(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -279,6 +302,7 @@ public class IssueItemProvider
 			case WindupPackage.ISSUE__RULE_ID:
 			case WindupPackage.ISSUE__EFFORT:
 			case WindupPackage.ISSUE__FIXED:
+			case WindupPackage.ISSUE__QUICK_FIX:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.ISSUE__LINKS:

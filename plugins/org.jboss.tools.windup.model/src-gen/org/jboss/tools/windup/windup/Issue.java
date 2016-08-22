@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getRuleId <em>Rule Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getEffort <em>Effort</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#isFixed <em>Fixed</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getQuickFix <em>Quick Fix</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
@@ -200,5 +201,31 @@ public interface Issue extends EObject {
 	 * @generated
 	 */
 	void setFixed(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Quick Fix</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Quick Fix</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Quick Fix</em>' attribute.
+	 * @see #setQuickFix(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_QuickFix()
+	 * @model
+	 * @generated
+	 */
+	String getQuickFix();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getQuickFix <em>Quick Fix</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Quick Fix</em>' attribute.
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	void setQuickFix(String value);
 
 } // Issue
