@@ -32,6 +32,12 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKE
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -59,6 +65,7 @@ import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
 /**
@@ -75,7 +82,6 @@ public class MarkerService {
 	@Optional
 	private void updateMarkers(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
 		try {
-			deleteWindpuMarkers();
 			populateHints(configuration);
 			broker.post(MARKERS_CHANGED, true);
 		} catch (CoreException e) {
@@ -135,14 +141,30 @@ public class MarkerService {
 		}
 	}
 	
-	public void deleteWindpuMarkers() {
+	public void deleteAllWindupMarkers() {
+		List<Input> all = Lists.newArrayList();
+		for (ConfigurationElement configuration : modelService.getModel().getConfigurationElements()) {
+			all.addAll(configuration.getPreviousInput());
+		}
+		flattenInput(all).forEach(input -> deleteWindupMarkers(input));
+		broker.post(MARKERS_CHANGED, true);
+	}
+	
+	private List<Input> flattenInput(List<Input> all) {
+		return all.stream().filter(unique(input -> input.getName())).collect(Collectors.toList());
+	}
+	
+	private static Predicate<Input> unique(Function<Input, String> extractor) {
+		Map<String, Boolean> seen = new ConcurrentHashMap<>();
+		return t -> seen.putIfAbsent(extractor.apply(t), Boolean.TRUE) == null;
+	}
+	
+	private void deleteWindupMarkers(Input input) {
 		try {
-			for (ConfigurationElement configuration : modelService.getModel().getConfigurationElements()) {
-				for (Input input : configuration.getInputs()) {
-					IResource resource = WorkspaceResourceUtils.findResource(input.getUri());
-					resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
-					resource.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
-				}
+			IResource resource = WorkspaceResourceUtils.findResource(input.getUri());
+			if (resource != null && resource.exists()) {
+				resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
 			}
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
