@@ -14,6 +14,8 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +39,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -66,6 +67,7 @@ public class ModelService {
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
 	
     private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
+    private static final String TIMESTAMP_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
@@ -192,7 +194,7 @@ public class ModelService {
 	}
 	
 	public void deleteConfiguration(ConfigurationElement configuration) {
-		EcoreUtil.delete(configuration);
+		model.getConfigurationElements().remove(configuration);
 		broker.post(CONFIG_DELETED, configuration);
 	}
 	
@@ -222,7 +224,7 @@ public class ModelService {
 				return i.getName().equals(project.getName());
 			}).findFirst();
 			if (input.isPresent()) {
-				EcoreUtil.delete(input.get());
+				configuration.getInputs().remove(input.get());
 			}
 		});
 		for (IPackageFragment fragment : ConfigurationResourceUtil.getCurrentPackages(configuration)) {
@@ -300,14 +302,12 @@ public class ModelService {
 	
 	/**
 	 * Populates the configuration element with the execution results.
-	 * 
-	 * NOTE: We might be able to remove this duplication if/when we
-	 * can restore the Windup execution graph.
 	 */
-	public void populateConfiguration(Input input, ExecutionResults results) {
+	public void populateConfiguration(ConfigurationElement configuration, Input input, ExecutionResults results) {
     	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
+        createPreviousInput(configuration, input);
         for (Hint wHint : results.getHints()) {
         	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
         	result.getIssues().add(hint);
@@ -331,5 +331,21 @@ public class ModelService {
         		hint.getLinks().add(link);
         	}
         }
+	}
+	
+	private void createPreviousInput(ConfigurationElement configuration, Input input) {
+		Input previousInput = WindupFactory.eINSTANCE.createInput();
+		previousInput.setName(input.getName());
+		previousInput.setUri(input.getUri());
+		previousInput.setGeneratedReportLocation(input.getGeneratedReportLocation());
+		configuration.getPreviousInput().add(previousInput);
+	}
+	
+	private SimpleDateFormat getTimestampFormat() {
+		return new SimpleDateFormat(TIMESTAMP_FORMAT);
+	}
+	
+	public String createTimestamp() {
+		return getTimestampFormat().format(new Date());
 	}
 }

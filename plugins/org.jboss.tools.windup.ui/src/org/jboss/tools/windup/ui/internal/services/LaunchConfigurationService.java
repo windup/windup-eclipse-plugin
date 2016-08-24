@@ -39,7 +39,6 @@ import com.google.common.base.Objects;
 public class LaunchConfigurationService implements ILaunchConfigurationListener {
 	
 	@Inject private ModelService modelService;
-	@Inject private MarkerService markerService;
 	@Inject private IEventBroker broker;
 
 	@PostConstruct
@@ -62,7 +61,6 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration launchConfig) {
 		ConfigurationElement configuration = modelService.findConfiguration(launchConfig.getName());
-		markerService.deleteWindpuMarkers();
 		broker.post(MARKERS_CHANGED, true);
 		modelService.deleteConfiguration(configuration);
 	}
