@@ -176,6 +176,10 @@ public class WindupService
     	progress.subTask(Messages.removing_old_report);
         FileUtils.delete(baseOutputDir, true);
         IStatus status = null;
+
+        configuration.setTimestamp(modelService.createTimestamp());
+    	configuration.getPreviousInput().clear();
+        
         try {
         	for (Input input : configuration.getInputs()) {
         		WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
@@ -195,9 +199,8 @@ public class WindupService
                 if (!configuration.getPackages().isEmpty()) {
                 	options.setOption(ScanPackagesOption.NAME, configuration.getPackages());
                 }
-                
                 ExecutionResults results = options.ignore("\\.class$").execute();
-                modelService.populateConfiguration(input, results);
+                modelService.populateConfiguration(configuration, input, results);
         	}
         	modelService.save();
             broker.post(WindupConstants.WINDUP_RUN_COMPLETED, configuration);
