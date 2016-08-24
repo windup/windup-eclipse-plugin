@@ -5,8 +5,7 @@
     <parent>
         <groupId>org.jboss.tools</groupId>
         <artifactId>parent</artifactId>
-        <version>4.4.1.Alpha1-SNAPSHOT</version>
-        <relativePath/>
+        <version>4.4.1.Final-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup</artifactId>

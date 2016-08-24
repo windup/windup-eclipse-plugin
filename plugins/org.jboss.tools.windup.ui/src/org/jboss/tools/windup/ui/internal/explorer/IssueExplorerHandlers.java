@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.DiffDialog.QuickFixTempProject;
@@ -104,7 +105,7 @@ public class IssueExplorerHandlers {
 		@Inject private IEventBroker broker;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			markerService.deleteWindpuMarkers();
+			markerService.deleteAllWindupMarkers();
 			broker.post(MARKERS_CHANGED, true);
 			return null;
 		}
