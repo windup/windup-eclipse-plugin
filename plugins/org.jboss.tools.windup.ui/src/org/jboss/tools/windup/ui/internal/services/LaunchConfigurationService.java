@@ -11,7 +11,6 @@
 package org.jboss.tools.windup.ui.internal.services;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -39,6 +38,7 @@ import com.google.common.base.Objects;
 public class LaunchConfigurationService implements ILaunchConfigurationListener {
 	
 	@Inject private ModelService modelService;
+	@Inject private MarkerService markerService;
 	@Inject private IEventBroker broker;
 
 	@PostConstruct
@@ -61,7 +61,7 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration launchConfig) {
 		ConfigurationElement configuration = modelService.findConfiguration(launchConfig.getName());
-		broker.post(MARKERS_CHANGED, true);
+		markerService.deleteAllWindupMarkers();
 		modelService.deleteConfiguration(configuration);
 	}
 	
