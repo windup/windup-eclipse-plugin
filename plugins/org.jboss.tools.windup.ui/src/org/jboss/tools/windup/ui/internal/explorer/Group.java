@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.IJavaElement;
@@ -109,8 +110,8 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 	}
 	
-	public static class PackageGroup extends Group<IPackageFragment, PackageGroupNode> {
-		public PackageGroup(Group<?, ?> parent, IEclipseContext context) {
+	public static class JavaPackageGroup extends Group<IPackageFragment, JavaPackageGroupNode> {
+		public JavaPackageGroup(Group<?, ?> parent, IEclipseContext context) {
 			super(parent, context);
 		}
 		
@@ -127,28 +128,55 @@ public abstract class Group<T, E extends IssueGroupNode<?>> {
 		}
 		
 		@Override
-		protected PackageGroupNode createGroupNode(IssueGroupNode<?> parent, IPackageFragment identifier, List<IMarker> markers, IEclipseContext context) {
-			return new PackageGroupNode(parent, markers, identifier);
+		protected JavaPackageGroupNode createGroupNode(IssueGroupNode<?> parent, IPackageFragment identifier, List<IMarker> markers, IEclipseContext context) {
+			return new JavaPackageGroupNode(parent, markers, identifier);
 		}
 	}
 	
-	public static class ClassGroup extends Group<IJavaElement, ClassGroupNode> {
-		public ClassGroup(Group<?, ?> parent, IEclipseContext context) {
+	public static class JavaElementGroup extends Group<IJavaElement, JavaElementGroupNode> {
+		public JavaElementGroup(Group<?, ?> parent, IEclipseContext context) {
 			super(parent, context);
 		}
 		
 		@Override
 		protected IJavaElement findIdentifier(IMarker marker) {
+			return JavaElementGroup.findJavaElement(marker);
+		}
+		
+		public static IJavaElement findJavaElement(IMarker marker) {
 			IJavaElement javaElement = findJavaElementForMarker(marker);
 			if (javaElement != null) {
 				return javaElement;
 			}
-			return JavaCore.create(marker.getResource());
+			javaElement = JavaCore.create(marker.getResource());
+			if (javaElement != null) {
+				return javaElement;
+			}
+			return null;
 		}
 
 		@Override
-		protected ClassGroupNode createGroupNode(IssueGroupNode<?> parent, IJavaElement identifier, List<IMarker> markers, IEclipseContext context) {
-			return new ClassGroupNode(parent, markers, identifier);
+		protected JavaElementGroupNode createGroupNode(IssueGroupNode<?> parent, IJavaElement identifier, List<IMarker> markers, IEclipseContext context) {
+			return new JavaElementGroupNode(parent, markers, identifier);
+		}
+	}
+	
+	public static class ResourceGroup extends Group<IResource, ResourceGroupNode> {
+		public ResourceGroup(Group<?, ?> parent, IEclipseContext context) {
+			super(parent, context);
+		}
+		
+		@Override
+		protected IResource findIdentifier(IMarker marker) {
+			if (JavaElementGroup.findJavaElement(marker) == null) {
+				return marker.getResource();
+			}
+			return null;
+		}
+
+		@Override
+		protected ResourceGroupNode createGroupNode(IssueGroupNode<?> parent, IResource identifier, List<IMarker> markers, IEclipseContext context) {
+			return new ResourceGroupNode(parent, markers, identifier);
 		}
 	}
 	

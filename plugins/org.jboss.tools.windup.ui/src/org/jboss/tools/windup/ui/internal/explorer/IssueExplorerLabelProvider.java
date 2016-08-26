@@ -82,8 +82,8 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 			return RULE;
 		}
 		if (element instanceof ProjectGroupNode ||
-				element instanceof PackageGroupNode ||
-					element instanceof ClassGroupNode) {
+				element instanceof JavaPackageGroupNode ||
+					element instanceof JavaElementGroupNode) {
 			IssueGroupNode<?> node = (IssueGroupNode<?>)element;
 			return workbenchProvider.getImage(node.getType());
 		}

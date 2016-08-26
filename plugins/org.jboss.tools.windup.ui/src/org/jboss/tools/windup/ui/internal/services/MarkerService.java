@@ -32,20 +32,18 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKE
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -54,19 +52,19 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
-import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
 import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
-
-import com.google.common.collect.Lists;
-import com.google.inject.Singleton;
 
 /**
  * Service for annotating eclipse {@link IResource}s with Windup's generated hints and classifications.
@@ -76,20 +74,30 @@ import com.google.inject.Singleton;
 public class MarkerService {
 	
 	@Inject private IEventBroker broker;
-	@Inject private ModelService modelService;
 	
 	@Inject
 	@Optional
 	private void updateMarkers(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
 		try {
-			populateHints(configuration);
+			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+				@Override
+				protected void execute(IProgressMonitor monitor)
+						throws CoreException, InvocationTargetException, InterruptedException {
+					createWindupMarkers(configuration);
+				}
+			};
+			new ProgressMonitorDialog(Display.getDefault().getActiveShell()).run(true, false, op);
 			broker.post(MARKERS_CHANGED, true);
-		} catch (CoreException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
+			Display.getDefault().syncExec(() -> {
+				MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
+						Messages.launchErrorTitle, Messages.markersCreateError);
+			});
 			WindupUIPlugin.log(e);
 		}
 	}
 	
-	private void populateHints(ConfigurationElement configuration) throws CoreException {
+	private void createWindupMarkers(ConfigurationElement configuration) throws CoreException {
 		for (Input input : configuration.getInputs()) {
 			for (Issue issue : input.getWindupResult().getIssues()) {
 				String absolutePath = issue.getFileAbsolutePath();
@@ -124,7 +132,6 @@ public class MarkerService {
 					
 					//populateLinePosition(marker, hint.getLineNumber(), new File(hint.getFileAbsolutePath()));
 				}
-				
 				else {
 					Classification classification = (Classification)issue;
 					marker.setAttribute(IMarker.MESSAGE, classification.getClassification());
@@ -136,36 +143,23 @@ public class MarkerService {
 					marker.setAttribute(IMarker.CHAR_END, 0);
 				}
 	            marker.setAttribute(IMarker.USER_EDITABLE, false);
-	            
 			}
 		}
 	}
 	
 	public void deleteAllWindupMarkers() {
-		List<Input> all = Lists.newArrayList();
-		for (ConfigurationElement configuration : modelService.getModel().getConfigurationElements()) {
-			all.addAll(configuration.getPreviousInput());
+		for (IProject input : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (input.isAccessible()) {
+				deleteWindupMarkers(input);
+			}
 		}
-		flattenInput(all).forEach(input -> deleteWindupMarkers(input));
 		broker.post(MARKERS_CHANGED, true);
 	}
 	
-	private List<Input> flattenInput(List<Input> all) {
-		return all.stream().filter(unique(input -> input.getName())).collect(Collectors.toList());
-	}
-	
-	private static Predicate<Input> unique(Function<Input, String> extractor) {
-		Map<String, Boolean> seen = new ConcurrentHashMap<>();
-		return t -> seen.putIfAbsent(extractor.apply(t), Boolean.TRUE) == null;
-	}
-	
-	private void deleteWindupMarkers(Input input) {
+	private void deleteWindupMarkers(IResource input) {
 		try {
-			IResource resource = WorkspaceResourceUtils.findResource(input.getUri());
-			if (resource != null && resource.exists()) {
-				resource.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
-			}
+			input.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+			input.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}

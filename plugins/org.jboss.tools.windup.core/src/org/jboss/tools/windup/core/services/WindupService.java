@@ -177,9 +177,6 @@ public class WindupService
         FileUtils.delete(baseOutputDir, true);
         IStatus status = null;
 
-        configuration.setTimestamp(modelService.createTimestamp());
-    	configuration.getPreviousInput().clear();
-        
         try {
         	for (Input input : configuration.getInputs()) {
         		WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);

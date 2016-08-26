@@ -22,7 +22,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
@@ -39,7 +38,6 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	
 	@Inject private ModelService modelService;
 	@Inject private MarkerService markerService;
-	@Inject private IEventBroker broker;
 
 	@PostConstruct
 	private void init() {

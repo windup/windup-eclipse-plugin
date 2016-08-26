@@ -20,13 +20,13 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 
 /**
- * Represents a class grouping.
+ * Represents a java element grouping.
  */
-public class ClassGroupNode extends IssueGroupNode<IJavaElement> {
+public class JavaElementGroupNode extends IssueGroupNode<IJavaElement> {
 
 	private IJavaElement element;
 	
-	public ClassGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, IJavaElement element) {
+	public JavaElementGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, IJavaElement element) {
 		super(parent, issues);
 		this.element = element;
 	}

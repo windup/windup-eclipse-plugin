@@ -32,6 +32,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -43,6 +44,7 @@ public class IssueExplorer extends CommonNavigator {
 	@Inject private IEclipseContext context;
 	@Inject private IEventBroker broker;
 	@Inject private ModelService modelService;
+	@Inject private IssueGroupService groupService;
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
 		@Override
@@ -145,5 +147,6 @@ public class IssueExplorer extends CommonNavigator {
 		broker.unsubscribe(issueChangedHandler);
 		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();
+		groupService.save();
 	}
 }

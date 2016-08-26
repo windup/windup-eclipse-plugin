@@ -59,6 +59,9 @@ public class Messages extends NLS
     public static String WindupReportExport_errorGeneratingReports;
     public static String WindupReportExport_reGenerateReportBeforeExport;
     
+    public static String markerError_findingMarkers;
+    public static String markerError_findingJavaId;
+    
     // Launch
     public static String inputTabName;
     public static String applicationsToMigrate;
@@ -127,6 +130,8 @@ public class Messages extends NLS
     
     public static String launchErrorTitle;
     public static String launchErrorMessage;
+    
+    public static String markersCreateError;
     
     // Issue Details
     public static String noIssueDetails;

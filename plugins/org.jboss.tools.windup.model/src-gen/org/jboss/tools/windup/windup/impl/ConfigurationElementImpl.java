@@ -35,8 +35,6 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isSourceMode <em>Source Mode</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getPackages <em>Packages</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getPreviousInput <em>Previous Input</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getTimestamp <em>Timestamp</em>}</li>
  * </ul>
  *
  * @generated
@@ -121,36 +119,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<String> packages;
-
-	/**
-	 * The cached value of the '{@link #getPreviousInput() <em>Previous Input</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPreviousInput()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Input> previousInput;
-
-	/**
-	 * The default value of the '{@link #getTimestamp() <em>Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTimestamp()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TIMESTAMP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTimestamp() <em>Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTimestamp()
-	 * @generated
-	 * @ordered
-	 */
-	protected String timestamp = TIMESTAMP_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -263,46 +231,11 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Input> getPreviousInput() {
-		if (previousInput == null) {
-			previousInput = new EObjectContainmentEList.Resolving<Input>(Input.class, this, WindupPackage.CONFIGURATION_ELEMENT__PREVIOUS_INPUT);
-		}
-		return previousInput;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getTimestamp() {
-		return timestamp;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTimestamp(String newTimestamp) {
-		String oldTimestamp = timestamp;
-		timestamp = newTimestamp;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP, oldTimestamp, timestamp));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
 				return ((InternalEList<?>)getInputs()).basicRemove(otherEnd, msgs);
-			case WindupPackage.CONFIGURATION_ELEMENT__PREVIOUS_INPUT:
-				return ((InternalEList<?>)getPreviousInput()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -325,10 +258,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getGeneratedReportsLocation();
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				return getPackages();
-			case WindupPackage.CONFIGURATION_ELEMENT__PREVIOUS_INPUT:
-				return getPreviousInput();
-			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
-				return getTimestamp();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -359,13 +288,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getPackages().clear();
 				getPackages().addAll((Collection<? extends String>)newValue);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__PREVIOUS_INPUT:
-				getPreviousInput().clear();
-				getPreviousInput().addAll((Collection<? extends Input>)newValue);
-				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
-				setTimestamp((String)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -393,12 +315,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				getPackages().clear();
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__PREVIOUS_INPUT:
-				getPreviousInput().clear();
-				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
-				setTimestamp(TIMESTAMP_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -421,10 +337,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return GENERATED_REPORTS_LOCATION_EDEFAULT == null ? generatedReportsLocation != null : !GENERATED_REPORTS_LOCATION_EDEFAULT.equals(generatedReportsLocation);
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				return packages != null && !packages.isEmpty();
-			case WindupPackage.CONFIGURATION_ELEMENT__PREVIOUS_INPUT:
-				return previousInput != null && !previousInput.isEmpty();
-			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
-				return TIMESTAMP_EDEFAULT == null ? timestamp != null : !TIMESTAMP_EDEFAULT.equals(timestamp);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -447,8 +359,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(generatedReportsLocation);
 		result.append(", packages: ");
 		result.append(packages);
-		result.append(", timestamp: ");
-		result.append(timestamp);
 		result.append(')');
 		return result.toString();
 	}

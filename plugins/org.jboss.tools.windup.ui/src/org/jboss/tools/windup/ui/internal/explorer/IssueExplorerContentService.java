@@ -66,14 +66,16 @@ public class IssueExplorerContentService {
 	private Object[] createNodeGroups() {
 		List<IMarker> markers = Lists.newArrayList();
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			markers.addAll(getMarkers(
-					WINDUP_HINT_MARKER_ID, 
-					project, 
-					IResource.DEPTH_INFINITE));
-			markers.addAll(getMarkers(
-					WINDUP_CLASSIFICATION_MARKER_ID, 
-					project, 
-					IResource.DEPTH_INFINITE));
+			if (project.isAccessible()) {
+				markers.addAll(getMarkers(
+						WINDUP_HINT_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE));
+				markers.addAll(getMarkers(
+						WINDUP_CLASSIFICATION_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE));
+			}
 		}
 		return createNodeGroups(markers);
 	}

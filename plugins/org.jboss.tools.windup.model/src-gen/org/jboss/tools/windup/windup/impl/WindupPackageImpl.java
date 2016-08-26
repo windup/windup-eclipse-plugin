@@ -278,24 +278,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getConfigurationElement_PreviousInput() {
-		return (EReference)configurationElementEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getConfigurationElement_Timestamp() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getParameter() {
 		return parameterEClass;
 	}
@@ -653,8 +635,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__SOURCE_MODE);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__PACKAGES);
-		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__PREVIOUS_INPUT);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__TIMESTAMP);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -758,8 +738,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getConfigurationElement_SourceMode(), ecorePackage.getEBoolean(), "sourceMode", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_GeneratedReportsLocation(), ecorePackage.getEString(), "generatedReportsLocation", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_Packages(), ecorePackage.getEString(), "packages", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getConfigurationElement_PreviousInput(), this.getInput(), null, "previousInput", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_Timestamp(), ecorePackage.getEString(), "timestamp", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

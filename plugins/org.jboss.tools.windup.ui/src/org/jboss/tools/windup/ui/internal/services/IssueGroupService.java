@@ -23,9 +23,10 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.Group;
-import org.jboss.tools.windup.ui.internal.explorer.Group.ClassGroup;
+import org.jboss.tools.windup.ui.internal.explorer.Group.JavaElementGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.IssueGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.PackageGroup;
+import org.jboss.tools.windup.ui.internal.explorer.Group.ResourceGroup;
+import org.jboss.tools.windup.ui.internal.explorer.Group.JavaPackageGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.ProjectGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.RuleGroup;
 import org.jboss.tools.windup.ui.internal.explorer.Group.SeverityGroup;
@@ -65,7 +66,7 @@ public class IssueGroupService {
 	}
 	
 	@PreDestroy
-	private void save() {
+	public void save() {
 		preferences.putBoolean(GROUP_BY_PROJECT, groupByProject);
 		preferences.putBoolean(GROUP_BY_PACKAGE, groupByPackage);
 		preferences.putBoolean(GROUP_BY_FILE, groupByFile);
@@ -103,6 +104,26 @@ public class IssueGroupService {
 		notifyChanged();
 	}
 	
+	public boolean isGroupByProject() {
+		return groupByProject;
+	}
+	
+	public boolean isGroupByPackage() {
+		return groupByPackage;
+	}
+	
+	public boolean isGroupByFile() {
+		return groupByFile;
+	}
+	
+	public boolean isGroupBySeverity() {
+		return groupBySeverity;
+	}
+	
+	public boolean isGroupByRule() {
+		return groupByRule;
+	}
+	
 	private void notifyChanged() {
 		save();
 		broker.post(WindupConstants.GROUPS_CHANGED, true);
@@ -114,15 +135,29 @@ public class IssueGroupService {
 		
 		if (groupByProject) {
 			parent = new ProjectGroup(parent, context);
+			if (groupByFile) {
+				buildSeverityRuleGrouping(new ResourceGroup(parent, context));
+			}
 		}
 		
 		if (groupByPackage) {
-			parent = new PackageGroup(parent, context);
+			parent = new JavaPackageGroup(parent, context);
 		}
 		
 		if (groupByFile) {
-			parent = new ClassGroup(parent, context);
+			Group<?, ?> oldParent = parent;
+			parent = new JavaElementGroup(parent, context);
+			if (!groupByProject) {
+				buildSeverityRuleGrouping(new ResourceGroup(oldParent, context));
+			}
 		}
+
+		parent = buildSeverityRuleGrouping(parent);
+		
+		return parent.getRoot();
+	}
+	
+	public Group<?, ?> buildSeverityRuleGrouping(Group<?, ?> parent) {
 		
 		if (groupBySeverity) {
 			parent = new SeverityGroup(parent, context);
@@ -139,6 +174,6 @@ public class IssueGroupService {
 			parent = new IssueGroup(parent, context);
 		}
 		
-		return parent.getRoot();
+		return parent;
 	}
 }

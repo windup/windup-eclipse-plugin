@@ -19,7 +19,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.windup.reporting.model.Severity;
 
 import com.google.common.collect.Lists;
@@ -38,7 +40,7 @@ public class MarkerUtil {
 		try {
 			return Lists.newArrayList(resource.findMarkers(type, true, depth));
 		} catch (CoreException e) {
-			WindupUIPlugin.logError("Error while finding Windup markers from: " + resource.getName(), e);
+			WindupUIPlugin.logError(NLS.bind(Messages.markerError_findingMarkers, resource.getName()), e);
 		}
 		return Lists.newArrayList();
 	}
@@ -50,7 +52,7 @@ public class MarkerUtil {
                 return JavaCore.create((String) elementId);
             }
         } catch (CoreException e) {
-            WindupUIPlugin.logError("Marker does not container valid java element id", e);
+            WindupUIPlugin.logError(Messages.markerError_findingJavaId, e);
             return null;
         }
         return null;

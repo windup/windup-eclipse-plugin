@@ -14,8 +14,6 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -67,7 +65,6 @@ public class ModelService {
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
 	
     private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
-    private static final String TIMESTAMP_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
@@ -307,11 +304,11 @@ public class ModelService {
     	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
-        createPreviousInput(configuration, input);
         for (Hint wHint : results.getHints()) {
         	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
         	result.getIssues().add(hint);
 
+        	// TODO: I think we might want to change this to project relative for portability.
         	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
         	hint.setSeverity(wHint.getSeverity().toString());
         	hint.setRuleId(wHint.getRuleID());
@@ -331,21 +328,5 @@ public class ModelService {
         		hint.getLinks().add(link);
         	}
         }
-	}
-	
-	private void createPreviousInput(ConfigurationElement configuration, Input input) {
-		Input previousInput = WindupFactory.eINSTANCE.createInput();
-		previousInput.setName(input.getName());
-		previousInput.setUri(input.getUri());
-		previousInput.setGeneratedReportLocation(input.getGeneratedReportLocation());
-		configuration.getPreviousInput().add(previousInput);
-	}
-	
-	private SimpleDateFormat getTimestampFormat() {
-		return new SimpleDateFormat(TIMESTAMP_FORMAT);
-	}
-	
-	public String createTimestamp() {
-		return getTimestampFormat().format(new Date());
 	}
 }

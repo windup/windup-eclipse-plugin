@@ -18,8 +18,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode <em>Source Mode</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPreviousInput <em>Previous Input</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -136,47 +134,5 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<String> getPackages();
-
-	/**
-	 * Returns the value of the '<em><b>Previous Input</b></em>' containment reference list.
-	 * The list contents are of type {@link org.jboss.tools.windup.windup.Input}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Previous Input</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Previous Input</em>' containment reference list.
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_PreviousInput()
-	 * @model containment="true" resolveProxies="true"
-	 * @generated
-	 */
-	EList<Input> getPreviousInput();
-
-	/**
-	 * Returns the value of the '<em><b>Timestamp</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Timestamp</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Timestamp</em>' attribute.
-	 * @see #setTimestamp(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_Timestamp()
-	 * @model
-	 * @generated
-	 */
-	String getTimestamp();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Timestamp</em>' attribute.
-	 * @see #getTimestamp()
-	 * @generated
-	 */
-	void setTimestamp(String value);
 
 } // ConfigurationElement

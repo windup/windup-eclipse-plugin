@@ -16,20 +16,20 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IPackageFragment;
 
 /**
- * Represents a package grouping.
+ * Represents a Java package grouping.
  */
-public class PackageGroupNode extends IssueGroupNode<IPackageFragment> {
+public class JavaPackageGroupNode extends IssueGroupNode<IPackageFragment> {
 	
 	private IPackageFragment element;
 	
-	public PackageGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, IPackageFragment element) {
+	public JavaPackageGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, IPackageFragment element) {
 		super(parent, issues);
 		this.element = element;
 	}
 	
 	@Override
 	public String getLabel() {
-		String name = "unknown package";
+		String name = "unknown java package";
         if (element != null) {
         	String temp = element.getElementName();
         	if (temp != null && temp.length() != 0) {
