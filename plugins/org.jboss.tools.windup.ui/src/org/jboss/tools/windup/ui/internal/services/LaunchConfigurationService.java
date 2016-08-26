@@ -81,6 +81,13 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Inject
 	@Optional
 	private void configDeleted(@UIEventTopic(CONFIG_DELETED) ConfigurationElement configuration) {
-        FileUtils.delete(new Path(configuration.getGeneratedReportsLocation()).toFile(), true);
+		if (configuration == null)
+			return;
+		
+		String reportsOutput = configuration.getGeneratedReportsLocation();
+		Path reportsOutputPath = new Path(reportsOutput);
+		if ( reportsOutputPath != null ) {
+			FileUtils.delete(reportsOutputPath.toFile(), true);
+		}
 	}
 }
