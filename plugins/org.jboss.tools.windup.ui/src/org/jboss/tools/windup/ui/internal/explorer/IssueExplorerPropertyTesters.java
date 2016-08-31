@@ -17,20 +17,20 @@ import org.eclipse.core.expressions.PropertyTester;
  */
 public class IssueExplorerPropertyTesters {
 	
-	public static final String QUICKFIX = "hasQuickFix";
-	public static final String FIXED = "isFixed";
+	public static final String QUICKFIX = "hasQuickFix";  //$NON-NLS-1$
+	public static final String FIXED = "isFixed";  //$NON-NLS-1$
 
 	public static class QuickFixPropertyTester extends PropertyTester {
 		@Override
 		public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 			if (QUICKFIX.equals(property)) {
-				if (element instanceof IssueNode) {
-					return ((IssueNode)element).hasQuickFix();
+				if (element instanceof MarkerNode) {
+					return ((MarkerNode)element).hasQuickFix();
 				}
 			}
 			else if (FIXED.equals(property)) {
-				if (element instanceof IssueNode) {
-					return !((IssueNode)element).isFixed();
+				if (element instanceof MarkerNode) {
+					return !((MarkerNode)element).isFixed();
 				}
 			}
 			return false;

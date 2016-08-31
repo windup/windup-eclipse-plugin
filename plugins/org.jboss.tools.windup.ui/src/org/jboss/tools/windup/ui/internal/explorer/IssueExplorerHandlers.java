@@ -19,8 +19,10 @@ import java.io.FileOutputStream;
 import javax.inject.Inject;
 
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -31,8 +33,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.DiffDialog.QuickFixTempProject;
@@ -69,25 +71,26 @@ public class IssueExplorerHandlers {
 			groupService.setGroupByRule(enabled);
 		}
 	}
-	
-	public static class GroupByProject extends GroubyBy {
+
+	public static class GroupByProjectHierarchy extends GroubyBy {
+		@Inject private ICommandService commandService;
 		@Override
 		protected void update(boolean enabled) {
-			groupService.setGroupByProject(enabled);
-		}
-	}
-	
-	public static class GroupByPackage extends GroubyBy {
-		@Override
-		protected void update(boolean enabled) {
-			groupService.setGroupByPackage(enabled);
+			groupService.setGroupByHierachy(enabled);
+			if (enabled) {
+				Command c = commandService.getCommand(IssueConstants.GROUP_BY_FILE_CMD);
+				State s = c.getState(IssueConstants.TOGGLE_STATE_ID); 
+				s.setValue(true);
+				commandService.refreshElements(c.getId(), null);
+				groupService.setGroupByFile(true, false);
+			}
 		}
 	}
 	
 	public static class GroupByFile extends GroubyBy {
 		@Override
 		protected void update(boolean enabled) {
-			groupService.setGroupByFile(enabled);
+			groupService.setGroupByFile(enabled, true);
 		}
 	}
 	
@@ -113,9 +116,9 @@ public class IssueExplorerHandlers {
 	
 	private abstract static class AbstractIssueHanlder extends AbstractHandler {
 		@Inject protected IEventBroker broker;
-		protected IssueNode getIssueNode (ExecutionEvent event) {
+		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
-			return (IssueNode)selection.getFirstElement();
+			return (MarkerNode)selection.getFirstElement();
 		}
 	}
 	
@@ -124,7 +127,7 @@ public class IssueExplorerHandlers {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				((IssueNode)selected).markAsFixed();				
+				((MarkerNode)selected).markAsFixed();				
 			}
 			return null;
 		}
@@ -134,10 +137,10 @@ public class IssueExplorerHandlers {
 		@Inject private EPartService partService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			IssueNode node = getIssueNode(event);
+			MarkerNode node = getMarkerNode(event);
 			MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
 			IssueDetailsView view = (IssueDetailsView)part.getObject();
-			view.showIssueDetails(node.getType());
+			view.showIssueDetails(node.getMarker());
 			return null;
 		}
 	}
@@ -169,8 +172,8 @@ public class IssueExplorerHandlers {
 	public static class PreviewQuickFixHandler extends AbstractIssueHanlder {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			IssueNode node = getIssueNode(event);
-			IResource left = node.getType().getResource();
+			MarkerNode node = getMarkerNode(event);
+			IResource left = node.getResource();
 			IResource right = getCompareResource(left, node.getQuickFix());
 			Shell shell = Display.getCurrent().getActiveShell();
 			DiffDialog dialog = new DiffDialog(shell, left, right);
@@ -186,8 +189,8 @@ public class IssueExplorerHandlers {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				IssueNode node = (IssueNode)selected;
-				IResource left = node.getType().getResource();
+				MarkerNode node = (MarkerNode)selected;
+				IResource left = node.getResource();
 				IResource right = getCompareResource(left, node.getQuickFix());
 				applyFix(left, right);
 				node.markAsFixed();
@@ -201,7 +204,7 @@ public class IssueExplorerHandlers {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				((IssueNode)selected).delete();
+				((MarkerNode)selected).delete();
 			}
 			broker.send(WindupConstants.MARKERS_CHANGED, true);
 			return null;

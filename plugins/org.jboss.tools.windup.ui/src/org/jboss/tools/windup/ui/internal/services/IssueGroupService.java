@@ -17,19 +17,10 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.explorer.Group;
-import org.jboss.tools.windup.ui.internal.explorer.Group.JavaElementGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.IssueGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.ResourceGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.JavaPackageGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.ProjectGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.RuleGroup;
-import org.jboss.tools.windup.ui.internal.explorer.Group.SeverityGroup;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -41,37 +32,32 @@ public class IssueGroupService {
 	
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupUIPlugin.PLUGIN_ID);
 
-	private static final String GROUP_BY_PROJECT = "GROUP_BY_PROJECT"; //$NON-NLS-1$
-	private static final String GROUP_BY_PACKAGE = "GROUP_BY_PACKAGE"; //$NON-NLS-1$
-	private static final String GROUP_BY_FILE = "GROUP_BY_FILE"; //$NON-NLS-1$
+	private static final String GROUP_BY_HIERARCHY = "GROUP_BY_HIERARCH"; //$NON-NLS-1$
 	private static final String GROUP_BY_SEVERITY = "GROUP_BY_SEVERITY"; //$NON-NLS-1$
 	private static final String GROUP_BY_RULE = "GROUP_BY_RULE"; //$NON-NLS-1$
+	private static final String GROUP_BY_FILE = "GROUP_BY_FILE"; //$NON-NLS-1$
 	
-	private boolean groupByProject;
-	private boolean groupByPackage;
-	private boolean groupByFile;
+	private boolean groupByHierarchy;
 	private boolean groupBySeverity;
 	private boolean groupByRule;
+	private boolean groupByFile;
 	
-	@Inject private IEclipseContext context;
 	@Inject	private IEventBroker broker;
 	
 	@PostConstruct
 	private void start() {
-		this.groupByProject = preferences.getBoolean(GROUP_BY_PROJECT, false);
-		this.groupByPackage = preferences.getBoolean(GROUP_BY_PROJECT, false);
-		this.groupByFile = preferences.getBoolean(GROUP_BY_FILE, false);
+		this.groupByHierarchy = preferences.getBoolean(GROUP_BY_HIERARCHY, true);
 		this.groupBySeverity = preferences.getBoolean(GROUP_BY_SEVERITY, false);
 		this.groupByRule = preferences.getBoolean(GROUP_BY_RULE, false);
+		this.groupByFile = preferences.getBoolean(GROUP_BY_FILE, false);
 	}
 	
 	@PreDestroy
 	public void save() {
-		preferences.putBoolean(GROUP_BY_PROJECT, groupByProject);
-		preferences.putBoolean(GROUP_BY_PACKAGE, groupByPackage);
-		preferences.putBoolean(GROUP_BY_FILE, groupByFile);
+		preferences.putBoolean(GROUP_BY_HIERARCHY, groupByHierarchy);
 		preferences.putBoolean(GROUP_BY_SEVERITY, groupBySeverity);
 		preferences.putBoolean(GROUP_BY_RULE, groupByRule);
+		preferences.putBoolean(GROUP_BY_FILE, groupByFile);
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
@@ -79,18 +65,8 @@ public class IssueGroupService {
 		}
 	}
 	
-	public void setGroupByProject(boolean groupByProject) {
-		this.groupByProject = groupByProject;
-		notifyChanged();
-	}
-	
-	public void setGroupByPackage(boolean groupByPackage) {
-		this.groupByPackage = groupByPackage;
-		notifyChanged();
-	}
-	
-	public void setGroupByFile(boolean groupByFile) {
-		this.groupByFile = groupByFile;
+	public void setGroupByHierachy(boolean groupByHierarchy) {
+		this.groupByHierarchy = groupByHierarchy;
 		notifyChanged();
 	}
 	
@@ -104,16 +80,15 @@ public class IssueGroupService {
 		notifyChanged();
 	}
 	
-	public boolean isGroupByProject() {
-		return groupByProject;
+	public void setGroupByFile(boolean groupByFile, boolean notify) {
+		this.groupByFile = groupByFile;
+		if (notify) {
+			notifyChanged();
+		}
 	}
 	
-	public boolean isGroupByPackage() {
-		return groupByPackage;
-	}
-	
-	public boolean isGroupByFile() {
-		return groupByFile;
+	public boolean isGroupByHierarchy() {
+		return groupByHierarchy;
 	}
 	
 	public boolean isGroupBySeverity() {
@@ -124,56 +99,12 @@ public class IssueGroupService {
 		return groupByRule;
 	}
 	
+	public boolean isGroupByFile() {
+		return groupByFile;
+	}
+	
 	private void notifyChanged() {
 		save();
 		broker.post(WindupConstants.GROUPS_CHANGED, true);
-	}
-	
-	public Group<?, ?> getRoot() {
-		
-		Group<?, ?> parent = null;
-		
-		if (groupByProject) {
-			parent = new ProjectGroup(parent, context);
-			if (groupByFile) {
-				buildSeverityRuleGrouping(new ResourceGroup(parent, context));
-			}
-		}
-		
-		if (groupByPackage) {
-			parent = new JavaPackageGroup(parent, context);
-		}
-		
-		if (groupByFile) {
-			Group<?, ?> oldParent = parent;
-			parent = new JavaElementGroup(parent, context);
-			if (!groupByProject) {
-				buildSeverityRuleGrouping(new ResourceGroup(oldParent, context));
-			}
-		}
-
-		parent = buildSeverityRuleGrouping(parent);
-		
-		return parent.getRoot();
-	}
-	
-	public Group<?, ?> buildSeverityRuleGrouping(Group<?, ?> parent) {
-		
-		if (groupBySeverity) {
-			parent = new SeverityGroup(parent, context);
-			if (!groupByRule) {
-				parent = new IssueGroup(parent, context);
-			}
-		}
-		
-		if (groupByRule) {
-			parent = new IssueGroup(new RuleGroup(parent, context), context);
-		}
-		 
-		if (!groupBySeverity && !groupByRule) {
-			parent = new IssueGroup(parent, context);
-		}
-		
-		return parent;
 	}
 }

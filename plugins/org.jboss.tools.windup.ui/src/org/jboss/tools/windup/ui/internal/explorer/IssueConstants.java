@@ -22,4 +22,11 @@ public interface IssueConstants {
 	 */
 	int OK = 1;
 	int APPLY_FIX = 2;
+	
+	/**
+	 * Explorer Content
+	 */
+	String GROUP_BY_FILE_CMD = "org.jboss.tools.windup.ui.groupByFile";
+	String TOGGLE_STATE_ID = "org.eclipse.ui.commands.toggleState";
+	String JDT_CONTENT = "org.eclipse.jdt.java.ui.javaContent";
 }

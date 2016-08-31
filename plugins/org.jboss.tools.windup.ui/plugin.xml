@@ -149,46 +149,6 @@
                style="push">
          </command>
          <separator
-               name="org.jboss.tools.windup.ui.separatorExplorer3"
-               visible="true">
-         </separator>
-         <command
-               commandId="org.jboss.tools.windup.ui.groupByProject"
-               icon="icons/project.png"
-               style="toggle"
-               tooltip="Group By Project">
-         </command>
-         <command
-               commandId="org.jboss.tools.windup.ui.groupByPackage"
-               icon="icons/package.png"
-               label="Package"
-               style="toggle"
-               tooltip="Group By Package">
-         </command>
-         <command
-               commandId="org.jboss.tools.windup.ui.groupByFile"
-               icon="icons/file.png"
-               label="File"
-               style="toggle"
-               tooltip="Group By File">
-         </command>
-         <separator
-               name="org.jboss.tools.windup.ui.separator4"
-               visible="true">
-         </separator>
-         <command
-               commandId="org.jboss.tools.windup.ui.groupBySeverity"
-               icon="icons/errorwarning.png"
-               label="Severity"
-               style="toggle">
-         </command>
-         <command
-               commandId="org.jboss.tools.windup.ui.groupByRule"
-               icon="icons/rule.gif"
-               label="Migration Rule"
-               style="toggle">
-         </command>
-         <separator
                name="org.jboss.tools.windup.ui.separatorExplorer1"
                visible="true">
          </separator>
@@ -196,7 +156,7 @@
                commandId="org.jboss.tools.windup.ui.deleteAllIssues"
                icon="icons/deleteAllMarkers.png"
                style="push"
-               tooltip="Delete all issues">
+               tooltip="Delete All Migration Issues">
          </command>
          <command
                commandId="org.jboss.tools.windup.ui.createRunConfiguration"
@@ -207,6 +167,33 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:org.jboss.tools.windup.ui.explorer?after=additions">
+         <command
+               commandId="org.jboss.tools.windup.ui.groupByProjectHierarchy"
+               icon="icons/hierarchicalLayout.png"
+               label="Show Project Hierarchy"
+               style="toggle">
+         </command>
+         <menu
+               label="Group By">
+            <command
+                  commandId="org.jboss.tools.windup.ui.groupBySeverity"
+                  icon="icons/errorwarning.png"
+                  label="Severity"
+                  style="toggle">
+            </command>
+            <command
+                  commandId="org.jboss.tools.windup.ui.groupByRule"
+                  icon="icons/rule.gif"
+                  label="Migration Rule"
+                  style="toggle">
+            </command>
+            <command
+                  commandId="org.jboss.tools.windup.ui.groupByFile"
+                  icon="icons/file.png"
+                  label="File"
+                  style="toggle">
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -222,7 +209,7 @@
                   </count>
                   <iterate>
                      <instanceof
-                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                           value="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
                      </instanceof>
                   </iterate>
                </and>
@@ -245,11 +232,10 @@
                   </count>
                   <iterate>
                      <instanceof
-                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                           value="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
                      </instanceof>
                      <test
-                           property="org.jboss.tools.windup.ui.isFixed"
-                           value="false">
+                           property="org.jboss.tools.windup.ui.isFixed">
                      </test>
                   </iterate>
                </and>
@@ -270,7 +256,7 @@
                   </count>
                   <iterate>
                      <instanceof
-                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                           value="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
                      </instanceof>
                      <test
                            property="org.jboss.tools.windup.ui.hasQuickFix">
@@ -293,7 +279,7 @@
                   </count>
                   <iterate>
                      <instanceof
-                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                           value="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
                      </instanceof>
                      <test
                            property="org.jboss.tools.windup.ui.hasQuickFix">
@@ -319,7 +305,7 @@
                   <iterate
                         operator="or">
                      <instanceof
-                           value="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+                           value="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
                      </instanceof>
                   </iterate>
                </and>
@@ -338,6 +324,24 @@
             defaultHandler="org.jboss.tools.windup.ui.internal.editor.CreateRunConfigurationHandler"
             id="org.jboss.tools.windup.ui.createRunConfiguration"
             name="Create Windup Run Configuration">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByProjectHierarchy"
+            id="org.jboss.tools.windup.ui.groupByProjectHierarchy"
+            name="Group By Project Hierarchy">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByFile"
+            id="org.jboss.tools.windup.ui.groupByFile"
+            name="Group By File">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
       <command
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupBySeverity"
@@ -392,33 +396,6 @@
             id="org.jboss.tools.windup.ui.deleteAllIssues"
             name="Delete All Issues">
       </command>
-      <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByProject"
-            id="org.jboss.tools.windup.ui.groupByProject"
-            name="Group By Project">
-         <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
-               id="org.eclipse.ui.commands.toggleState">
-         </state>
-      </command>
-      <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByPackage"
-            id="org.jboss.tools.windup.ui.groupByPackage"
-            name="Group By Package">
-         <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
-               id="org.eclipse.ui.commands.toggleState">
-         </state>
-      </command>
-      <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByFile"
-            id="org.jboss.tools.windup.ui.groupByFile"
-            name="Group By File">
-         <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
-               id="org.eclipse.ui.commands.toggleState">
-         </state>
-      </command>
    </extension>
     <extension
              point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -452,6 +429,28 @@
                    type="org.jboss.tools.windup.windup.Issue">
              </adapt>
           </triggerPoints>
+          <possibleChildren>
+                <or>
+                    <instanceof value="org.eclipse.core.resources.IResource" />
+                    <instanceof value="org.eclipse.jdt.core.IJavaElement" />
+                    <instanceof value="org.eclipse.jdt.core.IJarEntryResource" />
+                    <instanceof value="org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer" />
+                </or>
+            </possibleChildren> 
+          <actionProvider
+                class="org.jboss.tools.windup.ui.internal.explorer.WindupActionProvider"
+                id="org.jboss.tools.windup.ui.internal.explorer.actionProvider"
+                overrides="org.eclipse.jdt.ui.navigator.actions.ViewActions"
+                priority="highest">
+                <enablement>
+                    <or>  
+                        <instanceof value="org.eclipse.core.resources.IWorkspaceRoot" /> 
+                        <adapt type="java.util.Collection"> 
+                            <count value="0" />
+                        </adapt>        
+                    </or>
+                </enablement>
+          </actionProvider>
        </navigatorContent>
     </extension>
     <extension
@@ -472,6 +471,9 @@
        <viewerContentBinding
              viewerId="org.jboss.tools.windup.ui.explorer">
           <includes>
+             <contentExtension
+                   isRoot="false"
+                   pattern="org.eclipse.jdt.java.ui.javaContent"/>   
              <contentExtension
                    isRoot="true"
                    pattern="org.jboss.tools.windup.ui.*">
@@ -504,7 +506,7 @@
              id="org.jboss.tools.windup.ui.hasQuickFixTester"
              namespace="org.jboss.tools.windup.ui"
              properties="hasQuickFix, isFixed"
-             type="org.jboss.tools.windup.ui.internal.explorer.IssueNode">
+             type="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
        </propertyTester>
     </extension>
 </plugin>

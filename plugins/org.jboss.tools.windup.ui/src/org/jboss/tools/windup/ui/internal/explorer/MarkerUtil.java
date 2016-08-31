@@ -66,23 +66,13 @@ public class MarkerUtil {
 			return IMarker.SEVERITY_ERROR;
 		}
 		else if (severity.equals(Severity.OPTIONAL.toString())) {
+			return IMarker.SEVERITY_INFO;
+		}
+		else if (severity.equals(Severity.POTENTIAL.toString())) {
 			return IMarker.SEVERITY_WARNING;
 		}
 		else {
 			return IMarker.SEVERITY_ERROR;
 		}
-	}
-	
-	public static Severity getSeverity(String severity) {
-		if (severity.equals(Severity.MANDATORY.toString())) {
-			return Severity.MANDATORY;
-		}
-		else if (severity.equals(Severity.OPTIONAL.toString())) {
-			return Severity.OPTIONAL;
-		}
-		else if (severity.equals(Severity.POTENTIAL)) {
-			return Severity.POTENTIAL;
-		}
-		return Severity.MANDATORY;
 	}
 }

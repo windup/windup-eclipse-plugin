@@ -10,29 +10,27 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import java.util.List;
-
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 
 /**
- * Represents a rule grouping.
+ * Issue explorer comparator.
  */
-public class RuleGroupNode extends IssueGroupNode<String> {
+public class IssueExplorerComparator extends ResourceComparator {
 
-	private String element;
-	
-	public RuleGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, String element) {
-		super(parent, issues);
-		this.element = element;
+	public IssueExplorerComparator() {
+		super(NAME);
 	}
-	
+
 	@Override
-	public String getLabel() {
-		return element;
-	}
-	
-	@Override
-	public String getType() {
-		return element;
+	public int compare(Viewer viewer, Object o1, Object o2) {
+		if (o1 instanceof TreeNode) {
+			o1 = ((TreeNode)o1).getSegment();
+		}
+		if (o2 instanceof TreeNode) {
+			o2 = ((TreeNode)o2).getSegment();
+		}
+		return super.compare(viewer, o1, o2);
 	}
 }

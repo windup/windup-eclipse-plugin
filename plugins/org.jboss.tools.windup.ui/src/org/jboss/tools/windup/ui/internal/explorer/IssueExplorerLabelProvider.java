@@ -10,11 +10,20 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.ui.WindupUIPlugin.*;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_ERROR;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_FIXED;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_INFO;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_ERROR;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_INFO;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_WARNING;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_WARNING;
 
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -25,6 +34,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RuleGroupNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.SeverityNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 
 import com.google.common.collect.Maps;
 
@@ -60,35 +72,25 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 	
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof SeverityGroupNode) {
-			SeverityGroupNode node = (SeverityGroupNode)element;
-			Image image = null;
-			switch (node.getType()) {
-				case MANDATORY: {
-					image = ERROR;
-					break;
-				}
-				case OPTIONAL: {
-					image = INFO;
-					break;
-				}
-				case POTENTIAL: {
-					image = WARNING;
-				}
-			}
-			return image;
-		}
 		if (element instanceof RuleGroupNode) {
 			return RULE;
 		}
-		if (element instanceof ProjectGroupNode ||
-				element instanceof JavaPackageGroupNode ||
-					element instanceof JavaElementGroupNode) {
-			IssueGroupNode<?> node = (IssueGroupNode<?>)element;
-			return workbenchProvider.getImage(node.getType());
+		if (element instanceof SeverityNode) {
+			SeverityNode node = (SeverityNode)element;
+			int severity = (int)node.getSegment();
+			Image image = null;
+			switch (severity) {
+				case IMarker.SEVERITY_ERROR:
+					image = ERROR; break;
+				case IMarker.SEVERITY_WARNING:
+					image = WARNING; break;
+				case IMarker.SEVERITY_INFO:
+					image = INFO;
+			}
+			return image;
 		}
-		if (element instanceof IssueNode) {
-			IssueNode issue = (IssueNode)element;
+		if (element instanceof MarkerNode) {
+			MarkerNode issue = (MarkerNode)element;
 			boolean hasQuickFix = issue.hasQuickFix();
 			boolean isFixed = issue.isFixed();
 			Image result = null;
@@ -107,20 +109,37 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 			}
 			return result;
 		}
-		return null;
+		else if (element instanceof TreeNode) {
+			TreeNode node = (TreeNode)element;
+			element = node.getSegment();
+		}
+		return workbenchProvider.getImage(element);
 	}
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IssueGroupNode) {
-			IssueGroupNode<?> node = (IssueGroupNode<?>)element;
-			String label = node.getLabel();
-			if (!(element instanceof IssueNode)) {
+		if (element instanceof TreeNode) {
+			TreeNode node = (TreeNode)element;
+			String label = "";
+			if (element instanceof SeverityNode) {
+				SeverityNode severityNode = (SeverityNode)element;
+				label = severityNode.getSeverity();
+			}
+			else {
+				element = node.getSegment();
+				if (element instanceof IResource || element instanceof IJavaElement || element instanceof IMarker) { 
+					label = workbenchProvider.getText(element);
+				}
+				if (label == null || label.isEmpty()) {
+					label = String.valueOf(element);
+				}
+			}
+			if (node.isLeafParent()) {
 				label += " (" + node.getChildren().size() + ")";
 			}
 			return label;
 		}
-		return null;
+		return workbenchProvider.getText(element);
 	}
 
 	@Override
@@ -157,7 +176,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 	@Override
 	public Color getForeground(Object element) {
 		return null;
-	}
+	};
 
 	@Override
 	public Color getBackground(Object element) {

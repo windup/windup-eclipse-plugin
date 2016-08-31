@@ -10,30 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import java.util.List;
-
-import org.eclipse.core.resources.IMarker;
-import org.jboss.windup.reporting.model.Severity;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.navigator.CommonActionProvider;
 
 /**
- * Represents a severity grouping.
+ * Action provider for the Issue Explorer.
  */
-public class SeverityGroupNode extends IssueGroupNode<Severity> {
-
-	private Severity element;
-	
-	public SeverityGroupNode(IssueGroupNode<?> parent, List<IMarker> issues, Severity element) {
-		super(parent, issues);
-		this.element = element;
-	}
-	
+public class WindupActionProvider extends CommonActionProvider {
 	@Override
-	public String getLabel() {
-		return element.toString();
-	}
-	
-	@Override
-	public Severity getType() {
-		return element;
+	public void fillActionBars(IActionBars actionBars) {
 	}
 }

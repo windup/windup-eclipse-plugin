@@ -41,6 +41,8 @@ import org.osgi.service.event.EventHandler;
  */
 public class IssueExplorer extends CommonNavigator {
 	
+	public static final String VIEW_ID = "org.jboss.tools.windup.ui.explorer"; //$NON-NLS-1$
+	
 	@Inject private IEclipseContext context;
 	@Inject private IEventBroker broker;
 	@Inject private ModelService modelService;
@@ -55,7 +57,7 @@ public class IssueExplorer extends CommonNavigator {
 			getCommonViewer().refresh();
 		}
 	};
-
+	
 	@Override
 	public void createPartControl(Composite aParent) {
 		super.createPartControl(aParent);
@@ -65,12 +67,13 @@ public class IssueExplorer extends CommonNavigator {
 			if (ss.size() == 1) {
 				Object selection = ss.getFirstElement();
 				IMarker type = null;
-				if (selection instanceof IssueNode) {
-					type = ((IssueNode)selection).getType();
+				if (selection instanceof MarkerNode) {
+					type = ((MarkerNode)selection).getMarker();
 				}
 				context.set(IMarker.class, type);
 			}
 		});
+		getCommonViewer().setComparator(new IssueExplorerComparator());
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
 		broker.subscribe(ISSUE_CHANGED, issueChangedHandler);
@@ -118,11 +121,11 @@ public class IssueExplorer extends CommonNavigator {
 			StructuredSelection ss = (StructuredSelection)event.getSelection();
 			if (ss.size() == 1) {
 				Object node = ss.getFirstElement();
-				if (node instanceof IssueNode) {
-					IssueNode issue = (IssueNode)node;
+				if (node instanceof MarkerNode) {
+					MarkerNode issue = (MarkerNode)node;
                     try {
 						IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								issue.getType(), true);
+								issue.getMarker(), true);
 					} catch (PartInitException e) {
 						WindupUIPlugin.log(e);
 					}

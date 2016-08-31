@@ -11,13 +11,13 @@
 package org.jboss.tools.windup.ui.internal.explorer;
 
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
-import static org.jboss.tools.windup.model.domain.WindupMarker.TITLE;
 import static org.jboss.tools.windup.ui.internal.Messages.issueDeleteError;
 import static org.jboss.tools.windup.ui.internal.Messages.operationError;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,39 +27,24 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.ide.IDE;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.windup.reporting.model.Severity;
 
-/**
- * Represents a marker grouping.
- */
-public class IssueNode extends IssueGroupNode<IMarker> {
+public class MarkerNode extends TreeNode {
 	
-	private IMarker marker;
 	private Issue issue;
+	private IMarker marker;
 	
 	@Inject private IEventBroker broker;
 	
 	@Inject
-	public IssueNode(IssueGroupNode<?> parent, IMarker marker, ModelService modelService) {
-		super(parent);
+	public MarkerNode(IMarker marker, ModelService modelService) {
+		super (marker);
 		this.marker = marker;
 		this.issue = modelService.findIssue(marker);
-	}
-	
-	public Issue getIssue() {
-		return issue;
-	}
-	
-	@Override
-	public String getLabel() {
-		return marker.getAttribute(TITLE, "unknown issue"); //$NON-NLS-1$
-	}
-	
-	@Override
-	public IMarker getType() {
-		return marker;
 	}
 	
 	public int getSeverity() {
@@ -88,6 +73,18 @@ public class IssueNode extends IssueGroupNode<IMarker> {
 	
 	public boolean isFixed() {
 		return issue.isFixed();
+	}
+	
+	public IMarker getMarker() {
+		return marker;
+	}
+	
+	public IResource getResource() {
+		return marker.getResource();
+	}
+	
+	public String getRule() {
+		return marker.getAttribute(WindupMarker.RULE_ID, WindupConstants.DEFAULT_RULE_ID);
 	}
 	
 	public void delete() {

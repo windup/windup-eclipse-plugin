@@ -24,7 +24,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.ui.PlatformUI;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNodeBuilder;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 
 import com.google.common.collect.Lists;
@@ -37,18 +41,20 @@ import com.google.common.collect.Lists;
 public class IssueExplorerContentService {
 	
 	@Inject private IssueGroupService groupService;
+	@Inject private IEclipseContext context;
 	
 	public boolean hasChildren(Object element) {
-		if (element instanceof IssueGroupNode) {
-			return !((IssueGroupNode<?>)element).getChildren().isEmpty();
+		if (element instanceof TreeNode) {
+			TreeNode node = (TreeNode)element;
+			return !node.getChildren().isEmpty();
 		}
 		return element instanceof IWorkspaceRoot;
 	}
 	
 	public Object[] getChildren(Object parent) {
-		if (parent instanceof IssueGroupNode) {
-			List<IssueGroupNode<?>> children = ((IssueGroupNode<?>)parent).getChildren();
-			return children.stream().toArray(Object[]::new);
+		if (parent instanceof TreeNode) {
+			TreeNode node = (TreeNode)parent;
+			return node.getChildren().stream().toArray(TreeNode[]::new);	
 		}
 		else if (parent instanceof IWorkspaceRoot) {
 			return createNodeGroups();
@@ -57,13 +63,23 @@ public class IssueExplorerContentService {
 	}
 	
 	public Object getParent(Object element) {
-		if (element instanceof IssueGroupNode) {
-			return ((IssueGroupNode<?>)element).getParent();
+		if (element instanceof TreeNode) {
+			return ((TreeNode)element).getParent();
 		}
 		return null;
 	}
 	
 	private Object[] createNodeGroups() {
+		return createNodeGroups(collectMarkers());
+	}
+	
+	private Object[] createNodeGroups(List<IMarker> markers) {
+		IssueExplorer explorer = (IssueExplorer)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
+					getActivePage().findView(IssueExplorer.VIEW_ID);
+		return new TreeNodeBuilder(markers, explorer, groupService, context).build();
+	}
+
+	public List<IMarker> collectMarkers() {
 		List<IMarker> markers = Lists.newArrayList();
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			if (project.isAccessible()) {
@@ -77,11 +93,6 @@ public class IssueExplorerContentService {
 						IResource.DEPTH_INFINITE));
 			}
 		}
-		return createNodeGroups(markers);
-	}
-	
-	private Object[] createNodeGroups(List<IMarker> markers) {
-		List<IssueGroupNode<?>> nodes = groupService.getRoot().createGroupNodes(markers);
-		return nodes.toArray(new IssueGroupNode[nodes.size()]);
+		return markers;
 	}
 }
