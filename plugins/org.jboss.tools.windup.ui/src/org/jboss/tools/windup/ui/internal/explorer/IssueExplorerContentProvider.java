@@ -105,7 +105,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				List<TreePath> paths = Lists.newArrayList(contentProvider.getParents(marker.getResource()));
 				if (!paths.isEmpty()) {
 					TreePath path = paths.get(0);
-					build(root, path, marker, 1);
+					build(root, root, path, marker, 1);
 				}
 			}
 			List<TreeNode> children = root.getChildren();
@@ -115,19 +115,22 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			return children.stream().toArray(TreeNode[]::new);
 		}
 		
-		public void build(TreeNode node, TreePath path, IMarker marker, int index) {
-			if (index < path.getSegmentCount()) {
-				Object segment = path.getSegment(index);
-				TreeNode child = node.getChildPath(segment);
-				if (child == null) {
-					child = new TreeNode(segment);
-					node.addChild(child);
+		public void build(TreeNode root, TreeNode node, TreePath path, IMarker marker, int index) {
+			if (groupService.isGroupByHierarchy()) {
+				// build the hierarchy.
+				if (index < path.getSegmentCount()) {
+					Object segment = path.getSegment(index);
+					TreeNode child = node.getChildPath(segment);
+					if (child == null) {
+						child = new TreeNode(segment);
+						node.addChild(child);
+					}
+					build(root, child, path, marker, ++index);
+					return;
 				}
-				build(child, path, marker, ++index);
-				return;
 			}
-			TreeNode parent = node;
-			if (groupService.isGroupByHierarchy() || groupService.isGroupByFile()) {
+			TreeNode parent = groupService.isGroupByHierarchy() ? node : root;
+			if (groupService.isGroupByFile()) {
 				TreeNode resourceNode = parent.getChildPath(marker.getResource());
 				if (resourceNode == null) {
 					resourceNode = new TreeNode(marker.getResource());

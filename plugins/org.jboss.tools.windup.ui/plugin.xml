@@ -509,4 +509,12 @@
              type="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
        </propertyTester>
     </extension>
+    <extension
+          point="org.eclipse.ui.ide.markerImageProviders">
+       <imageprovider
+             icon="icons/windup.png"
+             id="org.jboss.tools.windup.ui.imageprovider"
+             markertype="org.jboss.tools.windup.core.hintMarker">
+       </imageprovider>
+    </extension>
 </plugin>

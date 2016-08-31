@@ -53,7 +53,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_RULE = "icons/rule.gif"; //$NON-NLS-1$
     public static final String IMG_SEVERITY = "icons/severity.png"; //$NON-NLS-1$
     public static final String IMG_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
-    public static final String IMG_FIXED = "icons/fixedIssue.png"; //"icons/issueFixed.png"; //$NON-NLS-1$
+    public static final String IMG_FIXED = "icons/fixedIssue.png"; //$NON-NLS-1$
     public static final String IMG_DELETE_ALL = "icons/deleteAllMarkers.png"; //$NON-NLS-1$
     
     // The shared instance

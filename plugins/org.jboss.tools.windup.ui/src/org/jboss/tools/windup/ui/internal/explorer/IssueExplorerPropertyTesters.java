@@ -10,7 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.expressions.PropertyTester;
+import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 
 /**
  * Property testers for the Issue Explorer.
@@ -19,8 +22,12 @@ public class IssueExplorerPropertyTesters {
 	
 	public static final String QUICKFIX = "hasQuickFix";  //$NON-NLS-1$
 	public static final String FIXED = "isFixed";  //$NON-NLS-1$
-
+	public static final String HIERARCHY = "isGroupByHierarchy"; //$NON-NLS-1$
+	
 	public static class QuickFixPropertyTester extends PropertyTester {
+		
+		@Inject private IssueGroupService groupService;
+		
 		@Override
 		public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 			if (QUICKFIX.equals(property)) {
@@ -32,6 +39,9 @@ public class IssueExplorerPropertyTesters {
 				if (element instanceof MarkerNode) {
 					return !((MarkerNode)element).isFixed();
 				}
+			}
+			else if (HIERARCHY.equals(property)) {
+				return groupService.isGroupByHierarchy();
 			}
 			return false;
 		}
