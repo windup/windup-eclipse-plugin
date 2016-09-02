@@ -30,6 +30,7 @@ import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
+import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.windup.reporting.model.Severity;
 
@@ -45,6 +46,28 @@ public class MarkerNode extends TreeNode {
 		super (marker);
 		this.marker = marker;
 		this.issue = modelService.findIssue(marker);
+	}
+	
+	public String getTitle() {
+		if (issue instanceof Hint) {
+			return ((Hint)issue).getTitle();
+		}
+		return "classification"; //$NON-NLS-1$ 
+	}
+	
+	public String getFileName() {
+		return marker.getResource().getName();
+	}
+	
+	public int getLineNumber() {
+		if (issue instanceof Hint) {
+			return ((Hint)issue).getLineNumber();
+		}
+		return 0;
+	}
+	
+	public Issue getIssue() {
+		return issue;
 	}
 	
 	public int getSeverity() {

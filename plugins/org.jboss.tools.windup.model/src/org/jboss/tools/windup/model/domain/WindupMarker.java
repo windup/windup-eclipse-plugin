@@ -23,21 +23,21 @@ public interface WindupMarker {
 	 */
 	static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
 
-	static final String CONFIGURATION_ID = "CONFIGURATION_ID";
-	static final String URI_ID = "URI_ID";
+	static final String CONFIGURATION_ID = "CONFIGURATION_ID"; //$NON-NLS-1$
+	static final String URI_ID = "URI_ID"; //$NON-NLS-1$
 	static final String ELEMENT_ID = "ELEMENT_ID"; //$NON-NLS-1$
 	
-	static final String TITLE = "TITLE_ID";
-	static final String HINT = "HINT_ID";
-	static final String SEVERITY = "SEVERITY_ID";
-	static final String EFFORT = "EFFORT_ID";
-	static final String RULE_ID = "RULE_ID";
-	static final String SOURCE_SNIPPET = "SOURCE_ID";
-	static final String LINE = "LINE_ID";
-	static final String COLUMN = "COLUMN_ID";
-	static final String LENGTH = "LENGTH_ID";
-	
-	static final String CLASSIFICATION = "CLASSIFICATION_ID";
-	static final String DESCRIPTION = "DESCRIPTION_ID";
+	static final String TITLE = "TITLE_ID";//$NON-NLS-1$
+	static final String HINT = "HINT_ID"; //$NON-NLS-1$
+	static final String SEVERITY = "SEVERITY_ID"; //$NON-NLS-1$
+	static final String EFFORT = "EFFORT_ID"; //$NON-NLS-1$
+	static final String RULE_ID = "RULE_ID"; //$NON-NLS-1$
+	static final String SOURCE_SNIPPET = "SOURCE_ID"; //$NON-NLS-1$
+	static final String LINE = "LINE_ID"; //$NON-NLS-1$ 
+	static final String COLUMN = "COLUMN_ID"; //$NON-NLS-1$
+	static final String LENGTH = "LENGTH_ID";//$NON-NLS-1$
+	 
+	static final String CLASSIFICATION = "CLASSIFICATION_ID"; //$NON-NLS-1$
+	static final String DESCRIPTION = "DESCRIPTION_ID"; //$NON-NLS-1$
 	
 }
