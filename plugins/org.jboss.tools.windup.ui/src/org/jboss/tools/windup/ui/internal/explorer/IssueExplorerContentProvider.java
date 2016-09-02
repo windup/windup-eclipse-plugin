@@ -32,9 +32,12 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
+import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.windup.reporting.model.Severity;
 
 import com.google.common.collect.Lists;
@@ -84,12 +87,15 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private List<IMarker> markers;
 		private NavigatorContentServiceContentProvider contentProvider;
 		private IssueGroupService groupService;
+		private ModelService modelService;
 		private IEclipseContext context;
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
-				IssueGroupService groupService, IEclipseContext context) {
+				IssueGroupService groupService, IEclipseContext context,
+				ModelService modelService) {
 			this.markers = markers;
 			this.groupService = groupService;
+			this.modelService = modelService;
 			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
 			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
 			// TODO: Correct this temporary hack to get flat package layout.
@@ -151,10 +157,16 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			}
 			
 			if (groupService.isGroupByRule()) {
-				String segment = marker.getAttribute(WindupMarker.RULE_ID, WindupConstants.DEFAULT_RULE_ID);
+				String ruleId = marker.getAttribute(WindupMarker.RULE_ID, WindupConstants.DEFAULT_RULE_ID);
+				String title = "";
+				Issue issue = modelService.findIssue(marker);
+				if (issue instanceof Hint) {
+					title = ((Hint)issue).getTitle();
+				}
+				String segment = ruleId+title;
 				TreeNode ruleNode = parent.getChildPath(segment);
 				if (ruleNode == null) {
-					ruleNode = new RuleGroupNode(segment);
+					ruleNode = new RuleGroupNode(segment, ruleId, title);
 					parent.addChild(ruleNode);
 				}
 				parent = ruleNode;
@@ -225,8 +237,18 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 	}
 	
 	public static class RuleGroupNode extends TreeNode {
-		public RuleGroupNode(Object segment) {
+		private String ruleId;
+		private String title;
+		public RuleGroupNode(Object segment, String ruleId, String title) {
 			super(segment);
+			this.ruleId = ruleId;
+			this.title = title;
+		}
+		public String getRuleId() {
+			return ruleId;
+		}
+		public String getTitle() {
+			return title;
 		}
 	}
 	

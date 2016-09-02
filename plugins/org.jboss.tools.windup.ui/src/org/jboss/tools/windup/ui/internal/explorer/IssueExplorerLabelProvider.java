@@ -25,9 +25,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -37,13 +37,15 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RuleGroupNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.SeverityNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
+import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Issue;
 
 import com.google.common.collect.Maps;
 
 /**
  * The label provider for the Windup explorer.
  */
-public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorProvider {
+public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyledLabelProvider {
 	
 	private Map<String, Image> imageCache = Maps.newHashMap();
 	
@@ -120,26 +122,35 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 	public String getText(Object element) {
 		if (element instanceof TreeNode) {
 			TreeNode node = (TreeNode)element;
-			String label = "";
-			if (element instanceof SeverityNode) {
-				SeverityNode severityNode = (SeverityNode)element;
-				label = severityNode.getSeverity();
-			}
-			else {
-				element = node.getSegment();
-				if (element instanceof IResource || element instanceof IJavaElement || element instanceof IMarker) { 
-					label = workbenchProvider.getText(element);
-				}
-				if (label == null || label.isEmpty()) {
-					label = String.valueOf(element);
-				}
-			}
+			String label = getLabel(node);
 			if (node.isLeafParent()) {
 				label += " (" + node.getChildren().size() + ")";
 			}
 			return label;
 		}
 		return workbenchProvider.getText(element);
+	}
+	
+	private String getLabel(TreeNode node) {
+		String label = "";
+		if (node instanceof SeverityNode) {
+			SeverityNode severityNode = (SeverityNode)node;
+			label = severityNode.getSeverity();
+		}
+		else if (node instanceof RuleGroupNode) {
+			RuleGroupNode ruleNode = (RuleGroupNode)node;
+			label = ruleNode.getTitle();
+		}
+		else {
+			Object segment = node.getSegment();
+			if (segment instanceof IResource || segment instanceof IJavaElement || segment instanceof IMarker) { 
+				label = workbenchProvider.getText(segment);
+			}
+			if (label == null || label.isEmpty()) {
+				label = String.valueOf(segment);
+			}
+		}
+		return label;
 	}
 
 	@Override
@@ -174,12 +185,41 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IColorP
 	}
 
 	@Override
-	public Color getForeground(Object element) {
-		return null;
-	};
+	public StyledString getStyledText(Object element) {
+		if (element instanceof MarkerNode) {
+			MarkerNode markerNode = (MarkerNode)element;
+			
+			StyledString style = new StyledString();
+			Issue issue = markerNode.getIssue();
+			
+			if (issue instanceof Hint) {
+				Hint hint = (Hint)issue;
+				style.append(hint.getTitle());
+				style.append(" [" + markerNode.getFileName() + " " + hint.getLineNumber() + "]", 
+						StyledString.DECORATIONS_STYLER); 
+			}
 
-	@Override
-	public Color getBackground(Object element) {
+			else {
+				style.append(markerNode.getFileName());
+			}
+			return style;
+		}
+		if (element instanceof TreeNode) {
+			TreeNode node = (TreeNode)element;
+			String label = getLabel(node);
+			
+			StyledString style = new StyledString(label);
+			
+			if (node instanceof RuleGroupNode) {
+				RuleGroupNode ruleNode = (RuleGroupNode)node;
+				style.append(" [rule id: " + ruleNode.getRuleId() + "]", StyledString.DECORATIONS_STYLER);
+			}
+			
+			if (node.isLeafParent()) {
+				style.append(" (" + node.getChildren().size() + ")", StyledString.COUNTER_STYLER);
+			}
+			return style;
+		}
 		return null;
 	}
 

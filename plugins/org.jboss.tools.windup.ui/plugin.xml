@@ -415,7 +415,7 @@
              contentProvider="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider"
              icon="icons/windup.png"
              id="org.jboss.tools.windup.ui.explorer.WindupExplorerContentProvider"
-             labelProvider="org.jboss.tools.windup.ui.internal.explorer.IssueExplorerLabelProvider"
+             labelProvider="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerLabelProvider"
              name="Windup Explorer Content Provider"
              priority="highest">
           <triggerPoints>

@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.ui.PlatformUI;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNodeBuilder;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
@@ -42,6 +43,7 @@ public class IssueExplorerContentService {
 	
 	@Inject private IssueGroupService groupService;
 	@Inject private IEclipseContext context;
+	@Inject private ModelService modelService;
 	
 	public boolean hasChildren(Object element) {
 		if (element instanceof TreeNode) {
@@ -76,7 +78,7 @@ public class IssueExplorerContentService {
 	private Object[] createNodeGroups(List<IMarker> markers) {
 		IssueExplorer explorer = (IssueExplorer)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
 					getActivePage().findView(IssueExplorer.VIEW_ID);
-		return new TreeNodeBuilder(markers, explorer, groupService, context).build();
+		return new TreeNodeBuilder(markers, explorer, groupService, context, modelService).build();
 	}
 
 	public List<IMarker> collectMarkers() {
