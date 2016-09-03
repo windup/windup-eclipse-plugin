@@ -29,9 +29,6 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.URI_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.inject.Inject;
@@ -56,7 +53,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
@@ -77,13 +73,15 @@ public class MarkerService {
 	
 	@Inject
 	@Optional
-	private void updateMarkers(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
+	public void updateMarkers(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
 		try {
 			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 				@Override
 				protected void execute(IProgressMonitor monitor)
 						throws CoreException, InvocationTargetException, InterruptedException {
-					createWindupMarkers(configuration);
+					monitor.beginTask(Messages.generateIssues, getTotalIssueCount(configuration));
+					monitor.subTask(Messages.generateIssues);
+					createWindupMarkers(configuration, monitor);
 				}
 			};
 			new ProgressMonitorDialog(Display.getDefault().getActiveShell()).run(true, false, op);
@@ -97,7 +95,18 @@ public class MarkerService {
 		}
 	}
 	
-	private void createWindupMarkers(ConfigurationElement configuration) throws CoreException {
+	public int getTotalIssueCount(ConfigurationElement configuration) {
+		int count = 0;
+		for (Input input : configuration.getInputs()) {
+			if (input.getWindupResult() != null) {
+				count += input.getWindupResult().getIssues().size();
+			}
+		}
+		return count;
+	}
+	
+	private void createWindupMarkers(ConfigurationElement configuration, IProgressMonitor monitor) throws CoreException {
+		int count = 0;
 		for (Input input : configuration.getInputs()) {
 			for (Issue issue : input.getWindupResult().getIssues()) {
 				String absolutePath = issue.getFileAbsolutePath();
@@ -129,8 +138,6 @@ public class MarkerService {
 					marker.setAttribute(LENGTH, hint.getLength());
 					
 					marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
-					
-					//populateLinePosition(marker, hint.getLineNumber(), new File(hint.getFileAbsolutePath()));
 				}
 				else {
 					Classification classification = (Classification)issue;
@@ -143,6 +150,7 @@ public class MarkerService {
 					marker.setAttribute(IMarker.CHAR_END, 0);
 				}
 	            marker.setAttribute(IMarker.USER_EDITABLE, false);
+	            monitor.worked(++count);
 			}
 		}
 	}
@@ -167,40 +175,5 @@ public class MarkerService {
 	
 	private IFile getResource(String absolutePath) {
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(absolutePath));
-	}
-	
-	private void populateLinePosition(IMarker marker, int lineNumber, File file) {
-		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-			int currentLine = 1;
-            int pos = 0;
-            int currentByte = 0;
-            int lastByte = 0;
-
-            int startPos = -1;
-            int endPos = -1;
-            
-            while ((currentByte = bis.read()) != -1) {
-                pos++;
-                if (currentByte == '\n' && lastByte != '\r') {
-                    currentLine++;
-                    if (startPos != -1) {
-                        endPos = pos;
-                        break;
-                    }
-                }
-                if (currentLine == lineNumber && startPos == -1) {
-                    startPos = pos;
-                }
-                lastByte = currentByte;
-            }
-            if (endPos == -1) {
-                endPos = pos;
-            }
-            marker.setAttribute(IMarker.CHAR_START, startPos);
-            marker.setAttribute(IMarker.CHAR_END, endPos);
-        }
-        catch (Exception e) {
-            WindupRuntimePlugin.logError(e.getMessage(), e);
-		}
 	}
 }

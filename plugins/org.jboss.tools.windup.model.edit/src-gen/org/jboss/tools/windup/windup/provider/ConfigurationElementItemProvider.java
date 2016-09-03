@@ -52,6 +52,8 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			addSourceModePropertyDescriptor(object);
 			addGeneratedReportsLocationPropertyDescriptor(object);
 			addPackagesPropertyDescriptor(object);
+			addTimestampPropertyDescriptor(object);
+			addGenerateGraphPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -145,6 +147,50 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
+	 * This adds a property descriptor for the Timestamp feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTimestampPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_timestamp_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_timestamp_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_Timestamp(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Generate Graph feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addGenerateGraphPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_generateGraph_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generateGraph_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_GenerateGraph(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -216,6 +262,8 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
+			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:

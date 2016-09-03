@@ -233,13 +233,31 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__PACKAGES = PARAMETERIZED_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Timestamp</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__TIMESTAMP = PARAMETERIZED_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Generate Graph</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__GENERATE_GRAPH = PARAMETERIZED_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 5;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 7;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -994,6 +1012,28 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getConfigurationElement_Packages();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Timestamp</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_Timestamp();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph <em>Generate Graph</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generate Graph</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_GenerateGraph();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.

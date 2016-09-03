@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.DiffDialog.QuickFixTempProject;
@@ -42,6 +43,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerSe
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 
 /**
  * Handlers used by the Issue Explorer.
@@ -141,6 +143,20 @@ public class IssueExplorerHandlers {
 			MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
 			IssueDetailsView view = (IssueDetailsView)part.getObject();
 			view.showIssueDetails(node.getMarker());
+			return null;
+		}
+	}
+	
+	public static class RefreshIssuesHandler extends AbstractIssueHanlder {
+		@Inject private ModelService modelService;
+		@Inject private MarkerService markerService;
+		@Override
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			markerService.deleteAllWindupMarkers();
+			ConfigurationElement configuration = modelService.getRecentConfiguration();
+			if (configuration != null) {
+				markerService.updateMarkers(configuration);
+			}
 			return null;
 		}
 	}

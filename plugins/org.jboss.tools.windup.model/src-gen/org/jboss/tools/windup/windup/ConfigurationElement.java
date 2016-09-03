@@ -18,6 +18,8 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode <em>Source Mode</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph <em>Generate Graph</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -134,5 +136,57 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<String> getPackages();
+
+	/**
+	 * Returns the value of the '<em><b>Timestamp</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Timestamp</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Timestamp</em>' attribute.
+	 * @see #setTimestamp(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_Timestamp()
+	 * @model
+	 * @generated
+	 */
+	String getTimestamp();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Timestamp</em>' attribute.
+	 * @see #getTimestamp()
+	 * @generated
+	 */
+	void setTimestamp(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Generate Graph</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Generate Graph</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Generate Graph</em>' attribute.
+	 * @see #setGenerateGraph(boolean)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GenerateGraph()
+	 * @model
+	 * @generated
+	 */
+	boolean isGenerateGraph();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph <em>Generate Graph</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Generate Graph</em>' attribute.
+	 * @see #isGenerateGraph()
+	 * @generated
+	 */
+	void setGenerateGraph(boolean value);
 
 } // ConfigurationElement

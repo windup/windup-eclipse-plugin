@@ -35,6 +35,8 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isSourceMode <em>Source Mode</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getPackages <em>Packages</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getTimestamp <em>Timestamp</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateGraph <em>Generate Graph</em>}</li>
  * </ul>
  *
  * @generated
@@ -119,6 +121,46 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<String> packages;
+
+	/**
+	 * The default value of the '{@link #getTimestamp() <em>Timestamp</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTimestamp()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TIMESTAMP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTimestamp() <em>Timestamp</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTimestamp()
+	 * @generated
+	 * @ordered
+	 */
+	protected String timestamp = TIMESTAMP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isGenerateGraph() <em>Generate Graph</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isGenerateGraph()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean GENERATE_GRAPH_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isGenerateGraph() <em>Generate Graph</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isGenerateGraph()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean generateGraph = GENERATE_GRAPH_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -231,6 +273,48 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTimestamp(String newTimestamp) {
+		String oldTimestamp = timestamp;
+		timestamp = newTimestamp;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP, oldTimestamp, timestamp));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isGenerateGraph() {
+		return generateGraph;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setGenerateGraph(boolean newGenerateGraph) {
+		boolean oldGenerateGraph = generateGraph;
+		generateGraph = newGenerateGraph;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH, oldGenerateGraph, generateGraph));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -258,6 +342,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getGeneratedReportsLocation();
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				return getPackages();
+			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
+				return getTimestamp();
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH:
+				return isGenerateGraph();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -288,6 +376,12 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getPackages().clear();
 				getPackages().addAll((Collection<? extends String>)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
+				setTimestamp((String)newValue);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH:
+				setGenerateGraph((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -315,6 +409,12 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				getPackages().clear();
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
+				setTimestamp(TIMESTAMP_EDEFAULT);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH:
+				setGenerateGraph(GENERATE_GRAPH_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -337,6 +437,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return GENERATED_REPORTS_LOCATION_EDEFAULT == null ? generatedReportsLocation != null : !GENERATED_REPORTS_LOCATION_EDEFAULT.equals(generatedReportsLocation);
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				return packages != null && !packages.isEmpty();
+			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
+				return TIMESTAMP_EDEFAULT == null ? timestamp != null : !TIMESTAMP_EDEFAULT.equals(timestamp);
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH:
+				return generateGraph != GENERATE_GRAPH_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -359,6 +463,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(generatedReportsLocation);
 		result.append(", packages: ");
 		result.append(packages);
+		result.append(", timestamp: ");
+		result.append(timestamp);
+		result.append(", generateGraph: ");
+		result.append(generateGraph);
 		result.append(')');
 		return result.toString();
 	}

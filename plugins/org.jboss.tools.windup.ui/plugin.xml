@@ -153,6 +153,12 @@
                visible="true">
          </separator>
          <command
+               commandId="org.jboss.tools.windup.ui.refresh"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+         <command
                commandId="org.jboss.tools.windup.ui.deleteAllIssues"
                icon="icons/deleteAllMarkers.png"
                style="push"
@@ -395,6 +401,11 @@
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$DeleteAllIssuesHandler"
             id="org.jboss.tools.windup.ui.deleteAllIssues"
             name="Delete All Issues">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$RefreshIssuesHandler"
+            id="org.jboss.tools.windup.ui.refresh"
+            name="Refresh Issues">
       </command>
    </extension>
     <extension

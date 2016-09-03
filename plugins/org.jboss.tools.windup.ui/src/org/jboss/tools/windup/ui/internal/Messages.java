@@ -19,6 +19,7 @@ public class Messages extends NLS
     public static String link_with_editor_and_selection;
 
     public static String generate_windup_report;
+    public static String generateIssues;
 
     public static String refresh;
 

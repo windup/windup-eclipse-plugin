@@ -14,6 +14,9 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +68,8 @@ public class ModelService {
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
 	
     private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
+    private static final String TIMESTAMP_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
+
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
@@ -304,6 +309,7 @@ public class ModelService {
     	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
+        configuration.setTimestamp(createTimestamp());
         for (Hint wHint : results.getHints()) {
         	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
         	result.getIssues().add(hint);
@@ -328,5 +334,40 @@ public class ModelService {
         		hint.getLinks().add(link);
         	}
         }
+	}
+	
+	private SimpleDateFormat getTimestampFormat() {
+		return new SimpleDateFormat(TIMESTAMP_FORMAT);
+	}
+	
+	public String createTimestamp() {
+		return getTimestampFormat().format(new Date());
+	}
+	
+	private Date getTimestamp(ConfigurationElement configuration) {
+		try {
+			return new SimpleDateFormat(TIMESTAMP_FORMAT).parse(configuration.getTimestamp());
+		} catch (ParseException e) {
+			Activator.log(e);
+		}
+		return null;
+	}
+	
+	public ConfigurationElement getRecentConfiguration() {
+		ConfigurationElement mostRecentConfiguration = null;
+		for (ConfigurationElement configuration : getModel().getConfigurationElements()) {
+			if (mostRecentConfiguration == null) {
+				mostRecentConfiguration = configuration;
+			}
+			else if (!mostRecentConfiguration.getName().equals(configuration.getName()) &&
+					mostRecentConfiguration.getTimestamp() != null && configuration.getTimestamp() != null) {
+				Date thisTime = getTimestamp(mostRecentConfiguration);
+				Date otherTime = getTimestamp(configuration);
+				if (thisTime.before(otherTime)) {
+					mostRecentConfiguration = configuration;
+				}
+			}
+		}
+		return mostRecentConfiguration;
 	}
 }

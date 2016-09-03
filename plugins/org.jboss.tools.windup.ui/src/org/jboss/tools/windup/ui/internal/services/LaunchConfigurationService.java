@@ -59,7 +59,10 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration launchConfig) {
 		ConfigurationElement configuration = modelService.findConfiguration(launchConfig.getName());
-		markerService.deleteAllWindupMarkers();
+		ConfigurationElement lastConfiguration = modelService.getRecentConfiguration();
+		if (configuration.getName().equals(lastConfiguration.getName())) {
+			markerService.deleteAllWindupMarkers();
+		}
 		modelService.deleteConfiguration(configuration);
 	}
 	
