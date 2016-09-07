@@ -12,6 +12,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 
+import java.io.File;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
@@ -143,6 +145,17 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 					parent.addChild(resourceNode);
 				}
 				parent = resourceNode;
+				Issue issue = modelService.findIssue(marker);
+				if (issue.getGeneratedReportLocation() != null) {
+					File report = new File(issue.getGeneratedReportLocation());
+					if (report.exists()) {
+						TreeNode reportNode = parent.getChildPath(Messages.generatedReport);
+						if (reportNode == null) {
+							reportNode = new ReportNode(Messages.generatedReport, marker);
+							parent.addChild(reportNode);
+						}
+					}
+				}
 			}
 			
 			if (groupService.isGroupBySeverity()) {
@@ -255,6 +268,17 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 	public static class TreeGroupNode extends TreeNode {
 		public TreeGroupNode(Object segment) {
 			super(segment);
+		}
+	}
+	
+	public static class ReportNode extends TreeNode	 {
+		private IMarker marker;
+		public ReportNode (Object segment, IMarker marker) {
+			super(segment);
+			this.marker = marker;
+		}
+		public IMarker getMarker() {
+			return marker;
 		}
 	}
 }

@@ -41,7 +41,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -53,6 +52,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
@@ -109,8 +109,7 @@ public class MarkerService {
 		int count = 0;
 		for (Input input : configuration.getInputs()) {
 			for (Issue issue : input.getWindupResult().getIssues()) {
-				String absolutePath = issue.getFileAbsolutePath();
-				IFile resource = getResource(absolutePath);
+				IFile resource = ModelService.getIssueResource(issue);
 				String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
 				IMarker marker = resource.createMarker(type);
 				marker.setAttribute(CONFIGURATION_ID, configuration.getName());
@@ -171,9 +170,5 @@ public class MarkerService {
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
-	}
-	
-	private IFile getResource(String absolutePath) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(absolutePath));
 	}
 }

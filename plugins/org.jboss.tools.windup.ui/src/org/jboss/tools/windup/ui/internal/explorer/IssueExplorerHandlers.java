@@ -50,7 +50,7 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
  */
 public class IssueExplorerHandlers {
 	
-	public abstract static class GroubyBy extends AbstractHandler {
+	public abstract static class GroupBy extends AbstractHandler {
 		@Inject protected IssueGroupService groupService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -60,21 +60,21 @@ public class IssueExplorerHandlers {
 		protected abstract void update(boolean enabled);
 	}
 	
-	public static class GroupBySeverity extends GroubyBy {
+	public static class GroupBySeverity extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {
 			groupService.setGroupBySeverity(enabled);
 		}
 	}
 	
-	public static class GroupByRule extends GroubyBy {
+	public static class GroupByRule extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {
 			groupService.setGroupByRule(enabled);
 		}
 	}
 
-	public static class GroupByProjectHierarchy extends GroubyBy {
+	public static class GroupByProjectHierarchy extends GroupBy {
 		@Inject private ICommandService commandService;
 		@Override
 		protected void update(boolean enabled) {
@@ -89,7 +89,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static class GroupByFile extends GroubyBy {
+	public static class GroupByFile extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {
 			groupService.setGroupByFile(enabled, true);

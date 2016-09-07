@@ -55,6 +55,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
     public static final String IMG_FIXED = "icons/fixedIssue.png"; //$NON-NLS-1$
     public static final String IMG_DELETE_ALL = "icons/deleteAllMarkers.png"; //$NON-NLS-1$
+    public static final String IMG_REPORT = "icons/report.gif"; //$NON-NLS-1$
     
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -162,6 +163,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_EXPANDALL, createImageDescriptor(IMG_EXPANDALL));
 		reg.put(IMG_FIXED, createImageDescriptor(IMG_FIXED));
 		reg.put(IMG_DELETE_ALL, createImageDescriptor(IMG_DELETE_ALL));
+		reg.put(IMG_REPORT, createImageDescriptor(IMG_REPORT));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

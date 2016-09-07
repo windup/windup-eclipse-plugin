@@ -494,6 +494,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getIssue_GeneratedReportLocation() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getHint() {
 		return hintEClass;
 	}
@@ -683,6 +692,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(issueEClass, ISSUE__EFFORT);
 		createEAttribute(issueEClass, ISSUE__FIXED);
 		createEAttribute(issueEClass, ISSUE__QUICK_FIX);
+		createEAttribute(issueEClass, ISSUE__GENERATED_REPORT_LOCATION);
 
 		hintEClass = createEClass(HINT);
 		createEAttribute(hintEClass, HINT__TITLE);
@@ -788,6 +798,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getIssue_Effort(), ecorePackage.getEInt(), "effort", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_Fixed(), ecorePackage.getEBoolean(), "fixed", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_QuickFix(), ecorePackage.getEString(), "quickFix", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_GeneratedReportLocation(), ecorePackage.getEString(), "generatedReportLocation", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(hintEClass, Hint.class, "Hint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getHint_Title(), ecorePackage.getEString(), "title", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

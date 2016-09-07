@@ -38,6 +38,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getEffort <em>Effort</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isFixed <em>Fixed</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getQuickFix <em>Quick Fix</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  * </ul>
  *
  * @generated
@@ -192,6 +193,26 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * @ordered
 	 */
 	protected String quickFix = QUICK_FIX_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getGeneratedReportLocation() <em>Generated Report Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGeneratedReportLocation()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String GENERATED_REPORT_LOCATION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getGeneratedReportLocation() <em>Generated Report Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGeneratedReportLocation()
+	 * @generated
+	 * @ordered
+	 */
+	protected String generatedReportLocation = GENERATED_REPORT_LOCATION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -376,6 +397,27 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getGeneratedReportLocation() {
+		return generatedReportLocation;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setGeneratedReportLocation(String newGeneratedReportLocation) {
+		String oldGeneratedReportLocation = generatedReportLocation;
+		generatedReportLocation = newGeneratedReportLocation;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__GENERATED_REPORT_LOCATION, oldGeneratedReportLocation, generatedReportLocation));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -409,6 +451,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return isFixed();
 			case WindupPackage.ISSUE__QUICK_FIX:
 				return getQuickFix();
+			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
+				return getGeneratedReportLocation();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -447,6 +491,9 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__QUICK_FIX:
 				setQuickFix((String)newValue);
 				return;
+			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
+				setGeneratedReportLocation((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -483,6 +530,9 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__QUICK_FIX:
 				setQuickFix(QUICK_FIX_EDEFAULT);
 				return;
+			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
+				setGeneratedReportLocation(GENERATED_REPORT_LOCATION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -511,6 +561,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return fixed != FIXED_EDEFAULT;
 			case WindupPackage.ISSUE__QUICK_FIX:
 				return QUICK_FIX_EDEFAULT == null ? quickFix != null : !QUICK_FIX_EDEFAULT.equals(quickFix);
+			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
+				return GENERATED_REPORT_LOCATION_EDEFAULT == null ? generatedReportLocation != null : !GENERATED_REPORT_LOCATION_EDEFAULT.equals(generatedReportLocation);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -539,6 +591,8 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 		result.append(fixed);
 		result.append(", quickFix: ");
 		result.append(quickFix);
+		result.append(", generatedReportLocation: ");
+		result.append(generatedReportLocation);
 		result.append(')');
 		return result.toString();
 	}

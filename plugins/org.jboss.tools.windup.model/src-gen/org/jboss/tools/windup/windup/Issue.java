@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getEffort <em>Effort</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#isFixed <em>Fixed</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getQuickFix <em>Quick Fix</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
@@ -227,5 +228,31 @@ public interface Issue extends EObject {
 	 * @generated
 	 */
 	void setQuickFix(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Generated Report Location</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Generated Report Location</em>' attribute.
+	 * @see #setGeneratedReportLocation(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_GeneratedReportLocation()
+	 * @model
+	 * @generated
+	 */
+	String getGeneratedReportLocation();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getGeneratedReportLocation <em>Generated Report Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Generated Report Location</em>' attribute.
+	 * @see #getGeneratedReportLocation()
+	 * @generated
+	 */
+	void setGeneratedReportLocation(String value);
 
 } // Issue

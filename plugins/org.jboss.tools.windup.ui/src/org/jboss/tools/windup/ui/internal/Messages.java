@@ -20,6 +20,7 @@ public class Messages extends NLS
 
     public static String generate_windup_report;
     public static String generateIssues;
+    public static String noWindupReport;
 
     public static String refresh;
 
@@ -77,6 +78,7 @@ public class Messages extends NLS
     public static String inputPackagesDescription;
     
     public static String generate_windup_report_for;
+    public static String generatedReport;
     
     public static String selectLaunchConfiguration;
     public static String selectExistinConfiguration;

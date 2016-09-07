@@ -571,13 +571,22 @@ public interface WindupPackage extends EPackage {
 	int ISSUE__QUICK_FIX = 7;
 
 	/**
+	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__GENERATED_REPORT_LOCATION = 8;
+
+	/**
 	 * The number of structural features of the '<em>Issue</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ISSUE_FEATURE_COUNT = 8;
+	int ISSUE_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Issue</em>' class.
@@ -669,6 +678,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int HINT__QUICK_FIX = ISSUE__QUICK_FIX;
+
+	/**
+	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__GENERATED_REPORT_LOCATION = ISSUE__GENERATED_REPORT_LOCATION;
 
 	/**
 	 * The feature id for the '<em><b>Title</b></em>' attribute.
@@ -823,6 +841,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION__QUICK_FIX = ISSUE__QUICK_FIX;
+
+	/**
+	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__GENERATED_REPORT_LOCATION = ISSUE__GENERATED_REPORT_LOCATION;
 
 	/**
 	 * The feature id for the '<em><b>Classification</b></em>' attribute.
@@ -1270,6 +1297,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIssue_QuickFix();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getGeneratedReportLocation <em>Generated Report Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generated Report Location</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#getGeneratedReportLocation()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_GeneratedReportLocation();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.

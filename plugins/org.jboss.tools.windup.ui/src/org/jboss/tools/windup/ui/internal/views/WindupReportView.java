@@ -340,7 +340,11 @@ public class WindupReportView implements IShowInTarget
      * @param hideMessage <code>true</code> to hide the current message, <code>false</code> to show the message with the report
      */
     public void showReport(IPath reportPath, boolean hideMessage) {
-        this.browser.setUrl(reportPath.toString());
+        showReport(reportPath.toString(), hideMessage);
+    }
+    
+    public void showReport(String path, boolean hideMessage) {
+        this.browser.setUrl(path);
         this.browser.setVisible(true);
         ((GridData) this.browser.getLayoutData()).exclude = false;
 
@@ -358,7 +362,7 @@ public class WindupReportView implements IShowInTarget
      * @param message text message to display to user in the view
      * @param hideReport <code>true</code> to hide the report, <code>false</code> to show the message with the report
      */
-    private void showMessage(String message, boolean hideReport)
+    public void showMessage(String message, boolean hideReport)
     {
         this.message.setText(message);
         this.message.setVisible(true);

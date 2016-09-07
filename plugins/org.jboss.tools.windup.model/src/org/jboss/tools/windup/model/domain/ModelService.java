@@ -29,9 +29,11 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -55,6 +57,7 @@ import org.jboss.tools.windup.windup.WindupResult;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Link;
+import org.jboss.windup.tooling.data.ReportLink;
 
 import com.google.common.base.Objects;
 
@@ -295,11 +298,21 @@ public class ModelService {
 		return reportsDir.append(path);
 	}
 	
+	public IPath getGeneratedReportsBaseLocation(Issue issue) {
+		Input input = (Input)issue.eContainer().eContainer();
+		ConfigurationElement configuration = (ConfigurationElement)input.eContainer();
+		return getGeneratedReportBaseLocation(configuration, input);
+	}
+	
 	public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration, Input input) {
 		IPath path = getGeneratedReportsBaseLocation(configuration);
 		path = path.append(input.getName());
 		path = path.append(File.separator);
 		return path;
+	}
+	
+	public static IFile getIssueResource(Issue issue) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(issue.getFileAbsolutePath()));
 	}
 	
 	/**
@@ -334,6 +347,23 @@ public class ModelService {
         		hint.getLinks().add(link);
         	}
         }
+        
+        // TODO: Classifications
+        linkReports(results, result.getIssues());
+	}
+	
+	private void linkReports(ExecutionResults results, List<Issue> issues) {
+		for (Issue issue : issues) {
+			IFile resource = ModelService.getIssueResource(issue);
+			File file = resource.getRawLocation().toFile();
+			for (ReportLink link : results.getReportLinks()) {
+				if (link.getInputFile().equals(file)) {
+					File report = link.getReportFile();
+					issue.setGeneratedReportLocation(report.getAbsolutePath());
+					break;
+				}
+			}
+		}
 	}
 	
 	private SimpleDateFormat getTimestampFormat() {
