@@ -64,6 +64,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	
 	private TableViewer projectsTable;
 	private TableViewer packagesTable;
+	private Button generateReportButton;
 	
 	public WindupInputTab(ModelService modelService) {
 		this.modelService = modelService;
@@ -76,6 +77,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		createProjectsGroup(container);
 		createPackagesGroup(container);
+		createReportGroup(container);
 		createVerticalSpacer(container, 1);
 		super.setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, ID);
@@ -91,6 +93,12 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		createProjectsButtonBar(group, projectsTable);
 	}
 	
+	private void reload() {
+		reloadProjectsTable();
+		reloadPackagesTable();
+		reloadReportGroup();
+	}
+	
 	private void reloadProjectsTable() {
 		if (projectsTable != null) {
 			projectsTable.setInput(getCurrentProjects(configuration));
@@ -100,6 +108,12 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	private void reloadPackagesTable() {
 		if (packagesTable != null) {
 			packagesTable.setInput(getCurrentPackages(configuration));
+		}
+	}
+	
+	private void reloadReportGroup() {
+		if (generateReportButton != null) {
+			generateReportButton.setSelection(configuration.isGenerateReport());
 		}
 	}
 	
@@ -213,6 +227,19 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	private void createReportGroup(Composite parent) {
+		Group group = SWTFactory.createGroup(parent, Messages.windupReport+":", 1, 1, GridData.FILL_HORIZONTAL);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+		generateReportButton = SWTFactory.createCheckButton(group, Messages.windupGenerateReport, null, true, GridData.GRAB_HORIZONTAL);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(generateReportButton);
+		generateReportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				configuration.setGenerateReport(generateReportButton.getSelection());
+			}
+		});
+	}
+	
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy launchConfig) {
 		initializeConfiguration(launchConfig);
@@ -254,7 +281,6 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		if (configuration == null) {
 			this.configuration = modelService.createConfiguration(launchConfig.getName());
 		}
-		reloadProjectsTable();
-		reloadPackagesTable();
+		reload();
 	}
 }

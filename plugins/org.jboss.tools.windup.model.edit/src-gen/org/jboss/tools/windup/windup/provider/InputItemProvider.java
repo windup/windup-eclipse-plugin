@@ -49,7 +49,6 @@ public class InputItemProvider extends NamedElementItemProvider {
 			super.getPropertyDescriptors(object);
 
 			addUriPropertyDescriptor(object);
-			addGeneratedReportLocationPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -68,28 +67,6 @@ public class InputItemProvider extends NamedElementItemProvider {
 				 getString("_UI_Input_uri_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Input_uri_feature", "_UI_Input_type"),
 				 WindupPackage.eINSTANCE.getInput_Uri(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Generated Report Location feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addGeneratedReportLocationPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Input_generatedReportLocation_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Input_generatedReportLocation_feature", "_UI_Input_type"),
-				 WindupPackage.eINSTANCE.getInput_GeneratedReportLocation(),
 				 true,
 				 false,
 				 false,
@@ -167,7 +144,6 @@ public class InputItemProvider extends NamedElementItemProvider {
 
 		switch (notification.getFeatureID(Input.class)) {
 			case WindupPackage.INPUT__URI:
-			case WindupPackage.INPUT__GENERATED_REPORT_LOCATION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.INPUT__WINDUP_RESULT:

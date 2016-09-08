@@ -45,6 +45,7 @@ import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
+import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
@@ -192,7 +193,10 @@ public class WindupService
                         .setProgressMonitor(windupProgressMonitor)
                         .setOption(SourceModeOption.NAME, true)
                         .setOption(TargetOption.NAME, Lists.newArrayList("eap"));
-                        
+                
+                if (!configuration.isGenerateReport()) {
+                	options.setOption(SkipReportsRenderingOption.NAME, true);
+                }
                 if (!configuration.getPackages().isEmpty()) {
                 	options.setOption(ScanPackagesOption.NAME, configuration.getPackages());
                 }

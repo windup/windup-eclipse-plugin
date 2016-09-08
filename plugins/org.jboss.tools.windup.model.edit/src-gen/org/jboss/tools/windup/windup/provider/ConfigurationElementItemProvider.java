@@ -53,7 +53,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			addGeneratedReportsLocationPropertyDescriptor(object);
 			addPackagesPropertyDescriptor(object);
 			addTimestampPropertyDescriptor(object);
-			addGenerateGraphPropertyDescriptor(object);
+			addGenerateReportPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -169,19 +169,19 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
-	 * This adds a property descriptor for the Generate Graph feature.
+	 * This adds a property descriptor for the Generate Report feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addGenerateGraphPropertyDescriptor(Object object) {
+	protected void addGenerateReportPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ConfigurationElement_generateGraph_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generateGraph_feature", "_UI_ConfigurationElement_type"),
-				 WindupPackage.eINSTANCE.getConfigurationElement_GenerateGraph(),
+				 getString("_UI_ConfigurationElement_generateReport_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generateReport_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_GenerateReport(),
 				 true,
 				 false,
 				 false,
@@ -263,7 +263,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_GRAPH:
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:

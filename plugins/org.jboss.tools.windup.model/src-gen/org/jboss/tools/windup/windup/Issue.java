@@ -110,7 +110,7 @@ public interface Issue extends EObject {
 	 * @return the value of the '<em>Severity</em>' attribute.
 	 * @see #setSeverity(String)
 	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Severity()
-	 * @model transient="true"
+	 * @model
 	 * @generated
 	 */
 	String getSeverity();

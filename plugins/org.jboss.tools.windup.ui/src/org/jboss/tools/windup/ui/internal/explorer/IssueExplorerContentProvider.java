@@ -38,6 +38,7 @@ import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.windup.reporting.model.Severity;
@@ -91,6 +92,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private IssueGroupService groupService;
 		private ModelService modelService;
 		private IEclipseContext context;
+		private ConfigurationElement configuration;
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
@@ -100,6 +102,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			this.modelService = modelService;
 			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
 			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
+			this.configuration = modelService.getRecentConfiguration();
 			// TODO: Correct this temporary hack to get flat package layout.
 			INavigatorContentService contentService = explorer.getCommonViewer().getNavigatorContentService();
 			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
@@ -145,14 +148,18 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 					parent.addChild(resourceNode);
 				}
 				parent = resourceNode;
-				Issue issue = modelService.findIssue(marker);
-				if (issue.getGeneratedReportLocation() != null) {
-					File report = new File(issue.getGeneratedReportLocation());
-					if (report.exists()) {
-						TreeNode reportNode = parent.getChildPath(Messages.generatedReport);
-						if (reportNode == null) {
-							reportNode = new ReportNode(Messages.generatedReport, marker);
-							parent.addChild(reportNode);
+				
+				if (configuration.isGenerateReport()) {
+					Issue issue = modelService.findIssue(marker);
+					System.out.println(issue.getGeneratedReportLocation());
+					if (issue.getGeneratedReportLocation() != null) {
+						File report = new File(issue.getGeneratedReportLocation());
+						if (report.exists()) {
+							TreeNode reportNode = parent.getChildPath(Messages.generatedReport);
+							if (reportNode == null) {
+								reportNode = new ReportNode(Messages.generatedReport, marker);
+								parent.addChild(reportNode);
+							}
 						}
 					}
 				}

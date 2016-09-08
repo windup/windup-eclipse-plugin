@@ -19,7 +19,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph <em>Generate Graph</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -164,29 +164,29 @@ public interface ConfigurationElement extends Parameterized {
 	void setTimestamp(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Generate Graph</b></em>' attribute.
+	 * Returns the value of the '<em><b>Generate Report</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Generate Graph</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Generate Report</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Generate Graph</em>' attribute.
-	 * @see #setGenerateGraph(boolean)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GenerateGraph()
+	 * @return the value of the '<em>Generate Report</em>' attribute.
+	 * @see #setGenerateReport(boolean)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GenerateReport()
 	 * @model
 	 * @generated
 	 */
-	boolean isGenerateGraph();
+	boolean isGenerateReport();
 
 	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph <em>Generate Graph</em>}' attribute.
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Generate Graph</em>' attribute.
-	 * @see #isGenerateGraph()
+	 * @param value the new value of the '<em>Generate Report</em>' attribute.
+	 * @see #isGenerateReport()
 	 * @generated
 	 */
-	void setGenerateGraph(boolean value);
+	void setGenerateReport(boolean value);
 
 } // ConfigurationElement

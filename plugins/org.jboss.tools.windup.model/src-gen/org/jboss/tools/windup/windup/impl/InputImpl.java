@@ -24,7 +24,6 @@ import org.jboss.tools.windup.windup.WindupResult;
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.impl.InputImpl#getUri <em>Uri</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.InputImpl#getWindupResult <em>Windup Result</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.InputImpl#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  * </ul>
  *
  * @generated
@@ -59,26 +58,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 	 * @ordered
 	 */
 	protected WindupResult windupResult;
-
-	/**
-	 * The default value of the '{@link #getGeneratedReportLocation() <em>Generated Report Location</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGeneratedReportLocation()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String GENERATED_REPORT_LOCATION_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getGeneratedReportLocation() <em>Generated Report Location</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGeneratedReportLocation()
-	 * @generated
-	 * @ordered
-	 */
-	protected String generatedReportLocation = GENERATED_REPORT_LOCATION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -191,27 +170,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getGeneratedReportLocation() {
-		return generatedReportLocation;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setGeneratedReportLocation(String newGeneratedReportLocation) {
-		String oldGeneratedReportLocation = generatedReportLocation;
-		generatedReportLocation = newGeneratedReportLocation;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.INPUT__GENERATED_REPORT_LOCATION, oldGeneratedReportLocation, generatedReportLocation));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -234,8 +192,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 			case WindupPackage.INPUT__WINDUP_RESULT:
 				if (resolve) return getWindupResult();
 				return basicGetWindupResult();
-			case WindupPackage.INPUT__GENERATED_REPORT_LOCATION:
-				return getGeneratedReportLocation();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -253,9 +209,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 				return;
 			case WindupPackage.INPUT__WINDUP_RESULT:
 				setWindupResult((WindupResult)newValue);
-				return;
-			case WindupPackage.INPUT__GENERATED_REPORT_LOCATION:
-				setGeneratedReportLocation((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -275,9 +228,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 			case WindupPackage.INPUT__WINDUP_RESULT:
 				setWindupResult((WindupResult)null);
 				return;
-			case WindupPackage.INPUT__GENERATED_REPORT_LOCATION:
-				setGeneratedReportLocation(GENERATED_REPORT_LOCATION_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -294,8 +244,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case WindupPackage.INPUT__WINDUP_RESULT:
 				return windupResult != null;
-			case WindupPackage.INPUT__GENERATED_REPORT_LOCATION:
-				return GENERATED_REPORT_LOCATION_EDEFAULT == null ? generatedReportLocation != null : !GENERATED_REPORT_LOCATION_EDEFAULT.equals(generatedReportLocation);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -312,8 +260,6 @@ public class InputImpl extends NamedElementImpl implements Input {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (uri: ");
 		result.append(uri);
-		result.append(", generatedReportLocation: ");
-		result.append(generatedReportLocation);
 		result.append(')');
 		return result.toString();
 	}

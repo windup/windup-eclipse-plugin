@@ -242,13 +242,13 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__TIMESTAMP = PARAMETERIZED_FEATURE_COUNT + 5;
 
 	/**
-	 * The feature id for the '<em><b>Generate Graph</b></em>' attribute.
+	 * The feature id for the '<em><b>Generate Report</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__GENERATE_GRAPH = PARAMETERIZED_FEATURE_COUNT + 6;
+	int CONFIGURATION_ELEMENT__GENERATE_REPORT = PARAMETERIZED_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
@@ -407,22 +407,13 @@ public interface WindupPackage extends EPackage {
 	int INPUT__WINDUP_RESULT = NAMED_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INPUT__GENERATED_REPORT_LOCATION = NAMED_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
 	 * The number of structural features of the '<em>Input</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 3;
+	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1052,15 +1043,15 @@ public interface WindupPackage extends EPackage {
 	EAttribute getConfigurationElement_Timestamp();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph <em>Generate Graph</em>}'.
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Generate Graph</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#isGenerateGraph()
+	 * @return the meta object for the attribute '<em>Generate Report</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport()
 	 * @see #getConfigurationElement()
 	 * @generated
 	 */
-	EAttribute getConfigurationElement_GenerateGraph();
+	EAttribute getConfigurationElement_GenerateReport();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -1156,17 +1147,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getInput_WindupResult();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Input#getGeneratedReportLocation <em>Generated Report Location</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Generated Report Location</em>'.
-	 * @see org.jboss.tools.windup.windup.Input#getGeneratedReportLocation()
-	 * @see #getInput()
-	 * @generated
-	 */
-	EAttribute getInput_GeneratedReportLocation();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.WindupResult <em>Result</em>}'.

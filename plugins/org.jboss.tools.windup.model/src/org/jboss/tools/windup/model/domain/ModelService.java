@@ -70,9 +70,7 @@ public class ModelService {
 	
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
 	
-    private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
     private static final String TIMESTAMP_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
-
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
 
@@ -286,10 +284,6 @@ public class ModelService {
 			return Objects.equal(configuration.getName(), name);
 		}).findFirst();
 		return found.isPresent() ? found.get() : null;
-	}
-	
-	public IPath getGeneratedReportHomeLocation(Input input) {
-		return new Path(input.getGeneratedReportLocation().concat(PROJECT_REPORT_HOME_PAGE));
 	}
 	
 	public IPath getGeneratedReportsBaseLocation(ConfigurationElement configuration) {
