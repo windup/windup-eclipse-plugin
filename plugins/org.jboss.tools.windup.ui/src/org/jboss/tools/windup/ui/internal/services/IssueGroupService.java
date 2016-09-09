@@ -47,9 +47,9 @@ public class IssueGroupService {
 	@PostConstruct
 	private void start() {
 		this.groupByHierarchy = preferences.getBoolean(GROUP_BY_HIERARCHY, true);
-		this.groupBySeverity = preferences.getBoolean(GROUP_BY_SEVERITY, false);
-		this.groupByRule = preferences.getBoolean(GROUP_BY_RULE, false);
-		this.groupByFile = preferences.getBoolean(GROUP_BY_FILE, false);
+		this.groupBySeverity = preferences.getBoolean(GROUP_BY_SEVERITY, true);
+		this.groupByRule = preferences.getBoolean(GROUP_BY_RULE, true);
+		this.groupByFile = preferences.getBoolean(GROUP_BY_FILE, true);
 	}
 	
 	@PreDestroy

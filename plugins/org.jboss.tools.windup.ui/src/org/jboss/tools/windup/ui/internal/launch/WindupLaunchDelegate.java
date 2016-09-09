@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.services.ConsoleService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -40,6 +41,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	@Inject private WindupService windupService;
 	@Inject private IEventBroker broker;
 	@Inject private MarkerService markerService;
+	@Inject private ConsoleService consoleService;
 	
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) {
 		ConfigurationElement configuration = modelService.findConfiguration(config.getName());
@@ -54,8 +56,15 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			Job job = new Job(NLS.bind(Messages.generate_windup_report_for, configuration.getName())) {
 	            @Override
 	            protected IStatus run(IProgressMonitor monitor) {
-	            	IStatus status = windupService.generateGraph(configuration, monitor);
-	                broker.post(LAUNCH_COMPLETED, configuration);
+	            	IStatus status = null;
+	            	try {
+	            		consoleService.startCapturing();
+	            		status = windupService.generateGraph(configuration, monitor);
+	            	} 
+	            	finally {
+	            		consoleService.stopCapturing();
+	            	}
+	            	broker.post(LAUNCH_COMPLETED, configuration);
 	                return status;
 	            }
 	        };

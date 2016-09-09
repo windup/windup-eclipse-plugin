@@ -73,6 +73,8 @@ public class Messages extends NLS
     public static String launchTabTitle;
     public static String launchName;
     
+    public static String rulesTabName;
+    
     public static String inputProjects;
     public static String inputProjectsDescription;
     public static String inputPackages;

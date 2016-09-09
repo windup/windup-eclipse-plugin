@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.launch.input;
+package org.jboss.tools.windup.ui.internal.launch;
 
 import static org.jboss.tools.windup.model.domain.ConfigurationResourceUtil.computePackages;
 import static org.jboss.tools.windup.model.domain.ConfigurationResourceUtil.getCurrentPackages;
@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("restriction")
 public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	
-	private static final String ID = "org.jboss.tools.windup.ui.launch.WindupSourceTab";
+	private static final String ID = "org.jboss.tools.windup.ui.launch.WindupInputTab"; //$NON-NLS-1$
 
 	private ModelService modelService;
 	private ConfigurationElement configuration;
