@@ -32,12 +32,15 @@ import com.google.common.collect.Lists;
 public class ConfigurationResourceUtil {
 
 	public static IProject[] getCurrentProjects(ConfigurationElement configuration) {
-		IProject[] projects = new IProject[configuration.getInputs().size()];
+		List<IProject> projects = Lists.newArrayList();
 		for (int i = 0; i < configuration.getInputs().size(); i++) {
 			Input input = configuration.getInputs().get(i);
-			projects[i] = (IProject)WorkspaceResourceUtils.findResource(input.getUri());
+			IProject project = (IProject)WorkspaceResourceUtils.findResource(input.getUri());
+			if (project != null) {
+				projects.add(project);
+			}
 		}
-		return projects;
+		return projects.toArray(new IProject[projects.size()]);
 	}
 	
 	public static IPackageFragment[] getCurrentPackages(ConfigurationElement configuration) {

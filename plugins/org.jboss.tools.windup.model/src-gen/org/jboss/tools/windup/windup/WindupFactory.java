@@ -121,6 +121,15 @@ public interface WindupFactory extends EFactory {
 	Link createLink();
 
 	/**
+	 * Returns a new object of class '<em>Quick Fix</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Quick Fix</em>'.
+	 * @generated
+	 */
+	QuickFix createQuickFix();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

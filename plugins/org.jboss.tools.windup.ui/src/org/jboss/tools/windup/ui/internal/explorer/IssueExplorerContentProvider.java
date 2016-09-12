@@ -151,7 +151,6 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				
 				if (configuration.isGenerateReport()) {
 					Issue issue = modelService.findIssue(marker);
-					System.out.println(issue.getGeneratedReportLocation());
 					if (issue.getGeneratedReportLocation() != null) {
 						File report = new File(issue.getGeneratedReportLocation());
 						if (report.exists()) {

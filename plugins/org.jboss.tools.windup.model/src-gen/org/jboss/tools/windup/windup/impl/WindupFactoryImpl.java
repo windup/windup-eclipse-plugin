@@ -68,6 +68,7 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 			case WindupPackage.HINT: return createHint();
 			case WindupPackage.CLASSIFICATION: return createClassification();
 			case WindupPackage.LINK: return createLink();
+			case WindupPackage.QUICK_FIX: return createQuickFix();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -207,6 +208,16 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 	public Link createLink() {
 		LinkImpl link = new LinkImpl();
 		return link;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public QuickFix createQuickFix() {
+		QuickFixImpl quickFix = new QuickFixImpl();
+		return quickFix;
 	}
 
 	/**

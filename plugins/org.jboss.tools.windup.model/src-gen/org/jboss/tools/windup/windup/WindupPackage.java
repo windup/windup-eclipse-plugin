@@ -553,22 +553,22 @@ public interface WindupPackage extends EPackage {
 	int ISSUE__FIXED = 6;
 
 	/**
-	 * The feature id for the '<em><b>Quick Fix</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__QUICK_FIX = 7;
-
-	/**
 	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ISSUE__GENERATED_REPORT_LOCATION = 8;
+	int ISSUE__GENERATED_REPORT_LOCATION = 7;
+
+	/**
+	 * The feature id for the '<em><b>Quick Fixes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__QUICK_FIXES = 8;
 
 	/**
 	 * The number of structural features of the '<em>Issue</em>' class.
@@ -662,15 +662,6 @@ public interface WindupPackage extends EPackage {
 	int HINT__FIXED = ISSUE__FIXED;
 
 	/**
-	 * The feature id for the '<em><b>Quick Fix</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HINT__QUICK_FIX = ISSUE__QUICK_FIX;
-
-	/**
 	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -678,6 +669,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int HINT__GENERATED_REPORT_LOCATION = ISSUE__GENERATED_REPORT_LOCATION;
+
+	/**
+	 * The feature id for the '<em><b>Quick Fixes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__QUICK_FIXES = ISSUE__QUICK_FIXES;
 
 	/**
 	 * The feature id for the '<em><b>Title</b></em>' attribute.
@@ -825,15 +825,6 @@ public interface WindupPackage extends EPackage {
 	int CLASSIFICATION__FIXED = ISSUE__FIXED;
 
 	/**
-	 * The feature id for the '<em><b>Quick Fix</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASSIFICATION__QUICK_FIX = ISSUE__QUICK_FIX;
-
-	/**
 	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -841,6 +832,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION__GENERATED_REPORT_LOCATION = ISSUE__GENERATED_REPORT_LOCATION;
+
+	/**
+	 * The feature id for the '<em><b>Quick Fixes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__QUICK_FIXES = ISSUE__QUICK_FIXES;
 
 	/**
 	 * The feature id for the '<em><b>Classification</b></em>' attribute.
@@ -925,6 +925,88 @@ public interface WindupPackage extends EPackage {
 	int LINK_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.QuickFixImpl <em>Quick Fix</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.QuickFixImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getQuickFix()
+	 * @generated
+	 */
+	int QUICK_FIX = 11;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__NAME = NAMED_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>New Line</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__NEW_LINE = NAMED_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Replacement String</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__REPLACEMENT_STRING = NAMED_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Search String</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__SEARCH_STRING = NAMED_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Quick Fix Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__QUICK_FIX_TYPE = NAMED_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Quick Fix</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX___VALIDATE__DIAGNOSTICCHAIN_MAP = NAMED_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Quick Fix</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -932,7 +1014,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 11;
+	int WINDUP_EXECUTION_RESULTS = 12;
 
 
 	/**
@@ -1268,17 +1350,6 @@ public interface WindupPackage extends EPackage {
 	EAttribute getIssue_Fixed();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getQuickFix <em>Quick Fix</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Quick Fix</em>'.
-	 * @see org.jboss.tools.windup.windup.Issue#getQuickFix()
-	 * @see #getIssue()
-	 * @generated
-	 */
-	EAttribute getIssue_QuickFix();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getGeneratedReportLocation <em>Generated Report Location</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1288,6 +1359,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIssue_GeneratedReportLocation();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.Issue#getQuickFixes <em>Quick Fixes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Quick Fixes</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#getQuickFixes()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EReference getIssue_QuickFixes();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.
@@ -1428,6 +1510,60 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getLink_Url();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.QuickFix <em>Quick Fix</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Quick Fix</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix
+	 * @generated
+	 */
+	EClass getQuickFix();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getNewLine <em>New Line</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>New Line</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getNewLine()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_NewLine();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getReplacementString <em>Replacement String</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Replacement String</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getReplacementString()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_ReplacementString();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getSearchString <em>Search String</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Search String</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getSearchString()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_SearchString();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getQuickFixType <em>Quick Fix Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Quick Fix Type</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getQuickFixType()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_QuickFixType();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

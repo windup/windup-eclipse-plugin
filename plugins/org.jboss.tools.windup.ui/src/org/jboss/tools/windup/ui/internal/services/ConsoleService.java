@@ -38,6 +38,8 @@ public class ConsoleService {
 
 	private MessageConsole console;
 	private PrintStream printStream;
+	private PrintStream oldOut;
+	private PrintStream oldError;
 
 	@PostConstruct
 	private void init() {
@@ -61,6 +63,8 @@ public class ConsoleService {
 			}
 		});
 		console.clearConsole();
+		oldOut = System.out;
+		oldError = System.err;
 		System.setOut(printStream);
 		System.setErr(printStream);
 	}
@@ -69,7 +73,7 @@ public class ConsoleService {
 	 * Stops capturing logging info, and restores streams.
 	 */
 	public void stopCapturing() {
-		System.setOut(System.out);
-		System.setErr(System.err);
+		System.setOut(oldOut);
+		System.setErr(oldError);
 	}
 }

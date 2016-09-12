@@ -22,6 +22,7 @@ import org.jboss.tools.windup.windup.Link;
 import org.jboss.tools.windup.windup.NamedElement;
 import org.jboss.tools.windup.windup.Parameter;
 import org.jboss.tools.windup.windup.Parameterized;
+import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupPackage;
@@ -114,6 +115,13 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	private EClass linkEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass quickFixEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -476,7 +484,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIssue_QuickFix() {
+	public EAttribute getIssue_GeneratedReportLocation() {
 		return (EAttribute)issueEClass.getEStructuralFeatures().get(7);
 	}
 
@@ -485,8 +493,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIssue_GeneratedReportLocation() {
-		return (EAttribute)issueEClass.getEStructuralFeatures().get(8);
+	public EReference getIssue_QuickFixes() {
+		return (EReference)issueEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -611,6 +619,51 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getQuickFix() {
+		return quickFixEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getQuickFix_NewLine() {
+		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getQuickFix_ReplacementString() {
+		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getQuickFix_SearchString() {
+		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getQuickFix_QuickFixType() {
+		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -681,8 +734,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(issueEClass, ISSUE__RULE_ID);
 		createEAttribute(issueEClass, ISSUE__EFFORT);
 		createEAttribute(issueEClass, ISSUE__FIXED);
-		createEAttribute(issueEClass, ISSUE__QUICK_FIX);
 		createEAttribute(issueEClass, ISSUE__GENERATED_REPORT_LOCATION);
+		createEReference(issueEClass, ISSUE__QUICK_FIXES);
 
 		hintEClass = createEClass(HINT);
 		createEAttribute(hintEClass, HINT__TITLE);
@@ -699,6 +752,12 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		linkEClass = createEClass(LINK);
 		createEAttribute(linkEClass, LINK__DESCRIPTION);
 		createEAttribute(linkEClass, LINK__URL);
+
+		quickFixEClass = createEClass(QUICK_FIX);
+		createEAttribute(quickFixEClass, QUICK_FIX__NEW_LINE);
+		createEAttribute(quickFixEClass, QUICK_FIX__REPLACEMENT_STRING);
+		createEAttribute(quickFixEClass, QUICK_FIX__SEARCH_STRING);
+		createEAttribute(quickFixEClass, QUICK_FIX__QUICK_FIX_TYPE);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -738,6 +797,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		inputEClass.getESuperTypes().add(this.getNamedElement());
 		hintEClass.getESuperTypes().add(this.getIssue());
 		classificationEClass.getESuperTypes().add(this.getIssue());
+		quickFixEClass.getESuperTypes().add(this.getNamedElement());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(namedElementEClass, NamedElement.class, "NamedElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -786,8 +846,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getIssue_RuleId(), ecorePackage.getEString(), "ruleId", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_Effort(), ecorePackage.getEInt(), "effort", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_Fixed(), ecorePackage.getEBoolean(), "fixed", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIssue_QuickFix(), ecorePackage.getEString(), "quickFix", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_GeneratedReportLocation(), ecorePackage.getEString(), "generatedReportLocation", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getIssue_QuickFixes(), this.getQuickFix(), null, "quickFixes", null, 0, -1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(hintEClass, Hint.class, "Hint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getHint_Title(), ecorePackage.getEString(), "title", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -804,6 +864,12 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEClass(linkEClass, Link.class, "Link", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLink_Description(), ecorePackage.getEString(), "description", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLink_Url(), ecorePackage.getEString(), "url", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(quickFixEClass, QuickFix.class, "QuickFix", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getQuickFix_NewLine(), ecorePackage.getEString(), "newLine", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getQuickFix_ReplacementString(), ecorePackage.getEString(), "replacementString", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getQuickFix_SearchString(), ecorePackage.getEString(), "searchString", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getQuickFix_QuickFixType(), ecorePackage.getEString(), "quickFixType", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

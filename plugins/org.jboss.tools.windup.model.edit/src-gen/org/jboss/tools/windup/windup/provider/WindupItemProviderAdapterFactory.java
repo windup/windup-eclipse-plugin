@@ -325,6 +325,29 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.QuickFix} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected QuickFixItemProvider quickFixItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.QuickFix}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createQuickFixAdapter() {
+		if (quickFixItemProvider == null) {
+			quickFixItemProvider = new QuickFixItemProvider(this);
+		}
+
+		return quickFixItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -434,6 +457,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (hintItemProvider != null) hintItemProvider.dispose();
 		if (classificationItemProvider != null) classificationItemProvider.dispose();
 		if (linkItemProvider != null) linkItemProvider.dispose();
+		if (quickFixItemProvider != null) quickFixItemProvider.dispose();
 	}
 
 }

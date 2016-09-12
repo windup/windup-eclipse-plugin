@@ -110,6 +110,10 @@ public class MarkerService {
 		for (Input input : configuration.getInputs()) {
 			for (Issue issue : input.getWindupResult().getIssues()) {
 				IFile resource = ModelService.getIssueResource(issue);
+				if (resource == null) {
+					WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
+					continue;
+				}
 				String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
 				IMarker marker = resource.createMarker(type);
 				marker.setAttribute(CONFIGURATION_ID, configuration.getName());

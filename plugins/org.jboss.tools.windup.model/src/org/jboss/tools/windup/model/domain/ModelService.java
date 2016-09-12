@@ -57,6 +57,7 @@ import org.jboss.tools.windup.windup.WindupResult;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Link;
+import org.jboss.windup.tooling.data.Quickfix;
 import org.jboss.windup.tooling.data.ReportLink;
 
 import com.google.common.base.Objects;
@@ -306,7 +307,11 @@ public class ModelService {
 	}
 	
 	public static IFile getIssueResource(Issue issue) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(issue.getFileAbsolutePath()));
+		return getResource(issue.getFileAbsolutePath());
+	}
+	
+	private static IFile getResource(String path) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(path));
 	}
 	
 	/**
@@ -318,8 +323,26 @@ public class ModelService {
         input.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
         for (Hint wHint : results.getHints()) {
+        	// TODO: Why are we running into this?
+        	String path = wHint.getFile().getAbsolutePath();
+        	IFile resource = ModelService.getResource(path);
+			if (resource == null) {
+				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
+				continue;
+			}
+					
         	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
         	result.getIssues().add(hint);
+        	
+        	for (Quickfix fix : wHint.getQuickfixes()) {
+        		org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
+        		quickFix.setName(fix.getName());
+        		quickFix.setQuickFixType(fix.getType().toString());
+        		quickFix.setSearchString(fix.getSearch());
+        		quickFix.setReplacementString(fix.getReplacement());
+        		quickFix.setNewLine(fix.getNewline());
+        		hint.getQuickFixes().add(quickFix);
+        	}
 
         	// TODO: I think we might want to change this to project relative for portability.
         	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
@@ -333,7 +356,7 @@ public class ModelService {
         	hint.setColumn(wHint.getColumn());
         	hint.setLength(wHint.getLength());
         	hint.setSourceSnippet(wHint.getSourceSnippit());
-        
+        	
         	for (Link wLink : wHint.getLinks()) {
         		org.jboss.tools.windup.windup.Link link = WindupFactory.eINSTANCE.createLink();
         		link.setDescription(wLink.getDescription());
@@ -349,6 +372,10 @@ public class ModelService {
 	private void linkReports(ExecutionResults results, List<Issue> issues) {
 		for (Issue issue : issues) {
 			IFile resource = ModelService.getIssueResource(issue);
+			if (resource == null) {
+				Activator.logErrorMessage("ModelService:: No resource associated with issue file: " + issue.getFileAbsolutePath());
+				continue;
+			}
 			File file = resource.getRawLocation().toFile();
 			for (ReportLink link : results.getReportLinks()) {
 				if (link.getInputFile().equals(file)) {

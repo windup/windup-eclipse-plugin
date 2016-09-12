@@ -117,6 +117,8 @@ public class WindupValidator extends EObjectValidator {
 				return validateClassification((Classification)value, diagnostics, context);
 			case WindupPackage.LINK:
 				return validateLink((Link)value, diagnostics, context);
+			case WindupPackage.QUICK_FIX:
+				return validateQuickFix((QuickFix)value, diagnostics, context);
 			case WindupPackage.WINDUP_EXECUTION_RESULTS:
 				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
 			default:
@@ -281,6 +283,25 @@ public class WindupValidator extends EObjectValidator {
 	 */
 	public boolean validateLink(Link link, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint(link, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateQuickFix(QuickFix quickFix, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment(quickFix, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(quickFix, diagnostics, context);
+		if (result || diagnostics != null) result &= validateNamedElement_validate(quickFix, diagnostics, context);
+		return result;
 	}
 
 	/**

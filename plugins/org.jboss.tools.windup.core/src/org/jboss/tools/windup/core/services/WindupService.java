@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.forge.core.furnace.FurnaceProvider;
 import org.jboss.tools.forge.core.furnace.FurnaceService;
@@ -40,7 +39,6 @@ import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -73,7 +71,6 @@ public class WindupService
     private List<IWindupListener> windupListeners = new ArrayList<IWindupListener>();
     private Map<IProject, ExecutionResults> projectToResults = new HashMap<>();
     
-    @Inject private IEventBroker broker;
     @Inject private ModelService modelService;
 
     /**
@@ -204,7 +201,6 @@ public class WindupService
                 modelService.populateConfiguration(configuration, input, results);
         	}
         	modelService.save();
-            broker.post(WindupConstants.WINDUP_RUN_COMPLETED, configuration);
             status = Status.OK_STATUS;
         }
         catch (Exception e)

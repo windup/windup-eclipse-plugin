@@ -69,7 +69,6 @@ public class IssueItemProvider
 			addRuleIdPropertyDescriptor(object);
 			addEffortPropertyDescriptor(object);
 			addFixedPropertyDescriptor(object);
-			addQuickFixPropertyDescriptor(object);
 			addGeneratedReportLocationPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -208,28 +207,6 @@ public class IssueItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Quick Fix feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addQuickFixPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Issue_quickFix_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_quickFix_feature", "_UI_Issue_type"),
-				 WindupPackage.eINSTANCE.getIssue_QuickFix(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This adds a property descriptor for the Generated Report Location feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -264,6 +241,7 @@ public class IssueItemProvider
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(WindupPackage.eINSTANCE.getIssue_Links());
+			childrenFeatures.add(WindupPackage.eINSTANCE.getIssue_QuickFixes());
 		}
 		return childrenFeatures;
 	}
@@ -325,11 +303,11 @@ public class IssueItemProvider
 			case WindupPackage.ISSUE__RULE_ID:
 			case WindupPackage.ISSUE__EFFORT:
 			case WindupPackage.ISSUE__FIXED:
-			case WindupPackage.ISSUE__QUICK_FIX:
 			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.ISSUE__LINKS:
+			case WindupPackage.ISSUE__QUICK_FIXES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -351,6 +329,11 @@ public class IssueItemProvider
 			(createChildParameter
 				(WindupPackage.eINSTANCE.getIssue_Links(),
 				 WindupFactory.eINSTANCE.createLink()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(WindupPackage.eINSTANCE.getIssue_QuickFixes(),
+				 WindupFactory.eINSTANCE.createQuickFix()));
 	}
 
 	/**

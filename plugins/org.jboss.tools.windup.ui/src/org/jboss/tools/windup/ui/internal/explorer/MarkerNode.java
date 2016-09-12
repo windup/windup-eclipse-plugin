@@ -23,8 +23,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.ide.IDE;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
@@ -75,16 +73,11 @@ public class MarkerNode extends TreeNode {
 		return MarkerUtil.convertSeverity(severity);
 	}
 	
-	public String getQuickFix() {
-		return issue.getQuickFix();
-	}
-	
 	public boolean hasQuickFix() {
-		IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
-		return resolutions.length > 0 && !issue.isFixed();
+		return !issue.getQuickFixes().isEmpty() && !issue.isFixed();
 	}
 	
-	public void markAsFixed() {
+	public void setFixed() {
 		issue.setFixed(true);
 		try {
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
