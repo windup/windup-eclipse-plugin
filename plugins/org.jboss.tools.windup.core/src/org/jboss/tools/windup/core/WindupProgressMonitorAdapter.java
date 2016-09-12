@@ -11,14 +11,14 @@
 package org.jboss.tools.windup.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.tooling.WindupToolingProgressMonitor;
 
 /**
  * <p>
  * Adapts an {@link IProgressMonitor} to an {@link WindupProgressMonitor}.
  * </p>
  */
-public class WindupProgressMonitorAdapter implements WindupProgressMonitor
+public class WindupProgressMonitorAdapter implements WindupToolingProgressMonitor
 {
 
     /**
@@ -29,6 +29,16 @@ public class WindupProgressMonitorAdapter implements WindupProgressMonitor
     public WindupProgressMonitorAdapter(IProgressMonitor monitor)
     {
         this.wrappedMonitor = monitor;
+    }
+
+    @Override
+    public void logMessage(String level, String category, String message) {
+        WindupCorePlugin.logErrorMessage("Received a record: " + message);
+    }
+
+    @Override
+    public void logMessage(String level, String category, String message, Throwable throwable) {
+        WindupCorePlugin.logErrorMessage("Received a record with exception: " + message, throwable);
     }
 
     /**
