@@ -62,8 +62,8 @@ public class DiffDialog extends Dialog {
 	
 	private ComparePreviewer viewer;
 	
-	private IResource left;
-	private IResource right;
+	protected IResource left;
+	protected IResource right;
 	
 	public DiffDialog(Shell shell, IResource left, IResource right) {
 		super(shell);
@@ -78,9 +78,19 @@ public class DiffDialog extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		Control control = doCreateDialogArea(parent);
+		loadPreview(left, right);
+		return control;
+	}
+	
+	protected Control doCreateDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
 		viewer = new ComparePreviewer((Composite)control);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getViewer().getControl().getParent());
+		return control;
+	}
+	
+	protected void loadPreview(IResource left, IResource right) {
 		try {
 			String leftContents = FileUtils.readFileToString(left.getLocation().toFile());
 			String rightContents = FileUtils.readFileToString(right.getLocation().toFile());
@@ -90,7 +100,6 @@ public class DiffDialog extends Dialog {
 		} catch (IOException e) {
 			WindupUIPlugin.log(e);
 		}
-		return control;
 	}
 	
 	@Override
@@ -265,5 +274,9 @@ public class DiffDialog extends Dialog {
 				close();
 			}
 		});
+	}
+	
+	public IResource getRight() {
+		return right;
 	}
 }

@@ -173,7 +173,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	private static IResource getCompareResource(IResource resource, Hint hint, QuickFix quickFix) {
+	public static IResource getCompareResource(IResource resource, Hint hint, QuickFix quickFix) {
 		QuickFixTempProject project = new QuickFixTempProject();
 		try {
 			String contents = FileUtils.readFileToString(resource.getLocation().toFile());
@@ -201,7 +201,7 @@ public class IssueExplorerHandlers {
 				for (String indentChar : indentChars) {
 					builder.append(indentChar);
 				}
-				builder.append(quickFix.getNewLine());
+				builder.append(quickFix.getReplacementString());
 				
 				int newLineOffset = previousLine.getOffset() + previousLine.getLength();
 				document.replace(newLineOffset, 0, builder.toString());
@@ -251,11 +251,10 @@ public class IssueExplorerHandlers {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
 			IResource left = node.getResource();
-			IResource right = getCompareResource(left, (Hint)node.getIssue(), node.getIssue().getQuickFixes().get(0));
 			Shell shell = Display.getCurrent().getActiveShell();
-			DiffDialog dialog = new DiffDialog(shell, left, right);
+			QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, (Hint)node.getIssue());
 			if (dialog.open() == IssueConstants.APPLY_FIX) {
-				applyFix(left, right);
+				applyFix(left, dialog.getRight());
 				node.setFixed();
 			}
 			return null;
