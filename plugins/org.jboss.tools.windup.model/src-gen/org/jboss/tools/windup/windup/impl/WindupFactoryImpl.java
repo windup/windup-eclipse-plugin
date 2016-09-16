@@ -69,6 +69,8 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 			case WindupPackage.CLASSIFICATION: return createClassification();
 			case WindupPackage.LINK: return createLink();
 			case WindupPackage.QUICK_FIX: return createQuickFix();
+			case WindupPackage.MIGRATION_PATH: return createMigrationPath();
+			case WindupPackage.TECHNOLOGY: return createTechnology();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -218,6 +220,26 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 	public QuickFix createQuickFix() {
 		QuickFixImpl quickFix = new QuickFixImpl();
 		return quickFix;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MigrationPath createMigrationPath() {
+		MigrationPathImpl migrationPath = new MigrationPathImpl();
+		return migrationPath;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Technology createTechnology() {
+		TechnologyImpl technology = new TechnologyImpl();
+		return technology;
 	}
 
 	/**

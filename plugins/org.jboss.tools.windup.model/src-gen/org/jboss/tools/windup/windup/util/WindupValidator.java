@@ -119,6 +119,10 @@ public class WindupValidator extends EObjectValidator {
 				return validateLink((Link)value, diagnostics, context);
 			case WindupPackage.QUICK_FIX:
 				return validateQuickFix((QuickFix)value, diagnostics, context);
+			case WindupPackage.MIGRATION_PATH:
+				return validateMigrationPath((MigrationPath)value, diagnostics, context);
+			case WindupPackage.TECHNOLOGY:
+				return validateTechnology((Technology)value, diagnostics, context);
 			case WindupPackage.WINDUP_EXECUTION_RESULTS:
 				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
 			default:
@@ -302,6 +306,34 @@ public class WindupValidator extends EObjectValidator {
 		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(quickFix, diagnostics, context);
 		if (result || diagnostics != null) result &= validateNamedElement_validate(quickFix, diagnostics, context);
 		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateMigrationPath(MigrationPath migrationPath, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment(migrationPath, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(migrationPath, diagnostics, context);
+		if (result || diagnostics != null) result &= validateNamedElement_validate(migrationPath, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateTechnology(Technology technology, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(technology, diagnostics, context);
 	}
 
 	/**

@@ -14,6 +14,8 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +36,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -46,11 +49,15 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.jboss.tools.common.xml.IMemento;
+import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.tools.windup.model.Activator;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
+import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupResult;
@@ -59,6 +66,8 @@ import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Link;
 import org.jboss.windup.tooling.data.Quickfix;
 import org.jboss.windup.tooling.data.ReportLink;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import com.google.common.base.Objects;
 
@@ -70,6 +79,8 @@ import com.google.common.base.Objects;
 public class ModelService {
 	
 	private static final String DOMAIN_NAME = "org.jboss.tools.windup.WindupEditingDomain"; //$NON-NLS-1$
+	
+    public static final String CONFIG_XML_PATH = "model/migration-paths/migration-paths.xml";
 	
     private static final String TIMESTAMP_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
 	
@@ -94,6 +105,38 @@ public class ModelService {
 	public WindupModel getModel() {
 		return model;
 	}
+	
+	private void loadMigrationPaths() {
+    	Bundle bundle = FrameworkUtil.getBundle(ModelService.class);
+        URL url = FileLocator.find(bundle, new Path(CONFIG_XML_PATH), null);
+        try (InputStream input = url.openStream()) {
+        	XMLMemento root = XMLMemento.createReadRoot(input);
+            for (IMemento element : root.getChildren("path")) {
+            	MigrationPath path = WindupFactory.eINSTANCE.createMigrationPath();
+            	model.getMigrationPaths().add(path);
+            	path.setId(element.getString("id"));
+            	
+            	XMLMemento child = (XMLMemento)element.getChild("name");
+            	path.setName(child.getTextData());
+            	
+            	child = (XMLMemento)element.getChild("target");
+            	Technology target = WindupFactory.eINSTANCE.createTechnology();
+            	path.setTarget(target);
+            	target.setId(child.getString("id"));
+            	target.setVersionRange(child.getString("version-range"));
+            	
+            	child = (XMLMemento)element.getChild("source");
+            	if (child != null) {
+            		Technology source = WindupFactory.eINSTANCE.createTechnology();
+            		path.setSource(source);
+            		source.setId(child.getString("id"));
+            		source.setVersionRange(child.getString("version-range"));
+            	}
+            }
+        } catch (IOException e) {
+			Activator.log(e);
+		}
+    }
 	
 	/**
 	 * Executes the provided runnable on the command stack of Windup's editing domain.
@@ -153,6 +196,7 @@ public class ModelService {
 		else {
 			model = WindupFactory.eINSTANCE.createWindupModel();
 			resource.getContents().add(model);
+			loadMigrationPaths();
 		}
 	}
 	
@@ -208,6 +252,7 @@ public class ModelService {
 		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
 		configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
 		configuration.setSourceMode(true);
+		configuration.setMigrationPath(model.getMigrationPaths().get(1));
 		model.getConfigurationElements().add(configuration);
 		return configuration;
 	}

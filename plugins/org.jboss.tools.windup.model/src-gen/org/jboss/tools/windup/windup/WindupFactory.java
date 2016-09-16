@@ -130,6 +130,24 @@ public interface WindupFactory extends EFactory {
 	QuickFix createQuickFix();
 
 	/**
+	 * Returns a new object of class '<em>Migration Path</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Migration Path</em>'.
+	 * @generated
+	 */
+	MigrationPath createMigrationPath();
+
+	/**
+	 * Returns a new object of class '<em>Technology</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Technology</em>'.
+	 * @generated
+	 */
+	Technology createTechnology();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -19,10 +19,12 @@ import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.Link;
+import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.NamedElement;
 import org.jboss.tools.windup.windup.Parameter;
 import org.jboss.tools.windup.windup.Parameterized;
 import org.jboss.tools.windup.windup.QuickFix;
+import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupPackage;
@@ -122,6 +124,20 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	private EClass quickFixEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass migrationPathEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass technologyEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -304,6 +320,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getConfigurationElement_MigrationPath() {
+		return (EReference)configurationElementEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getParameter() {
 		return parameterEClass;
 	}
@@ -351,6 +376,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EReference getWindupModel_ConfigurationElements() {
 		return (EReference)windupModelEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getWindupModel_MigrationPaths() {
+		return (EReference)windupModelEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -664,6 +698,69 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMigrationPath() {
+		return migrationPathEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMigrationPath_Id() {
+		return (EAttribute)migrationPathEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getMigrationPath_Source() {
+		return (EReference)migrationPathEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getMigrationPath_Target() {
+		return (EReference)migrationPathEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getTechnology() {
+		return technologyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTechnology_Id() {
+		return (EAttribute)technologyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTechnology_VersionRange() {
+		return (EAttribute)technologyEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -708,6 +805,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__PACKAGES);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__TIMESTAMP);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
+		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__MIGRATION_PATH);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -717,6 +815,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		windupModelEClass = createEClass(WINDUP_MODEL);
 		createEReference(windupModelEClass, WINDUP_MODEL__CONFIGURATION_ELEMENTS);
+		createEReference(windupModelEClass, WINDUP_MODEL__MIGRATION_PATHS);
 
 		inputEClass = createEClass(INPUT);
 		createEAttribute(inputEClass, INPUT__URI);
@@ -759,6 +858,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(quickFixEClass, QUICK_FIX__SEARCH_STRING);
 		createEAttribute(quickFixEClass, QUICK_FIX__QUICK_FIX_TYPE);
 
+		migrationPathEClass = createEClass(MIGRATION_PATH);
+		createEAttribute(migrationPathEClass, MIGRATION_PATH__ID);
+		createEReference(migrationPathEClass, MIGRATION_PATH__SOURCE);
+		createEReference(migrationPathEClass, MIGRATION_PATH__TARGET);
+
+		technologyEClass = createEClass(TECHNOLOGY);
+		createEAttribute(technologyEClass, TECHNOLOGY__ID);
+		createEAttribute(technologyEClass, TECHNOLOGY__VERSION_RANGE);
+
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
 	}
@@ -798,6 +906,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		hintEClass.getESuperTypes().add(this.getIssue());
 		classificationEClass.getESuperTypes().add(this.getIssue());
 		quickFixEClass.getESuperTypes().add(this.getNamedElement());
+		migrationPathEClass.getESuperTypes().add(this.getNamedElement());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(namedElementEClass, NamedElement.class, "NamedElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -820,6 +929,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getConfigurationElement_Packages(), ecorePackage.getEString(), "packages", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_Timestamp(), ecorePackage.getEString(), "timestamp", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfigurationElement_MigrationPath(), this.getMigrationPath(), null, "migrationPath", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -829,6 +939,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		initEClass(windupModelEClass, WindupModel.class, "WindupModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getWindupModel_ConfigurationElements(), this.getConfigurationElement(), null, "configurationElements", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getWindupModel_MigrationPaths(), this.getMigrationPath(), null, "migrationPaths", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(inputEClass, Input.class, "Input", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getInput_Uri(), ecorePackage.getEString(), "uri", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -870,6 +981,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getQuickFix_ReplacementString(), ecorePackage.getEString(), "replacementString", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getQuickFix_SearchString(), ecorePackage.getEString(), "searchString", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getQuickFix_QuickFixType(), ecorePackage.getEString(), "quickFixType", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(migrationPathEClass, MigrationPath.class, "MigrationPath", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMigrationPath_Id(), ecorePackage.getEString(), "id", null, 0, 1, MigrationPath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMigrationPath_Source(), this.getTechnology(), null, "source", null, 0, 1, MigrationPath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMigrationPath_Target(), this.getTechnology(), null, "target", null, 0, 1, MigrationPath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(technologyEClass, Technology.class, "Technology", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getTechnology_Id(), ecorePackage.getEString(), "id", null, 0, 1, Technology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTechnology_VersionRange(), ecorePackage.getEString(), "versionRange", null, 0, 1, Technology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

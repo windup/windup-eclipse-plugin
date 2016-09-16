@@ -20,6 +20,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -188,5 +189,31 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setGenerateReport(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Migration Path</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Migration Path</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Migration Path</em>' reference.
+	 * @see #setMigrationPath(MigrationPath)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_MigrationPath()
+	 * @model
+	 * @generated
+	 */
+	MigrationPath getMigrationPath();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Migration Path</em>' reference.
+	 * @see #getMigrationPath()
+	 * @generated
+	 */
+	void setMigrationPath(MigrationPath value);
 
 } // ConfigurationElement

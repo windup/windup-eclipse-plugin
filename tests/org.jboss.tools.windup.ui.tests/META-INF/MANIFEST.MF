@@ -24,6 +24,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.apache.log4j,
  org.eclipse.e4.ui.workbench.renderers.swt,
  org.eclipse.swtbot.eclipse.finder,
- org.jboss.tools.windup.ui
+ org.jboss.tools.windup.ui,
+ org.jboss.tools.windup.model,
+ org.eclipse.ui.navigator
 Bundle-Vendor: %plugin.vendor
 Bundle-Activator: org.jboss.tools.windup.ui.tests.Activator

@@ -348,6 +348,52 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.MigrationPath} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MigrationPathItemProvider migrationPathItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.MigrationPath}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMigrationPathAdapter() {
+		if (migrationPathItemProvider == null) {
+			migrationPathItemProvider = new MigrationPathItemProvider(this);
+		}
+
+		return migrationPathItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Technology} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected TechnologyItemProvider technologyItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Technology}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createTechnologyAdapter() {
+		if (technologyItemProvider == null) {
+			technologyItemProvider = new TechnologyItemProvider(this);
+		}
+
+		return technologyItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -458,6 +504,8 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (classificationItemProvider != null) classificationItemProvider.dispose();
 		if (linkItemProvider != null) linkItemProvider.dispose();
 		if (quickFixItemProvider != null) quickFixItemProvider.dispose();
+		if (migrationPathItemProvider != null) migrationPathItemProvider.dispose();
+		if (technologyItemProvider != null) technologyItemProvider.dispose();
 	}
 
 }

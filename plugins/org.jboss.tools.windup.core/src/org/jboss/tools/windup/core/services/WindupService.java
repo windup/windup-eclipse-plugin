@@ -43,8 +43,10 @@ import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
+import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -188,8 +190,13 @@ public class WindupService
                         .setInput(projectPath)
                         .setOutput(outputPath.toFile().toPath())
                         .setProgressMonitor(windupProgressMonitor)
-                        .setOption(SourceModeOption.NAME, true)
-                        .setOption(TargetOption.NAME, Lists.newArrayList("eap"));
+                        .setOption(SourceModeOption.NAME, true);
+                
+                MigrationPath path = configuration.getMigrationPath();
+                options.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
+                if (path.getSource() != null) {
+                	options.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
+                }
                 
                 if (!configuration.isGenerateReport()) {
                 	options.setOption(SkipReportsRenderingOption.NAME, true);

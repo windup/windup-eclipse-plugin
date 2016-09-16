@@ -251,13 +251,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__GENERATE_REPORT = PARAMETERIZED_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Migration Path</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__MIGRATION_PATH = PARAMETERIZED_FEATURE_COUNT + 7;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 7;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 8;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -352,13 +361,22 @@ public interface WindupPackage extends EPackage {
 	int WINDUP_MODEL__CONFIGURATION_ELEMENTS = 0;
 
 	/**
+	 * The feature id for the '<em><b>Migration Paths</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDUP_MODEL__MIGRATION_PATHS = 1;
+
+	/**
 	 * The number of structural features of the '<em>Model</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDUP_MODEL_FEATURE_COUNT = 1;
+	int WINDUP_MODEL_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Model</em>' class.
@@ -1007,6 +1025,125 @@ public interface WindupPackage extends EPackage {
 	int QUICK_FIX_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MigrationPathImpl <em>Migration Path</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.MigrationPathImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getMigrationPath()
+	 * @generated
+	 */
+	int MIGRATION_PATH = 12;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH__NAME = NAMED_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH__ID = NAMED_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Source</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH__SOURCE = NAMED_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Target</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH__TARGET = NAMED_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Migration Path</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH___VALIDATE__DIAGNOSTICCHAIN_MAP = NAMED_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Migration Path</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MIGRATION_PATH_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.TechnologyImpl <em>Technology</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.TechnologyImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getTechnology()
+	 * @generated
+	 */
+	int TECHNOLOGY = 13;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TECHNOLOGY__ID = 0;
+
+	/**
+	 * The feature id for the '<em><b>Version Range</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TECHNOLOGY__VERSION_RANGE = 1;
+
+	/**
+	 * The number of structural features of the '<em>Technology</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TECHNOLOGY_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Technology</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TECHNOLOGY_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1014,7 +1151,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 12;
+	int WINDUP_EXECUTION_RESULTS = 14;
 
 
 	/**
@@ -1136,6 +1273,17 @@ public interface WindupPackage extends EPackage {
 	EAttribute getConfigurationElement_GenerateReport();
 
 	/**
+	 * Returns the meta object for the reference '{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Migration Path</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_MigrationPath();
+
+	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1197,6 +1345,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getWindupModel_ConfigurationElements();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.WindupModel#getMigrationPaths <em>Migration Paths</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Migration Paths</em>'.
+	 * @see org.jboss.tools.windup.windup.WindupModel#getMigrationPaths()
+	 * @see #getWindupModel()
+	 * @generated
+	 */
+	EReference getWindupModel_MigrationPaths();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Input <em>Input</em>}'.
@@ -1564,6 +1723,81 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getQuickFix_QuickFixType();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.MigrationPath <em>Migration Path</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Migration Path</em>'.
+	 * @see org.jboss.tools.windup.windup.MigrationPath
+	 * @generated
+	 */
+	EClass getMigrationPath();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.MigrationPath#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.jboss.tools.windup.windup.MigrationPath#getId()
+	 * @see #getMigrationPath()
+	 * @generated
+	 */
+	EAttribute getMigrationPath_Id();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.MigrationPath#getSource <em>Source</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Source</em>'.
+	 * @see org.jboss.tools.windup.windup.MigrationPath#getSource()
+	 * @see #getMigrationPath()
+	 * @generated
+	 */
+	EReference getMigrationPath_Source();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.MigrationPath#getTarget <em>Target</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Target</em>'.
+	 * @see org.jboss.tools.windup.windup.MigrationPath#getTarget()
+	 * @see #getMigrationPath()
+	 * @generated
+	 */
+	EReference getMigrationPath_Target();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Technology <em>Technology</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Technology</em>'.
+	 * @see org.jboss.tools.windup.windup.Technology
+	 * @generated
+	 */
+	EClass getTechnology();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Technology#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.jboss.tools.windup.windup.Technology#getId()
+	 * @see #getTechnology()
+	 * @generated
+	 */
+	EAttribute getTechnology_Id();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Technology#getVersionRange <em>Version Range</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Version Range</em>'.
+	 * @see org.jboss.tools.windup.windup.Technology#getVersionRange()
+	 * @see #getTechnology()
+	 * @generated
+	 */
+	EAttribute getTechnology_VersionRange();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

@@ -9,44 +9,31 @@ import java.util.List;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
-import org.eclipse.emf.edit.provider.IItemLabelProvider;
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.IItemPropertySource;
-import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
-import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
+import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.WindupFactory;
-import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupPackage;
 
 /**
- * This is the item provider adapter for a {@link org.jboss.tools.windup.windup.WindupModel} object.
+ * This is the item provider adapter for a {@link org.jboss.tools.windup.windup.MigrationPath} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class WindupModelItemProvider 
-	extends ItemProviderAdapter
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class MigrationPathItemProvider extends NamedElementItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WindupModelItemProvider(AdapterFactory adapterFactory) {
+	public MigrationPathItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -61,8 +48,31 @@ public class WindupModelItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addIdPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Id feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIdPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_MigrationPath_id_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_MigrationPath_id_feature", "_UI_MigrationPath_type"),
+				 WindupPackage.eINSTANCE.getMigrationPath_Id(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -77,8 +87,8 @@ public class WindupModelItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(WindupPackage.eINSTANCE.getWindupModel_ConfigurationElements());
-			childrenFeatures.add(WindupPackage.eINSTANCE.getWindupModel_MigrationPaths());
+			childrenFeatures.add(WindupPackage.eINSTANCE.getMigrationPath_Source());
+			childrenFeatures.add(WindupPackage.eINSTANCE.getMigrationPath_Target());
 		}
 		return childrenFeatures;
 	}
@@ -97,14 +107,14 @@ public class WindupModelItemProvider
 	}
 
 	/**
-	 * This returns WindupModel.gif.
+	 * This returns MigrationPath.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/WindupModel"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/MigrationPath"));
 	}
 
 	/**
@@ -115,7 +125,10 @@ public class WindupModelItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_WindupModel_type");
+		String label = ((MigrationPath)object).getName();
+		return label == null || label.length() == 0 ?
+			getString("_UI_MigrationPath_type") :
+			getString("_UI_MigrationPath_type") + " " + label;
 	}
 	
 
@@ -130,9 +143,12 @@ public class WindupModelItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(WindupModel.class)) {
-			case WindupPackage.WINDUP_MODEL__CONFIGURATION_ELEMENTS:
-			case WindupPackage.WINDUP_MODEL__MIGRATION_PATHS:
+		switch (notification.getFeatureID(MigrationPath.class)) {
+			case WindupPackage.MIGRATION_PATH__ID:
+				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+				return;
+			case WindupPackage.MIGRATION_PATH__SOURCE:
+			case WindupPackage.MIGRATION_PATH__TARGET:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -152,24 +168,36 @@ public class WindupModelItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(WindupPackage.eINSTANCE.getWindupModel_ConfigurationElements(),
-				 WindupFactory.eINSTANCE.createConfigurationElement()));
+				(WindupPackage.eINSTANCE.getMigrationPath_Source(),
+				 WindupFactory.eINSTANCE.createTechnology()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(WindupPackage.eINSTANCE.getWindupModel_MigrationPaths(),
-				 WindupFactory.eINSTANCE.createMigrationPath()));
+				(WindupPackage.eINSTANCE.getMigrationPath_Target(),
+				 WindupFactory.eINSTANCE.createTechnology()));
 	}
 
 	/**
-	 * Return the resource locator for this item provider's resources.
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public ResourceLocator getResourceLocator() {
-		return WindupEditPlugin.INSTANCE;
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == WindupPackage.eINSTANCE.getMigrationPath_Source() ||
+			childFeature == WindupPackage.eINSTANCE.getMigrationPath_Target();
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2",
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 }

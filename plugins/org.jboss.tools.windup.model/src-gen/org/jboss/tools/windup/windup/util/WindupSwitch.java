@@ -146,6 +146,19 @@ public class WindupSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case WindupPackage.MIGRATION_PATH: {
+				MigrationPath migrationPath = (MigrationPath)theEObject;
+				T result = caseMigrationPath(migrationPath);
+				if (result == null) result = caseNamedElement(migrationPath);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case WindupPackage.TECHNOLOGY: {
+				Technology technology = (Technology)theEObject;
+				T result = caseTechnology(technology);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -327,6 +340,36 @@ public class WindupSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseQuickFix(QuickFix object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Migration Path</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Migration Path</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMigrationPath(MigrationPath object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Technology</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Technology</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseTechnology(Technology object) {
 		return null;
 	}
 

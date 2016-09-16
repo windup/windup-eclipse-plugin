@@ -54,6 +54,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			addPackagesPropertyDescriptor(object);
 			addTimestampPropertyDescriptor(object);
 			addGenerateReportPropertyDescriptor(object);
+			addMigrationPathPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -186,6 +187,28 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 				 false,
 				 false,
 				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Migration Path feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addMigrationPathPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_migrationPath_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_migrationPath_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_MigrationPath(),
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}

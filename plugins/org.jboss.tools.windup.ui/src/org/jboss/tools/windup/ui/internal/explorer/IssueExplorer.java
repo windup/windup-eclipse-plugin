@@ -98,7 +98,7 @@ public class IssueExplorer extends CommonNavigator {
 		public void handleEvent(Event event) {
 			refresh();
 			// TODO: restore previously expanded nodes, selection, scrolls, etc.
-			getCommonViewer().expandAll();
+			getCommonViewer().collapseAll();
 		}
 	};
 	
@@ -116,7 +116,7 @@ public class IssueExplorer extends CommonNavigator {
 		public void handleEvent(Event event) {
 			refresh();
 			// TODO: restore previously expanded nodes, selection, scrolls, etc.
-			getCommonViewer().expandAll();
+			getCommonViewer().collapseAll();
 		}
 	};
 	

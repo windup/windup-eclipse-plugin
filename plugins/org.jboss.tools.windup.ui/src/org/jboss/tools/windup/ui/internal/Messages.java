@@ -94,6 +94,8 @@ public class Messages extends NLS
     public static String windupReport;
     public static String windupHomeLocation;
     
+    public static String windupMigrationPath;
+    
     public static String sourceMode;
     
     public static String javaRuntimeEnvironment;

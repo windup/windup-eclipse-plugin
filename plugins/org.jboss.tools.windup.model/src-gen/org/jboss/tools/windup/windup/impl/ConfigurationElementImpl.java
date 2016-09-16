@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
+import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.WindupPackage;
 
 /**
@@ -37,6 +38,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getPackages <em>Packages</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getTimestamp <em>Timestamp</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getMigrationPath <em>Migration Path</em>}</li>
  * </ul>
  *
  * @generated
@@ -161,6 +163,16 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected boolean generateReport = GENERATE_REPORT_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getMigrationPath() <em>Migration Path</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMigrationPath()
+	 * @generated
+	 * @ordered
+	 */
+	protected MigrationPath migrationPath;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -315,6 +327,44 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MigrationPath getMigrationPath() {
+		if (migrationPath != null && migrationPath.eIsProxy()) {
+			InternalEObject oldMigrationPath = (InternalEObject)migrationPath;
+			migrationPath = (MigrationPath)eResolveProxy(oldMigrationPath);
+			if (migrationPath != oldMigrationPath) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH, oldMigrationPath, migrationPath));
+			}
+		}
+		return migrationPath;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MigrationPath basicGetMigrationPath() {
+		return migrationPath;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMigrationPath(MigrationPath newMigrationPath) {
+		MigrationPath oldMigrationPath = migrationPath;
+		migrationPath = newMigrationPath;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH, oldMigrationPath, migrationPath));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -346,6 +396,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getTimestamp();
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				return isGenerateReport();
+			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
+				if (resolve) return getMigrationPath();
+				return basicGetMigrationPath();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -382,6 +435,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				setGenerateReport((Boolean)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
+				setMigrationPath((MigrationPath)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -415,6 +471,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				setGenerateReport(GENERATE_REPORT_EDEFAULT);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
+				setMigrationPath((MigrationPath)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -441,6 +500,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return TIMESTAMP_EDEFAULT == null ? timestamp != null : !TIMESTAMP_EDEFAULT.equals(timestamp);
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				return generateReport != GENERATE_REPORT_EDEFAULT;
+			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
+				return migrationPath != null;
 		}
 		return super.eIsSet(featureID);
 	}

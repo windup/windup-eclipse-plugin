@@ -39,6 +39,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
@@ -48,6 +49,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.launch.FilteredListDialog;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.MigrationPath;
 
 import com.google.common.collect.Lists;
 
@@ -65,6 +67,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	private TableViewer projectsTable;
 	private TableViewer packagesTable;
 	private Button generateReportButton;
+	private Combo migrationPathCombo;
 	
 	public WindupInputTab(ModelService modelService) {
 		this.modelService = modelService;
@@ -75,6 +78,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+		createMigrationPathGroup(container);
 		createProjectsGroup(container);
 		createPackagesGroup(container);
 		createReportGroup(container);
@@ -94,6 +98,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void reload() {
+		reloadMigrationPath();
 		reloadProjectsTable();
 		reloadPackagesTable();
 		reloadReportGroup();
@@ -114,6 +119,14 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	private void reloadReportGroup() {
 		if (generateReportButton != null) {
 			generateReportButton.setSelection(configuration.isGenerateReport());
+		}
+	}
+	
+	private void reloadMigrationPath() {
+		if (migrationPathCombo != null) {
+			int current = Lists.newArrayList(migrationPathCombo.getItems()).
+					indexOf(configuration.getMigrationPath().getName());
+			migrationPathCombo.select(current);
 		}
 	}
 	
@@ -238,6 +251,31 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 				configuration.setGenerateReport(generateReportButton.getSelection());
 			}
 		});
+	}
+	
+	private void createMigrationPathGroup(Composite parent) {
+		Group group = SWTFactory.createGroup(parent, Messages.windupMigrationPath+":", 1, 1, GridData.FILL_HORIZONTAL);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+		String[] items = buildMigrationPaths();
+		migrationPathCombo = SWTFactory.createCombo(group, SWT.READ_ONLY|SWT.BORDER, GridData.FILL_HORIZONTAL, items);
+		migrationPathCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				configuration.setMigrationPath(findMigrationPath(migrationPathCombo.getText()));
+			}
+		});
+	}
+	
+	private String[] buildMigrationPaths() {
+		List<String> paths = Lists.newArrayList();
+		modelService.getModel().getMigrationPaths().stream().forEach(p -> paths.add(p.getName()));
+		return paths.toArray(new String[paths.size()]);
+	}
+	
+	private MigrationPath findMigrationPath(String name) {
+		return modelService.getModel().getMigrationPaths().stream().filter(p -> { 
+			return p.getName().equals(name);
+		}).findFirst().get();
 	}
 	
 	@Override
