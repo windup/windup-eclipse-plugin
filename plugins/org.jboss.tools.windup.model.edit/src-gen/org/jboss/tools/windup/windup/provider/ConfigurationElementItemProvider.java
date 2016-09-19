@@ -55,6 +55,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			addTimestampPropertyDescriptor(object);
 			addGenerateReportPropertyDescriptor(object);
 			addMigrationPathPropertyDescriptor(object);
+			addUserRulesDirectoriesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -214,6 +215,28 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
+	 * This adds a property descriptor for the User Rules Directories feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addUserRulesDirectoriesPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_userRulesDirectories_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_userRulesDirectories_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_UserRulesDirectories(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -287,6 +310,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
+			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:

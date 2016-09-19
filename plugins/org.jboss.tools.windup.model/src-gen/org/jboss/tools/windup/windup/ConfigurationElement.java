@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -215,5 +216,21 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setMigrationPath(MigrationPath value);
+
+	/**
+	 * Returns the value of the '<em><b>User Rules Directories</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>User Rules Directories</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>User Rules Directories</em>' attribute list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_UserRulesDirectories()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getUserRulesDirectories();
 
 } // ConfigurationElement

@@ -48,6 +48,7 @@ import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.tooling.ExecutionBuilder;
@@ -203,6 +204,10 @@ public class WindupService
                 }
                 if (!configuration.getPackages().isEmpty()) {
                 	options.setOption(ScanPackagesOption.NAME, configuration.getPackages());
+                }
+                if (!configuration.getUserRulesDirectories().isEmpty()) {
+                	File file = new File(configuration.getUserRulesDirectories().get(0));
+                	options.setOption(UserRulesDirectoryOption.NAME, file);
                 }
                 ExecutionResults results = options.ignore("\\.class$").execute();
                 modelService.populateConfiguration(configuration, input, results);

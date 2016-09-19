@@ -329,6 +329,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getConfigurationElement_UserRulesDirectories() {
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getParameter() {
 		return parameterEClass;
 	}
@@ -806,6 +815,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__TIMESTAMP);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__MIGRATION_PATH);
+		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -930,6 +940,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getConfigurationElement_Timestamp(), ecorePackage.getEString(), "timestamp", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_MigrationPath(), this.getMigrationPath(), null, "migrationPath", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationElement_UserRulesDirectories(), ecorePackage.getEString(), "userRulesDirectories", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

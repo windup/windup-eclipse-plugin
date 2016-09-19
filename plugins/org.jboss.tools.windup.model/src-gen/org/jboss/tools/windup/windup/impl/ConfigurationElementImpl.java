@@ -39,6 +39,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getTimestamp <em>Timestamp</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getMigrationPath <em>Migration Path</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  * </ul>
  *
  * @generated
@@ -173,6 +174,16 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected MigrationPath migrationPath;
+
+	/**
+	 * The cached value of the '{@link #getUserRulesDirectories() <em>User Rules Directories</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getUserRulesDirectories()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> userRulesDirectories;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -365,6 +376,18 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<String> getUserRulesDirectories() {
+		if (userRulesDirectories == null) {
+			userRulesDirectories = new EDataTypeUniqueEList<String>(String.class, this, WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES);
+		}
+		return userRulesDirectories;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -399,6 +422,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				if (resolve) return getMigrationPath();
 				return basicGetMigrationPath();
+			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
+				return getUserRulesDirectories();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -438,6 +463,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				setMigrationPath((MigrationPath)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
+				getUserRulesDirectories().clear();
+				getUserRulesDirectories().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -474,6 +503,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				setMigrationPath((MigrationPath)null);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
+				getUserRulesDirectories().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -502,6 +534,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return generateReport != GENERATE_REPORT_EDEFAULT;
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				return migrationPath != null;
+			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
+				return userRulesDirectories != null && !userRulesDirectories.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -528,6 +562,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(timestamp);
 		result.append(", generateReport: ");
 		result.append(generateReport);
+		result.append(", userRulesDirectories: ");
+		result.append(userRulesDirectories);
 		result.append(')');
 		return result.toString();
 	}

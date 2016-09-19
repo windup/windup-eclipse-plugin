@@ -260,13 +260,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__MIGRATION_PATH = PARAMETERIZED_FEATURE_COUNT + 7;
 
 	/**
+	 * The feature id for the '<em><b>User Rules Directories</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES = PARAMETERIZED_FEATURE_COUNT + 8;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 8;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 9;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1282,6 +1291,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getConfigurationElement_MigrationPath();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories <em>User Rules Directories</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>User Rules Directories</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_UserRulesDirectories();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
