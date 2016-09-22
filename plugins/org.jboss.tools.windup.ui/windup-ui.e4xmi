@@ -77,5 +77,6 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_3VCkoEkGEeab9oKjuw75kg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_58crwEkGEeab9oKjuw75kg" elementId="org.jboss.tools.windup.ui.addon.markerService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerService"/>
     <elements xsi:type="application:Addon" xmi:id="_OATG0E71Eea2x-7ba-JCLw" elementId="org.jboss.tools.windup.ui.addon.launchConfigurationService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.LaunchConfigurationService"/>
+    <elements xsi:type="application:Addon" xmi:id="_pg_D0H9JEeaDaMGaik4Rpg" elementId="org.jboss.tools.windup.ui.addon.markerSyncService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerSyncService"/>
   </fragments>
 </fragment:ModelFragments>

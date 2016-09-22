@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE;
+import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
 import java.io.File;
+import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -31,6 +33,8 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -43,6 +47,8 @@ import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.Issue;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+
+import com.google.common.collect.Lists;
 
 /**
  * Explorer view for displaying and navigating Windup issues, classifications, etc. 
@@ -105,9 +111,13 @@ public class IssueExplorer extends CommonNavigator {
 	private EventHandler issueChangedHandler = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
-			Display.getDefault().asyncExec(() -> {
-				getCommonViewer().refresh(event.getProperty(EVENT_ISSUE), true);
-			});
+			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
+			Object node = findIssueNode(marker);
+			if (node != null) {
+				Display.getDefault().syncExec(() -> {
+					getCommonViewer().refresh(node, true);
+				});
+			}
 		}
 	};
 	
@@ -119,6 +129,36 @@ public class IssueExplorer extends CommonNavigator {
 			getCommonViewer().collapseAll();
 		}
 	};
+	
+	private Object findIssueNode(IMarker marker) {
+		List<TreeItem> treeItems = Lists.newArrayList();
+		collectTreeItems(getCommonViewer().getTree(), treeItems);
+		for (TreeItem item : treeItems) {
+			Object data = item.getData();
+			if (data instanceof MarkerNode) {
+				MarkerNode node = (MarkerNode)data;
+				if (Objects.equals(marker, node.getMarker())) {
+					return node;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static void collectTreeItems(Tree tree, List<TreeItem> treeItems) {
+	    for(TreeItem item : tree.getItems()) {
+	    	treeItems.add(item);
+	    	collectTreeItems(item, treeItems);
+	    }
+	}
+	
+	private static void collectTreeItems(TreeItem currentItem, List<TreeItem> treeItems) {
+	    TreeItem[] children = currentItem.getItems();
+	    for(int i = 0; i < children.length; i++) {
+	        treeItems.add(children[i]);
+	        collectTreeItems(children[i], treeItems);
+	    }
+	}
 	
 	private void refresh() {
 		if (getCommonViewer() != null && !getCommonViewer().getTree().isDisposed()) {

@@ -231,7 +231,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		
 		protected Dictionary<String, Object> createData() {
 			Dictionary<String, Object> props = new Hashtable<String, Object>();
-			props.put(WindupConstants.EVENT_ISSUE, this);
+			props.put(WindupConstants.EVENT_ISSUE_MARKER, this);
 			return props;
 		}
 		

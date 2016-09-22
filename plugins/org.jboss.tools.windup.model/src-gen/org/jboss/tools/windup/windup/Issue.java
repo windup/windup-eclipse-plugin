@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.jboss.tools.windup.windup.Issue#isFixed <em>Fixed</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getQuickFixes <em>Quick Fixes</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getOriginalLineSource <em>Original Line Source</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#isStale <em>Stale</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
@@ -244,5 +246,57 @@ public interface Issue extends EObject {
 	 * @generated
 	 */
 	EList<QuickFix> getQuickFixes();
+
+	/**
+	 * Returns the value of the '<em><b>Original Line Source</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Original Line Source</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Original Line Source</em>' attribute.
+	 * @see #setOriginalLineSource(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_OriginalLineSource()
+	 * @model
+	 * @generated
+	 */
+	String getOriginalLineSource();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getOriginalLineSource <em>Original Line Source</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Original Line Source</em>' attribute.
+	 * @see #getOriginalLineSource()
+	 * @generated
+	 */
+	void setOriginalLineSource(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Stale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Stale</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Stale</em>' attribute.
+	 * @see #setStale(boolean)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Stale()
+	 * @model
+	 * @generated
+	 */
+	boolean isStale();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#isStale <em>Stale</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Stale</em>' attribute.
+	 * @see #isStale()
+	 * @generated
+	 */
+	void setStale(boolean value);
 
 } // Issue

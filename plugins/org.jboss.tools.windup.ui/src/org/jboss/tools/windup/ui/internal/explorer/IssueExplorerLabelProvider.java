@@ -19,6 +19,7 @@ import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_WARNING;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_WARNING;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_REPORT;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_STALE_ISSUE;
 
 import java.util.Map;
 
@@ -60,6 +61,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 	private static final Image INFO_QUICKFIX;
 	private static final Image RULE;
 	private static final Image REPORT;
+	private static final Image STALE;
 	
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -72,6 +74,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		RULE = imageRegistry.get(IMG_RULE);
 		FIXED = imageRegistry.get(IMG_FIXED);
 		REPORT = imageRegistry.get(IMG_REPORT);
+		STALE = imageRegistry.get(IMG_STALE_ISSUE);
 	}
 	
 	private WorkbenchLabelProvider workbenchProvider = new WorkbenchLabelProvider();
@@ -100,6 +103,9 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		}
 		if (element instanceof MarkerNode) {
 			MarkerNode issue = (MarkerNode)element;
+			if (issue.getIssue().isStale()) {
+				return STALE;
+			}
 			boolean hasQuickFix = issue.hasQuickFix();
 			boolean isFixed = issue.isFixed();
 			Image result = null;

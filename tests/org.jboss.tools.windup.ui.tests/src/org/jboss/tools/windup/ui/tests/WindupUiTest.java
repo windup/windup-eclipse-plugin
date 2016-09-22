@@ -14,16 +14,21 @@ import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.jboss.tools.test.util.TestProjectProvider;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.core.test.WindupTest;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.util.NameUtil;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.tests.swtbot.WorkbenchBot;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.junit.After;
@@ -48,6 +53,10 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected WorkbenchBot workbenchBot;
 	
 	@Inject protected ModelService modelService;
+	@Inject protected WindupService windupService;
+	
+	@Inject protected IEventBroker broker;
+	@Inject protected MarkerService markerService;
 	
 	@Before
 	public void init() throws CoreException {
@@ -70,6 +79,10 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
+		windupService.generateGraph(configuration, new NullProgressMonitor());
+		Display.getDefault().syncExec(() -> {
+			markerService.updateMarkers(configuration);
+		});
 	}
 	
 	protected ConfigurationElement createRunConfiguration() {

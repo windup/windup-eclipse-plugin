@@ -70,6 +70,8 @@ public class IssueItemProvider
 			addEffortPropertyDescriptor(object);
 			addFixedPropertyDescriptor(object);
 			addGeneratedReportLocationPropertyDescriptor(object);
+			addOriginalLineSourcePropertyDescriptor(object);
+			addStalePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -229,6 +231,50 @@ public class IssueItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Original Line Source feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addOriginalLineSourcePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_originalLineSource_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_originalLineSource_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_OriginalLineSource(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Stale feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addStalePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_stale_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_stale_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_Stale(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -304,6 +350,8 @@ public class IssueItemProvider
 			case WindupPackage.ISSUE__EFFORT:
 			case WindupPackage.ISSUE__FIXED:
 			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
+			case WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE:
+			case WindupPackage.ISSUE__STALE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.ISSUE__LINKS:

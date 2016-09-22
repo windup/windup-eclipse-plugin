@@ -30,6 +30,7 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICA
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -62,6 +63,8 @@ import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 
+import com.google.common.collect.Maps;
+
 /**
  * Service for annotating eclipse {@link IResource}s with Windup's generated hints and classifications.
  */
@@ -70,7 +73,11 @@ import org.jboss.tools.windup.windup.Issue;
 public class MarkerService {
 	
 	@Inject private IEventBroker broker;
+	@Inject private ModelService modelService;
 	
+	/**
+	 * Creates markers for Windup migration issues. This is triggered after Windup has completed executing.  
+	 */
 	@Inject
 	@Optional
 	public void updateMarkers(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
@@ -84,7 +91,7 @@ public class MarkerService {
 					createWindupMarkers(configuration, monitor);
 				}
 			};
-			new ProgressMonitorDialog(Display.getDefault().getActiveShell()).run(true, false, op);
+			new ProgressMonitorDialog(Display.getDefault().getActiveShell()).run(false, false, op);
 			broker.post(MARKERS_CHANGED, true);
 		} catch (InvocationTargetException | InterruptedException e) {
 			Display.getDefault().syncExec(() -> {
@@ -95,6 +102,9 @@ public class MarkerService {
 		}
 	}
 	
+	/**
+	 * Returns the total number of markers that will be created. Used for reporting progress.
+	 */
 	public int getTotalIssueCount(ConfigurationElement configuration) {
 		int count = 0;
 		for (Input input : configuration.getInputs()) {
@@ -105,6 +115,9 @@ public class MarkerService {
 		return count;
 	}
 	
+	/**
+	 * Creates markers for Windup migration issues contained in the provided configuration.
+	 */
 	private void createWindupMarkers(ConfigurationElement configuration, IProgressMonitor monitor) throws CoreException {
 		int count = 0;
 		for (Input input : configuration.getInputs()) {
@@ -114,50 +127,60 @@ public class MarkerService {
 					WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
 					continue;
 				}
-				String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
-				IMarker marker = resource.createMarker(type);
-				marker.setAttribute(CONFIGURATION_ID, configuration.getName());
-				
-				IJavaElement element = JavaCore.create(resource);
-				if (element != null) {
-					marker.setAttribute(ELEMENT_ID, element.getHandleIdentifier());
-				}
-				marker.setAttribute(URI_ID, EcoreUtil.getURI(issue).toString());
-				marker.setAttribute(IMarker.SEVERITY, MarkerUtil.convertSeverity(issue.getSeverity()));
-				marker.setAttribute(SEVERITY, issue.getSeverity());
-	            marker.setAttribute(RULE_ID, issue.getRuleId());
-	            marker.setAttribute(EFFORT, issue.getEffort());
-				
-				if (issue instanceof Hint) {
-					Hint hint = (Hint)issue;
-					
-					marker.setAttribute(IMarker.MESSAGE, hint.getTitle());
-					marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
-					
-					marker.setAttribute(TITLE, hint.getTitle());
-					marker.setAttribute(HINT, hint.getHint());
-					marker.setAttribute(LINE, hint.getLineNumber());
-					marker.setAttribute(COLUMN, hint.getColumn());
-					marker.setAttribute(LENGTH, hint.getLength());
-					
-					marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
-				}
-				else {
-					Classification classification = (Classification)issue;
-					marker.setAttribute(IMarker.MESSAGE, classification.getClassification());
-					marker.setAttribute(CLASSIFICATION, classification.getClassification());
-					marker.setAttribute(DESCRIPTION, classification.getDescription());
-					
-					marker.setAttribute(IMarker.LINE_NUMBER, 1);
-					marker.setAttribute(IMarker.CHAR_START, 0);
-					marker.setAttribute(IMarker.CHAR_END, 0);
-				}
-	            marker.setAttribute(IMarker.USER_EDITABLE, false);
-	            monitor.worked(++count);
+				createWindupMarker(issue, configuration, resource);
+				monitor.worked(++count);
 			}
 		}
 	}
 	
+	/**
+	 * Helper method that actually creates the marker on the specified resource for the specified Windup migration issue.
+	 */
+	private void createWindupMarker(Issue issue, ConfigurationElement configuration, IResource resource) throws CoreException {
+		String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
+		IMarker marker = resource.createMarker(type);
+		marker.setAttribute(CONFIGURATION_ID, configuration.getName());
+		
+		IJavaElement element = JavaCore.create(resource);
+		if (element != null) {
+			marker.setAttribute(ELEMENT_ID, element.getHandleIdentifier());
+		}
+		marker.setAttribute(URI_ID, EcoreUtil.getURI(issue).toString());
+		marker.setAttribute(IMarker.SEVERITY, MarkerUtil.convertSeverity(issue.getSeverity()));
+		marker.setAttribute(SEVERITY, issue.getSeverity());
+        marker.setAttribute(RULE_ID, issue.getRuleId());
+        marker.setAttribute(EFFORT, issue.getEffort());
+		
+		if (issue instanceof Hint) {
+			Hint hint = (Hint)issue;
+			
+			marker.setAttribute(IMarker.MESSAGE, hint.getTitle());
+			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+			
+			marker.setAttribute(TITLE, hint.getTitle());
+			marker.setAttribute(HINT, hint.getHint());
+			marker.setAttribute(LINE, hint.getLineNumber());
+			marker.setAttribute(COLUMN, hint.getColumn());
+			marker.setAttribute(LENGTH, hint.getLength());
+			
+			marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
+		}
+		else {
+			Classification classification = (Classification)issue;
+			marker.setAttribute(IMarker.MESSAGE, classification.getClassification());
+			marker.setAttribute(CLASSIFICATION, classification.getClassification());
+			marker.setAttribute(DESCRIPTION, classification.getDescription());
+			
+			marker.setAttribute(IMarker.LINE_NUMBER, 1);
+			marker.setAttribute(IMarker.CHAR_START, 0);
+			marker.setAttribute(IMarker.CHAR_END, 0);
+		}
+        marker.setAttribute(IMarker.USER_EDITABLE, false);
+	}
+	
+	/**
+	 * Deletes all Windup markers on all projects within the workspace.
+	 */
 	public void deleteAllWindupMarkers() {
 		for (IProject input : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			if (input.isAccessible()) {
@@ -167,6 +190,9 @@ public class MarkerService {
 		broker.post(MARKERS_CHANGED, true);
 	}
 	
+	/**
+	 * Deletes all Windup markers assigned to the specified resource.
+	 */
 	private void deleteWindupMarkers(IResource input) {
 		try {
 			input.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
@@ -174,5 +200,21 @@ public class MarkerService {
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
+	}
+	
+	/**
+	 * Returns issue/marker pairs associated with the specified resource. 
+	 */
+	public Map<Issue, IMarker> buildIssueMarkerMap(IResource resource) {
+		Map<Issue, IMarker> map = Maps.newHashMap();
+		try {
+			IMarker[] markers = resource.findMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+			for (IMarker marker : markers) {
+				map.put(modelService.findIssue(marker), marker);
+			}
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		return map;
 	}
 }

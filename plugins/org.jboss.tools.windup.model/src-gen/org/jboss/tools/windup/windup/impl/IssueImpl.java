@@ -40,6 +40,8 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isFixed <em>Fixed</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getGeneratedReportLocation <em>Generated Report Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getQuickFixes <em>Quick Fixes</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getOriginalLineSource <em>Original Line Source</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isStale <em>Stale</em>}</li>
  * </ul>
  *
  * @generated
@@ -204,6 +206,46 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * @ordered
 	 */
 	protected EList<QuickFix> quickFixes;
+
+	/**
+	 * The default value of the '{@link #getOriginalLineSource() <em>Original Line Source</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOriginalLineSource()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ORIGINAL_LINE_SOURCE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getOriginalLineSource() <em>Original Line Source</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOriginalLineSource()
+	 * @generated
+	 * @ordered
+	 */
+	protected String originalLineSource = ORIGINAL_LINE_SOURCE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isStale() <em>Stale</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStale()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STALE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isStale() <em>Stale</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStale()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean stale = STALE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -400,6 +442,48 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getOriginalLineSource() {
+		return originalLineSource;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOriginalLineSource(String newOriginalLineSource) {
+		String oldOriginalLineSource = originalLineSource;
+		originalLineSource = newOriginalLineSource;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE, oldOriginalLineSource, originalLineSource));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isStale() {
+		return stale;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setStale(boolean newStale) {
+		boolean oldStale = stale;
+		stale = newStale;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__STALE, oldStale, stale));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -437,6 +521,10 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return getGeneratedReportLocation();
 			case WindupPackage.ISSUE__QUICK_FIXES:
 				return getQuickFixes();
+			case WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE:
+				return getOriginalLineSource();
+			case WindupPackage.ISSUE__STALE:
+				return isStale();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -479,6 +567,12 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				getQuickFixes().clear();
 				getQuickFixes().addAll((Collection<? extends QuickFix>)newValue);
 				return;
+			case WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE:
+				setOriginalLineSource((String)newValue);
+				return;
+			case WindupPackage.ISSUE__STALE:
+				setStale((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -518,6 +612,12 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 			case WindupPackage.ISSUE__QUICK_FIXES:
 				getQuickFixes().clear();
 				return;
+			case WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE:
+				setOriginalLineSource(ORIGINAL_LINE_SOURCE_EDEFAULT);
+				return;
+			case WindupPackage.ISSUE__STALE:
+				setStale(STALE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -548,6 +648,10 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 				return GENERATED_REPORT_LOCATION_EDEFAULT == null ? generatedReportLocation != null : !GENERATED_REPORT_LOCATION_EDEFAULT.equals(generatedReportLocation);
 			case WindupPackage.ISSUE__QUICK_FIXES:
 				return quickFixes != null && !quickFixes.isEmpty();
+			case WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE:
+				return ORIGINAL_LINE_SOURCE_EDEFAULT == null ? originalLineSource != null : !ORIGINAL_LINE_SOURCE_EDEFAULT.equals(originalLineSource);
+			case WindupPackage.ISSUE__STALE:
+				return stale != STALE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -576,6 +680,10 @@ public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
 		result.append(fixed);
 		result.append(", generatedReportLocation: ");
 		result.append(generatedReportLocation);
+		result.append(", originalLineSource: ");
+		result.append(originalLineSource);
+		result.append(", stale: ");
+		result.append(stale);
 		result.append(')');
 		return result.toString();
 	}

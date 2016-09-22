@@ -52,6 +52,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.jboss.tools.common.xml.IMemento;
 import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.tools.windup.model.Activator;
+import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
@@ -368,17 +369,19 @@ public class ModelService {
         input.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
         for (Hint wHint : results.getHints()) {
-        	// TODO: Why are we running into this?
         	String path = wHint.getFile().getAbsolutePath();
         	IFile resource = ModelService.getResource(path);
 			if (resource == null) {
 				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
 				continue;
 			}
-					
+			
         	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
         	result.getIssues().add(hint);
         	
+        	String line = DocumentUtils.getLine(resource, wHint.getLineNumber()-1);
+        	hint.setOriginalLineSource(line);
+
         	for (Quickfix fix : wHint.getQuickfixes()) {
         		org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
         		quickFix.setName(fix.getName());

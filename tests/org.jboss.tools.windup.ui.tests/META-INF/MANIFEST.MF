@@ -26,6 +26,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swtbot.eclipse.finder,
  org.jboss.tools.windup.ui,
  org.jboss.tools.windup.model,
- org.eclipse.ui.navigator
+ org.eclipse.ui.navigator,
+ org.eclipse.emf.common,
+ org.eclipse.text,
+ org.jboss.tools.windup.runtime,
+ org.eclipse.ui.ide,
+ org.eclipse.e4.core.services
 Bundle-Vendor: %plugin.vendor
 Bundle-Activator: org.jboss.tools.windup.ui.tests.Activator

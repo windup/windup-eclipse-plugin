@@ -46,7 +46,7 @@ public interface WindupConstants {
 	String GROUPS_CHANGED = "windup/issue/groups";
 	String INPUT_CHANGED = "windup/configuration/input";
 	String ISSUE_CHANGED = "windup/issues/changed";
-	String EVENT_ISSUE = "data";
+	String EVENT_ISSUE_MARKER = "data";
 	
 	/**
 	 * Model Events

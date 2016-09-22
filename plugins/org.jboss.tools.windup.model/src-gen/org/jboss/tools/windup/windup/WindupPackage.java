@@ -598,13 +598,31 @@ public interface WindupPackage extends EPackage {
 	int ISSUE__QUICK_FIXES = 8;
 
 	/**
+	 * The feature id for the '<em><b>Original Line Source</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__ORIGINAL_LINE_SOURCE = 9;
+
+	/**
+	 * The feature id for the '<em><b>Stale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__STALE = 10;
+
+	/**
 	 * The number of structural features of the '<em>Issue</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ISSUE_FEATURE_COUNT = 9;
+	int ISSUE_FEATURE_COUNT = 11;
 
 	/**
 	 * The number of operations of the '<em>Issue</em>' class.
@@ -705,6 +723,24 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int HINT__QUICK_FIXES = ISSUE__QUICK_FIXES;
+
+	/**
+	 * The feature id for the '<em><b>Original Line Source</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__ORIGINAL_LINE_SOURCE = ISSUE__ORIGINAL_LINE_SOURCE;
+
+	/**
+	 * The feature id for the '<em><b>Stale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__STALE = ISSUE__STALE;
 
 	/**
 	 * The feature id for the '<em><b>Title</b></em>' attribute.
@@ -868,6 +904,24 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION__QUICK_FIXES = ISSUE__QUICK_FIXES;
+
+	/**
+	 * The feature id for the '<em><b>Original Line Source</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__ORIGINAL_LINE_SOURCE = ISSUE__ORIGINAL_LINE_SOURCE;
+
+	/**
+	 * The feature id for the '<em><b>Stale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__STALE = ISSUE__STALE;
 
 	/**
 	 * The feature id for the '<em><b>Classification</b></em>' attribute.
@@ -1549,6 +1603,28 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getIssue_QuickFixes();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getOriginalLineSource <em>Original Line Source</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Original Line Source</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#getOriginalLineSource()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_OriginalLineSource();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#isStale <em>Stale</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Stale</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#isStale()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_Stale();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.
