@@ -14,6 +14,9 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.ui.internal.Messages.issueDeleteError;
 import static org.jboss.tools.windup.ui.internal.Messages.operationError;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
@@ -44,6 +47,10 @@ public class MarkerNode extends TreeNode {
 		super (marker);
 		this.marker = marker;
 		this.issue = modelService.findIssue(marker);
+	}
+	
+	public void setMarker(IMarker marker) {
+		this.marker = marker;
 	}
 	
 	public String getTitle() {
@@ -84,7 +91,9 @@ public class MarkerNode extends TreeNode {
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
-		broker.post(WindupConstants.ISSUE_CHANGED, createData());
+		Dictionary<String, Object> props = new Hashtable<String, Object>();
+		props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
+		broker.post(WindupConstants.ISSUE_CHANGED, props);
 	}
 	
 	public boolean isFixed() {

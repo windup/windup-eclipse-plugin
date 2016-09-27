@@ -12,6 +12,9 @@ package org.jboss.tools.windup.ui.internal.explorer;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -216,8 +219,10 @@ public class IssueExplorerHandlers {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
 				((MarkerNode)selected).delete();
+				Dictionary<String, Object> props = new Hashtable<String, Object>();
+				props.put(WindupConstants.EVENT_ISSUE_MARKER, selected);
+				broker.send(WindupConstants.MARKER_DELETED, props);
 			}
-			broker.send(WindupConstants.MARKERS_CHANGED, true);
 			return null;
 		}
 	}

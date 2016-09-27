@@ -11,9 +11,12 @@
 package org.jboss.tools.windup.ui.internal.explorer;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER;
+import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER_UPDATE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_STALE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_DELETED;
 
 import java.io.File;
 import java.util.List;
@@ -96,6 +99,8 @@ public class IssueExplorer extends CommonNavigator {
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
 		broker.subscribe(ISSUE_CHANGED, issueChangedHandler);
+		broker.subscribe(MARKER_DELETED, markerDeletedHandler);
+		broker.subscribe(ISSUE_STALE, issueStaleHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 	}
 	
@@ -114,6 +119,29 @@ public class IssueExplorer extends CommonNavigator {
 			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
 			Object node = findIssueNode(marker);
 			if (node != null) {
+				Display.getDefault().syncExec(() -> {
+					getCommonViewer().refresh(node, true);
+				});
+			}
+		}
+	};
+	
+	private EventHandler markerDeletedHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			getCommonViewer().remove((MarkerNode)event.getProperty(EVENT_ISSUE_MARKER));
+		}
+	};
+	
+	private EventHandler issueStaleHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
+			IMarker updatedMarker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER_UPDATE);
+			Object node = findIssueNode(marker);
+			if (node != null) {
+				MarkerNode markerNode = (MarkerNode)node;
+				markerNode.setMarker(updatedMarker);
 				Display.getDefault().syncExec(() -> {
 					getCommonViewer().refresh(node, true);
 				});
@@ -231,6 +259,8 @@ public class IssueExplorer extends CommonNavigator {
 	public void dispose() {
 		super.dispose();
 		broker.unsubscribe(markersChangedHandler);
+		broker.unsubscribe(markerDeletedHandler);
+		broker.unsubscribe(issueStaleHandler);
 		broker.unsubscribe(issueChangedHandler);
 		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();

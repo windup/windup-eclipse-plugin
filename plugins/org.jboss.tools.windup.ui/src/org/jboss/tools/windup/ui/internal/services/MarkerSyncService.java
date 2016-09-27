@@ -79,7 +79,16 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, ((Hint)issue).getLineNumber());
 				if (DocumentUtils.differs(resource, lineNumber-1, issue.getOriginalLineSource())) {
 					issue.setStale(true);
-					setStale(marker);
+					try {
+						Map<String, Object> attributes = marker.getAttributes();
+						marker.delete();
+						IMarker updatedMarker = MarkerService.createMarker(issue, resource);
+						updatedMarker.setAttributes(attributes);
+						updatedMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+						setStale(marker, updatedMarker);
+					} catch (CoreException e) {
+						WindupUIPlugin.log(e);
+					}
 				}
 			}
 		}
@@ -88,10 +97,11 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 	/**
 	 * Updates the specified marker's severity to 'stale'.
 	 */
-	private void setStale(IMarker marker) {
+	private void setStale(IMarker original, IMarker update) {
 		Dictionary<String, Object> props = new Hashtable<String, Object>();
-		props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
-		broker.post(WindupConstants.ISSUE_CHANGED, props);
+		props.put(WindupConstants.EVENT_ISSUE_MARKER, original);
+		props.put(WindupConstants.EVENT_ISSUE_MARKER_UPDATE, update);
+		broker.post(WindupConstants.ISSUE_STALE, props);
 	}
 	
 	@PostConstruct

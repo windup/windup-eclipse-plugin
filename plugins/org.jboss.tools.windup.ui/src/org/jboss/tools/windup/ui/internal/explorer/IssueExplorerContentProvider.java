@@ -13,8 +13,6 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 
 import java.io.File;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -227,12 +225,6 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		public void addChild(TreeNode node) {
 			node.parent = this;
 			children.put(node.segment, node);
-		}
-		
-		protected Dictionary<String, Object> createData() {
-			Dictionary<String, Object> props = new Hashtable<String, Object>();
-			props.put(WindupConstants.EVENT_ISSUE_MARKER, this);
-			return props;
 		}
 		
 		public boolean isLeafParent() {

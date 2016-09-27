@@ -103,23 +103,30 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		}
 		if (element instanceof MarkerNode) {
 			MarkerNode issue = (MarkerNode)element;
+			
+			boolean isFixed = issue.isFixed();
+			if (isFixed) {
+				return FIXED;
+			}
+			
 			if (issue.getIssue().isStale()) {
 				return STALE;
 			}
+		
 			boolean hasQuickFix = issue.hasQuickFix();
-			boolean isFixed = issue.isFixed();
+			
 			Image result = null;
 			switch (issue.getSeverity()) {
 				case IMarker.SEVERITY_ERROR: {
-					result = isFixed ? FIXED : hasQuickFix ? ERROR_QUICKFIX : ERROR;
+					result = hasQuickFix ? ERROR_QUICKFIX : ERROR;
 					break;
 				}
 				case IMarker.SEVERITY_WARNING: {
-					result = isFixed ? FIXED : hasQuickFix ? WARNING_QUICKFIX : WARNING;
+					result = hasQuickFix ? WARNING_QUICKFIX : WARNING;
 					break;
 				}
 				default: {
-					result = isFixed ? FIXED : hasQuickFix ? INFO_QUICKFIX : INFO;
+					result = hasQuickFix ? INFO_QUICKFIX : INFO;
 				}
 			}
 			return result;

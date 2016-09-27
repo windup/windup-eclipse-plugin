@@ -133,12 +133,22 @@ public class MarkerService {
 		}
 	}
 	
+	public static IMarker createMarker(Issue issue, IResource resource) {
+		String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
+		try {
+			return resource.createMarker(type);
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		return null;
+	}
+	
 	/**
 	 * Helper method that actually creates the marker on the specified resource for the specified Windup migration issue.
 	 */
 	private void createWindupMarker(Issue issue, ConfigurationElement configuration, IResource resource) throws CoreException {
-		String type = issue instanceof Classification ? WINDUP_CLASSIFICATION_MARKER_ID : WINDUP_HINT_MARKER_ID;
-		IMarker marker = resource.createMarker(type);
+	
+		IMarker marker = createMarker(issue, resource);
 		marker.setAttribute(CONFIGURATION_ID, configuration.getName());
 		
 		IJavaElement element = JavaCore.create(resource);
