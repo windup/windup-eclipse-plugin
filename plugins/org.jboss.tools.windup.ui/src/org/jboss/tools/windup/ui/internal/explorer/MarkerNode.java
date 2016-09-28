@@ -31,6 +31,7 @@ import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.windup.reporting.model.Severity;
@@ -87,7 +88,11 @@ public class MarkerNode extends TreeNode {
 	public void setFixed() {
 		issue.setFixed(true);
 		try {
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			IMarker fixedMarker = MarkerService.createMarker(issue, marker.getResource());
+			fixedMarker.setAttributes(marker.getAttributes());
+			fixedMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			this.marker.delete();
+			this.marker = fixedMarker;
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}

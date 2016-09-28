@@ -40,6 +40,9 @@
       <super
             type="org.eclipse.wst.validation.problemmarker2">
       </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
    </extension>
     <extension
          id="hintMarker"
@@ -50,6 +53,9 @@
       </persistent>
       <super
             type="org.eclipse.wst.validation.problemmarker2">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
       </super>
    </extension>
 </plugin>

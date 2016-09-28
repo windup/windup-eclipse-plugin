@@ -45,6 +45,7 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.Issue;
@@ -129,7 +130,21 @@ public class IssueExplorer extends CommonNavigator {
 	private EventHandler markerDeletedHandler = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
-			getCommonViewer().remove((MarkerNode)event.getProperty(EVENT_ISSUE_MARKER));
+			MarkerNode node = (MarkerNode)event.getProperty(EVENT_ISSUE_MARKER);
+			TreeNode parent = node.getParent();
+			Object segment = node.getSegment();
+			while (parent != null) {
+				parent.removeChild(segment);
+				getCommonViewer().remove(node);
+				getCommonViewer().refresh(parent, true);
+				if (parent.getChildren().isEmpty()) {
+					segment = parent.getSegment();
+					parent = parent.getParent();
+				}
+				else {
+					break;
+				}
+			}
 		}
 	};
 	

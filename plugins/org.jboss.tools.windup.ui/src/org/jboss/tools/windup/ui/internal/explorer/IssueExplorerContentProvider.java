@@ -210,6 +210,10 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			return Lists.newArrayList(children.values());
 		}
 		
+		public void removeChild(Object key) {
+			children.remove(key);
+		}
+		
 		public TreeNode getParent() {
 			return parent;
 		}
