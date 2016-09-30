@@ -101,7 +101,7 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 		Dictionary<String, Object> props = new Hashtable<String, Object>();
 		props.put(WindupConstants.EVENT_ISSUE_MARKER, original);
 		props.put(WindupConstants.EVENT_ISSUE_MARKER_UPDATE, update);
-		broker.post(WindupConstants.ISSUE_STALE, props);
+		broker.post(WindupConstants.MARKER_CHANGED, props);
 	}
 	
 	@PostConstruct

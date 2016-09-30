@@ -36,15 +36,17 @@ public class QuickFixDiffDialog extends DiffDialog {
 	
 	private TableViewer table;
 	private Hint hint;
+	private QuickFix quickFix;
 	
-	public QuickFixDiffDialog(Shell shell, IResource left, Hint hint) {
-		super(shell, left, getResource(left, hint, hint.getQuickFixes().get(0)));
+	public QuickFixDiffDialog(Shell shell, IResource left, IResource right, Hint hint) {
+		super(shell, left, right);
 		this.hint = hint; 
 	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		if (hint.getQuickFixes().size() == 1) {
+			this.quickFix = hint.getQuickFixes().get(0);
 			return super.createDialogArea(parent);
 		}
 		Composite container = new Composite(parent, SWT.NONE);
@@ -61,8 +63,8 @@ public class QuickFixDiffDialog extends DiffDialog {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!event.getSelection().isEmpty()) {
-					QuickFix quickFix = (QuickFix)((StructuredSelection)event.getSelection()).getFirstElement();
-					QuickFixDiffDialog.this.right = getResource(left, hint, quickFix);
+					QuickFixDiffDialog.this.quickFix = (QuickFix)((StructuredSelection)event.getSelection()).getFirstElement();
+					QuickFixDiffDialog.this.right = QuickFixUtil.getQuickFixedResource(left, quickFix, hint);
 					loadPreview(left, right);
 				}
 			}
@@ -72,8 +74,8 @@ public class QuickFixDiffDialog extends DiffDialog {
 		return control;
 	}
 	
-	private static IResource getResource(IResource left, Hint hint, QuickFix quickFix) {
-		return IssueExplorerHandlers.getCompareResource(left, hint, quickFix);
+	public QuickFix getQuickFix() {
+		return this.quickFix;
 	}
 	
 	private void buildColumns() {

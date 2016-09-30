@@ -34,6 +34,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
+import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.windup.reporting.model.Severity;
 
 public class MarkerNode extends TreeNode {
@@ -42,6 +43,7 @@ public class MarkerNode extends TreeNode {
 	private IMarker marker;
 	
 	@Inject private IEventBroker broker;
+	@Inject private MarkerService markerService;
 	
 	@Inject
 	public MarkerNode(IMarker marker, ModelService modelService) {
@@ -85,17 +87,13 @@ public class MarkerNode extends TreeNode {
 		return !issue.getQuickFixes().isEmpty() && !issue.isFixed();
 	}
 	
+	public void applyQuickFix(QuickFix quickFix) {
+		QuickFixUtil.applyQuickFix(marker.getResource(), quickFix, (Hint)issue);
+		setFixed();
+	}
+	
 	public void setFixed() {
-		issue.setFixed(true);
-		try {
-			IMarker fixedMarker = MarkerService.createMarker(issue, marker.getResource());
-			fixedMarker.setAttributes(marker.getAttributes());
-			fixedMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-			this.marker.delete();
-			this.marker = fixedMarker;
-		} catch (CoreException e) {
-			WindupUIPlugin.log(e);
-		}
+		this.marker = markerService.createFixedMarker(marker, issue);
 		Dictionary<String, Object> props = new Hashtable<String, Object>();
 		props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
 		broker.post(WindupConstants.ISSUE_CHANGED, props);

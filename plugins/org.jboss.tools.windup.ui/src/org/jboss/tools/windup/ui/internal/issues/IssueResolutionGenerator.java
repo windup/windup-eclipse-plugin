@@ -10,23 +10,16 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.issues;
 
-import static org.jboss.tools.windup.ui.internal.issues.IssueResolutions.DELETE_RESOLUTION;
-import static org.jboss.tools.windup.ui.internal.issues.IssueResolutions.INSERT_RESOLUTION;
-import static org.jboss.tools.windup.ui.internal.issues.IssueResolutions.REPLACE_RESOLUTION;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.internal.issues.IssueResolutions.FirstQuickFixResolution;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
-import org.jboss.windup.reporting.model.QuickfixType;
-
-import com.google.common.collect.Lists;
 
 /**
  * Resolution generator for Windup issues.
@@ -34,12 +27,13 @@ import com.google.common.collect.Lists;
 public class IssueResolutionGenerator implements IMarkerResolutionGenerator2 {
 	
 	@Inject private ModelService modelService;
+	@Inject private MarkerService markerService;
+	@Inject private IEventBroker broker;
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		Issue issue = modelService.findIssue(marker);
-		List<String> types = collectQuickFixTypes(issue);
-		return collectResolutions(types);
+		return collectResolutions(issue);
 	}
 
 	@Override 
@@ -47,26 +41,10 @@ public class IssueResolutionGenerator implements IMarkerResolutionGenerator2 {
 		return getResolutions(marker).length > 0;
 	}
 	
-	private IMarkerResolution[] collectResolutions(List<String> types) {
-		List<IMarkerResolution> resolutions = Lists.newArrayList();
-		for (String type : types) {
-			if (type.equals(QuickfixType.DELETE_LINE.toString())) {
-				resolutions.add(DELETE_RESOLUTION);
-			}
-			else if (type.equals(QuickfixType.REPLACE.toString())) {
-				resolutions.add(REPLACE_RESOLUTION);
-			}
-			else if (type.endsWith(QuickfixType.INSERT_LINE.toString())) {
-				resolutions.add(INSERT_RESOLUTION);
-			}
+	private IMarkerResolution[] collectResolutions(Issue issue) {
+		if (!issue.getQuickFixes().isEmpty()) {
+			return new IMarkerResolution[]{new FirstQuickFixResolution(modelService, markerService, broker, issue)};
 		}
-		return resolutions.toArray(new IMarkerResolution[resolutions.size()]);
-	}
-	
-	private List<String> collectQuickFixTypes(Issue issue) {
-		return issue.getQuickFixes().stream().
-					flatMap(i -> issue.getQuickFixes().stream()).
-					map(f -> f.getQuickFixType()).
-					collect(Collectors.toList());
+		return new IMarkerResolution[0];
 	}
 }

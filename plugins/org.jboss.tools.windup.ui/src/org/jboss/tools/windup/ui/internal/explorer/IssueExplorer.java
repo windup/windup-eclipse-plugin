@@ -13,9 +13,9 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER;
 import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER_UPDATE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_STALE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_DELETED;
 
 import java.io.File;
@@ -101,7 +101,7 @@ public class IssueExplorer extends CommonNavigator {
 		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
 		broker.subscribe(ISSUE_CHANGED, issueChangedHandler);
 		broker.subscribe(MARKER_DELETED, markerDeletedHandler);
-		broker.subscribe(ISSUE_STALE, issueStaleHandler);
+		broker.subscribe(MARKER_CHANGED, markerChangedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 	}
 	
@@ -148,7 +148,7 @@ public class IssueExplorer extends CommonNavigator {
 		}
 	};
 	
-	private EventHandler issueStaleHandler = new EventHandler() {
+	private EventHandler markerChangedHandler = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
 			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
@@ -275,7 +275,7 @@ public class IssueExplorer extends CommonNavigator {
 		super.dispose();
 		broker.unsubscribe(markersChangedHandler);
 		broker.unsubscribe(markerDeletedHandler);
-		broker.unsubscribe(issueStaleHandler);
+		broker.unsubscribe(markerChangedHandler);
 		broker.unsubscribe(issueChangedHandler);
 		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();

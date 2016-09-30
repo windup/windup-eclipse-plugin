@@ -152,7 +152,7 @@ public class DocumentUtils {
 			}
 			outputFile.close();
 			inputFile.close();
-			left.refreshLocal(IResource.DEPTH_ZERO, null);
+			left.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (Exception e) {
 			Activator.log(e);
 		}

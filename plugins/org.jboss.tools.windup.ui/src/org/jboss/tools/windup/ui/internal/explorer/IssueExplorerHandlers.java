@@ -10,8 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
-
+import java.lang.reflect.InvocationTargetException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -23,28 +22,30 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-import org.eclipse.jface.text.Document;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
-import org.jboss.tools.windup.model.util.DocumentUtils;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerService;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.QuickFix;
-import org.jboss.windup.reporting.model.QuickfixType;
 
 /**
  * Handlers used by the Issue Explorer.
@@ -112,7 +113,7 @@ public class IssueExplorerHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			markerService.deleteAllWindupMarkers();
-			broker.post(MARKERS_CHANGED, true);
+			broker.post(WindupConstants.MARKERS_CHANGED, true);
 			return null;
 		}
 	}
@@ -159,40 +160,18 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static IResource getCompareResource(IResource resource, Hint hint, QuickFix quickFix) {
-		TempProject project = new TempProject();
-		if (QuickfixType.REPLACE.toString().equals(quickFix.getQuickFixType())) {
-			int lineNumber = hint.getLineNumber()-1;
-			String searchString = quickFix.getSearchString();
-			String replacement = quickFix.getReplacementString();
-			Document document = DocumentUtils.replace(resource, lineNumber, searchString, replacement);
-			return project.createResource(document.get());
-		}
-		else if (QuickfixType.DELETE_LINE.toString().equals(quickFix.getQuickFixType())) {
-			int lineNumber = hint.getLineNumber()-1;
-			Document document = DocumentUtils.deleteLine(resource, lineNumber);
-			return project.createResource(document.get());
-		}
-		else if (QuickfixType.INSERT_LINE.toString().equals(quickFix.getQuickFixType())) {
-			int lineNumber = hint.getLineNumber();
-			lineNumber = lineNumber > 1 ? lineNumber - 2 : lineNumber - 1;
-			String newLine = quickFix.getReplacementString();
-			Document document = DocumentUtils.insertLine(resource, lineNumber, newLine);
-			return project.createResource(document.get());
-		}
-		return null;
-	}
-
 	public static class PreviewQuickFixHandler extends AbstractIssueHanlder {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
 			IResource left = node.getResource();
 			Shell shell = Display.getCurrent().getActiveShell();
-			QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, (Hint)node.getIssue());
+			Hint hint = (Hint)node.getIssue();
+			QuickFix firstQuickFix = hint.getQuickFixes().get(0); 
+			IResource right = QuickFixUtil.getQuickFixedResource(left, firstQuickFix, hint);
+			QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, right, hint);
 			if (dialog.open() == IssueConstants.APPLY_FIX) {
-				DocumentUtils.replace(left, dialog.getRight());
-				node.setFixed();
+				node.applyQuickFix(dialog.getQuickFix());
 			}
 			return null;
 		}
@@ -202,12 +181,21 @@ public class IssueExplorerHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
-			for (Object selected : ((StructuredSelection)selection).toList()) {
-				MarkerNode node = (MarkerNode)selected;
-				IResource left = node.getResource();
-				IResource right = getCompareResource(left, (Hint)node.getIssue(), node.getIssue().getQuickFixes().get(0));
-				DocumentUtils.replace(left, right);
-				node.setFixed();
+			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+				@Override
+				protected void execute(IProgressMonitor monitor)
+						throws CoreException, InvocationTargetException, InterruptedException {
+					for (Object selected : ((StructuredSelection)selection).toList()) {
+						MarkerNode node = (MarkerNode)selected;
+						QuickFix quickFix = node.getIssue().getQuickFixes().get(0);
+						node.applyQuickFix(quickFix);
+					}
+				}
+			};
+			try {
+				new ProgressMonitorDialog(Display.getDefault().getActiveShell()).run(false, false, op);
+			} catch (InvocationTargetException | InterruptedException e) {
+				WindupUIPlugin.log(e);
 			}
 			return null;
 		}

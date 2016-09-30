@@ -242,6 +242,14 @@ public class ModelService {
 		return (Issue)getModel().eResource().getEObject(uri.fragment());
 	}
 	
+	public org.jboss.tools.windup.windup.Hint findHint(IMarker marker) {
+		Issue issue = findIssue(marker);
+		if (issue instanceof org.jboss.tools.windup.windup.Hint) {
+			return (org.jboss.tools.windup.windup.Hint)issue;
+		}
+		return null;
+	}
+	
 	public void deleteConfiguration(ConfigurationElement configuration) {
 		model.getConfigurationElements().remove(configuration);
 		broker.post(CONFIG_DELETED, configuration);

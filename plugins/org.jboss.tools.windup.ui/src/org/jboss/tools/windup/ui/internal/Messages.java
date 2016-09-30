@@ -143,6 +143,7 @@ public class Messages extends NLS
     public static String launchErrorMessage;
     
     public static String markersCreateError;
+    public static String applyQuickFixError;
     
     // Issue Details
     public static String noIssueDetails;

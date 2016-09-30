@@ -95,11 +95,24 @@ public class MarkerService {
 			broker.post(MARKERS_CHANGED, true);
 		} catch (InvocationTargetException | InterruptedException e) {
 			Display.getDefault().syncExec(() -> {
-				MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
+				MessageDialog.openError(Display.getDefault().getActiveShell(), 
 						Messages.launchErrorTitle, Messages.markersCreateError);
 			});
 			WindupUIPlugin.log(e);
 		}
+	}
+	
+	public IMarker createFixedMarker(IMarker marker, Issue issue) {
+		issue.setFixed(true);
+		IMarker fixedMarker = MarkerService.createMarker(issue, marker.getResource());
+		try {
+			fixedMarker.setAttributes(marker.getAttributes());
+			fixedMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			marker.delete();
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		return fixedMarker;
 	}
 	
 	/**

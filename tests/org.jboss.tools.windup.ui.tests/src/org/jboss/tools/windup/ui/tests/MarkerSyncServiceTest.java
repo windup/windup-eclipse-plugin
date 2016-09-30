@@ -10,10 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
@@ -45,7 +47,8 @@ public class MarkerSyncServiceTest extends WindupUiTest {
 					}
 					return false;
 				}).findFirst().get();
-		QuickFixUtil.applyReplacementQuickFix(hint.getQuickFixes().get(0), hint);
+		IFile file = ModelService.getIssueResource(hint);
+		QuickFixUtil.applyQuickFix(file, hint.getQuickFixes().get(0), hint);
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
 		} catch (CoreException e) {

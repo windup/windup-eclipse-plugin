@@ -32,6 +32,10 @@ public class IssueExplorerPropertyTesters {
 		public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 			if (QUICKFIX.equals(property)) {
 				if (element instanceof MarkerNode) {
+					MarkerNode node = (MarkerNode)element;
+					if (node.getIssue().isStale()) {
+						return false;
+					}
 					return ((MarkerNode)element).hasQuickFix();
 				}
 			}
