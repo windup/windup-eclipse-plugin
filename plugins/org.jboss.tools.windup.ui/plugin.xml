@@ -539,20 +539,4 @@
              markerType="org.jboss.tools.windup.core.classificationMarker">
        </markerResolutionGenerator>
     </extension>
-    <extension
-          point="org.eclipse.ui.editors.annotationTypes">
-       <type
-             name="org.jboss.tools.windup.ui.hintType">
-       </type>
-    </extension>
-    <extension
-          point="org.eclipse.ui.editors.markerAnnotationSpecification">
-       <specification
-             annotationImageProvider="org.jboss.tools.windup.ui.internal.issues.AnnotationImageProvider"
-             annotationType="org.jboss.tools.windup.ui.hintType"
-             icon="icons/windup.png"
-             includeOnPreferencePage="true"
-             quickFixIcon="icons/windup.png">
-       </specification>
-    </extension>
 </plugin>

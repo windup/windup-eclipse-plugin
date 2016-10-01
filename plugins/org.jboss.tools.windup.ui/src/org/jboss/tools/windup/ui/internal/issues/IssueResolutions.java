@@ -42,7 +42,7 @@ public class IssueResolutions {
 
 	public static class FirstQuickFixResolution extends WorkbenchMarkerResolution {
 		
-		private static String LABEL = "Apply first available quick fix for the selected resources."; //$NON-NLS-1$ 
+		private static String LABEL = "Apply first quick fix for the selected migration issue."; //$NON-NLS-1$ 
 		
 		private ModelService modelService;
 		private MarkerService markerService;
