@@ -66,7 +66,6 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	
 	private TableViewer projectsTable;
 	private TableViewer packagesTable;
-	private Button generateReportButton;
 	private Combo migrationPathCombo;
 	
 	public WindupInputTab(ModelService modelService) {
@@ -81,7 +80,6 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		createMigrationPathGroup(container);
 		createProjectsGroup(container);
 		createPackagesGroup(container);
-		createReportGroup(container);
 		createVerticalSpacer(container, 1);
 		super.setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, ID);
@@ -101,7 +99,6 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		reloadMigrationPath();
 		reloadProjectsTable();
 		reloadPackagesTable();
-		reloadReportGroup();
 	}
 	
 	private void reloadProjectsTable() {
@@ -113,12 +110,6 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	private void reloadPackagesTable() {
 		if (packagesTable != null) {
 			packagesTable.setInput(getCurrentPackages(configuration));
-		}
-	}
-	
-	private void reloadReportGroup() {
-		if (generateReportButton != null) {
-			generateReportButton.setSelection(configuration.isGenerateReport());
 		}
 	}
 	
@@ -236,19 +227,6 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 					modelService.removePackages(configuration, (List<IPackageFragment>)ss.toList());
 					reloadPackagesTable();
 				}
-			}
-		});
-	}
-	
-	private void createReportGroup(Composite parent) {
-		Group group = SWTFactory.createGroup(parent, Messages.windupReport+":", 1, 1, GridData.FILL_HORIZONTAL);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
-		generateReportButton = SWTFactory.createCheckButton(group, Messages.windupGenerateReport, null, true, GridData.GRAB_HORIZONTAL);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(generateReportButton);
-		generateReportButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				configuration.setGenerateReport(generateReportButton.getSelection());
 			}
 		});
 	}

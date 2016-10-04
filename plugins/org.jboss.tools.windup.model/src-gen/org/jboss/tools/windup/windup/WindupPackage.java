@@ -269,13 +269,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES = PARAMETERIZED_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Options</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__OPTIONS = PARAMETERIZED_FEATURE_COUNT + 9;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 9;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 10;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1207,6 +1216,52 @@ public interface WindupPackage extends EPackage {
 	int TECHNOLOGY_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.PairImpl <em>Pair</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.PairImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getPair()
+	 * @generated
+	 */
+	int PAIR = 14;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAIR__KEY = 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAIR__VALUE = 1;
+
+	/**
+	 * The number of structural features of the '<em>Pair</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAIR_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Pair</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAIR_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1214,7 +1269,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 14;
+	int WINDUP_EXECUTION_RESULTS = 15;
 
 
 	/**
@@ -1356,6 +1411,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getConfigurationElement_UserRulesDirectories();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getOptions <em>Options</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Options</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getOptions()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_Options();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -1894,6 +1960,38 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getTechnology_VersionRange();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Pair <em>Pair</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Pair</em>'.
+	 * @see org.jboss.tools.windup.windup.Pair
+	 * @generated
+	 */
+	EClass getPair();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Pair#getKey <em>Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Key</em>'.
+	 * @see org.jboss.tools.windup.windup.Pair#getKey()
+	 * @see #getPair()
+	 * @generated
+	 */
+	EAttribute getPair_Key();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Pair#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see org.jboss.tools.windup.windup.Pair#getValue()
+	 * @see #getPair()
+	 * @generated
+	 */
+	EAttribute getPair_Value();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

@@ -21,6 +21,7 @@ import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.Link;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.NamedElement;
+import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.Parameter;
 import org.jboss.tools.windup.windup.Parameterized;
 import org.jboss.tools.windup.windup.QuickFix;
@@ -138,6 +139,13 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	private EClass technologyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass pairEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -331,6 +339,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EAttribute getConfigurationElement_UserRulesDirectories() {
 		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getConfigurationElement_Options() {
+		return (EReference)configurationElementEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -788,6 +805,33 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getPair() {
+		return pairEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPair_Key() {
+		return (EAttribute)pairEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPair_Value() {
+		return (EAttribute)pairEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -834,6 +878,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__MIGRATION_PATH);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES);
+		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__OPTIONS);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -896,6 +941,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		technologyEClass = createEClass(TECHNOLOGY);
 		createEAttribute(technologyEClass, TECHNOLOGY__ID);
 		createEAttribute(technologyEClass, TECHNOLOGY__VERSION_RANGE);
+
+		pairEClass = createEClass(PAIR);
+		createEAttribute(pairEClass, PAIR__KEY);
+		createEAttribute(pairEClass, PAIR__VALUE);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -961,6 +1010,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_MigrationPath(), this.getMigrationPath(), null, "migrationPath", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_UserRulesDirectories(), ecorePackage.getEString(), "userRulesDirectories", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfigurationElement_Options(), this.getPair(), null, "options", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1023,6 +1073,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEClass(technologyEClass, Technology.class, "Technology", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTechnology_Id(), ecorePackage.getEString(), "id", null, 0, 1, Technology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTechnology_VersionRange(), ecorePackage.getEString(), "versionRange", null, 0, 1, Technology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(pairEClass, Pair.class, "Pair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPair_Key(), ecorePackage.getEString(), "key", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPair_Value(), ecorePackage.getEString(), "value", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

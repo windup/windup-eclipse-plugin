@@ -134,14 +134,16 @@ public class MarkerService {
 	private void createWindupMarkers(ConfigurationElement configuration, IProgressMonitor monitor) throws CoreException {
 		int count = 0;
 		for (Input input : configuration.getInputs()) {
-			for (Issue issue : input.getWindupResult().getIssues()) {
-				IFile resource = ModelService.getIssueResource(issue);
-				if (resource == null) {
-					WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
-					continue;
+			if (input.getWindupResult() != null) {
+				for (Issue issue : input.getWindupResult().getIssues()) {
+					IFile resource = ModelService.getIssueResource(issue);
+					if (resource == null) {
+						WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
+						continue;
+					}
+					createWindupMarker(issue, configuration, resource);
+					monitor.worked(++count);
 				}
-				createWindupMarker(issue, configuration, resource);
-				monitor.worked(++count);
 			}
 		}
 	}

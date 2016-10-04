@@ -394,6 +394,29 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Pair} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected PairItemProvider pairItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Pair}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createPairAdapter() {
+		if (pairItemProvider == null) {
+			pairItemProvider = new PairItemProvider(this);
+		}
+
+		return pairItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -506,6 +529,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (quickFixItemProvider != null) quickFixItemProvider.dispose();
 		if (migrationPathItemProvider != null) migrationPathItemProvider.dispose();
 		if (technologyItemProvider != null) technologyItemProvider.dispose();
+		if (pairItemProvider != null) pairItemProvider.dispose();
 	}
 
 }

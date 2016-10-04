@@ -51,6 +51,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_QUICKFIX_WARNING = "icons/quickfix_warning.png"; //$NON-NLS-1$
     public static final String IMG_QUICKFIX_INFO = "icons/quickfix_info.png"; //$NON-NLS-1$
     public static final String IMG_RULE = "icons/rule.gif"; //$NON-NLS-1$
+    public static final String IMG_ARGS = "icons/variable_tab.gif"; //$NON_NLS-1$
     public static final String IMG_SEVERITY = "icons/severity.png"; //$NON-NLS-1$
     public static final String IMG_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
     public static final String IMG_FIXED = "icons/fixedIssue.png"; //$NON-NLS-1$
@@ -166,6 +167,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_DELETE_ALL, createImageDescriptor(IMG_DELETE_ALL));
 		reg.put(IMG_REPORT, createImageDescriptor(IMG_REPORT));
 		reg.put(IMG_STALE_ISSUE, createImageDescriptor(IMG_STALE_ISSUE));
+		reg.put(IMG_ARGS, createImageDescriptor(IMG_ARGS));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

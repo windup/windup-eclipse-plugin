@@ -34,6 +34,9 @@ public class Messages extends NLS
     public static String Question;
 
     public static String Options;
+    public static String windupOption;
+    public static String KEY;
+    public static String VALUE;
 
     public static String WindupReportExport_page_one_title;
     public static String WindupReportExport_page_one_description;
@@ -72,8 +75,6 @@ public class Messages extends NLS
     public static String launchTab;
     public static String launchTabTitle;
     public static String launchName;
-    
-    public static String rulesTabName;
     
     public static String inputProjects;
     public static String inputProjectsDescription;

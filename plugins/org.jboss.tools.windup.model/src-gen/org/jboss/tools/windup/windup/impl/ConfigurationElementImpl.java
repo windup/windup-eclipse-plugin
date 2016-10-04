@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.WindupPackage;
 
 /**
@@ -40,6 +41,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getMigrationPath <em>Migration Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getUserRulesDirectories <em>User Rules Directories</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getOptions <em>Options</em>}</li>
  * </ul>
  *
  * @generated
@@ -184,6 +186,16 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<String> userRulesDirectories;
+
+	/**
+	 * The cached value of the '{@link #getOptions() <em>Options</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOptions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Pair> options;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -388,11 +400,25 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Pair> getOptions() {
+		if (options == null) {
+			options = new EObjectContainmentEList.Resolving<Pair>(Pair.class, this, WindupPackage.CONFIGURATION_ELEMENT__OPTIONS);
+		}
+		return options;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
 				return ((InternalEList<?>)getInputs()).basicRemove(otherEnd, msgs);
+			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
+				return ((InternalEList<?>)getOptions()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -424,6 +450,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return basicGetMigrationPath();
 			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
 				return getUserRulesDirectories();
+			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
+				return getOptions();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -467,6 +495,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getUserRulesDirectories().clear();
 				getUserRulesDirectories().addAll((Collection<? extends String>)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
+				getOptions().clear();
+				getOptions().addAll((Collection<? extends Pair>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -506,6 +538,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
 				getUserRulesDirectories().clear();
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
+				getOptions().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -536,6 +571,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return migrationPath != null;
 			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
 				return userRulesDirectories != null && !userRulesDirectories.isEmpty();
+			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
+				return options != null && !options.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

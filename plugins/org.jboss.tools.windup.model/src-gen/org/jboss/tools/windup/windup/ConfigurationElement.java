@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories <em>User Rules Directories</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getOptions <em>Options</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -232,5 +233,21 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<String> getUserRulesDirectories();
+
+	/**
+	 * Returns the value of the '<em><b>Options</b></em>' containment reference list.
+	 * The list contents are of type {@link org.jboss.tools.windup.windup.Pair}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Options</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Options</em>' containment reference list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_Options()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	EList<Pair> getOptions();
 
 } // ConfigurationElement
