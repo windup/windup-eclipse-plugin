@@ -37,6 +37,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 
 import com.google.common.collect.Lists;
@@ -137,8 +138,9 @@ public class LaunchUtils {
 		}
 
 		private boolean matches(ILaunchConfiguration other) throws CoreException {
-			return Collator.getInstance().equals(project.getName(), 
-					other.getAttribute(ATTR_PROJECT_NAME, DEFAULT));
+			return WindupConstants.LAUNCH_TYPE.equals(other.getType().getIdentifier())
+					&& Collator.getInstance().equals(project.getName(), 
+							other.getAttribute(ATTR_PROJECT_NAME, DEFAULT));
 		}
 	}
 }
