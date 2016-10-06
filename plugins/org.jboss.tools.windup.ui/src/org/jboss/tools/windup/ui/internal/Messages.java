@@ -37,6 +37,9 @@ public class Messages extends NLS
     public static String windupOption;
     public static String KEY;
     public static String VALUE;
+    
+    public static String showInIssueExplorer;
+    public static String showIssueDetails;
 
     public static String WindupReportExport_page_one_title;
     public static String WindupReportExport_page_one_description;

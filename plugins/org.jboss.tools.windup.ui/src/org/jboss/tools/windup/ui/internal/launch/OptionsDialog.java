@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -20,11 +23,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.windup.config.ConfigurationOption;
 
-public class KeyValueDialog extends Dialog {
+public class OptionsDialog extends Dialog {
 
 	private String key;
 	private String value;
@@ -33,9 +39,25 @@ public class KeyValueDialog extends Dialog {
 	private Text keyText;
 	private Label valueLabel;
 	private Text valueText;
+	
+	private WindupOptionsService optionsService;
 
-	public KeyValueDialog(Shell shell) {
+	public OptionsDialog(Shell shell, WindupOptionsService optionsService) {
 		super(shell);
+		this.optionsService = optionsService;
+	}
+	
+	@Override
+	protected void initializeBounds() {
+		super.initializeBounds();
+		ProgressBar progress = new ProgressBar(getParentShell(), SWT.HORIZONTAL|SWT.INDETERMINATE);
+		optionsService.loadOptions(new Consumer<List<ConfigurationOption>>() {
+			@Override
+			public void accept(List<ConfigurationOption> options) {
+				progress.dispose();
+				System.out.println(options);
+			}
+		});
 	}
 
 	@Override

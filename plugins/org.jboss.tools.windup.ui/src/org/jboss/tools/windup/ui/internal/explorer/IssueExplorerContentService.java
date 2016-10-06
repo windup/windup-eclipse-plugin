@@ -15,6 +15,7 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKE
 import static org.jboss.tools.windup.ui.internal.explorer.MarkerUtil.getMarkers;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,6 +34,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * A service for computing the issue explorer's input.
@@ -44,6 +46,7 @@ public class IssueExplorerContentService {
 	@Inject private IssueGroupService groupService;
 	@Inject private IEclipseContext context;
 	@Inject private ModelService modelService;
+	private Map<IMarker, MarkerNode> nodeMap = Maps.newHashMap();
 	
 	public boolean hasChildren(Object element) {
 		if (element instanceof TreeNode) {
@@ -78,7 +81,10 @@ public class IssueExplorerContentService {
 	private Object[] createNodeGroups(List<IMarker> markers) {
 		IssueExplorer explorer = (IssueExplorer)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
 					getActivePage().findView(IssueExplorer.VIEW_ID);
-		return new TreeNodeBuilder(markers, explorer, groupService, context, modelService).build();
+		TreeNodeBuilder builder = new TreeNodeBuilder(markers, explorer, groupService, context, modelService);
+		Object[] input = builder.build();
+		this.nodeMap = builder.getNodeMap();
+		return input;
 	}
 
 	public List<IMarker> collectMarkers() {
@@ -96,5 +102,9 @@ public class IssueExplorerContentService {
 			}
 		}
 		return markers;
+	}
+	
+	public MarkerNode findMarkerNode(IMarker marker) {
+		return nodeMap.get(marker);
 	}
 }

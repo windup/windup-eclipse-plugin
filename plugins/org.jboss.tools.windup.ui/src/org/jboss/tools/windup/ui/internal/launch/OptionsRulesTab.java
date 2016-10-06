@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
+import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -61,9 +62,11 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 	private TableViewer rulesDirectoryViewer;
 	private TableViewer optionsViewer;
 	
+	private WindupOptionsService optionsService;
 	
-	public OptionsRulesTab(ModelService modelService) {
+	public OptionsRulesTab(ModelService modelService, WindupOptionsService optionsService) {
 		this.modelService = modelService;
+		this.optionsService = optionsService;
 	}
 
 	@Override
@@ -186,7 +189,7 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				KeyValueDialog dialog = new KeyValueDialog(parent.getShell());
+				OptionsDialog dialog = new OptionsDialog(parent.getShell(), optionsService);
 				if (dialog.open() == IDialogConstants.OK_ID) {
 					String key = dialog.getKey();
 					String value = dialog.getValue();

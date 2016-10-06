@@ -14,6 +14,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.SourceOption;
@@ -181,7 +183,7 @@ public class WindupService
         try {
         	for (Input input : configuration.getInputs()) {
         		WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
-                ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
+                ExecutionBuilder execBuilder = WindupService.getServiceFromFurnace(ExecutionBuilder.class, progress);
             	
                 Path projectPath = WorkspaceResourceUtils.computePath(input.getUri());
                 progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, input.getName()), IProgressMonitor.UNKNOWN);
@@ -274,7 +276,7 @@ public class WindupService
             progress.subTask(NLS.bind(Messages.generate_windup_graph_for, projectName));
 
             WindupProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
-            ExecutionBuilder execBuilder = getServiceFromFurnace(ExecutionBuilder.class, progress);
+            ExecutionBuilder execBuilder = WindupService.getServiceFromFurnace(ExecutionBuilder.class, progress);
             
             /*ExecutionResults results = execBuilder.begin(WindupRuntimePlugin.findWindupHome().toPath())
                         .setInput(inputDir.toPath())
@@ -465,51 +467,52 @@ public class WindupService
     {
         return ModelService.reportsDir.append(resource.getProject().getName());
     }
-
-    /**
-     * TODO: DOC ME
-     * 
-     * @param monitor
-     */
-    private void waitForFurnace(IProgressMonitor monitor)
-    {
+    
+    public static void waitForFurnace(IProgressMonitor monitor) {
         // protect against a null given for the progress monitor
         IProgressMonitor progress;
-        if (monitor != null)
-        {
+        if (monitor != null) {
             progress = new SubProgressMonitor(monitor, 1);
         }
-        else
-        {
+        else {
             progress = new NullProgressMonitor();
         }
 
         // start the task
-        progress.beginTask(Messages.waiting_for_furnace, IProgressMonitor.UNKNOWN);
+        progress.beginTask("Waiting for Furnace.", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
         FurnaceProvider.INSTANCE.startFurnace();
-        try
-        {
+        try {
             FurnaceService.INSTANCE.waitUntilContainerIsStarted();
         }
-        catch (InterruptedException e)
-        {
+        catch (InterruptedException e) {
             WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
         }
 
         progress.done();
     }
-
+    
+    public static List<ConfigurationOption> getWindupConfigurationOptions() {
+    	waitForFurnace(null);
+        List<ConfigurationOption> results = new ArrayList<ConfigurationOption>();
+        FurnaceService.INSTANCE.lookupImported(ConfigurationOption.class).get();
+        Collections.sort(results, new Comparator<ConfigurationOption>() {
+            @Override
+            public int compare(ConfigurationOption o1, ConfigurationOption o2) {
+                return o2.getPriority() - o1.getPriority();
+            }
+        });
+        return results;
+    }
+    
     /**
      * TODO: DOC ME
      * 
      * @param clazz
      * @return
      */
-    private <T> T getServiceFromFurnace(Class<T> clazz, IProgressMonitor monitor)
-    {
-        this.waitForFurnace(monitor);
-
+    private static <T> T getServiceFromFurnace(Class<T> clazz, IProgressMonitor monitor) {
+        waitForFurnace(monitor);
         return FurnaceService.INSTANCE.lookupImported(clazz).get();
     }
 }

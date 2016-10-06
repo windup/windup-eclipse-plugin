@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
@@ -66,6 +67,7 @@ public class IssueExplorer extends CommonNavigator {
 	@Inject private ModelService modelService;
 	@Inject private IssueGroupService groupService;
 	@Inject private EPartService partService;
+	@Inject private IssueExplorerContentService contentService;
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
 		@Override
@@ -76,6 +78,23 @@ public class IssueExplorer extends CommonNavigator {
 			getCommonViewer().refresh();
 		}
 	};
+	
+	public void showIssue(IMarker marker) {
+		MarkerNode node = contentService.findMarkerNode(marker);
+		if (node != null) {
+			List<Object> segments = Lists.newArrayList();
+			TreeNode parent = node.getParent();
+			while (parent != null) {
+				if (parent.getSegment() != null) {
+					segments.add(0, parent);
+				}
+				parent = parent.getParent();
+			}
+			segments.add(node);
+			TreePath path = new TreePath(segments.toArray(new TreeNode[segments.size()]));
+			getCommonViewer().setSelection(new StructuredSelection(path), true);
+		}
+	}
 	
 	@Override
 	public void createPartControl(Composite aParent) {
@@ -174,7 +193,7 @@ public class IssueExplorer extends CommonNavigator {
 	};
 	
 	private Object findIssueNode(IMarker marker) {
-		List<TreeItem> treeItems = Lists.newArrayList();
+ 		List<TreeItem> treeItems = Lists.newArrayList();
 		collectTreeItems(getCommonViewer().getTree(), treeItems);
 		for (TreeItem item : treeItems) {
 			Object data = item.getData();
@@ -191,6 +210,9 @@ public class IssueExplorer extends CommonNavigator {
 	private static void collectTreeItems(Tree tree, List<TreeItem> treeItems) {
 	    for(TreeItem item : tree.getItems()) {
 	    	treeItems.add(item);
+	    	if (item.getData() instanceof MarkerNode) {
+	    		System.out.println();
+	    	}
 	    	collectTreeItems(item, treeItems);
 	    }
 	}

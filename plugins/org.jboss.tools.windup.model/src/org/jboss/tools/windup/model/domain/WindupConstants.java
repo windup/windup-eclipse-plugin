@@ -22,6 +22,11 @@ public interface WindupConstants {
 	String LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.run";
 	
 	/**
+	 * Windup Services
+	 */
+	String LOADING_OPTIONS = "Loading Windup Options";
+	
+	/**
 	 * Projects launch configuration attribute.
 	 */
 	String DEFAULT = "";

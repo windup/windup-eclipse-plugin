@@ -91,6 +91,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private ModelService modelService;
 		private IEclipseContext context;
 		private ConfigurationElement configuration;
+		private Map<IMarker, MarkerNode> nodeMap = Maps.newHashMap();
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
@@ -122,6 +123,10 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				return new TreeNode[0];
 			}
 			return children.stream().toArray(TreeNode[]::new);
+		}
+		
+		public Map<IMarker, MarkerNode> getNodeMap() {
+			return nodeMap;
 		}
 		
 		public void build(TreeNode root, TreeNode node, TreePath path, IMarker marker, int index) {
@@ -193,6 +198,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			child.set(IMarker.class, marker);
 			MarkerNode markerNode = ContextInjectionFactory.make(MarkerNode.class, child);
 			parent.addChild(markerNode);
+			nodeMap.put(marker, markerNode);
 		}
 	}
 	
