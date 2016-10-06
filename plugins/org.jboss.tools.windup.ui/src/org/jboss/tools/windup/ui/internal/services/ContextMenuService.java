@@ -20,14 +20,15 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -42,11 +43,16 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
+import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
+import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Issue;
+import org.jboss.tools.windup.windup.QuickFix;
 
 import com.google.common.collect.Lists;
 
@@ -61,30 +67,64 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 	private IVerticalRulerInfo ruler;
 	private ITextEditor editor;
 	
+	@Inject private IEventBroker broker;
+	@Inject private MarkerService markerService;
 	@Inject private EPartService partService;
+	@Inject private ModelService modelService;
 	
 	private List<IMarker> markers = Lists.newArrayList();
 	
-	private IAction SHOW_IN_EXPLORER_ACTION = new Action(Messages.showInIssueExplorer,
-			WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP)) {
-		@Override
-		public void run() {
+	private WindupAction SHOW_IN_EXPLORER_ACTION = new WindupAction(Messages.showInIssueExplorer,
+			WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
 			MPart part = partService.showPart(IssueExplorer.VIEW_ID, PartState.ACTIVATE);
 			CompatibilityPart compatPart = (CompatibilityPart)part.getObject();
 			IssueExplorer view = (IssueExplorer)compatPart.getPart();
 			view.showIssue(markers.get(0));
-		}
-	};
+		});
 	
-	private IAction SHOW_DETAILS_ACTION = new Action(Messages.showIssueDetails,
-			WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP)) {
-		@Override
-		public void run() {
+	private WindupAction SHOW_DETAILS_ACTION = new WindupAction(Messages.showIssueDetails,
+			WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
 			MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
 			IssueDetailsView view = (IssueDetailsView)part.getObject();
 			view.showIssueDetails(markers.get(0));
+		});
+	
+	private void previewQuickFix() {
+		IMarker marker = markers.get(0);
+		Issue issue = modelService.findIssue(marker);
+		if (issue instanceof Hint) {
+			Hint hint = (Hint)issue;
+			QuickFixUtil.previewQuickFix(hint, marker, broker, markerService);
 		}
-	};
+	}
+	
+	private void applyQuickFix() {
+		IMarker marker = markers.get(0);
+		Issue issue = modelService.findIssue(marker);
+		if (issue instanceof Hint) {
+			Hint hint = (Hint)issue;
+			QuickFix quickFix = hint.getQuickFixes().get(0);
+			QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);
+		}
+	}
+	
+	private void markAsFixed() {
+		IMarker marker = markers.get(0);
+		Issue issue = modelService.findIssue(marker);
+		QuickFixUtil.setFixed(issue, marker, broker, markerService);
+	}
+	
+	private class WindupAction extends Action {
+		private Runnable runner;
+		public WindupAction(String label, ImageDescriptor descriptor, Runnable runner) {
+			super(label, descriptor);
+			this.runner = runner;
+		}
+		@Override
+		public void run() {
+			runner.run();
+		}
+	}
 		
 	@Inject
 	private void execute(@Named(IServiceConstants.ACTIVE_PART) MPart part) {
@@ -163,6 +203,17 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 		if (!markers.isEmpty()) {
 			manager.add(SHOW_IN_EXPLORER_ACTION);
 			manager.add(SHOW_DETAILS_ACTION);
+			IMarker marker = markers.get(0);
+			Issue issue = modelService.findIssue(marker);
+			if (!issue.isStale() && !issue.isFixed() && !issue.getQuickFixes().isEmpty()) {
+				manager.add(new WindupAction(Messages.PreviewQuickFix, null, this::previewQuickFix));
+				manager.add(new WindupAction(Messages.ApplyQuickFix, null, this::applyQuickFix));
+			}
+			if (!issue.isStale() && !issue.isFixed()) {
+				manager.add(new WindupAction(Messages.MarkAsFixed, 
+						WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_FIXED), 
+						this::markAsFixed));
+			}
 		}
 	}
 	

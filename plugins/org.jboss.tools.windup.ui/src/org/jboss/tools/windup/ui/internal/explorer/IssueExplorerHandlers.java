@@ -21,7 +21,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.State;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -33,7 +33,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -45,6 +44,7 @@ import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
 
 /**
@@ -120,6 +120,7 @@ public class IssueExplorerHandlers {
 	
 	private abstract static class AbstractIssueHanlder extends AbstractHandler {
 		@Inject protected IEventBroker broker;
+		@Inject protected MarkerService markerService;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			return (MarkerNode)selection.getFirstElement();
@@ -131,7 +132,10 @@ public class IssueExplorerHandlers {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				((MarkerNode)selected).setFixed();				
+				MarkerNode node = (MarkerNode)selected;
+				Issue issue = node.getIssue();
+				IMarker marker = node.getMarker();
+				QuickFixUtil.setFixed(issue, marker, broker, markerService);
 			}
 			return null;
 		}
@@ -164,15 +168,8 @@ public class IssueExplorerHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
-			IResource left = node.getResource();
-			Shell shell = Display.getCurrent().getActiveShell();
 			Hint hint = (Hint)node.getIssue();
-			QuickFix firstQuickFix = hint.getQuickFixes().get(0); 
-			IResource right = QuickFixUtil.getQuickFixedResource(left, firstQuickFix, hint);
-			QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, right, hint);
-			if (dialog.open() == IssueConstants.APPLY_FIX) {
-				node.applyQuickFix(dialog.getQuickFix());
-			}
+			QuickFixUtil.previewQuickFix(hint, node.getMarker(), broker, markerService);
 			return null;
 		}
 	}
@@ -188,7 +185,8 @@ public class IssueExplorerHandlers {
 					for (Object selected : ((StructuredSelection)selection).toList()) {
 						MarkerNode node = (MarkerNode)selected;
 						QuickFix quickFix = node.getIssue().getQuickFixes().get(0);
-						node.applyQuickFix(quickFix);
+						IMarker marker = node.getMarker();
+						QuickFixUtil.applyQuickFix(quickFix, (Hint)node.getIssue(), marker, broker, markerService);
 					}
 				}
 			};

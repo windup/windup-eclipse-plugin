@@ -51,7 +51,6 @@ public interface WindupConstants {
 	String MARKERS_CHANGED = "windup/issue/markers";
 	String GROUPS_CHANGED = "windup/issue/groups";
 	String INPUT_CHANGED = "windup/configuration/input";
-	String ISSUE_CHANGED = "windup/issue/changed";
 	String MARKER_CHANGED = "windup/marker/changed";
 	
 	String EVENT_ISSUE_MARKER = "data";

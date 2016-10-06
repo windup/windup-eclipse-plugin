@@ -14,15 +14,11 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.ui.internal.Messages.issueDeleteError;
 import static org.jboss.tools.windup.ui.internal.Messages.operationError;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -31,19 +27,14 @@ import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
-import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.windup.reporting.model.Severity;
 
 public class MarkerNode extends TreeNode {
 	
 	private Issue issue;
 	private IMarker marker;
-	
-	@Inject private IEventBroker broker;
-	@Inject private MarkerService markerService;
 	
 	@Inject
 	public MarkerNode(IMarker marker, ModelService modelService) {
@@ -85,18 +76,6 @@ public class MarkerNode extends TreeNode {
 	
 	public boolean hasQuickFix() {
 		return !issue.getQuickFixes().isEmpty() && !issue.isFixed();
-	}
-	
-	public void applyQuickFix(QuickFix quickFix) {
-		QuickFixUtil.applyQuickFix(marker.getResource(), quickFix, (Hint)issue);
-		setFixed();
-	}
-	
-	public void setFixed() {
-		this.marker = markerService.createFixedMarker(marker, issue);
-		Dictionary<String, Object> props = new Hashtable<String, Object>();
-		props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
-		broker.post(WindupConstants.ISSUE_CHANGED, props);
 	}
 	
 	public boolean isFixed() {

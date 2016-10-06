@@ -11,8 +11,6 @@
 package org.jboss.tools.windup.ui.internal.issues;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -25,7 +23,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
@@ -76,7 +73,7 @@ public class IssueResolutions {
 			List<IMarker> others = Lists.newArrayList();
 			for (IMarker marker : markers) {
 				Hint hint = modelService.findHint(marker);
-				if (this.issue != hint && !hint.getQuickFixes().isEmpty()) {
+				if (this.issue != hint && !hint.isStale() && !hint.isFixed() && !hint.getQuickFixes().isEmpty()) {
 					others.add(marker);
 				}
 			}
@@ -91,13 +88,8 @@ public class IssueResolutions {
 						throws CoreException, InvocationTargetException, InterruptedException {
 					for (IMarker marker : markers) {
 						Hint hint = modelService.findHint(marker);
-						QuickFix fix = hint.getQuickFixes().get(0);
-						IMarker updatedMarker = markerService.createFixedMarker(marker, hint);
-						QuickFixUtil.applyQuickFix(updatedMarker.getResource(), fix, hint);
-						Dictionary<String, Object> props = new Hashtable<String, Object>();
-						props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
-						props.put(WindupConstants.EVENT_ISSUE_MARKER_UPDATE, updatedMarker);
-						broker.post(WindupConstants.MARKER_CHANGED, props);
+						QuickFix quickFix = hint.getQuickFixes().get(0);
+						QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);
 					}
 				}
 			};

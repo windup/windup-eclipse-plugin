@@ -107,4 +107,8 @@ public class IssueExplorerContentService {
 	public MarkerNode findMarkerNode(IMarker marker) {
 		return nodeMap.get(marker);
 	}
+	
+	public void updateNodeMapping(MarkerNode node, IMarker marker) {
+		nodeMap.put(marker, node);
+	}
 }

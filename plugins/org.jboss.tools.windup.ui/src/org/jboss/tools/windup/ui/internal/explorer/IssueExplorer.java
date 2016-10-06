@@ -13,7 +13,6 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER;
 import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER_UPDATE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.ISSUE_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_DELETED;
@@ -118,7 +117,6 @@ public class IssueExplorer extends CommonNavigator {
 		getCommonViewer().setComparator(new IssueExplorerComparator());
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
-		broker.subscribe(ISSUE_CHANGED, issueChangedHandler);
 		broker.subscribe(MARKER_DELETED, markerDeletedHandler);
 		broker.subscribe(MARKER_CHANGED, markerChangedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
@@ -130,19 +128,6 @@ public class IssueExplorer extends CommonNavigator {
 			refresh();
 			// TODO: restore previously expanded nodes, selection, scrolls, etc.
 			getCommonViewer().collapseAll();
-		}
-	};
-	
-	private EventHandler issueChangedHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
-			Object node = findIssueNode(marker);
-			if (node != null) {
-				Display.getDefault().syncExec(() -> {
-					getCommonViewer().refresh(node, true);
-				});
-			}
 		}
 	};
 	
@@ -176,6 +161,7 @@ public class IssueExplorer extends CommonNavigator {
 			if (node != null) {
 				MarkerNode markerNode = (MarkerNode)node;
 				markerNode.setMarker(updatedMarker);
+				contentService.updateNodeMapping(markerNode, updatedMarker);
 				Display.getDefault().syncExec(() -> {
 					getCommonViewer().refresh(node, true);
 				});
@@ -210,9 +196,6 @@ public class IssueExplorer extends CommonNavigator {
 	private static void collectTreeItems(Tree tree, List<TreeItem> treeItems) {
 	    for(TreeItem item : tree.getItems()) {
 	    	treeItems.add(item);
-	    	if (item.getData() instanceof MarkerNode) {
-	    		System.out.println();
-	    	}
 	    	collectTreeItems(item, treeItems);
 	    }
 	}
@@ -298,7 +281,6 @@ public class IssueExplorer extends CommonNavigator {
 		broker.unsubscribe(markersChangedHandler);
 		broker.unsubscribe(markerDeletedHandler);
 		broker.unsubscribe(markerChangedHandler);
-		broker.unsubscribe(issueChangedHandler);
 		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();
 		groupService.save();

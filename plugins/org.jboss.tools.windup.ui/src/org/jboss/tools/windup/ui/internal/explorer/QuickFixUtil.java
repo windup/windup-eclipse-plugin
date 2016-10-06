@@ -10,10 +10,20 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.text.Document;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.util.DocumentUtils;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.windup.reporting.model.QuickfixType;
 
@@ -22,9 +32,20 @@ import org.jboss.windup.reporting.model.QuickfixType;
  */
 public class QuickFixUtil {
 	
-	public static void applyQuickFix(IResource original, QuickFix quickFix, Hint hint) {
+	public static void applyQuickFix(QuickFix quickFix, Hint hint, IMarker marker, 
+			IEventBroker broker, MarkerService markerService) {
+		IResource original = marker.getResource();
 		IResource newResource = QuickFixUtil.getQuickFixedResource(original, quickFix, hint);
 		DocumentUtils.replace(original, newResource);
+		QuickFixUtil.setFixed(hint, marker, broker, markerService);
+	}
+	
+	public static void setFixed(Issue issue, IMarker marker, IEventBroker broker, MarkerService markerService) {
+		Dictionary<String, Object> props = new Hashtable<String, Object>();
+		IMarker updatedMarker = markerService.createFixedMarker(marker, issue);
+		props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
+		props.put(WindupConstants.EVENT_ISSUE_MARKER_UPDATE, updatedMarker);
+		broker.post(WindupConstants.MARKER_CHANGED, props);
 	}
 	
 	public static IResource getQuickFixedResource(IResource original, QuickFix quickFix, Hint hint) {
@@ -49,5 +70,17 @@ public class QuickFixUtil {
 			return project.createResource(document.get());
 		}
 		return null;
+	}
+	
+	public static void previewQuickFix(Hint hint, IMarker marker, IEventBroker broker,
+			MarkerService markerService) {
+		IResource left = marker.getResource();
+		Shell shell = Display.getCurrent().getActiveShell();
+		QuickFix firstQuickFix = hint.getQuickFixes().get(0); 
+		IResource right = QuickFixUtil.getQuickFixedResource(left, firstQuickFix, hint);
+		QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, right, hint);
+		if (dialog.open() == IssueConstants.APPLY_FIX) {
+			QuickFixUtil.applyQuickFix(firstQuickFix, hint, marker, broker, markerService);
+		}
 	}
 }

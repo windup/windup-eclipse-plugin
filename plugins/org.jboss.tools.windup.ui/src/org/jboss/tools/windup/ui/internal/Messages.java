@@ -41,6 +41,10 @@ public class Messages extends NLS
     public static String showInIssueExplorer;
     public static String showIssueDetails;
 
+    public static String PreviewQuickFix;
+    public static String ApplyQuickFix;
+    public static String MarkAsFixed;
+    
     public static String WindupReportExport_page_one_title;
     public static String WindupReportExport_page_one_description;
     public static String WindupReportExport_exportReportsTitle;
