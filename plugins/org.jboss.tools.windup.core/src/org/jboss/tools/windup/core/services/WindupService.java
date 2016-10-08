@@ -45,6 +45,7 @@ import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.Pair;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -200,7 +201,6 @@ public class WindupService
                 if (path.getSource() != null) {
                 	options.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
                 }
-                
                 if (!configuration.isGenerateReport()) {
                 	options.setOption(SkipReportsRenderingOption.NAME, true);
                 }
@@ -210,6 +210,10 @@ public class WindupService
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
                 	File file = new File(configuration.getUserRulesDirectories().get(0));
                 	options.setOption(UserRulesDirectoryOption.NAME, file);
+                }
+                // TODO: This is half-baked since we're migrating to external Windup launch soon.
+                for (Pair pair : configuration.getOptions()) {
+                	options.setOption(pair.getKey(), Lists.newArrayList(pair.getValue()));
                 }
                 ExecutionResults results = options.ignore("\\.class$").execute();
                 modelService.populateConfiguration(configuration, input, results);
@@ -495,7 +499,9 @@ public class WindupService
     public static List<ConfigurationOption> getWindupConfigurationOptions() {
     	waitForFurnace(null);
         List<ConfigurationOption> results = new ArrayList<ConfigurationOption>();
-        FurnaceService.INSTANCE.lookupImported(ConfigurationOption.class).get();
+        for (ConfigurationOption option : FurnaceService.INSTANCE.getAddonRegistry().getServices(ConfigurationOption.class)) {
+            results.add(option);
+        }
         Collections.sort(results, new Comparator<ConfigurationOption>() {
             @Override
             public int compare(ConfigurationOption o1, ConfigurationOption o2) {

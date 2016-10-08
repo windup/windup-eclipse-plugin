@@ -35,7 +35,7 @@ public class Messages extends NLS
 
     public static String Options;
     public static String windupOption;
-    public static String KEY;
+    public static String OPTION;
     public static String VALUE;
     
     public static String showInIssueExplorer;

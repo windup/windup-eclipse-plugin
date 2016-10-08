@@ -83,4 +83,8 @@ public class QuickFixUtil {
 			QuickFixUtil.applyQuickFix(firstQuickFix, hint, marker, broker, markerService);
 		}
 	}
+	
+	public static boolean isIssueFixable(Issue issue) {
+		return !issue.isStale() && !issue.isFixed() && !issue.getQuickFixes().isEmpty();
+	}
 }

@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -40,12 +41,15 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerService;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
+
+import com.google.common.collect.Lists;
 
 /**
  * Handlers used by the Issue Explorer.
@@ -118,7 +122,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	private abstract static class AbstractIssueHanlder extends AbstractHandler {
+	private abstract static class AbstractIssueHandler extends AbstractHandler {
 		@Inject protected IEventBroker broker;
 		@Inject protected MarkerService markerService;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
@@ -127,7 +131,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static class MarkIssueFixedHandler extends AbstractIssueHanlder {
+	public static class MarkIssueFixedHandler extends AbstractIssueHandler {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -141,7 +145,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static class ViewIssueDetailsHandler extends AbstractIssueHanlder {
+	public static class ViewIssueDetailsHandler extends AbstractIssueHandler {
 		@Inject private EPartService partService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -153,7 +157,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static class RefreshIssuesHandler extends AbstractIssueHanlder {
+	public static class RefreshIssuesHandler extends AbstractIssueHandler {
 		@Inject private ModelService modelService;
 		@Inject private MarkerService markerService;
 		@Override
@@ -164,7 +168,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static class PreviewQuickFixHandler extends AbstractIssueHanlder {
+	public static class PreviewQuickFixHandler extends AbstractIssueHandler {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
@@ -174,7 +178,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 
-	public static class IssueQuickFixHandler extends AbstractIssueHanlder {
+	public static class IssueQuickFixHandler extends AbstractIssueHandler {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -199,7 +203,7 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
-	public static class DeleteIssueHandler extends AbstractIssueHanlder {
+	public static class DeleteIssueHandler extends AbstractIssueHandler {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -210,6 +214,52 @@ public class IssueExplorerHandlers {
 				broker.send(WindupConstants.MARKER_DELETED, props);
 			}
 			return null;
+		}
+	}
+	
+	public static class QuickFixAllHandler extends AbstractIssueHandler {
+		@Override
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
+			List<MarkerNode> fixableNodes = Lists.newArrayList();
+			for (Object selected : ((StructuredSelection)selection).toList()) {
+				TreeNode node = (TreeNode)selected;
+				IssueExplorerHandlers.collectQuickFixableNodes(node, fixableNodes);
+			}
+			
+			for (MarkerNode node : fixableNodes) {
+				Hint hint = (Hint)node.getIssue();
+				QuickFix quickFix = hint.getQuickFixes().get(0);
+				IMarker marker = node.getMarker();
+				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+					@Override
+					protected void execute(IProgressMonitor monitor)
+							throws CoreException, InvocationTargetException, InterruptedException {
+						QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);	
+					}
+				};
+				try {
+					new ProgressMonitorDialog(Display.getDefault().getActiveShell()).run(false, false, op);
+				} catch (InvocationTargetException | InterruptedException e) {
+					WindupUIPlugin.log(e);
+				}
+			}
+			return null;
+		}
+	}
+	
+	private static void collectQuickFixableNodes(TreeNode node, List<MarkerNode> nodes) {
+		for (TreeNode child : node.getChildren()) {
+			if (child instanceof MarkerNode) {
+				MarkerNode childNode = (MarkerNode)child;
+				Issue issue = childNode.getIssue();
+				if (QuickFixUtil.isIssueFixable(issue)) {
+					nodes.add(childNode);
+				}
+			}
+			else {
+				collectQuickFixableNodes(child, nodes);
+			}
 		}
 	}
 }

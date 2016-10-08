@@ -158,10 +158,10 @@ public class IssueExplorer extends CommonNavigator {
 			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
 			IMarker updatedMarker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER_UPDATE);
 			Object node = findIssueNode(marker);
+			contentService.updateNodeMapping(marker, updatedMarker);
 			if (node != null) {
 				MarkerNode markerNode = (MarkerNode)node;
 				markerNode.setMarker(updatedMarker);
-				contentService.updateNodeMapping(markerNode, updatedMarker);
 				Display.getDefault().syncExec(() -> {
 					getCommonViewer().refresh(node, true);
 				});

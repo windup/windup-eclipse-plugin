@@ -22,7 +22,8 @@ Bundle-ClassPath: .,
  lib/windup-rules-base-api.jar,
  lib/blueprints-core.jar,
  lib/windup-tooling-api.jar,
- lib/windup-rules-java-api.jar
+ lib/windup-rules-java-api.jar,
+ lib/windup-utils-forge-addon.jar
 Export-Package: com.tinkerpop.frames;
   uses:="com.tinkerpop.blueprints.util.wrappers,
    com.tinkerpop.frames.annotations,
@@ -269,5 +270,6 @@ Export-Package: com.tinkerpop.frames;
    org.jboss.windup.graph,
    org.jboss.forge.furnace,
    org.jboss.windup.exec,
-   org.jboss.forge.furnace.util"
+   org.jboss.forge.furnace.util",
+ org.jboss.windup.util.exception
 Import-Package: org.jboss.forge.furnace.proxy

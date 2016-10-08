@@ -11,84 +11,76 @@
 package org.jboss.tools.windup.ui.internal.launch;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.windup.config.ConfigurationOption;
 
 public class OptionsDialog extends Dialog {
 
-	private String key;
+	private ConfigurationOption configurationOption;
 	private String value;
 
-	private Label keyLabel;
-	private Text keyText;
+	private Label optionLabel;
+	private Combo optionCombo;
 	private Label valueLabel;
 	private Text valueText;
 	
-	private WindupOptionsService optionsService;
-
-	public OptionsDialog(Shell shell, WindupOptionsService optionsService) {
+	private List<ConfigurationOption> configurationOptions;
+	
+	public OptionsDialog(Shell shell, List<ConfigurationOption> configurationOptions) {
 		super(shell);
-		this.optionsService = optionsService;
+		this.configurationOptions = configurationOptions;
 	}
 	
 	@Override
-	protected void initializeBounds() {
-		super.initializeBounds();
-		ProgressBar progress = new ProgressBar(getParentShell(), SWT.HORIZONTAL|SWT.INDETERMINATE);
-		optionsService.loadOptions(new Consumer<List<ConfigurationOption>>() {
-			@Override
-			public void accept(List<ConfigurationOption> options) {
-				progress.dispose();
-				System.out.println(options);
-			}
-		});
-	}
-
-	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
-		((GridLayout) comp.getLayout()).numColumns = 2;
-
-		keyLabel = new Label(comp, SWT.NONE);
-		keyLabel.setText(Messages.KEY);
-		keyLabel.setFont(comp.getFont());
-
-		keyText = new Text(comp, SWT.BORDER | SWT.SINGLE);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 300;
-		keyText.setLayoutData(gd);
-		keyText.setFont(comp.getFont());
-		keyText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateButtons();
-			}
-		});
-
-		valueLabel = new Label(comp, SWT.NONE);
-		valueLabel.setText(Messages.VALUE);
+		((GridLayout) comp.getLayout()).numColumns = 1;
+		
+		Composite container = new Composite(comp, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, false).hint(400, SWT.DEFAULT).applyTo(container);
+		optionLabel = new Label(container, SWT.NONE);
+		optionLabel.setText(Messages.OPTION+":");
+		optionLabel.setFont(comp.getFont());
+		GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).align(SWT.RIGHT, SWT.CENTER).applyTo(optionLabel);
+		
+		optionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(optionCombo);
+		optionCombo.setFont(comp.getFont());
+			
+		for (ConfigurationOption option : configurationOptions) {
+			optionCombo.add(option.getName());
+		}
+		
+		optionCombo.select(0);
+		
+		container = new Composite(comp, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, false).hint(400, SWT.DEFAULT).applyTo(container);
+		
+		valueLabel = new Label(container, SWT.NONE);
+		valueLabel.setText(Messages.VALUE+":");
 		valueLabel.setFont(comp.getFont());
-
-		valueText = new Text(comp, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 300;
-		valueText.setLayoutData(gd);
+		GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).align(SWT.RIGHT, SWT.CENTER).applyTo(valueLabel);
+		
+		valueText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(valueText);
+		
 		valueText.setFont(comp.getFont());
 		valueText.addModifyListener(new ModifyListener() {
 			@Override
@@ -97,11 +89,13 @@ public class OptionsDialog extends Dialog {
 			}
 		});
 
+		
+		valueText.setFocus();
 		return comp;
 	}
 
-	public String getKey() {
-		return key;
+	public ConfigurationOption getOption() {
+		return configurationOption;
 	}
 	
 	public String getValue() {
@@ -111,10 +105,10 @@ public class OptionsDialog extends Dialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-			key = keyText.getText().trim();
+			configurationOption = configurationOptions.get(optionCombo.getSelectionIndex());
 			value = valueText.getText().trim();
 		} else {
-			key = null;
+			configurationOption = null;
 			value = null;
 		}
 		super.buttonPressed(buttonId);
@@ -127,9 +121,8 @@ public class OptionsDialog extends Dialog {
 	}
 
 	protected void updateButtons() {
-		String name = keyText.getText().trim();
 		String value = valueText.getText().trim();
-		getButton(IDialogConstants.OK_ID).setEnabled((name.length() > 0) && (value.length() > 0));
+		getButton(IDialogConstants.OK_ID).setEnabled((value.length() > 0));
 	}
 
 	@Override

@@ -15,11 +15,12 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKE
 import static org.jboss.tools.windup.ui.internal.explorer.MarkerUtil.getMarkers;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -34,7 +35,6 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * A service for computing the issue explorer's input.
@@ -46,7 +46,7 @@ public class IssueExplorerContentService {
 	@Inject private IssueGroupService groupService;
 	@Inject private IEclipseContext context;
 	@Inject private ModelService modelService;
-	private Map<IMarker, MarkerNode> nodeMap = Maps.newHashMap();
+	private BidiMap nodeMap = new DualHashBidiMap();
 	
 	public boolean hasChildren(Object element) {
 		if (element instanceof TreeNode) {
@@ -105,10 +105,13 @@ public class IssueExplorerContentService {
 	}
 	
 	public MarkerNode findMarkerNode(IMarker marker) {
-		return nodeMap.get(marker);
+		return (MarkerNode)nodeMap.get(marker);
 	}
 	
-	public void updateNodeMapping(MarkerNode node, IMarker marker) {
-		nodeMap.put(marker, node);
+	public void updateNodeMapping(IMarker original, IMarker updatedMarker) {
+		MarkerNode node = (MarkerNode)nodeMap.get(original);
+		node.setMarker(updatedMarker);
+		nodeMap.remove(original);
+		nodeMap.put(updatedMarker, node);
 	}
 }

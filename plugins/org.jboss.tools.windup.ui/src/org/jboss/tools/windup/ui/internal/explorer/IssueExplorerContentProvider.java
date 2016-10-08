@@ -18,6 +18,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -91,7 +93,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private ModelService modelService;
 		private IEclipseContext context;
 		private ConfigurationElement configuration;
-		private Map<IMarker, MarkerNode> nodeMap = Maps.newHashMap();
+		private BidiMap nodeMap = new DualHashBidiMap();
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
@@ -125,7 +127,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			return children.stream().toArray(TreeNode[]::new);
 		}
 		
-		public Map<IMarker, MarkerNode> getNodeMap() {
+		public BidiMap getNodeMap() {
 			return nodeMap;
 		}
 		

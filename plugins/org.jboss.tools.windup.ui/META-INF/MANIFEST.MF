@@ -57,7 +57,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors,
  org.eclipse.e4.core.commands,
  org.eclipse.ui.console,
- org.apache.commons.lang
+ org.apache.commons.lang,
+ org.apache.commons.collections
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,

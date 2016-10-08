@@ -13,7 +13,10 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import javax.inject.Inject;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
+import org.jboss.tools.windup.windup.Issue;
 
 /**
  * Property testers for the Issue Explorer.
@@ -23,6 +26,7 @@ public class IssueExplorerPropertyTesters {
 	public static final String QUICKFIX = "hasQuickFix";  //$NON-NLS-1$
 	public static final String FIXED = "isFixed";  //$NON-NLS-1$
 	public static final String HIERARCHY = "isGroupByHierarchy"; //$NON-NLS-1$
+	public static final String IS_GROUP = "isGroupNode"; //$NON-NLS-1$
 	
 	public static class QuickFixPropertyTester extends PropertyTester {
 		
@@ -49,5 +53,34 @@ public class IssueExplorerPropertyTesters {
 			}
 			return false;
 		}
+	}
+	
+	public static class GroupPropertyTester extends PropertyTester {
+		@Override
+		public boolean test(Object element, String property, Object[] args, Object expectedValue) {
+			if (IS_GROUP.equals(property)) {
+				if (element instanceof TreeNode && !(element instanceof MarkerNode) && !(element instanceof ReportNode)) {
+					return containsQuickFix((TreeNode)element);
+				}
+			}
+			return false;
+		}
+	}
+	
+	private static boolean containsQuickFix(TreeNode node) {
+		for (TreeNode child : node.getChildren()) {
+			if (child instanceof MarkerNode) {
+				Issue issue = ((MarkerNode)child).getIssue();
+				if (QuickFixUtil.isIssueFixable(issue)) {
+					return true;
+				}
+			}
+			else {
+				if (containsQuickFix(child)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

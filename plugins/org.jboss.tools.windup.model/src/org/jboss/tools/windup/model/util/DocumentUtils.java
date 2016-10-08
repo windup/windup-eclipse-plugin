@@ -67,7 +67,9 @@ public class DocumentUtils {
 			IRegion info = document.getLineInformation(lineNumber);
 			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(document);
 			IRegion search = adapter.find(info.getOffset(), searchString, true, true, true, false);
-			document.replace(search.getOffset(), search.getLength(), replacement);
+			if (search != null) {
+				document.replace(search.getOffset(), search.getLength(), replacement);
+			}
 			return document;
 		} catch (IOException | BadLocationException e) {
 			Activator.log(e);
