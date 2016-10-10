@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -63,6 +64,7 @@ import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 /**
@@ -241,5 +243,23 @@ public class MarkerService {
 			WindupUIPlugin.log(e);
 		}
 		return map;
+	}
+	
+	public static IMarker findMarker(IResource resource, Issue issue, ModelService modelService) {
+		IMarker result = null;
+		try {
+			IMarker[] hints = resource.findMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
+			IMarker[] classifications = resource.findMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
+			IMarker[] markers = (IMarker[]) ArrayUtils.addAll(hints, classifications);
+			for (IMarker marker : markers) {
+				Issue markerIssue = modelService.findIssue(marker);
+				if (Objects.equal(issue, markerIssue)) {
+					return marker;
+				}
+			}
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		return result;
 	}
 }
