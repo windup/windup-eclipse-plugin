@@ -14,6 +14,14 @@
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
+      <view
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.intro.GettingStartedView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.gettingStarted"
+            name="Getting Started"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -530,6 +538,16 @@
           <viewShortcut
                 id="org.jboss.tools.windup.ui.issue.details">
           </viewShortcut>
+       </perspectiveExtension>
+       <perspectiveExtension
+             targetID="*">
+          <view
+                id="org.jboss.tools.windup.ui.gettingStarted:*"
+                minimized="false"
+                relationship="stack"
+                relative="org.eclipse.ui.editorss"
+                visible="true">
+          </view>
        </perspectiveExtension>
     </extension>
     <extension
