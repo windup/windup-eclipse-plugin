@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Shell;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.jboss.tools.windup.core.WindupCorePlugin;
+import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -65,17 +67,20 @@ public class WindupUIPlugin extends AbstractUIPlugin
     /**
      * The constructor
      */
-    public WindupUIPlugin()
-    {
+    public WindupUIPlugin() {
     }
 
     /**
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      */
-    public void start(BundleContext context) throws Exception
-    {
+    public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+    }
+    
+    @Override
+    protected void initializeDefaultPreferences(IPreferenceStore store) {
+    	store.setDefault(WindupConstants.SHOW_GETTING_STARTED, true);
     }
 
     /**

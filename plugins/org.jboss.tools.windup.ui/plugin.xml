@@ -14,14 +14,6 @@
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
-      <view
-            category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.intro.GettingStartedView"
-            icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.gettingStarted"
-            name="Getting Started"
-            restorable="true">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -539,16 +531,6 @@
                 id="org.jboss.tools.windup.ui.issue.details">
           </viewShortcut>
        </perspectiveExtension>
-       <perspectiveExtension
-             targetID="*">
-          <view
-                id="org.jboss.tools.windup.ui.gettingStarted:*"
-                minimized="false"
-                relationship="stack"
-                relative="org.eclipse.ui.editorss"
-                visible="true">
-          </view>
-       </perspectiveExtension>
     </extension>
     <extension
           point="org.eclipse.core.expressions.propertyTesters">
@@ -585,5 +567,15 @@
              class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.issues.IssueResolutionGenerator"
              markerType="org.jboss.tools.windup.core.classificationMarker">
        </markerResolutionGenerator>
+    </extension>
+    <extension
+          point="org.eclipse.ui.editors">
+       <editor
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.intro.GettingStartedEditor"
+             default="false"
+             icon="icons/windup.png"
+             id="org.jboss.tools.windup.ui.gettingStarted"
+             name="Getting Started">
+       </editor>
     </extension>
 </plugin>

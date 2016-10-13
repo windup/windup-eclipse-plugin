@@ -24,6 +24,10 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -38,16 +42,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.windup.Issue;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -120,6 +128,32 @@ public class IssueExplorer extends CommonNavigator {
 		broker.subscribe(MARKER_DELETED, markerDeletedHandler);
 		broker.subscribe(MARKER_CHANGED, markerChangedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
+		initGettingStarted();
+	}
+	
+	private void initGettingStarted() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (WindupUIPlugin.getDefault().getPreferenceStore()
+				.getBoolean(WindupConstants.SHOW_GETTING_STARTED)) {
+			if (window.getWorkbench().getIntroManager().getIntro() != null) {
+				return;
+			}
+			Job gettingStartedJob = new UIJob(WindupConstants.INIT_GETTING_STARTED) {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							ShowGettingStartedAction action = new ShowGettingStartedAction();
+							action.init(window);
+							action.run(null);
+							return;
+						}
+					});
+					return Status.OK_STATUS;
+				}
+			};
+			gettingStartedJob.setSystem(true);
+			gettingStartedJob.schedule();
+		}
 	}
 	
 	private EventHandler markersChangedHandler = new EventHandler() {

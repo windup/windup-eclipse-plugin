@@ -472,6 +472,16 @@ public class WindupService
         return ModelService.reportsDir.append(resource.getProject().getName());
     }
     
+    public static void startFurnace() {
+    	 FurnaceProvider.INSTANCE.startFurnace();
+         try {
+             FurnaceService.INSTANCE.waitUntilContainerIsStarted();
+         }
+         catch (InterruptedException e) {
+             WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
+         }
+    }
+    
     public static void waitForFurnace(IProgressMonitor monitor) {
         // protect against a null given for the progress monitor
         IProgressMonitor progress;
@@ -485,14 +495,8 @@ public class WindupService
         // start the task
         progress.beginTask("Waiting for Furnace.", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
-        FurnaceProvider.INSTANCE.startFurnace();
-        try {
-            FurnaceService.INSTANCE.waitUntilContainerIsStarted();
-        }
-        catch (InterruptedException e) {
-            WindupCorePlugin.logError("Could not load Furance", e); //$NON-NLS-1$
-        }
-
+        WindupService.startFurnace();
+        
         progress.done();
     }
     

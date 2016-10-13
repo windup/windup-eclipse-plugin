@@ -22,6 +22,12 @@ public interface WindupConstants {
 	String LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.run";
 	
 	/**
+	 * Getting Started
+	 */
+	String SHOW_GETTING_STARTED = "org.jboss.tools.windup.ui.gettingStarted";
+	String INIT_GETTING_STARTED = "Windup Getting Started Initialization";
+	
+	/**
 	 * Windup Services
 	 */
 	String LOADING_OPTIONS = "Loading Windup Options";
