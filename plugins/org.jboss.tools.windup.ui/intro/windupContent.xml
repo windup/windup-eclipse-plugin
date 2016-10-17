@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+    <extensionContent id="org.jboss.tools.windup.ui" name="Windup Getting Started"
+        style="overview.css" path="overview/@">
+        <group id="content-group" style-id="content-group">
+            <link label="Windup Getting Started"
+                url="http://org.eclipse.ui.intro/runAction?pluginId=org.jboss.tools.windup.ui&amp;class=org.jboss.tools.windup.ui.intro.ShowGettingStartedAction&amp;id=org.jboss.tools.windup.ui.action.gettingStarted"
+                id="windup-getting-started" style-id="content-link">
+                <text>Get started with Windup Eclipse tools</text>
+            </link>
+        </group>
+    </extensionContent>
+</introContent>
