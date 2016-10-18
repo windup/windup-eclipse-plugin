@@ -12,11 +12,19 @@ package org.jboss.tools.windup.runtime;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.jboss.tools.common.xml.IMemento;
+import org.jboss.tools.common.xml.XMLMemento;
+import org.jboss.windup.bootstrap.help.Help;
+import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -38,6 +46,8 @@ public class WindupRuntimePlugin extends Plugin
      * </p>
      */
     private static final String WINDUP_DIRECTORY = "windup"; //$NON-NLS-1$
+    
+    private static final String HELP_CACHE = "/cache/help/help.xml"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -72,7 +82,31 @@ public class WindupRuntimePlugin extends Plugin
             return null;
         }
     }
-
+    
+    /**
+     * Returns the cached help file from the embedded Windup installation.
+     */
+	public static Help findWindupHelpCache() {
+		Help result = new Help();
+    	File windupHome = WindupRuntimePlugin.findWindupHome();
+    	File cacheFile = new File(windupHome, HELP_CACHE);
+		try {
+		  	URL url = cacheFile.toURI().toURL();
+			InputStream input = url.openStream();
+        	XMLMemento root = XMLMemento.createReadRoot(input);
+            for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
+            	String name = element.getString("name"); //$NON-NLS-1$
+            	XMLMemento child = (XMLMemento)element.getChild("description"); //$NON-NLS-1$
+            	String description = child.getTextData();
+            	OptionDescription option = new OptionDescription(name, description);
+				result.getOptions().add(option);
+            }
+        } catch (Exception e) {
+			WindupRuntimePlugin.log(e);
+		}
+		return result;
+	}
+    
     /**
      * @return singleton instance of the plugin
      */
@@ -98,6 +132,30 @@ public class WindupRuntimePlugin extends Plugin
         super.stop(bundleContext);
         plugin = null;
     }
+    
+	public static void log(IStatus status) {
+		WindupRuntimePlugin.getDefault().getLog().log(status);
+	}
+
+	public static void logErrorMessage(final String message) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
+	}
+
+	public static void logErrorMessage(final String message, final Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e));
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException) {
+			status = ((CoreException) e).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+		}
+		log(status);
+	}
 
     /**
      * <p>

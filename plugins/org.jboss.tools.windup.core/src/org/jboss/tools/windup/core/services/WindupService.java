@@ -14,7 +14,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,8 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
-import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.bootstrap.help.Help;
+import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.SourceOption;
@@ -500,19 +500,14 @@ public class WindupService
         progress.done();
     }
     
-    public static List<ConfigurationOption> getWindupConfigurationOptions() {
-    	waitForFurnace(null);
-        List<ConfigurationOption> results = new ArrayList<ConfigurationOption>();
-        for (ConfigurationOption option : FurnaceService.INSTANCE.getAddonRegistry().getServices(ConfigurationOption.class)) {
-            results.add(option);
-        }
-        Collections.sort(results, new Comparator<ConfigurationOption>() {
-            @Override
-            public int compare(ConfigurationOption o1, ConfigurationOption o2) {
-                return o2.getPriority() - o1.getPriority();
-            }
-        });
-        return results;
+    public static List<String> getWindupConfigurationOptions() {
+    	 List<String> results = Lists.newArrayList();
+    	 Help help = WindupRuntimePlugin.findWindupHelpCache();
+    	 for (OptionDescription description : help.getOptions()) {
+    		 results.add(description.getName());
+    	 }
+    	 Collections.sort(results);
+         return results;
     }
     
     /**

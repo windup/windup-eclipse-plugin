@@ -4,7 +4,7 @@
         style="overview.css" path="overview/@">
         <group id="content-group" style-id="content-group">
             <link label="Windup Getting Started"
-                url="http://org.eclipse.ui.intro/runAction?pluginId=org.jboss.tools.windup.ui&amp;class=org.jboss.tools.windup.ui.intro.ShowGettingStartedAction&amp;id=org.jboss.tools.windup.ui.action.gettingStarted"
+                url="http://org.eclipse.ui.intro/runAction?pluginId=org.jboss.tools.windup.ui&amp;class=org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction&amp;id=org.jboss.tools.windup.ui.action.gettingStarted"
                 id="windup-getting-started" style-id="content-link">
                 <text>Get started with Windup Eclipse tools</text>
             </link>

@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.intro;
+package org.jboss.tools.windup.ui.internal.intro;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.intro.GettingStartedEditor.EditorInput;
+import org.jboss.tools.windup.ui.internal.intro.GettingStartedEditor.EditorInput;
 
 /**
  * Action for opening the {@link GettingStartedEditor}.

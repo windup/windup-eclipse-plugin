@@ -46,7 +46,6 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.WindupFactory;
-import org.jboss.windup.config.ConfigurationOption;
 
 import com.google.common.collect.Lists;
 
@@ -68,7 +67,7 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 	// TODO: We probably want to use this once we start using an external Windup launcher.
 	private WindupOptionsService optionsService;
 	
-	private List<ConfigurationOption> configurationOptions;
+	private List<String> configurationOptions;
 	
 	public OptionsRulesTab(ModelService modelService, WindupOptionsService optionsService) {
 		this.modelService = modelService;
@@ -203,10 +202,10 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 				}
 				OptionsDialog dialog = new OptionsDialog(parent.getShell(), configurationOptions);
 				if (dialog.open() == IDialogConstants.OK_ID) {
-					ConfigurationOption option = dialog.getOption();
+					String option = dialog.getOption();
 					String value = dialog.getValue();
 					Pair pair = WindupFactory.eINSTANCE.createPair();
-					pair.setKey(option.getName());
+					pair.setKey(option);
 					pair.setValue(value);
 					configuration.getOptions().add(pair);
 					reloadOptions();

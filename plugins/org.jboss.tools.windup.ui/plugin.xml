@@ -571,7 +571,7 @@
     <extension
           point="org.eclipse.ui.editors">
        <editor
-             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.intro.GettingStartedEditor"
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.intro.GettingStartedEditor"
              default="false"
              icon="icons/windup.png"
              id="org.jboss.tools.windup.ui.gettingStarted"
@@ -582,7 +582,7 @@
         <actionSet id="org.jboss.tools.windup.ui.actionSet.workbench"
             label="Windup Getting Started" visible="true">
             <action
-                class="org.jboss.tools.windup.ui.intro.ShowGettingStartedAction"
+                class="org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction"
                 icon="icons/windup.png" id="org.jboss.tools.windup.ui.action.gettingStarted"
                 label="Getting Started" menubarPath="help/group.intro" style="push">
             </action>

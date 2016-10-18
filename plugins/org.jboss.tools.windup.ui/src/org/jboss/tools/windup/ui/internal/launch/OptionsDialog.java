@@ -27,11 +27,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.windup.config.ConfigurationOption;
 
 public class OptionsDialog extends Dialog {
 
-	private ConfigurationOption configurationOption;
+	private String configurationOption;
 	private String value;
 
 	private Label optionLabel;
@@ -39,9 +38,9 @@ public class OptionsDialog extends Dialog {
 	private Label valueLabel;
 	private Text valueText;
 	
-	private List<ConfigurationOption> configurationOptions;
+	private List<String> configurationOptions;
 	
-	public OptionsDialog(Shell shell, List<ConfigurationOption> configurationOptions) {
+	public OptionsDialog(Shell shell, List<String> configurationOptions) {
 		super(shell);
 		this.configurationOptions = configurationOptions;
 	}
@@ -63,8 +62,8 @@ public class OptionsDialog extends Dialog {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(optionCombo);
 		optionCombo.setFont(comp.getFont());
 			
-		for (ConfigurationOption option : configurationOptions) {
-			optionCombo.add(option.getName());
+		for (String option : configurationOptions) {
+			optionCombo.add(option);
 		}
 		
 		optionCombo.select(0);
@@ -94,7 +93,7 @@ public class OptionsDialog extends Dialog {
 		return comp;
 	}
 
-	public ConfigurationOption getOption() {
+	public String getOption() {
 		return configurationOption;
 	}
 	

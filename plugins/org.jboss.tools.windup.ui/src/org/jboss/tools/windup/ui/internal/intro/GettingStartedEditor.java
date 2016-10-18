@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.intro;
+package org.jboss.tools.windup.ui.internal.intro;
 
 import java.io.IOException;
 import java.net.URL;

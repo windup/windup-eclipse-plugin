@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.jboss.tools.windup.model.domain.WindupConstants;
-import org.jboss.windup.config.ConfigurationOption;
 
 import com.google.common.collect.Lists;
 
@@ -31,11 +30,11 @@ import com.google.common.collect.Lists;
 @Creatable
 public class WindupOptionsService {
 
-	private List<ConfigurationOption> options = Lists.newArrayList();
+	private List<String> options = Lists.newArrayList();
 	
 	private boolean initialized = false;
 	
-	private void doLoadOptions(Consumer<List<ConfigurationOption>> runner) {
+	private void doLoadOptions(Consumer<List<String>> runner) {
 		Job job = new Job(WindupConstants.LOADING_OPTIONS) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -55,7 +54,7 @@ public class WindupOptionsService {
 		initialized = true;
 	}
 	
-	public void loadOptions(Consumer<List<ConfigurationOption>> runner) {
+	public void loadOptions(Consumer<List<String>> runner) {
 		if (!initialized) {
 			doLoadOptions(runner);
 		}
