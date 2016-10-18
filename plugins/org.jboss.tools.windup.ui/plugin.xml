@@ -578,4 +578,21 @@
              name="Getting Started">
        </editor>
     </extension>
+    <extension point="org.eclipse.ui.actionSets">
+        <actionSet id="org.jboss.tools.windup.ui.actionSet.workbench"
+            label="Windup Getting Started" visible="true">
+            <action
+                class="org.jboss.tools.windup.ui.intro.ShowGettingStartedAction"
+                icon="icons/windup.png" id="org.jboss.tools.windup.ui.action.gettingStarted"
+                label="Getting Started" menubarPath="help/group.intro" style="push">
+            </action>
+        </actionSet>
+    </extension>
+    <extension
+            point="org.eclipse.ui.intro.configExtension">
+        <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/windupContent.xml">
+        </configExtension>
+    </extension>
 </plugin>

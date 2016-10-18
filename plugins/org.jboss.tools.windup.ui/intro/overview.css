@@ -1,0 +1,7 @@
+a#windup-getting-started img {
+	background-image: url(windup_intro.png);
+}
+
+a#windup-getting-started:hover img {
+	background-image: url(windup_intro.png);
+}
