@@ -48,7 +48,7 @@
             uri="windup-ui.e4xmi">
       </fragment>
       <processor
-            apply="initial"
+            apply="always"
             beforefragment="false"
             class="org.jboss.tools.windup.ui.WindupPerspective">
       </processor>
@@ -592,7 +592,7 @@
             point="org.eclipse.ui.intro.configExtension">
         <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="intro/windupContent.xml">
+            content="$nl$/intro/windupContent.xml">
         </configExtension>
     </extension>
 </plugin>
