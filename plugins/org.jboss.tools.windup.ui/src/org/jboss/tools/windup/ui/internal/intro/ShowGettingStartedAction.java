@@ -53,7 +53,6 @@ public class ShowGettingStartedAction implements IWorkbenchWindowActionDelegate 
 						}
 						PlatformUI.getWorkbench().showPerspective(WindupPerspective.ID, window);
 						monitor.worked(1);
-						window.getActivePage().openEditor(EditorInput.INSTANCE, GettingStartedEditor.VIEW_ID);
 						return Status.OK_STATUS;
 					} catch (Throwable e) {
 						WindupUIPlugin.log(e);
