@@ -110,8 +110,10 @@ public class IssueExplorerContentService {
 	
 	public void updateNodeMapping(IMarker original, IMarker updatedMarker) {
 		MarkerNode node = (MarkerNode)nodeMap.get(original);
-		node.setMarker(updatedMarker);
-		nodeMap.remove(original);
-		nodeMap.put(updatedMarker, node);
+		if (node != null) {
+			node.setMarker(updatedMarker);
+			nodeMap.remove(original);
+			nodeMap.put(updatedMarker, node);
+		}
 	}
 }

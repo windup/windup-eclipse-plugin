@@ -362,7 +362,7 @@
             id="org.jboss.tools.windup.ui.groupByFile"
             name="Group By File">
          <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
                id="org.eclipse.ui.commands.toggleState">
          </state>
       </command>
@@ -371,7 +371,7 @@
             id="org.jboss.tools.windup.ui.groupBySeverity"
             name="Group By Severity">
          <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
                id="org.eclipse.ui.commands.toggleState">
          </state>
       </command>
@@ -380,7 +380,7 @@
             id="org.jboss.tools.windup.ui.groupByRule"
             name="Group By Rule">
          <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
                id="org.eclipse.ui.commands.toggleState">
          </state>
       </command>
@@ -582,9 +582,12 @@
         <actionSet id="org.jboss.tools.windup.ui.actionSet.workbench"
             label="Windup Getting Started" visible="true">
             <action
-                class="org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction"
-                icon="icons/windup.png" id="org.jboss.tools.windup.ui.action.gettingStarted"
-                label="Getting Started" menubarPath="help/group.intro" style="push">
+                  class="org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction"
+                  icon="icons/windup.png"
+                  id="org.jboss.tools.windup.ui.action.gettingStarted"
+                  label="Getting Started"
+                  menubarPath="help/group.intro"
+                  style="push">
             </action>
         </actionSet>
     </extension>

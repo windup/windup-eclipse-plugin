@@ -24,7 +24,6 @@ import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.intro.GettingStartedEditor.EditorInput;
 
 /**
  * Action for opening the {@link GettingStartedEditor}.

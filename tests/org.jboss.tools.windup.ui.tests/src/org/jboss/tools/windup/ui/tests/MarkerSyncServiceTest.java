@@ -12,11 +12,12 @@ package org.jboss.tools.windup.ui.tests;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -52,9 +53,11 @@ public class MarkerSyncServiceTest extends WindupUiTest {
 		IFile file = ModelService.getIssueResource(hint);
 		QuickFix quickFix = hint.getQuickFixes().get(0);
 		IMarker marker = MarkerService.findMarker(file, hint, modelService);
-		QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);
+		IResource original = marker.getResource();
+		IResource newResource = QuickFixUtil.getQuickFixedResource(original, quickFix, hint);
+		DocumentUtils.replace(original, newResource);
 		try {
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
