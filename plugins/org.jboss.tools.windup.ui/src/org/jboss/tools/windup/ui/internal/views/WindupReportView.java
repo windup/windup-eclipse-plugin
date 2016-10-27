@@ -10,6 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.views;
 
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
+import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.findProject;
+
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
@@ -40,14 +44,11 @@ import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.services.WindupService;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.Utils;
-
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.findProject;
-import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
 
 /**
  * <p>
@@ -60,8 +61,6 @@ public class WindupReportView implements IShowInTarget
 	@Inject private WindupService windupService;
 	@Inject private ESelectionService selectionService;
 	
-	//@Inject private IViewSite site;
-
     /**
      * The ID of the view as specified by the extension.
      */

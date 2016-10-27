@@ -72,8 +72,6 @@ import com.google.common.collect.Lists;
 @Creatable
 public class WindupService
 {
-    private static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
-
     private List<IWindupListener> windupListeners = new ArrayList<IWindupListener>();
     private Map<IProject, ExecutionResults> projectToResults = new HashMap<>();
     
@@ -378,7 +376,7 @@ public class WindupService
          */
         case IResource.PROJECT:
         {
-            reportPath = projectReportPath.append(PROJECT_REPORT_HOME_PAGE);
+            reportPath = projectReportPath.append(ModelService.PROJECT_REPORT_HOME_PAGE);
             break;
         }
 
@@ -454,10 +452,6 @@ public class WindupService
         }
     }
 
-    public IPath getReportPath(ConfigurationElement configuration) {
-    	return ModelService.reportsDir.append(configuration.getName()).append(PROJECT_REPORT_HOME_PAGE);
-    }
-    
     /**
      * <p>
      * Get the location where the report should be stored for the {@link IProject} containing the given {@link IResource}

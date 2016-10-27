@@ -23,9 +23,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.AbstractSection;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.WindupResult;
-
-import com.google.common.base.Objects;
 
 /**
  * Section containing an embedded browser.
@@ -52,6 +49,6 @@ public class BrowserSection extends AbstractSection {
 	}
 	
 	private void loadReport() {
-		browser.setUrl(windupService.getReportPath(configuration).toString());
+		browser.setUrl(modelService.getReportPath(configuration).toString());
 	}
 }

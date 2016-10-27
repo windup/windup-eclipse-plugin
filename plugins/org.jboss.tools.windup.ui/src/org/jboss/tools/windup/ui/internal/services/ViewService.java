@@ -12,8 +12,11 @@ package org.jboss.tools.windup.ui.internal.services;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -24,6 +27,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Input;
 
 /**
  * Service for view related functionality.
@@ -45,10 +49,16 @@ public class ViewService {
 		return (WindupReportView)part.getObject();
 	}
 	
-	@Inject
+    @Inject
 	@Optional
-	private void activeWindupReportView(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
-		//String url = modelService.getGeneratedReportHomeLocation(configuration).toOSString();
-		//activateWindupReportView().showReport(new Path(url), true);
-	}
+	public void renderReport(@UIEventTopic(LAUNCH_COMPLETED) ConfigurationElement configuration) {
+    	if (configuration.isGenerateReport() && !configuration.getInputs().isEmpty()) {
+    		Input input = configuration.getInputs().get(0);
+    		IPath path = modelService.getGeneratedReport(configuration, input);
+    		File file = new File(path.toString());
+    		if (file.exists()) {
+    			activateWindupReportView().showReport(path, true);
+    		}
+    	}
+    }
 }
