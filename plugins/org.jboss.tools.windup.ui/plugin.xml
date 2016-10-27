@@ -227,7 +227,7 @@
          </separator>
          <command
                commandId="org.jboss.tools.windup.ui.markIssueFixed"
-               icon="icons/fixedIssue.png"
+               icon="icons/fixedIssue.gif"
                label="Mark as Fixed"
                style="push"
                tooltip="Mark issue as fixed.">
