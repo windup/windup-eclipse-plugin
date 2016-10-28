@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.handlers;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ISelection;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.launch.LaunchUtils;
 
@@ -23,8 +25,9 @@ import org.jboss.tools.windup.ui.internal.launch.LaunchUtils;
  * Generates a Windup report. 
  */
 public class GenerateWindupReportHandler {
+	@Inject private ModelService modelService;
     @Execute
     public void execute(@Named(IServiceConstants.ACTIVE_SELECTION) @Optional ISelection selection) {
-    	LaunchUtils.launch(selection, Messages.launchMode);
+    	LaunchUtils.launch(selection, Messages.launchMode, modelService);
     }
 }

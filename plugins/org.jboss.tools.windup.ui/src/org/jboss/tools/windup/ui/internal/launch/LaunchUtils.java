@@ -37,8 +37,10 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 
 import com.google.common.collect.Lists;
 
@@ -47,14 +49,14 @@ import com.google.common.collect.Lists;
  */
 public class LaunchUtils {
 	
-	public static void launch(ISelection selection, String mode) {
+	public static void launch(ISelection selection, String mode, ModelService modelService) {
 		IProject project = getProjectsFromSelection(selection).get(0);
-		launch(project, mode);
+		launch(project, mode, modelService);
 	}
 	
-	public static void launch(IEditorPart editor, String mode) {
+	public static void launch(IEditorPart editor, String mode, ModelService modelService) {
 		IProject project = LaunchUtils.getProjectFromEditor(editor).getProject();
-		launch(project, mode);
+		launch(project, mode, modelService);
 	}
 	
 	public static IProject getProjectFromEditor(IEditorPart editor) {
@@ -65,20 +67,20 @@ public class LaunchUtils {
 		return ((IFileEditorInput)input).getFile().getProject();
 	}
 	
-	private static void launch(IProject project, String mode) {
-		ILaunchConfiguration currentConfig = computeConfiguration(project);
+	private static void launch(IProject project, String mode, ModelService modelService) {
+		ILaunchConfiguration currentConfig = computeConfiguration(project, modelService);
 		if (currentConfig != null) {
 			DebugUITools.launch(currentConfig, mode);
 		}
 	}
 	
-	private static ILaunchConfiguration computeConfiguration(IProject project) {
+	private static ILaunchConfiguration computeConfiguration(IProject project, ModelService modelService) {
 		ILaunchConfiguration currentConfig = null;
 		LaunchConfig launchConfig = new LaunchConfig(project);
 		try {
 			List<ILaunchConfiguration> candidates = collectCandidates(launchConfig);
 			if (candidates.isEmpty()) {
-				currentConfig = createConfiguration(launchConfig);
+				currentConfig = createConfiguration(launchConfig, modelService);
 			}
 			else if (candidates.size() == 1) {
 				currentConfig = candidates.get(0);
@@ -120,12 +122,27 @@ public class LaunchUtils {
 		return candidates;
 	}
 	
-	public static ILaunchConfiguration createConfiguration(LaunchConfig config) throws CoreException {
+	public static ILaunchConfiguration createConfiguration(LaunchConfig config, ModelService modelService) throws CoreException {
+		String name = config.project.getName();
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(LAUNCH_TYPE);
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, 
-				launchManager.generateLaunchConfigurationName(config.project.getName()));
+				launchManager.generateLaunchConfigurationName(name));
 		wc.setAttribute(ATTR_PROJECT_NAME, config.project.getName());
+		ConfigurationElement configuration = modelService.findConfiguration(name);
+		if (configuration == null) {
+			configuration = modelService.createConfiguration(config.project.getName());
+			configuration.setGenerateReport(true);
+		}
+		
+		boolean exists = configuration.getInputs().stream().filter(i -> { 
+			return i.getName().equals(name); }
+		).findAny().isPresent();
+		
+		if (!exists) {
+			modelService.createInput(configuration, Lists.newArrayList(config.project));
+		}
+		
 		return wc.doSave();
 	}
 	
