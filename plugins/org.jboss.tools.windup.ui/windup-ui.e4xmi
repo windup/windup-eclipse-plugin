@@ -18,7 +18,7 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5AHTkDtWEeam9qnVAiy5Fw" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
-    <elements xsi:type="commands:Command" xmi:id="_qa3OUDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.generateReport" commandName="Generate Report"/>
+    <elements xsi:type="commands:Command" xmi:id="_qa3OUDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.generateReport" commandName="Run Windup on this project"/>
     <elements xsi:type="commands:Command" xmi:id="_u5c5gDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.showReport" commandName="Show Report"/>
     <elements xsi:type="commands:Command" xmi:id="_0G2LcDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.exportReport" commandName="Export Report"/>
     <elements xsi:type="commands:Command" xmi:id="_f-MZQEYBEeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.command.help" commandName="Help"/>
