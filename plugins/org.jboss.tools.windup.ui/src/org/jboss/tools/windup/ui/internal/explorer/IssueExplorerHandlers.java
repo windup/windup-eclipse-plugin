@@ -66,6 +66,22 @@ public class IssueExplorerHandlers {
 		protected abstract void update(boolean enabled);
 	}
 	
+	public static class OpenReportHandler extends AbstractHandler {
+		@Inject private EPartService partService;
+		@Inject private ModelService modelService;
+		@Override
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
+			TreeNode node = (TreeNode)selection.getFirstElement();
+			if (node instanceof MarkerNode) {
+				IMarker marker = ((MarkerNode) node).getMarker();
+				Issue issue = modelService.findIssue(marker);
+				IssueExplorer.updateReportView(issue, true, partService);
+			}
+			return null;
+		}
+	}
+	
 	public static class GroupBySeverity extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {

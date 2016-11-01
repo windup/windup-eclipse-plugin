@@ -209,7 +209,7 @@ public class WindupService
                 	File file = new File(configuration.getUserRulesDirectories().get(0));
                 	options.setOption(UserRulesDirectoryOption.NAME, file);
                 }
-                // TODO: This is half-baked since we're migrating to external Windup launch soon.
+                // TODO: This is half-baked since we're migrating to external Windup launcher soon.
                 for (Pair pair : configuration.getOptions()) {
                 	options.setOption(pair.getKey(), Lists.newArrayList(pair.getValue()));
                 }

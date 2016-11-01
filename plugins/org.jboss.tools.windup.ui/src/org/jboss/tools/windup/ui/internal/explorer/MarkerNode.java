@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -37,10 +36,10 @@ public class MarkerNode extends TreeNode {
 	private IMarker marker;
 	
 	@Inject
-	public MarkerNode(IMarker marker, ModelService modelService) {
+	public MarkerNode(IMarker marker, Issue issue) {
 		super (marker);
 		this.marker = marker;
-		this.issue = modelService.findIssue(marker);
+		this.issue = issue;
 	}
 	
 	public void setMarker(IMarker marker) {

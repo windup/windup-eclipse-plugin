@@ -334,6 +334,27 @@
                </and>
             </visibleWhen>
          </command>
+         <separator
+               name="org.jboss.tools.windup.ui.reportSeparator"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.openReportCommand"
+               icon="icons/report.gif"
+               label="Open Report"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="org.jboss.tools.windup.ui.hasReport"
+                           value="false">
+                     </test></iterate></and>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -428,6 +449,11 @@
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$QuickFixAllHandler"
             id="org.jboss.tools.windup.ui.applyAllQuickFixesCommand"
             name="Quick Fix All">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$OpenReportHandler"
+            id="org.jboss.tools.windup.ui.openReportCommand"
+            name="Open Report">
       </command>
    </extension>
     <extension
@@ -547,6 +573,13 @@
              namespace="org.jboss.tools.windup.ui"
              properties="isGroupNode"
              type="org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider$TreeNode">
+       </propertyTester>
+       <propertyTester
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerPropertyTesters$ReportPropertyTester"
+             id="org.jboss.tools.windup.ui.hasReportTester"
+             namespace="org.jboss.tools.windup.ui"
+             properties="hasReport"
+             type="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
        </propertyTester>
     </extension>
     <extension

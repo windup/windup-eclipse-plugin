@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import javax.inject.Inject;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
@@ -27,6 +28,7 @@ public class IssueExplorerPropertyTesters {
 	public static final String FIXED = "isFixed";  //$NON-NLS-1$
 	public static final String HIERARCHY = "isGroupByHierarchy"; //$NON-NLS-1$
 	public static final String IS_GROUP = "isGroupNode"; //$NON-NLS-1$
+	public static final String HAS_REPORT = "hasReport"; //$NON-NLS-1$
 	
 	public static class QuickFixPropertyTester extends PropertyTester {
 		
@@ -82,5 +84,22 @@ public class IssueExplorerPropertyTesters {
 			}
 		}
 		return false;
+	}
+	
+	public static class ReportPropertyTester extends PropertyTester {
+		@Inject private ModelService modelService;
+		@Override
+		public boolean test(Object element, String property, Object[] args, Object expectedValue) {
+			if (HAS_REPORT.equals(property)) {
+				if (element instanceof MarkerNode) {
+					MarkerNode node = (MarkerNode)element;
+					Issue issue = modelService.findIssue(node.getMarker());
+					if (issue.getGeneratedReportLocation() != null) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 }

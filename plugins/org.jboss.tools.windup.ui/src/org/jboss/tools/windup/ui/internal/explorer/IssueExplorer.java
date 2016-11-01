@@ -118,7 +118,9 @@ public class IssueExplorer extends CommonNavigator {
 				}
 				context.set(IMarker.class, type);
 				if (selection instanceof ReportNode) {
-					updateReportView((ReportNode)selection, false);
+					ReportNode reportNode = (ReportNode)selection;
+					Issue issue = modelService.findIssue(reportNode.getMarker());
+					updateReportView(issue, false, partService);
 				}
 			}
 		});
@@ -277,14 +279,14 @@ public class IssueExplorer extends CommonNavigator {
 				Object element = ss.getFirstElement();
 				if (element instanceof ReportNode) {
 					ReportNode node = (ReportNode)element;
-					updateReportView(node, true);
+					Issue issue = modelService.findIssue(node.getMarker());
+					updateReportView(issue, true, partService);
 				}
 			}
 		}
 	}
 	
-	private void updateReportView(ReportNode node, boolean open) {
-		Issue issue = modelService.findIssue(node.getMarker());
+	public static void updateReportView(Issue issue, boolean open, EPartService partService) {
 		if (issue.getGeneratedReportLocation() != null) {
 			File file = new File(issue.getGeneratedReportLocation());
 			MPart part = partService.findPart(WindupReportView.ID);

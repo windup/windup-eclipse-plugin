@@ -196,11 +196,15 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				parent = ruleNode;
 			}
 			
-			IEclipseContext child = context.createChild();
-			child.set(IMarker.class, marker);
-			MarkerNode markerNode = ContextInjectionFactory.make(MarkerNode.class, child);
-			parent.addChild(markerNode);
-			nodeMap.put(marker, markerNode);
+			Issue issue = modelService.findIssue(marker);
+			if (issue != null) {
+				IEclipseContext child = context.createChild();
+				child.set(IMarker.class, marker);
+				child.set(Issue.class, issue);
+				MarkerNode markerNode = ContextInjectionFactory.make(MarkerNode.class, child);
+				parent.addChild(markerNode);
+				nodeMap.put(marker, markerNode);
+			}
 		}
 	}
 	
