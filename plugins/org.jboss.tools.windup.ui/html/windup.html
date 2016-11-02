@@ -4,5 +4,169 @@
 </head>
 <body>
 </body>
-    <h4>Windup - Getting Started</h4>
+    <h1>Getting Started with the Windup Eclipse Plugin</h2>
+
+    <h2>Identify and Resolve Migration Issues with Windup</h2>
+    <div>
+      <p>
+        Run Windup against your project to identify and fix migration issues.
+      </p>
+      <ol>
+        <li>
+          Import the project to analyze.
+        </li>
+        <li>
+          <p>
+            <a href="#create-config">Create a Windup run configuration</a>. From the Issue Explorer, press the Windup button (<img src="../icons/windup.png"/>).
+          </p>
+          <p>
+            <img src="../images/windup_button_create_config.png"/>
+          </p>
+          <p>
+            At a minimum, select the project to analyze. Set additional options as needed.
+          </p>
+        </li>
+        <li>
+          <p>
+          Click <b>Run</b> to execute Windup.
+          </p>
+        </li>
+        <li>
+          <p>
+            <a href="#review-issues">Review Windup issues</a> listed in the Issue Explorer.
+          </p>
+        </li>
+        <li>
+          <p>
+            <a href="#resolve-issues">Resolve Windup issues</a> by manually updating code or by using quick fixes when available.
+          </p>
+        </li>
+        <li>
+          <p>
+            Run Windup again as necessary. Use the drop down next to the Run button (<img src="../icons/run_exc.png"/>) to run an existing configuration.
+          </p>
+        </li>
+      </ol>
+    </div>
+
+    <a name="create-config"><h2>Create a Windup Run Configuration</h2></a>
+    <div>
+      <p>
+        A Windup run configuration can be created using the Windup button (<img src="../icons/windup.png"/>). You can create multiple run configurations, each with a unique name.
+      </p>
+      <h3>Input</h3>
+      <p>
+        Select a <b>migration path</b>. This determines which Windup rulesets are used. The migration path defaults to <b>Anything to EAP 7</b>, but can target <b>EAP 6</b> or specify a particular source.
+      </p>
+      <p>
+        Select one or more <b>projects</b> to analyze. Hold the <b>Ctrl</b> key to select multiple projects in the list.
+      </p>
+      <p>
+        Select one or more <b>packages</b> to scan. It is recommended to select only those packages that you need to analyze to reduce the overall Windup execution time. If no packages are selected, all packages in the project will be scanned. Hold the <b>Ctrl</b> key to select multiple packages in the list.
+      </p>
+      <h3>Options</h3>
+      <p>
+        Generate a Windup report. Check the <b>Generate Report</b> checkbox if you want to generate the Windup HTML report. The report will be shown in the <b>Windup Report</b> tab and can be found in the Issue Explorer when you group by <b>File</b>.
+      </p>
+      <p>
+        Add a <b>custom rules directory</b> if you have any custom Windup rules.
+      </p>
+      <!--TODO: Points to 2.7 docs for now, update to 3.0 docs when published?-->
+      <p>
+        Set additional Windup <b>options</b>. See the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/2.7/single/windup-user-guide#command-line-arguments">Windup User Guide</a> for a description of each Windup argument.
+      </p>
+    </div>
+
+    <a name="review-issues"><h2>Review Windup Issues</h2></a>
+    <div>
+      <p>
+        Use the Issue Explorer to review migration issues identified by Windup. Different <a href="#icon-legend">icons</a> indicate the issue's severity and state.
+      </p>
+
+      <p>
+         Change how issues are grouped by adjusting the <b>Group By</b> selections: Severity, Migration Rule, File.
+      </p>
+      <p>
+        <img src="../images/windup_group_by.png"/>
+      </p>
+      <p>
+        Double-click the Windup issue in the Issue Explorer to open the associated line of code in an editor. Right-click and select <b>Issue Details</b> to view information about the Windup issue, including its severity and how to address it.
+      </p>
+    </div>
+
+    <a name="resolve-issues"><h2>Resolve Windup Issues</h2></a>
+    <div>
+      <p>
+        You can resolve Windup issues by updating the code manually or by applying a quick fix when available.
+      </p>
+      <h3>Manual Update</h3>
+      <p>
+        Review the Windup issue details and additional resources and update the source code as necessary. Once a manual update has been made, the Windup issue will be marked stale until the next time that Windup is run on the project. You can also manually mark a Windup issue as fixed.
+      </p>
+      <h3>Quick Fix</h3>
+      <p>
+        Some Windup issues provide a quick fix, which assists in making the necessary edits to address the issue.
+      </p>
+      <h4>Preview a Quick Fix</h4>
+      <p>
+        Right-click the issue and select <b>Preview Quick Fix</b>. This will bring up a window that allows you to preview the change. From here, you can apply the fix or close the window.
+      </p>
+      <h4>Apply a Quick Fix</h4>
+      <p>
+        Right-click the issue and select <b>Apply Quick Fix</b>. This will update the source code as required and will mark the Windup issue as resolved.
+      </p>
+    </div>
+
+    <a name="icon-legend"><h2>Windup Issue Legend</h2></a>
+    <div>
+      <p>
+        In the Issue Explorer and file editors, Windup issues use an icon to indicate their severity level and status. The following table describes the meaning of the various icons.
+      </p>
+      <table border="1" cellpadding="2" cellspacing="0">
+        <tr>
+          <th>Icon</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td><img src="../icons/error.png"/></td>
+          <td>The issue is mandatory to fix for a successful migration.
+        </tr>
+        <tr>
+          <td><img src="../icons/quickfix_error.png"/></td>
+          <td>The issue is mandatory to fix for a successful migration. A quick fix is available.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/warning.png"/></td>
+          <td>The issue may potentially be an issue during migration.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/quickfix_warning.png"/></td>
+          <td>The issue may potentially be an issue during migration. A quick fix is available.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/fixedIssue.png"/></td>
+          <td>The issue has been resolved.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/info.gif"/></td>
+          <td>The issue is optional to fix for migration.
+        </tr>
+        <!-- Source icon and issue explorer icon aren't consistent on manual edits (? or i) -->
+        <tr>
+          <td><img src="../icons/stale_issue.gif"/></td>
+          <!-- TODO: Provide more info, like the code associated w/ the issue may have been modified? Or instruct to run Windup again?-->
+          <td>The issue is stale.</td>
+        </tr>
+      </table>
+    </div>
+
+    <h2>Additional Resources</h2>
+    <div>
+      <ul>
+        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">Red Hat JBoss Migration Toolkit Documentation</a></li>
+        <li><a href="http://windup.jboss.org/">Windup Website</a></li>
+        <!-- TODO: What else? Add Eclipse Plugin guide for final version -->
+      </ul>
+    </div>
+
 </html>
