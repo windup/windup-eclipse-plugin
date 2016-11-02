@@ -45,8 +45,6 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
-import org.jboss.windup.bootstrap.help.Help;
-import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.SourceOption;
@@ -492,16 +490,6 @@ public class WindupService
         WindupService.startFurnace();
         
         progress.done();
-    }
-    
-    public static List<String> getWindupConfigurationOptions() {
-    	 List<String> results = Lists.newArrayList();
-    	 Help help = WindupRuntimePlugin.findWindupHelpCache();
-    	 for (OptionDescription description : help.getOptions()) {
-    		 results.add(description.getName());
-    	 }
-    	 Collections.sort(results);
-         return results;
     }
     
     /**

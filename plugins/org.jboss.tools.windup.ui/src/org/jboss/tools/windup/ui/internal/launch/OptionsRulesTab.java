@@ -36,16 +36,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
-import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Pair;
-import org.jboss.tools.windup.windup.WindupFactory;
 
 import com.google.common.collect.Lists;
 
@@ -66,8 +63,6 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 	
 	// TODO: We probably want to use this once we start using an external Windup launcher.
 	private WindupOptionsService optionsService;
-	
-	private List<String> configurationOptions;
 	
 	public OptionsRulesTab(ModelService modelService, WindupOptionsService optionsService) {
 		this.modelService = modelService;
@@ -194,20 +189,14 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (configurationOptions == null) {
-					ProgressBar progress = new ProgressBar(parent.getShell(), SWT.HORIZONTAL|SWT.INDETERMINATE);
-					progress.setLayoutData(new GridData(GridData.FILL_BOTH));
-					OptionsRulesTab.this.configurationOptions = WindupService.getWindupConfigurationOptions();
-					progress.dispose();
-				}
-				OptionsDialog dialog = new OptionsDialog(parent.getShell(), configurationOptions);
+				OptionsDialog dialog = new OptionsDialog(parent.getShell(), optionsService);
 				if (dialog.open() == IDialogConstants.OK_ID) {
-					String option = dialog.getOption();
+					/*String option = dialog.getOption();
 					String value = dialog.getValue();
 					Pair pair = WindupFactory.eINSTANCE.createPair();
 					pair.setKey(option);
 					pair.setValue(value);
-					configuration.getOptions().add(pair);
+					configuration.getOptions().add(pair);*/
 					reloadOptions();
 				}
 			}

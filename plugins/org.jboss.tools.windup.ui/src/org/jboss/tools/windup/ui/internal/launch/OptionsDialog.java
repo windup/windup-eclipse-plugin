@@ -10,39 +10,51 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
-import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.launch.OptionTypeControls.OptionTypeControl;
+import org.jboss.windup.bootstrap.help.Help;
 
 public class OptionsDialog extends Dialog {
 
-	private String configurationOption;
-	private String value;
+	private WindupOptionsService optionsService;
 
 	private Label optionLabel;
 	private Combo optionCombo;
-	private Label valueLabel;
-	private Text valueText;
 	
-	private List<String> configurationOptions;
+	private Composite stackComposite;
 	
-	public OptionsDialog(Shell shell, List<String> configurationOptions) {
+	private OptionsWidgetManager widgetManager;
+	private OptionTypeControl selectedOption;
+	
+	public OptionsDialog(Shell shell, WindupOptionsService optionsService) {
 		super(shell);
-		this.configurationOptions = configurationOptions;
+		this.optionsService = optionsService;
+	}
+	
+	private void loadHelp(Composite parent) {
+		optionsService.loadOptions((Help help) -> {
+			this.widgetManager = new OptionsWidgetManager(help, parent, () -> {
+				updateButtons();
+			});
+			for (String option : widgetManager.getOptions()) {
+				optionCombo.add(option);
+			}
+		});
 	}
 	
 	@Override
@@ -61,18 +73,28 @@ public class OptionsDialog extends Dialog {
 		optionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(optionCombo);
 		optionCombo.setFont(comp.getFont());
-			
-		for (String option : configurationOptions) {
-			optionCombo.add(option);
-		}
 		
-		optionCombo.select(0);
+		stackComposite = new Composite(comp, SWT.NONE);
+		stackComposite.setLayout(new StackLayout());
+		GridDataFactory.fillDefaults().grab(true, true).hint(400, SWT.DEFAULT).applyTo(stackComposite);
 		
-		container = new Composite(comp, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
-		GridDataFactory.fillDefaults().grab(true, false).hint(400, SWT.DEFAULT).applyTo(container);
+		loadHelp(stackComposite);
 		
-		valueLabel = new Label(container, SWT.NONE);
+		optionCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String selection = widgetManager.getOptions().get(optionCombo.getSelectionIndex());
+				OptionsDialog.this.selectedOption = widgetManager.findOptionTypeControl(selection); 
+				Control top = OptionsDialog.this.selectedOption.getControl();
+				((StackLayout)stackComposite.getLayout()).topControl = top;
+				stackComposite.layout(true, true);
+				getShell().layout(true, true);
+				getShell().notifyListeners(SWT.Resize, null);
+				updateButtons();
+			}
+		});
+		
+		/*valueLabel = new Label(container, SWT.NONE);
 		valueLabel.setText(Messages.VALUE+":");
 		valueLabel.setFont(comp.getFont());
 		GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).align(SWT.RIGHT, SWT.CENTER).applyTo(valueLabel);
@@ -89,26 +111,14 @@ public class OptionsDialog extends Dialog {
 		});
 
 		
-		valueText.setFocus();
+		valueText.setFocus();*/
 		return comp;
-	}
-
-	public String getOption() {
-		return configurationOption;
-	}
-	
-	public String getValue() {
-		return value;
 	}
 
 	@Override
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.OK_ID) {
-			configurationOption = configurationOptions.get(optionCombo.getSelectionIndex());
-			value = valueText.getText().trim();
-		} else {
-			configurationOption = null;
-			value = null;
+		if (buttonId != IDialogConstants.OK_ID) {
+			this.selectedOption = null;
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -120,8 +130,8 @@ public class OptionsDialog extends Dialog {
 	}
 
 	protected void updateButtons() {
-		String value = valueText.getText().trim();
-		getButton(IDialogConstants.OK_ID).setEnabled((value.length() > 0));
+		boolean enabled = this.selectedOption != null ? this.selectedOption.isValid() : false; 
+		getButton(IDialogConstants.OK_ID).setEnabled(enabled);
 	}
 
 	@Override

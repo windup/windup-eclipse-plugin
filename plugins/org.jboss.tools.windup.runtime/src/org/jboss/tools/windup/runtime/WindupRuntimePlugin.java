@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -26,6 +27,8 @@ import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.windup.bootstrap.help.Help;
 import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.osgi.framework.BundleContext;
+
+import com.google.common.collect.Lists;
 
 /**
  * The activator class for the plugin containing
@@ -96,9 +99,22 @@ public class WindupRuntimePlugin extends Plugin
         	XMLMemento root = XMLMemento.createReadRoot(input);
             for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
             	String name = element.getString("name"); //$NON-NLS-1$
-            	XMLMemento child = (XMLMemento)element.getChild("description"); //$NON-NLS-1$
-            	String description = child.getTextData();
-            	OptionDescription option = new OptionDescription(name, description);
+            	XMLMemento descriptionChild = (XMLMemento)element.getChild("description"); //$NON-NLS-1$
+            	String description = descriptionChild.getTextData();
+            	XMLMemento typeChild = (XMLMemento)element.getChild("type"); //$NON-NLS-1$
+            	String type = typeChild.getTextData();
+            	XMLMemento uiTypeChild = (XMLMemento)element.getChild("ui-type"); //$NON-NLS-1$
+            	String uiType = uiTypeChild.getTextData();
+            	List<String> availableOptions = Lists.newArrayList();
+            	XMLMemento availableOptionsElement = (XMLMemento)element.getChild("available-options"); //$NON-NLS-1$
+            	if (availableOptionsElement != null) {
+            		for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
+            			XMLMemento optionMemento = (XMLMemento)optionElement;
+            			String availableOption = optionMemento.getTextData();
+            			availableOptions.add(availableOption);
+            		}
+            	}
+            	OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions);
 				result.getOptions().add(option);
             }
         } catch (Exception e) {
