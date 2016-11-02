@@ -93,25 +93,6 @@ public class OptionsDialog extends Dialog {
 				updateButtons();
 			}
 		});
-		
-		/*valueLabel = new Label(container, SWT.NONE);
-		valueLabel.setText(Messages.VALUE+":");
-		valueLabel.setFont(comp.getFont());
-		GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).align(SWT.RIGHT, SWT.CENTER).applyTo(valueLabel);
-		
-		valueText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(valueText);
-		
-		valueText.setFont(comp.getFont());
-		valueText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateButtons();
-			}
-		});
-
-		
-		valueText.setFocus();*/
 		return comp;
 	}
 
