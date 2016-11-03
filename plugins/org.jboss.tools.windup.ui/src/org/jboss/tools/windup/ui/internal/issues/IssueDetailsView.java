@@ -41,6 +41,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -70,7 +71,15 @@ public class IssueDetailsView {
 	
 	@Inject private ModelService modelService;
 	
-	private static Color DETAILS_BACKGROUND_COLOR = Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+	private static final String BACKGROUND = "detailsBackground";
+	
+	static {
+		if (!JFaceResources.getColorRegistry().hasValueFor(BACKGROUND)) {
+			JFaceResources.getColorRegistry().put(BACKGROUND, new RGB(231, 243, 243));
+		}
+	}
+	
+	private static Color DETAILS_BACKGROUND_COLOR = JFaceResources.getColorRegistry().get(BACKGROUND);
 	
 	private ScrolledForm form;
 
