@@ -10,8 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.core.services;
 
-import java.util.function.Consumer;
-
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,9 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.swt.widgets.Display;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
-import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
-import org.jboss.windup.bootstrap.help.Help;
 
 /**
  * Service for retrieving Windup options.
@@ -30,18 +28,17 @@ import org.jboss.windup.bootstrap.help.Help;
 @Singleton
 @Creatable
 public class WindupOptionsService {
-
-	private Help help;
 	
 	private boolean initialized = false;
-	
-	private void doLoadOptions(Consumer<Help> runner) {
+	@Inject private ModelService modelService;
+
+	private void doLoadOptions(Runnable runner) {
 		Job job = new Job(WindupConstants.LOADING_OPTIONS) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				loadOptions();
+				modelService.getOptionFacadeManager();
 				Display.getDefault().syncExec(() -> {
-					runner.accept(help);
+					runner.run();
 				});
 				return Status.OK_STATUS;
 			}
@@ -52,19 +49,12 @@ public class WindupOptionsService {
 	}
 	
 	
-	private void loadOptions() {
-		if (!initialized) {
-			this.help = WindupRuntimePlugin.findWindupHelpCache();
-		}
-		initialized = true;
-	}
-	
-	public void loadOptions(Consumer<Help> runner) {
+	public void loadOptions(Runnable runner) {
 		if (!initialized) {
 			doLoadOptions(runner);
 		}
 		else {
-			runner.accept(help);
+			runner.run();
 		}
 	}
 }

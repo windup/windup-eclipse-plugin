@@ -52,6 +52,8 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.jboss.tools.common.xml.IMemento;
 import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.tools.windup.model.Activator;
+import org.jboss.tools.windup.model.OptionFacades;
+import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -62,6 +64,7 @@ import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupResult;
+import org.jboss.windup.bootstrap.help.Help;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Link;
@@ -88,8 +91,9 @@ public class ModelService {
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
     public static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
 
-
-	@Inject private IEventBroker broker; 
+    private OptionsFacadeManager optionsFacadeManager;
+    
+	@Inject private IEventBroker broker;
 	
 	private WindupModel model;
 	private TransactionalEditingDomain domain;
@@ -140,6 +144,14 @@ public class ModelService {
 			Activator.log(e);
 		}
     }
+	
+	public OptionsFacadeManager getOptionFacadeManager() {
+		if (this.optionsFacadeManager == null) {
+			Help help = WindupRuntimePlugin.findWindupHelpCache();
+			this.optionsFacadeManager = OptionFacades.createOptionsFacadeManager(help);
+		}
+		return this.optionsFacadeManager;
+	}
 	
 	/**
 	 * Executes the provided runnable on the command stack of Windup's editing domain.

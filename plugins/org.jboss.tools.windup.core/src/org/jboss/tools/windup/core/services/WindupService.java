@@ -38,6 +38,9 @@ import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
 import org.jboss.tools.windup.core.internal.Messages;
 import org.jboss.tools.windup.core.utils.FileUtils;
+import org.jboss.tools.windup.model.OptionFacades;
+import org.jboss.tools.windup.model.OptionFacades.OptionTypeFacade;
+import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
@@ -45,6 +48,7 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
+import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.SourceOption;
@@ -59,7 +63,9 @@ import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.ReportLink;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /**
  * <p>
@@ -207,10 +213,30 @@ public class WindupService
                 	File file = new File(configuration.getUserRulesDirectories().get(0));
                 	options.setOption(UserRulesDirectoryOption.NAME, file);
                 }
-                // TODO: This is half-baked since we're migrating to external Windup launcher soon.
+                
+                OptionsFacadeManager facadeMgr = modelService.getOptionFacadeManager();
+                
+                Multimap<String, String> optionMap = ArrayListMultimap.create();
                 for (Pair pair : configuration.getOptions()) {
-                	options.setOption(pair.getKey(), Lists.newArrayList(pair.getValue()));
+                	String name = pair.getKey();
+                	String value = pair.getValue();
+                	optionMap.put(name, value);
                 }
+                
+                for (String name : optionMap.keySet()) {
+                	List<String> values = (List<String>)optionMap.get(name);
+                	OptionDescription option = facadeMgr.findOptionDescription(name);
+                	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
+                	if (OptionFacades.isSingleValued(option)) {
+                		Object optionValue = typeFacade.newInstance(values.get(0));
+                		options.setOption(name, optionValue);
+                	}
+                	else {
+                		List<?> optionValues = typeFacade.newInstance(values);
+                		options.setOption(name, optionValues);
+                	}
+                }
+                
                 ExecutionResults results = options.ignore("\\.class$").execute();
                 modelService.populateConfiguration(configuration, input, results);
         	}

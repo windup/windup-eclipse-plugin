@@ -24,6 +24,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.intro.GettingStartedEditor.EditorInput;
 
 /**
  * Action for opening the {@link GettingStartedEditor}.
@@ -52,6 +53,7 @@ public class ShowGettingStartedAction implements IWorkbenchWindowActionDelegate 
 						}
 						PlatformUI.getWorkbench().showPerspective(WindupPerspective.ID, window);
 						monitor.worked(1);
+						window.getActivePage().openEditor(EditorInput.INSTANCE, GettingStartedEditor.VIEW_ID);
 						return Status.OK_STATUS;
 					} catch (Throwable e) {
 						WindupUIPlugin.log(e);

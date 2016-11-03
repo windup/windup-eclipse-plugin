@@ -43,6 +43,8 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Pair;
+import org.jboss.tools.windup.windup.WindupFactory;
+import org.jboss.windup.bootstrap.help.OptionDescription;
 
 import com.google.common.collect.Lists;
 
@@ -189,14 +191,17 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				OptionsDialog dialog = new OptionsDialog(parent.getShell(), optionsService);
+				OptionsDialog dialog = new OptionsDialog(parent.getShell(), 
+						modelService, optionsService, configuration);
 				if (dialog.open() == IDialogConstants.OK_ID) {
-					/*String option = dialog.getOption();
-					String value = dialog.getValue();
-					Pair pair = WindupFactory.eINSTANCE.createPair();
-					pair.setKey(option);
-					pair.setValue(value);
-					configuration.getOptions().add(pair);*/
+					OptionDescription option = dialog.getSelectedOption();
+					String value = dialog.getSelectedOptionValue();
+					if (!value.isEmpty()) {
+						Pair pair = WindupFactory.eINSTANCE.createPair();
+						pair.setKey(option.getName());
+						pair.setValue(value);
+						configuration.getOptions().add(pair);
+					}
 					reloadOptions();
 				}
 			}

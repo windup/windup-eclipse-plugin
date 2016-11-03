@@ -5,59 +5,76 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.jboss.tools.windup.ui.internal.launch.OptionTypeControls.OptionTypeControl;
-import org.jboss.windup.bootstrap.help.Help;
+import org.jboss.tools.windup.model.OptionFacades;
+import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
+import org.jboss.tools.windup.ui.internal.launch.OptionUiFacades.OptionUiFacade;
+import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Pair;
 import org.jboss.windup.bootstrap.help.OptionDescription;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Factory for creating UI controls mapped to help options.
+ * Manages UI facades for option descriptions.
  */
 public class OptionsWidgetManager {
 	
-	private final Help help;
-	private Map<String, OptionTypeControl> optionTypeControls = Maps.newHashMap();
-	private final Runnable optionChangedCallback;
+	private Map<String, OptionUiFacade> optionTypeControls = Maps.newHashMap();
+	private OptionsFacadeManager optionsFacadeManager;
 	
-	public OptionsWidgetManager(Help help, Composite parent, Runnable optionChangedCallback) {
-		this.help = help;
+	private final Runnable optionChangedCallback;
+	private ConfigurationElement configuration;
+	
+	public OptionsWidgetManager(OptionsFacadeManager optionsFacadeManager, 
+			Composite parent, ConfigurationElement configuration, Runnable optionChangedCallback) {
 		this.optionChangedCallback = optionChangedCallback;
+		this.optionsFacadeManager = optionsFacadeManager;
+		this.configuration = configuration;
 		build(parent);
 	}
 	
 	private void build(Composite parent) {
-		for (OptionDescription option : help.getOptions()) {
+		for (OptionDescription option : optionsFacadeManager.getOptionDescriptions()) {
 			create(option, parent);
 		}
 	}
 	
-	private OptionTypeControl create(OptionDescription option, Composite parent) {
+	private OptionUiFacade create(OptionDescription option, Composite parent) {
 		if (!optionTypeControls.containsKey(option)) {
-			OptionTypeControl control = createControl(option, parent);
+			OptionUiFacade control = createControl(option, parent);
 			optionTypeControls.put(option.getName(), control);
 		}
 		return optionTypeControls.get(option);
 	}
 	
-	private OptionTypeControl createControl(OptionDescription option, Composite parent) {
-		OptionTypeControl optionTypeControl = OptionTypeControls.createControl(option, optionChangedCallback);
+	private OptionUiFacade createControl(OptionDescription option, Composite parent) {
+		OptionUiFacade optionTypeControl = OptionUiFacades.createOptionUiFacade(
+				option, optionsFacadeManager, optionChangedCallback);
 		optionTypeControl.createControls(parent);
 		return optionTypeControl; 
 	}
 	
+	public OptionUiFacade getOptionUiFacade(String name) {
+		return optionTypeControls.get(name);
+	}
+	
 	public List<String> getOptions() {
 		List<String> options = Lists.newArrayList();
-    	 for (OptionDescription description : help.getOptions()) {
-    		 options.add(description.getName());
+    	 for (OptionDescription option : optionsFacadeManager.getOptionDescriptions()) {
+    		 boolean filter = false;
+    		 // Filter existing single-valued options.
+    		 for (Pair pair : configuration.getOptions()) {
+    			 if (pair.getKey().equals(option.getName()) && OptionFacades.isSingleValued(option)) {
+    				 filter = true;
+    				 break;
+    			 }
+    		 }
+    		 if (!filter) {
+    			 options.add(option.getName());
+    		 }
     	 }
     	 Collections.sort(options);
 		return options;
-	}
-	
-	public OptionTypeControl findOptionTypeControl(String name) {
-		return optionTypeControls.get(name);
 	}
 }

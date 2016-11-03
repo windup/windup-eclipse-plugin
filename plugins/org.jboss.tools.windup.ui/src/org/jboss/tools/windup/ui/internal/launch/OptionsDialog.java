@@ -25,12 +25,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.launch.OptionTypeControls.OptionTypeControl;
-import org.jboss.windup.bootstrap.help.Help;
+import org.jboss.tools.windup.ui.internal.launch.OptionUiFacades.OptionUiFacade;
+import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.windup.bootstrap.help.OptionDescription;
 
 public class OptionsDialog extends Dialog {
 
+	private ModelService modelService;
 	private WindupOptionsService optionsService;
 
 	private Label optionLabel;
@@ -39,16 +42,22 @@ public class OptionsDialog extends Dialog {
 	private Composite stackComposite;
 	
 	private OptionsWidgetManager widgetManager;
-	private OptionTypeControl selectedOption;
+	private OptionUiFacade selectedOption;
 	
-	public OptionsDialog(Shell shell, WindupOptionsService optionsService) {
+	private ConfigurationElement configuration;
+	
+	public OptionsDialog(Shell shell, ModelService modelService, 
+			WindupOptionsService optionsService, ConfigurationElement configuration) {
 		super(shell);
+		this.modelService = modelService;
 		this.optionsService = optionsService;
+		this.configuration = configuration;
 	}
 	
 	private void loadHelp(Composite parent) {
-		optionsService.loadOptions((Help help) -> {
-			this.widgetManager = new OptionsWidgetManager(help, parent, () -> {
+		optionsService.loadOptions(() -> {
+			this.widgetManager = new OptionsWidgetManager(modelService.getOptionFacadeManager(), 
+					parent, configuration, () -> {
 				updateButtons();
 			});
 			for (String option : widgetManager.getOptions()) {
@@ -76,7 +85,7 @@ public class OptionsDialog extends Dialog {
 		
 		stackComposite = new Composite(comp, SWT.NONE);
 		stackComposite.setLayout(new StackLayout());
-		GridDataFactory.fillDefaults().grab(true, true).hint(400, SWT.DEFAULT).applyTo(stackComposite);
+		GridDataFactory.fillDefaults().grab(true, true).hint(400, 25).applyTo(stackComposite);
 		
 		loadHelp(stackComposite);
 		
@@ -84,12 +93,12 @@ public class OptionsDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String selection = widgetManager.getOptions().get(optionCombo.getSelectionIndex());
-				OptionsDialog.this.selectedOption = widgetManager.findOptionTypeControl(selection); 
-				Control top = OptionsDialog.this.selectedOption.getControl();
+				OptionUiFacade selectedOption = widgetManager.getOptionUiFacade(selection);
+				selectedOption.setFocus();
+				Control top = selectedOption.getControl();
+				OptionsDialog.this.selectedOption = selectedOption;
 				((StackLayout)stackComposite.getLayout()).topControl = top;
 				stackComposite.layout(true, true);
-				getShell().layout(true, true);
-				getShell().notifyListeners(SWT.Resize, null);
 				updateButtons();
 			}
 		});
@@ -113,6 +122,14 @@ public class OptionsDialog extends Dialog {
 	protected void updateButtons() {
 		boolean enabled = this.selectedOption != null ? this.selectedOption.isValid() : false; 
 		getButton(IDialogConstants.OK_ID).setEnabled(enabled);
+	}
+	
+	public OptionDescription getSelectedOption() {
+		return this.selectedOption.getOptionDescription();
+	}
+	
+	public String getSelectedOptionValue() {
+		return this.selectedOption.getValue();
 	}
 
 	@Override
