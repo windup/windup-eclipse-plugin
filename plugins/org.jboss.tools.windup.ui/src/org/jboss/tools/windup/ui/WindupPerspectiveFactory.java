@@ -1,5 +1,6 @@
 package org.jboss.tools.windup.ui;
 
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -20,6 +21,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
+		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addShowViewShortcut(IssueExplorer.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		layout.addShowViewShortcut(WindupReportView.ID);

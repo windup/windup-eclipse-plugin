@@ -236,6 +236,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
 		String[] items = buildMigrationPaths();
 		migrationPathCombo = SWTFactory.createCombo(group, SWT.READ_ONLY|SWT.BORDER, GridData.FILL_HORIZONTAL, items);
+		migrationPathCombo.select(items.length-1);
 		migrationPathCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

@@ -275,7 +275,7 @@ public class ModelService {
 		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
 		configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
 		configuration.setSourceMode(true);
-		configuration.setMigrationPath(model.getMigrationPaths().get(1));
+		configuration.setMigrationPath(model.getMigrationPaths().get(model.getMigrationPaths().size()-1));
 		model.getConfigurationElements().add(configuration);
 		return configuration;
 	}
