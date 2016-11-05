@@ -28,7 +28,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNodeBuilder;
@@ -46,6 +46,12 @@ public class IssueExplorerContentService {
 	@Inject private IssueGroupService groupService;
 	@Inject private IEclipseContext context;
 	@Inject private ModelService modelService;
+	@Inject @Optional private IssueExplorer issueExplorer;
+	
+	public void setIssuExplorer(IssueExplorer issueExplorer) {
+		this.issueExplorer = issueExplorer;
+	}
+	
 	private BidiMap nodeMap = new DualHashBidiMap();
 	
 	public boolean hasChildren(Object element) {
@@ -79,9 +85,7 @@ public class IssueExplorerContentService {
 	}
 	
 	private Object[] createNodeGroups(List<IMarker> markers) {
-		IssueExplorer explorer = (IssueExplorer)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-					getActivePage().findView(IssueExplorer.VIEW_ID);
-		TreeNodeBuilder builder = new TreeNodeBuilder(markers, explorer, groupService, context, modelService);
+		TreeNodeBuilder builder = new TreeNodeBuilder(markers, issueExplorer, groupService, context, modelService);
 		Object[] input = builder.build();
 		this.nodeMap = builder.getNodeMap();
 		return input;

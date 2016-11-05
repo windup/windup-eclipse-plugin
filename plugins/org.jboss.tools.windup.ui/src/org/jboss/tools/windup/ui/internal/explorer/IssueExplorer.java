@@ -74,7 +74,13 @@ public class IssueExplorer extends CommonNavigator {
 	@Inject private ModelService modelService;
 	@Inject private IssueGroupService groupService;
 	@Inject private EPartService partService;
-	@Inject private IssueExplorerContentService contentService;
+	private IssueExplorerContentService contentService;
+	
+	@Inject
+	public IssueExplorer(IssueExplorerContentService contentService) {
+		this.contentService = contentService;
+		contentService.setIssuExplorer(this);
+	}
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
 		@Override

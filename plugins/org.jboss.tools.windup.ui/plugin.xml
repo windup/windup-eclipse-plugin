@@ -8,12 +8,31 @@
             id="org.jboss.tools.windup.ui.view.category.windup">
       </category>
       <view
+            allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorer"
             icon="icons/windup.png"
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
+      <e4view
+            allowMultiple="false"
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.views.WindupReportView"
+            name="%view.windup_report.name"
+            restorable="true">
+      </e4view>
+      <e4view
+            allowMultiple="false"
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.internal.issues.IssueDetailsView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.issue.details"
+            name="Issue Details"
+            restorable="true">
+      </e4view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -47,11 +66,6 @@
       <fragment
             uri="windup-ui.e4xmi">
       </fragment>
-      <processor
-            apply="always"
-            beforefragment="false"
-            class="org.jboss.tools.windup.ui.WindupPerspective">
-      </processor>
    </extension>
    <extension
          id="windup.expressions"
@@ -547,18 +561,6 @@
        </viewerActionBinding>
     </extension>
     <extension
-          point="org.eclipse.ui.perspectiveExtensions">
-       <perspectiveExtension
-             targetID="*">
-          <viewShortcut
-                id="org.jboss.tools.windup.ui.explorer">
-          </viewShortcut>
-          <viewShortcut
-                id="org.jboss.tools.windup.ui.issue.details">
-          </viewShortcut>
-       </perspectiveExtension>
-    </extension>
-    <extension
           point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
              class="org.jboss.tools.windup.ui.internal.explorer.IssueExplorerPropertyTesters$QuickFixPropertyTester"
@@ -630,5 +632,15 @@
             configId="org.eclipse.ui.intro.universalConfig"
             content="$nl$/intro/windupContent.xml">
         </configExtension>
+    </extension>
+    <extension
+          point="org.eclipse.ui.perspectives">
+       <perspective
+             class="org.jboss.tools.windup.ui.WindupPerspectiveFactory"
+             fixed="false"
+             icon="icons/windup.png"
+             id="org.jboss.tools.windup.ui.perspective"
+             name="Windup">
+       </perspective>
     </extension>
 </plugin>
