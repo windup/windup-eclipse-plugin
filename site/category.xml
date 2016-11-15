@@ -4,10 +4,10 @@
 	To install these features, point Eclipse at this site.
 	</description>
 
-	<category-def label="JBoss Tools Windup Nightly Build Update Site" name="AllFeatures">
+	<category-def label="JBoss Tools - Windup" name="AllFeatures">
 		<description>JBoss Tools Windup Nightly Build Update Site: contains all features in this build.</description>
 	</category-def>
-	<category-def label="JBoss Tools Windup Nightly Build Update Site" name="AllSources">
+	<category-def label="JBoss Tools - Windup" name="AllSources">
 		<description>JBoss Tools Windup Nightly Build Update Site: contains all source features in this build.</description>
 	</category-def>
 
