@@ -2,7 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Model
 Bundle-SymbolicName: org.jboss.tools.windup.model;singleton:=true
-Bundle-Version: 3.1.0.qualifier
+Bundle-Version: 3.1.0.Alpha
+Eclipse-BundleShape: dir
 Bundle-Activator: org.jboss.tools.windup.model.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
