@@ -90,6 +90,8 @@ public class ModelService {
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
     public static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
+    
+    private static final String MODEL_FILE = "windup.xmi";
 
     private OptionsFacadeManager optionsFacadeManager;
     
@@ -240,7 +242,21 @@ public class ModelService {
 	}
 	
 	private File getWindupStateLocation() {
-		return Activator.getDefault().getStateLocation().append("windup.xmi").toFile();
+		File file = null;
+		try {
+			File bundleFile = FileLocator.getBundleFile(Activator.getDefault().getBundle());
+			file = new File(bundleFile, MODEL_FILE);
+			if (file != null) {
+				file = file.getCanonicalFile();
+			}
+		} catch (IOException e) {
+			Activator.log(e);
+		}
+		if (file == null) {
+			// Fall-back to creating it in workspace.
+			file = Activator.getDefault().getStateLocation().append(MODEL_FILE).toFile();
+		}
+		return file;
 	}
 	
 	public ConfigurationElement findConfigurationElement(String name) {

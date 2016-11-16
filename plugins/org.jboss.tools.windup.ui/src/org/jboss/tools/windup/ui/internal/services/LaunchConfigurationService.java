@@ -60,10 +60,12 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	public void launchConfigurationRemoved(ILaunchConfiguration launchConfig) {
 		ConfigurationElement configuration = modelService.findConfiguration(launchConfig.getName());
 		ConfigurationElement lastConfiguration = modelService.getRecentConfiguration();
-		if (configuration.getName().equals(lastConfiguration.getName())) {
-			markerService.deleteAllWindupMarkers();
+		if (configuration != null) {
+			if (configuration.getName().equals(lastConfiguration.getName())) {
+				markerService.deleteAllWindupMarkers();
+			}
+			modelService.deleteConfiguration(configuration);
 		}
-		modelService.deleteConfiguration(configuration);
 	}
 	
 	private boolean isWindupConfig(ILaunchConfiguration launchConfig) {

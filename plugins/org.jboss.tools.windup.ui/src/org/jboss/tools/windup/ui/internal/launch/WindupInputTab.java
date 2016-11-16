@@ -265,6 +265,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy launchConfig) {
 		configuration.setName(launchConfig.getName());
+		modelService.save();
 	}
 
 	@Override
