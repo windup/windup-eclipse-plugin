@@ -112,6 +112,9 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		}
 		
 		public TreeNode[] build() {
+			if (configuration == null) {
+				return new TreeNode[0];
+			}
 			TreeNode root = new TreeNode(null);
 			for (IMarker marker : markers) {
 				List<TreePath> paths = Lists.newArrayList(contentProvider.getParents(marker.getResource()));
