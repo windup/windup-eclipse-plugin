@@ -20,11 +20,21 @@
     </properties>
 
     <dependencies>
-
+    
+    	<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+			<version>1.3</version>
+		</dependency> 
+    
         <!-- Windup API -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-tooling-api</artifactId>
+        </dependency>
+          <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-tooling-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>

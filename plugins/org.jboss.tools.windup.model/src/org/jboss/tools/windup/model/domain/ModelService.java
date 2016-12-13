@@ -442,7 +442,7 @@ public class ModelService {
 
         	// TODO: I think we might want to change this to project relative for portability.
         	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
-        	hint.setSeverity(wHint.getSeverity().toString());
+        	hint.setSeverity(wHint.getIssueCategory().getCategoryID().toUpperCase());
         	hint.setRuleId(wHint.getRuleID());
         	hint.setEffort(wHint.getEffort());
         	

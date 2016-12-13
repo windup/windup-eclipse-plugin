@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
    <extension
-         id="org.jboss.tools.windup.core.validators.WindupValidator"
-         name="%_validator.name"
-         point="org.eclipse.wst.validation.validatorV2">
-      <validator
-            manual="true"
-            class="org.jboss.tools.windup.core.internal.validators.WindupValidator"
-            build="true">
-         <include>
-            <rules>
-               <fileext
-                     caseSensitive="false"
-                     ext="html">
-               </fileext>
-               <fileext
-                     caseSensitive="false"
-                     ext="jsp">
-               </fileext>
-               <fileext
-                     caseSensitive="false"
-                     ext="xml">
-               </fileext>
-               <fileext
-                     caseSensitive="false"
-                     ext="java">
-               </fileext>
-            </rules>
-         </include>
-      </validator>
-   </extension>
-   <extension
          id="classificationMarker"
          name="%_classificationMarker.name"
          point="org.eclipse.core.resources.markers">

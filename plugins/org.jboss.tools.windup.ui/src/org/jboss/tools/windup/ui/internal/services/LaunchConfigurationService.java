@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -38,6 +39,9 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	
 	@Inject private ModelService modelService;
 	@Inject private MarkerService markerService;
+	
+	// TODO: Temporary, to eagerly start the Windup client
+	@Inject private WindupRmiClient windupClient;
 
 	@PostConstruct
 	private void init() {

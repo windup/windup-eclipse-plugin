@@ -25,7 +25,7 @@ import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
-import org.jboss.windup.reporting.model.QuickfixType;
+import org.jboss.windup.tooling.data.QuickfixType;
 
 /**
  * Utility for interacting with quick fixes.

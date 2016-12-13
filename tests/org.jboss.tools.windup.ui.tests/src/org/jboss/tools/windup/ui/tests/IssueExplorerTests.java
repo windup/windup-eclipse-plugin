@@ -10,21 +10,13 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.explorer.MarkerNode;
-import org.junit.Ignore;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * Tests surrounding the Issue Explorer.
@@ -42,20 +34,14 @@ public class IssueExplorerTests extends WindupUiTest {
 	/**
 	 * Issue Explorer should contain migration issues after Windup execution. 
 	 */
-	@Ignore
 	@Test
 	public void testIssueExplorerPopulated() {
-		super.runWindup(super.createRunConfiguration());
+		ConfigurationElement configuration = super.createRunConfiguration();
+		super.runWindup(configuration);
+		assertTrue(!configuration.getInputs().get(0).getWindupResult().getIssues().isEmpty());
 		IssueExplorer explorer = super.getIssueExplorer();
+		explorer.getCommonViewer().expandAll();
 		Tree tree = explorer.getCommonViewer().getTree();
-		List<TreeItem> items = Lists.newArrayList();
-		Display.getDefault().syncExec(() -> {
-			TreeItem[] treeItems = tree.getItems();
-			List<TreeItem> markerItems = Arrays.stream(treeItems).filter(item -> {
-				return item.getData() instanceof MarkerNode;
-			}).collect(Collectors.toList());
-			items.addAll(markerItems);
-		});
-		assertTrue(228 == items.size());
+		assertTrue(tree.getItems().length > 0);
 	}
 }

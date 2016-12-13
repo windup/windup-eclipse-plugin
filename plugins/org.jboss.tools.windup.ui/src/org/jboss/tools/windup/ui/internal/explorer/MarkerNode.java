@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.ui.internal.Messages.issueDeleteError;
 import static org.jboss.tools.windup.ui.internal.Messages.operationError;
 
@@ -25,10 +24,10 @@ import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.IssueConstants.Severity;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
-import org.jboss.windup.reporting.model.Severity;
 
 public class MarkerNode extends TreeNode {
 	
@@ -69,7 +68,7 @@ public class MarkerNode extends TreeNode {
 	}
 	
 	public int getSeverity() {
-		String severity = marker.getAttribute(SEVERITY, Severity.OPTIONAL.toString());
+		String severity = marker.getAttribute(WindupMarker.SEVERITY, Severity.OPTIONAL.toString());
 		return MarkerUtil.convertSeverity(severity);
 	}
 	

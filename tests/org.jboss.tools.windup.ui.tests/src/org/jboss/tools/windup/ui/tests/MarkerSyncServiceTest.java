@@ -23,7 +23,7 @@ import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.QuickFix;
-import org.jboss.windup.reporting.model.QuickfixType;
+import org.jboss.windup.tooling.data.QuickfixType;
 import org.junit.Assert;
 import org.junit.Test;
 

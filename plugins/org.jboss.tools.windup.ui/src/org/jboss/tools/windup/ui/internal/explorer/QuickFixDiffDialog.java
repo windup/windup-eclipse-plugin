@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.QuickFix;
-import org.jboss.windup.reporting.model.QuickfixType;
+import org.jboss.windup.tooling.data.QuickfixType;
 
 /**
  * Diff dialog for previewing Windup quick fixes.

@@ -133,7 +133,7 @@ public class MarkerService {
 	/**
 	 * Creates markers for Windup migration issues contained in the provided configuration.
 	 */
-	private void createWindupMarkers(ConfigurationElement configuration, IProgressMonitor monitor) throws CoreException {
+	public void createWindupMarkers(ConfigurationElement configuration, IProgressMonitor monitor) throws CoreException {
 		int count = 0;
 		for (Input input : configuration.getInputs()) {
 			if (input.getWindupResult() != null) {

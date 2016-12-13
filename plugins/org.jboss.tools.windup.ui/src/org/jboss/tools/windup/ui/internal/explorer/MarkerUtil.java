@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.tools.windup.ui.internal.explorer.IssueConstants.Severity;
 
 import com.google.common.collect.Lists;
 

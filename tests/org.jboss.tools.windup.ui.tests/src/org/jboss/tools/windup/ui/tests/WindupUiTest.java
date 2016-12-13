@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
@@ -81,7 +83,12 @@ public class WindupUiTest extends WindupTest {
 	protected void runWindup(ConfigurationElement configuration) {
 		windupService.generateGraph(configuration, new NullProgressMonitor());
 		Display.getDefault().syncExec(() -> {
-			markerService.updateMarkers(configuration);
+			try {
+				markerService.createWindupMarkers(configuration, new NullProgressMonitor());
+				broker.send(MARKERS_CHANGED, true);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 		});
 	}
 	

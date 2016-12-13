@@ -10,87 +10,68 @@
  ******************************************************************************/
 package org.jboss.tools.windup.core;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.LogRecord;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.tooling.WindupToolingProgressMonitor;
 
 /**
  * <p>
  * Adapts an {@link IProgressMonitor} to an {@link WindupProgressMonitor}.
  * </p>
  */
-public class WindupProgressMonitorAdapter implements WindupProgressMonitor
-{
+public class WindupProgressMonitorAdapter extends UnicastRemoteObject implements WindupToolingProgressMonitor, Remote {
+	private static final long serialVersionUID = 1L;
 
-    /**
+	/**
      * {@link IProgressMonitor} being adapted to a {@link WindupProgressMonitor}
      */
-    IProgressMonitor wrappedMonitor;
-
-    public WindupProgressMonitorAdapter(IProgressMonitor monitor)
-    {
+    private IProgressMonitor wrappedMonitor;
+    
+    public WindupProgressMonitorAdapter(IProgressMonitor monitor) throws RemoteException {
         this.wrappedMonitor = monitor;
     }
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#beginTask(java.lang.String, int)
-     */
-    @Override
-    public void beginTask(String name, int totalWork)
-    {
-        this.wrappedMonitor.beginTask(name, totalWork);
-    }
+	@Override
+	public void beginTask(String task, int totalWork) throws RemoteException {
+		wrappedMonitor.beginTask(task, totalWork);
+	}
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#done()
-     */
-    @Override
-    public void done()
-    {
-        this.wrappedMonitor.done();
-    }
+	@Override
+	public void done() throws RemoteException {
+		wrappedMonitor.done();
+	}
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#isCancelled()
-     */
-    @Override
-    public boolean isCancelled()
-    {
-        return this.wrappedMonitor.isCanceled();
-    }
+	@Override
+	public boolean isCancelled() throws RemoteException {
+		return wrappedMonitor.isCanceled();
+	}
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#setCancelled(boolean)
-     */
-    @Override
-    public void setCancelled(boolean cancelled)
-    {
-        this.wrappedMonitor.setCanceled(cancelled);
-    }
+	@Override
+	public void setCancelled(boolean value) throws RemoteException {
+		wrappedMonitor.setCanceled(value);
+	}
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#setTaskName(java.lang.String)
-     */
-    @Override
-    public void setTaskName(String name)
-    {
-        this.wrappedMonitor.setTaskName(name);
-    }
+	@Override
+	public void setTaskName(String name) throws RemoteException {
+		wrappedMonitor.setTaskName(name);
+	}
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#subTask(java.lang.String)
-     */
-    @Override
-    public void subTask(String name)
-    {
-        this.wrappedMonitor.subTask(name);
-    }
+	@Override
+	public void subTask(String name) throws RemoteException {
+		wrappedMonitor.subTask(name);
+	}
 
-    /**
-     * @see org.jboss.windup.exec.WindupProgressMonitor#worked(int)
-     */
-    @Override
-    public void worked(int work)
-    {
-        this.wrappedMonitor.worked(work);
-    }
+	@Override
+	public void worked(int work) throws RemoteException {
+		wrappedMonitor.worked(work);
+	}
+
+	@Override
+	public void logMessage(LogRecord logRecord) {
+	}
 }

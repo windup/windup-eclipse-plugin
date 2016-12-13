@@ -67,7 +67,7 @@ public class WindupValidatorTest extends WindupTest
                     WindupCoreTestPlugin.PLUGIN_ID, null, projectName, false);
         IProject project = provider.getProject();
 
-        windupService.generateGraph(project);
+        //windupService.generateGraph(project);
 
         // be sure the project is built
         project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());

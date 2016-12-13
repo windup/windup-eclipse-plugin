@@ -23,6 +23,7 @@ import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_STALE_ISSUE;
 
 import java.util.Map;
 
+import org.apache.commons.lang.WordUtils;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaElement;
@@ -155,7 +156,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		String label = "";
 		if (node instanceof SeverityNode) {
 			SeverityNode severityNode = (SeverityNode)node;
-			label = severityNode.getSeverity();
+			label = WordUtils.capitalize(severityNode.getSeverity().toLowerCase());
 		}
 		else if (node instanceof RuleGroupNode) {
 			RuleGroupNode ruleNode = (RuleGroupNode)node;

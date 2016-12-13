@@ -56,7 +56,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.jboss.tools.windup.core.GenerateWindupReportsOperation;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -1012,7 +1011,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
         /*
          * if there are projects that need a windup report generated create an operation to do that
          */
-        final GenerateWindupReportsOperation generateReportsOperation =
+   /*     final GenerateWindupReportsOperation generateReportsOperation =
                     projectsWithoutReports.isEmpty() ?
                                 null : new GenerateWindupReportsOperation(windup, projectsWithoutReports);
 
@@ -1030,11 +1029,11 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
         }
 
         try
-        {
+        {*/
             /*
              * create an operation to optionally generate any required reports, then export all selected reports
              */
-            getContainer().run(true, true, new IRunnableWithProgress()
+            /*getContainer().run(true, true, new IRunnableWithProgress()
             {
                 @Override
                 public void run(IProgressMonitor monitor)
@@ -1097,7 +1096,7 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
                         exportStatus);
             return false;
         }
-
+	*/
         return true;
     }
 

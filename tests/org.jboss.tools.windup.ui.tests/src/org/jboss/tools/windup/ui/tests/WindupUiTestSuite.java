@@ -17,7 +17,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	WindupPerspectiveTests.class,
-	MarkerSyncServiceTest.class
+	MarkerSyncServiceTest.class,
+	IssueExplorerTests.class
 })
 public class WindupUiTestSuite {
 }

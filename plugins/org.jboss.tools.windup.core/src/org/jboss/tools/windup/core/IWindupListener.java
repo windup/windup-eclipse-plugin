@@ -13,7 +13,6 @@ package org.jboss.tools.windup.core;
 import java.util.EventListener;
 
 import org.eclipse.core.resources.IProject;
-import org.jboss.windup.graph.GraphContext;
 
 /**
  * <p>
