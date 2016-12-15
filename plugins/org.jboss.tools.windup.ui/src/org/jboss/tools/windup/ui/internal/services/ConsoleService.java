@@ -53,6 +53,15 @@ public class ConsoleService {
 	 * Starts capturing logging and redirects it to the console view.
 	 */
 	public void startCapturing() {
+		showWindupConsole();
+		console.clearConsole();
+		oldOut = System.out;
+		oldError = System.err;
+		System.setOut(printStream);
+		System.setErr(printStream);
+	}
+	
+	private void showWindupConsole() {
 		Display.getDefault().syncExec(() -> {
 			try {
 				IConsoleView view = (IConsoleView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
@@ -62,11 +71,11 @@ public class ConsoleService {
 				WindupUIPlugin.log(e);
 			}
 		});
-		console.clearConsole();
-		oldOut = System.out;
-		oldError = System.err;
-		System.setOut(printStream);
-		System.setErr(printStream);
+	}
+	
+	public void write(String line) {
+		showWindupConsole();
+		printStream.println(line);
 	}
 	
 	/**
