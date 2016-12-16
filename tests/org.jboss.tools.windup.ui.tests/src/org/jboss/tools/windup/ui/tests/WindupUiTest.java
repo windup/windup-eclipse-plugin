@@ -32,6 +32,7 @@ import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.tests.swtbot.WorkbenchBot;
+import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.junit.After;
 import org.junit.Before;
@@ -60,6 +61,8 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected IEventBroker broker;
 	@Inject protected MarkerService markerService;
 	
+	@Inject protected WindupLauncher windupLauncher;
+	
 	@Before
 	public void init() throws CoreException {
 		projectProvider = workbenchBot.importProject(Activator.PLUGIN_ID, null, PROJECT, false);
@@ -81,7 +84,9 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
-		windupService.generateGraph(configuration, new NullProgressMonitor());
+		windupLauncher.launchWindup(configuration, (config) -> {
+			windupService.generateGraph(configuration, new NullProgressMonitor());
+		});
 		Display.getDefault().syncExec(() -> {
 			try {
 				markerService.createWindupMarkers(configuration, new NullProgressMonitor());

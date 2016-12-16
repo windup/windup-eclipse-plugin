@@ -150,7 +150,9 @@ public class WindupRuntimePlugin extends Plugin
     }
     
 	public static void log(IStatus status) {
-		WindupRuntimePlugin.getDefault().getLog().log(status);
+		if (WindupRuntimePlugin.getDefault() != null) {
+			WindupRuntimePlugin.getDefault().getLog().log(status);
+		}
 	}
 
 	public static void logErrorMessage(final String message) {

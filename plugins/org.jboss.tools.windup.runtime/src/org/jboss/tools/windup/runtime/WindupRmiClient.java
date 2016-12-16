@@ -52,6 +52,10 @@ public class WindupRmiClient {
 		this.rmiPort = 1100;
 		this.windupHome = WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("windup");
 	}
+	
+	public Path getWindupHome() {
+		return windupHome;
+	}
 
 	public void startWindup(final IProgressMonitor monitor, final ProgressCallback callback) {
 		monitor.worked(1);
@@ -110,6 +114,7 @@ public class WindupRmiClient {
 		try {
 			Registry registry = LocateRegistry.getRegistry(rmiPort);
 	        ExecutionBuilder executionBuilder = (ExecutionBuilder) registry.lookup(ExecutionBuilder.LOOKUP_NAME);
+	        // TODO: Waiting for WINDUP-1259 executionBuilder.clear();
 	        return executionBuilder;
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
