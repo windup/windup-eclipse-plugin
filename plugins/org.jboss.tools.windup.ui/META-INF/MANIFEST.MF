@@ -66,3 +66,4 @@ Export-Package: org.jboss.tools.windup.ui,
  org.jboss.tools.windup.ui.internal.explorer,
  org.jboss.tools.windup.ui.internal.services,
  org.jboss.tools.windup.ui.util
+Import-Package: org.slf4j

@@ -89,3 +89,4 @@ Export-Package: org.jboss.tools.windup.runtime,
  org.jboss.windup.rules.apps.mavenize,
  org.jboss.windup.tooling,
  org.jboss.windup.tooling.data
+Import-Package: org.slf4j

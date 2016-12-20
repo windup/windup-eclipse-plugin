@@ -18,7 +18,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -34,17 +33,20 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.jboss.windup.tooling.ExecutionBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 @Creatable
 public class WindupRmiClient {
-
+	
+	private static Logger logger = LoggerFactory.getLogger(WindupRmiClient.class);
+	
 	private Path windupHome;
 	private int rmiPort;
 	
 	private ExecuteWatchdog watchdog;
-	
-	private AtomicBoolean started = new AtomicBoolean(false);
+	private ExecutionBuilder executionBuilder;
 	
 	@PostConstruct
 	private void init() {
@@ -56,8 +58,13 @@ public class WindupRmiClient {
 	public Path getWindupHome() {
 		return windupHome;
 	}
+	
+	public int getRmiPort() {
+		return rmiPort;
+	}
 
 	public void startWindup(final IProgressMonitor monitor, final ProgressCallback callback) {
+		logger.info("Begin start Windup."); //$NON-NLS-1$
 		monitor.worked(1);
 		CommandLine cmdLine = CommandLine.parse(windupHome.toString());
 		cmdLine.addArgument("--startServer"); //$NON-NLS-1$
@@ -66,66 +73,95 @@ public class WindupRmiClient {
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
 			public void onProcessFailed(ExecuteException e) {
-				started.set(false);
-				WindupRuntimePlugin.log(e);
-				callback.processFailed(e.getMessage());
+				logger.info("onProcessFailed"); //$NON-NLS-1$
+				executionBuilder = null;
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
-				started.set(false);
+				logger.info("onProcessComplete"); //$NON-NLS-1$
+				executionBuilder = null;
 			}
 		};
 		DefaultExecutor executor = new DefaultExecutor();
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				callback.log(line);
+				logger.info(line);
 				monitor.worked(1);
-				if (line.contains("Server started")) { //$NON-NLS-1$
-					started.set(true);
-					callback.serverStarted();
-				}
 			}
 		}));
 		executor.setWatchdog(watchdog);
 		executor.setExitValue(1);
 		monitor.worked(1);
 		try {
+			logger.info("Starting Windup in server mode..."); //$NON-NLS-1$
 			executor.execute(cmdLine, new HashMap<String, String>(), handler);
 		} catch (IOException e) {
 			WindupRuntimePlugin.log(e);
 		}
 	}
 	
-	@PreDestroy
-	public void shutdownWindup() {
-		watchdog.destroyProcess();
-		started.set(false);
-	}
-	
-	public boolean isWindupServerRunning() {
-		return started.get();
+	public boolean isWindupServerStarted() {
+		return executionBuilder != null;
 	}
 	
 	/**
-	 * Returns the ExecutionBuilder.
+	 * @return true if the ExecutionBuilder is not null, false otherwise.
 	 */
+	public boolean updateWindupServer() {
+		if (isWindupServerStarted()) {
+			return true;
+		}
+		else {
+			this.executionBuilder = WindupRmiClient.getExecutionBuilder(rmiPort);
+			return executionBuilder != null;
+		}
+	}
+	
 	public ExecutionBuilder getExecutionBuilder() {
+		return executionBuilder;
+	}
+	
+	public boolean isWindupServerRunning() {
+		return getExecutionBuilder() != null || WindupRmiClient.getExecutionBuilder(rmiPort) != null;
+	}
+
+	private static ExecutionBuilder getExecutionBuilder(int rmiPort) {
+		logger.info("Attempting to retrieve ExecutionBuilder from registry."); //$NON-NLS-1$
 		try {
 			Registry registry = LocateRegistry.getRegistry(rmiPort);
 	        ExecutionBuilder executionBuilder = (ExecutionBuilder) registry.lookup(ExecutionBuilder.LOOKUP_NAME);
-	        // TODO: Waiting for WINDUP-1259 executionBuilder.clear();
+	        executionBuilder.clear();
+			logger.info("ExecutionBuilder retrieved from registry."); //$NON-NLS-1$
 	        return executionBuilder;
-		} catch (RemoteException | NotBoundException e) {
-			e.printStackTrace();
+		} catch (RemoteException e) {
+			WindupRuntimePlugin.logError("Error while attemptint to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
+		} catch (NotBoundException e) {
+			logger.info("ExecutionBuilder not yet bound.", e); //$NON-NLS-1$
 		}
 		return null;
 	}
 	
+	@PreDestroy
+	public void shutdownWindup() {
+		ExecutionBuilder builder = WindupRmiClient.getExecutionBuilder(rmiPort);
+		if (builder != null) {
+			logger.info(""); //$NON-NLS-1$
+			try {
+				logger.info("ExecutionBuilder found in RMI Registry. Attempting to terminate it."); //$NON-NLS-1$
+				builder.terminate();
+				if (executionBuilder != null && executionBuilder != builder) {
+					logger.info("Attempting to terminate it current reference to ExecutionBuilder."); //$NON-NLS-1$
+					executionBuilder.terminate();
+				}
+			} catch (RemoteException e) {
+				WindupRuntimePlugin.logError("Error while terminating a previous Windup server instance.", e); //$NON-NLS-1$ 
+			}
+		}
+		executionBuilder = null;
+	}
+	
 	public static interface ProgressCallback {
-		void log(String line);
-		void serverStarted();
 		boolean isServerStarted();
-		void processFailed(String message);
 	}
 }
