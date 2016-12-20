@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -23,6 +26,7 @@ import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.QuickFix;
+import org.jboss.tools.windup.windup.WindupResult;
 import org.jboss.windup.tooling.data.QuickfixType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,6 +40,8 @@ public class MarkerSyncServiceTest extends WindupUiTest {
 	public void testStaleIssue() {
 		ConfigurationElement configuration = super.createRunConfiguration();
 		runWindup(configuration);
+		WindupResult result = configuration.getInputs().get(0).getWindupResult();
+		assertNotNull("Windup execution didn't finish!", result);
 		// get the first hint that contains a replacement quick fix.
 		Hint hint = configuration.getInputs().get(0).getWindupResult().getIssues().
 				stream().filter(issue -> { 

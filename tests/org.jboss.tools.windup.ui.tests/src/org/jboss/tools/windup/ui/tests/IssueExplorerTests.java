@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.swt.widgets.Tree;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.WindupResult;
 import org.junit.Test;
 
 /**
@@ -38,7 +39,9 @@ public class IssueExplorerTests extends WindupUiTest {
 	public void testIssueExplorerPopulated() {
 		ConfigurationElement configuration = super.createRunConfiguration();
 		super.runWindup(configuration);
-		assertTrue(!configuration.getInputs().get(0).getWindupResult().getIssues().isEmpty());
+		WindupResult result = configuration.getInputs().get(0).getWindupResult();
+		assertNotNull("Windup execution didn't finish!", result);
+		assertTrue("Windup execution didn't show any issues!", !result.getIssues().isEmpty());
 		IssueExplorer explorer = super.getIssueExplorer();
 		explorer.getCommonViewer().expandAll();
 		Tree tree = explorer.getCommonViewer().getTree();
