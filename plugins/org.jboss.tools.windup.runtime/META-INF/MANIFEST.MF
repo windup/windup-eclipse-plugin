@@ -9,7 +9,8 @@ Eclipse-BundleShape: dir
 Require-Bundle: org.eclipse.core.runtime,
  org.jboss.tools.common,
  com.google.guava,
- org.eclipse.e4.core.di
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.services
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %plugin.vendor

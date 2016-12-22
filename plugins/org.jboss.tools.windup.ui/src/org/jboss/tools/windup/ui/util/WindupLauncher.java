@@ -17,28 +17,23 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
-import org.jboss.tools.windup.runtime.WindupRmiClient.ProgressCallback;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.util.FutureUtils.AbstractDelegatingMonitorJob;
-import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,114 +47,47 @@ public class WindupLauncher {
 	public static final long WINDUP_START_DURATION_TIMEOUT = 25000;
 	public static final long WINDUP_STOP_DURATION_TIMEOUT = 25000;
 
-	@Inject private MarkerService markerService;
 	@Inject private WindupRmiClient windupClient;
-	@Inject @Named (IServiceConstants.ACTIVE_SHELL) Shell shell;
-
-	public void launchWindup(ConfigurationElement configuration, Consumer<ConfigurationElement> windupStartedCallback) {
-		markerService.deleteAllWindupMarkers();
-		if (!windupClient.isWindupServerStarted()) {
-			String windupHome = windupClient.getWindupHome().toString();
-			boolean executable = new File(windupHome).setExecutable(true);
-			if (executable) {
-				startWindup(configuration, windupStartedCallback);
-			}
-			else {
-				WindupUIPlugin.logErrorMessage(Messages.WindupNotExecutableInfo);
-				String message = Messages.WindupNotExecutableInfo + " - " + windupHome;
-				MessageDialog.openError(shell, Messages.WindupNotExecutableTitle, message);
-			}
-		}
-		else {
-			windupStartedCallback.accept(configuration);
-		}
-	}
 	
-	private void startWindup(ConfigurationElement configuration, Consumer<ConfigurationElement> windupStartedCallback) {
-		WindupRmiClient.ProgressCallback callback = new WindupRmiClient.ProgressCallback() {
-			@Override
-			public boolean isServerStarted() {
-				return windupClient.updateWindupServer();
-			}
-		};
-
-		Job job = createStartWindupJob(callback);
+	public void shutdown(WinupServerCallback callback) {
 		Display.getDefault().syncExec(() -> {
-			IStatus status = FutureUtils.runWithProgress(job, WINDUP_START_DURATION_TIMEOUT, 8, shell, Messages.WindupStartingDetail);
-			if (status.isOK()) {
-				windupStartedCallback.accept(configuration);
-			}
-			else {
-				WindupLauncher.openError(shell, status.getMessage());
-			}
+			Job job = new Job(Messages.WindupShuttingDown) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					IStatus result = Status.OK_STATUS;
+					try {
+						monitor.beginTask(Messages.WindupShuttingDown, 3);
+						shutdown(monitor);
+					} catch (ExecutionException | TimeoutException | InterruptedException e) {
+						WindupUIPlugin.log(e);
+						result = new Status(IStatus.ERROR, WindupUIPlugin.PLUGIN_ID, e.getMessage(), e);
+					} finally {
+						monitor.done();
+					}
+					if (monitor.isCanceled()) {
+						result = Status.CANCEL_STATUS;
+					}
+					return result;
+				}
+			};
+			job.setUser(true);
+			job.addJobChangeListener(new JobChangeAdapter() {
+				public void done(IJobChangeEvent event) {
+					callback.serverShutdown(event.getResult());
+				}
+			});
+			job.schedule();
 		});
 	}
 	
-	public Job createStartWindupJob(final ProgressCallback callback) {
-		Job job = new AbstractDelegatingMonitorJob(Messages.WindupStartingTitle) {
-			@Override
-			protected IStatus doRun(IProgressMonitor monitor) {
-				Future<IStatus> future = new Future<IStatus>() {
-					private AtomicBoolean cancelled = new AtomicBoolean(false);
-					@Override
-					public boolean cancel(boolean mayInterruptIfRunning) {
-						cancelled.set(true);
-						return true;
-					}
-					@Override
-					public boolean isCancelled() {
-						return cancelled.get();
-					}
-					@Override
-					public boolean isDone() {
-						return callback.isServerStarted();
-					}
-					@Override
-					public IStatus get() throws InterruptedException, ExecutionException {
-						return null;
-					}
-					@Override
-					public IStatus get(long timeout, TimeUnit unit)
-							throws InterruptedException, ExecutionException, TimeoutException {
-						return null;
-					}
-				};
-				try {
-					boolean windupStopped = tryTerminateWindup(windupClient, monitor);
-					if (windupStopped) {
-						monitor.subTask(Messages.WindupRunStartScipt);
-						windupClient.startWindup(monitor, callback);
-						FutureUtils.waitForFuture(WINDUP_START_DURATION_TIMEOUT, future, monitor);
-					}
-				} catch (ExecutionException | TimeoutException | InterruptedException e) {
-					WindupUIPlugin.log(e);
-					WindupLauncher.openError(shell, e.getMessage());
-				} finally {
-					monitor.done();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		return job;
-	}
-	
-	public static boolean tryTerminateWindup(WindupRmiClient windupClient, IProgressMonitor monitor) throws 
-		InterruptedException, ExecutionException, TimeoutException {
-		monitor.subTask(Messages.WindupShutdowCheck);
-		logger.info("Checking for existing Windup server."); //$NON-NLS-1$
+	private void shutdown(IProgressMonitor monitor) throws InterruptedException, ExecutionException, TimeoutException {
+		logger.info("Shutting Windup down."); //$NON-NLS-1$
 		monitor.worked(1);
-		if (windupClient.isWindupServerRunning()) {
-			logger.info("Found running Windup server. Shutting it down."); //$NON-NLS-1$
-			monitor.worked(1);
-			monitor.subTask(Messages.WindupShuttingDown);
-			windupClient.shutdownWindup();
-			Future<IStatus> future = WindupLauncher.getTerminateWindupFuture(windupClient);
-			FutureUtils.waitForFuture(WINDUP_STOP_DURATION_TIMEOUT, future, monitor);
-			monitor.worked(1);
-			return future.isDone();
-		}
-		return true;
+		windupClient.shutdownWindup();
+		monitor.worked(1);
+		Future<IStatus> future = WindupLauncher.getTerminateWindupFuture(windupClient);
+		FutureUtils.waitForFuture(WINDUP_STOP_DURATION_TIMEOUT, future, monitor);
+		monitor.worked(1);
 	}
 	
 	private static Future<IStatus> getTerminateWindupFuture(WindupRmiClient windupClient) {
@@ -190,10 +118,73 @@ public class WindupLauncher {
 		};
 	}
 	
-	private static void openError(Shell shell, String message) {
-		Display.getDefault().asyncExec(() -> {
-			String msg = Messages.WindupStartingError + " " + message;
-			MessageDialog.openError(shell,  Messages.WindupServerError, msg);
+	public void start(WinupServerCallback callback) {
+		Display.getDefault().syncExec(() -> {
+			logger.info("Start Windup Server."); //$NON-NLS-1$
+			String windupHome = windupClient.getWindupHome().toString();
+			boolean executable = new File(windupHome).setExecutable(true);
+			if (!executable) {
+				logger.info("Windup not executable."); //$NON-NLS-1$
+				callback.windupNotExecutable();
+				return;
+			}
+			Job job = createStartWindupJob();
+			IStatus status = FutureUtils.runWithProgress(job, WINDUP_START_DURATION_TIMEOUT, 5, callback.getShell(),
+					Messages.WindupStartingDetail);
+			callback.serverStart(status);
 		});
+	}
+	
+	public Job createStartWindupJob() {
+		Job job = new AbstractDelegatingMonitorJob(Messages.WindupStartingTitle) {
+			@Override
+			protected IStatus doRun(IProgressMonitor monitor) {
+				Future<IStatus> future = new Future<IStatus>() {
+					private AtomicBoolean cancelled = new AtomicBoolean(false);
+					@Override
+					public boolean cancel(boolean mayInterruptIfRunning) {
+						cancelled.set(true);
+						return true;
+					}
+					@Override
+					public boolean isCancelled() {
+						return cancelled.get();
+					}
+					@Override
+					public boolean isDone() {
+						return windupClient.updateWindupServer();
+					}
+					@Override
+					public IStatus get() throws InterruptedException, ExecutionException {
+						return null;
+					}
+					@Override
+					public IStatus get(long timeout, TimeUnit unit)
+							throws InterruptedException, ExecutionException, TimeoutException {
+						return null;
+					}
+				};
+				try {
+					monitor.subTask(Messages.WindupRunStartScipt);
+					windupClient.startWindup(monitor);
+					FutureUtils.waitForFuture(WINDUP_START_DURATION_TIMEOUT, future, monitor);
+				} catch (ExecutionException | TimeoutException | InterruptedException e) {
+					WindupUIPlugin.log(e);
+					
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		return job;
+	}
+	
+	public static interface WinupServerCallback {
+		void serverShutdown(IStatus status);
+		void serverStart(IStatus status);
+		void windupNotExecutable();
+		Shell getShell();
 	}
 }

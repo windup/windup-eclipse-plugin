@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.exec.CommandLine;
@@ -32,6 +33,7 @@ import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +44,18 @@ public class WindupRmiClient {
 	
 	private static Logger logger = LoggerFactory.getLogger(WindupRmiClient.class);
 	
+	/**
+	 * Server status
+	 */
+	public static final String WINDUP_SERVER_STATUS = "windup/server/status";
+	
 	private Path windupHome;
 	private int rmiPort;
 	
 	private ExecuteWatchdog watchdog;
 	private ExecutionBuilder executionBuilder;
+	
+	@Inject private IEventBroker eventBroker;
 	
 	@PostConstruct
 	private void init() {
@@ -63,7 +72,7 @@ public class WindupRmiClient {
 		return rmiPort;
 	}
 
-	public void startWindup(final IProgressMonitor monitor, final ProgressCallback callback) {
+	public void startWindup(final IProgressMonitor monitor) {
 		logger.info("Begin start Windup."); //$NON-NLS-1$
 		monitor.worked(1);
 		CommandLine cmdLine = CommandLine.parse(windupHome.toString());
@@ -114,8 +123,13 @@ public class WindupRmiClient {
 		}
 		else {
 			this.executionBuilder = WindupRmiClient.getExecutionBuilder(rmiPort);
+			notifyServerChanged();
 			return executionBuilder != null;
 		}
+	}
+	
+	private void notifyServerChanged() {
+		eventBroker.post(WINDUP_SERVER_STATUS, executionBuilder);
 	}
 	
 	public ExecutionBuilder getExecutionBuilder() {
@@ -135,7 +149,7 @@ public class WindupRmiClient {
 			logger.info("ExecutionBuilder retrieved from registry."); //$NON-NLS-1$
 	        return executionBuilder;
 		} catch (RemoteException e) {
-			WindupRuntimePlugin.logError("Error while attemptint to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
+			WindupRuntimePlugin.logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
 		} catch (NotBoundException e) {
 			logger.info("ExecutionBuilder not yet bound.", e); //$NON-NLS-1$
 		}
@@ -159,9 +173,6 @@ public class WindupRmiClient {
 			}
 		}
 		executionBuilder = null;
-	}
-	
-	public static interface ProgressCallback {
-		boolean isServerStarted();
+		notifyServerChanged();
 	}
 }

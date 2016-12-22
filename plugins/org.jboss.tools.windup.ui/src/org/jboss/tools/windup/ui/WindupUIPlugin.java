@@ -60,6 +60,17 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_DELETE_ALL = "icons/deleteAllMarkers.png"; //$NON-NLS-1$
     public static final String IMG_REPORT = "icons/report.gif"; //$NON-NLS-1$
     public static final String IMG_STALE_ISSUE = "icons/stale_issue.gif"; //$NON-NLS-1$
+    public static final String IMG_SERVER = "icons/server.gif"; //$NON-NLS-1$
+    public static final String IMG_CONFIG_HOT = "icons/config_hot.png"; //$NON-NLS-1$
+    public static final String IMG_CONFIG_COLD = "icons/config_cold.png"; //$NON-NLS-1$
+    public static final String IMG_LAUNCH_BG = "icons/launch_button_bg.png"; //$NON-NLS-1$
+    public static final String IMG_SERVER_NOT_STARTE = "icons/server_not_started.gif"; //$NON-NLS-1$
+    public static final String IMG_START = "icons/start.gif"; //$NON-NLS-1$
+    public static final String IMG_STOP = "icons/stop.gif"; //$NON-NLS-1$
+    public static final String IMG_SERVER_RUNNING_STATUS = "icons/server_running_status.gif"; //$NON-NLS-1$
+    public static final String IMG_SERVER_NOT_RUNNING_STATUS = "icons/server_not_running_status.png"; //$NON-NLS-1$
+    public static final String IMG_START_DISABLED = "icons/start_disabled.gif"; //$NON-NLS-1$
+    public static final String IMG_STOP_DISABLED = "icons/stop_disabled.gif"; //$NON-NLS-1$
     
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -173,6 +184,16 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_REPORT, createImageDescriptor(IMG_REPORT));
 		reg.put(IMG_STALE_ISSUE, createImageDescriptor(IMG_STALE_ISSUE));
 		reg.put(IMG_ARGS, createImageDescriptor(IMG_ARGS));
+		reg.put(IMG_SERVER, createImageDescriptor(IMG_SERVER));
+		reg.put(IMG_CONFIG_HOT, createImageDescriptor(IMG_CONFIG_HOT));
+		reg.put(IMG_CONFIG_COLD, createImageDescriptor(IMG_CONFIG_COLD));
+		reg.put(IMG_LAUNCH_BG, createImageDescriptor(IMG_LAUNCH_BG));
+		reg.put(IMG_START, createImageDescriptor(IMG_START));
+		reg.put(IMG_STOP, createImageDescriptor(IMG_STOP));
+		reg.put(IMG_SERVER_RUNNING_STATUS, createImageDescriptor(IMG_SERVER_RUNNING_STATUS));
+		reg.put(IMG_SERVER_NOT_RUNNING_STATUS, createImageDescriptor(IMG_SERVER_NOT_RUNNING_STATUS));
+		reg.put(IMG_START_DISABLED, createImageDescriptor(IMG_START_DISABLED));
+		reg.put(IMG_STOP_DISABLED, createImageDescriptor(IMG_STOP_DISABLED));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

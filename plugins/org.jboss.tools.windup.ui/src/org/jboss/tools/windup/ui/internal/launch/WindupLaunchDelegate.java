@@ -18,6 +18,7 @@ import javax.inject.Named;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -30,9 +31,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
+import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
 
@@ -47,6 +50,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	@Inject private IEventBroker broker;
 	@Inject private ModelService modelService;
 	@Inject private MarkerService markerService;
+	@Inject private WindupRmiClient windupClient;
 	@Inject @Named (IServiceConstants.ACTIVE_SHELL) Shell shell;
 	
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) {
@@ -59,7 +63,32 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		else {
 			markerService.deleteAllWindupMarkers();
-			launcher.launchWindup(configuration, this::runWindup);
+			if (windupClient.getExecutionBuilder() == null) {
+				launcher.start(new WindupServerCallbackAdapter(shell) {
+					@Override
+					public void windupNotExecutable() {
+						MessageDialog.openError(shell, 
+								Messages.WindupNotExecutableTitle, 
+								Messages.WindupNotExecutableInfo);
+					}
+					@Override
+					public void serverStart(IStatus status) {
+						if (status.getSeverity() == Status.ERROR) {
+							MessageDialog.openError(shell,
+									Messages.WindupStartingError, 
+									status.getMessage());
+						}
+						if (status.isOK()) {
+							runWindup(configuration);
+						}
+					}
+					@Override
+					public void serverShutdown(IStatus status) {}
+				});
+			}
+			else {
+				runWindup(configuration);
+			}
 		}
 	}
 	

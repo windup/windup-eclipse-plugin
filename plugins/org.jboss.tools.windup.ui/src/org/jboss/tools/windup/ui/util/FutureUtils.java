@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
@@ -57,7 +56,9 @@ public class FutureUtils {
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
 			WindupRuntimePlugin.log(e);
-			MessageDialog.openError(shell, job.getName(), e.getMessage());
+			String message = "Error occurred during operation - " + job.getName();
+			message += ": Exeception is: " + e.getMessage();
+			return new Status(IStatus.ERROR, WindupUIPlugin.PLUGIN_ID, message);
 		}
 		return getStatus(job, future);
 	}
@@ -71,9 +72,7 @@ public class FutureUtils {
 		if (future.isDone()) {
 			return job.getResult();
 		}
-		String message =
-				NLS.bind("The operation ''{0}'' did not complete in a reasonnable amount of time", job.getName());
-		WindupUIPlugin.logErrorMessage(message);
+		String message = NLS.bind("The operation ''{0}'' did not complete in a reasonnable amount of time", job.getName());
 		return new Status(IStatus.ERROR, WindupUIPlugin.PLUGIN_ID, message);
 	}
 

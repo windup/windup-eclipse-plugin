@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -28,11 +29,13 @@ import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.core.test.WindupTest;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.util.NameUtil;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.tests.swtbot.WorkbenchBot;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
+import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.junit.After;
 import org.junit.Before;
@@ -61,6 +64,7 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected IEventBroker broker;
 	@Inject protected MarkerService markerService;
 	
+	@Inject protected WindupRmiClient windupClient;
 	@Inject protected WindupLauncher windupLauncher;
 	
 	@Before
@@ -84,9 +88,24 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
-		windupLauncher.launchWindup(configuration, (config) -> {
+		if (windupClient.getExecutionBuilder() != null) {
 			windupService.generateGraph(configuration, new NullProgressMonitor());
-		});
+			updateMarkers(configuration);
+		}
+		else {
+			windupLauncher.start(new WindupServerCallbackAdapter(Display.getDefault().getActiveShell()) {
+				@Override
+				public void serverStart(IStatus status) {
+					if (status.isOK() && windupClient.getExecutionBuilder() != null) {
+						windupService.generateGraph(configuration, new NullProgressMonitor());
+						updateMarkers(configuration);
+					}
+				}
+			});
+		}
+	}
+	
+	private void updateMarkers(ConfigurationElement configuration) {
 		Display.getDefault().syncExec(() -> {
 			try {
 				markerService.createWindupMarkers(configuration, new NullProgressMonitor());

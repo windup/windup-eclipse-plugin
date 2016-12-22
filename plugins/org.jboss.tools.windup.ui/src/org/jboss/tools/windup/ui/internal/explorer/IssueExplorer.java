@@ -29,17 +29,30 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -50,13 +63,18 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.util.WindupLauncher;
+import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.Issue;
+import org.jboss.windup.tooling.ExecutionBuilder;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -75,6 +93,9 @@ public class IssueExplorer extends CommonNavigator {
 	@Inject private IssueGroupService groupService;
 	@Inject private EPartService partService;
 	private IssueExplorerContentService contentService;
+	
+	@Inject private WindupLauncher windupLauncher;
+	@Inject private WindupRmiClient windupClient;
 	
 	@Inject
 	public IssueExplorer(IssueExplorerContentService contentService) {
@@ -111,7 +132,9 @@ public class IssueExplorer extends CommonNavigator {
 	
 	@Override
 	public void createPartControl(Composite aParent) {
+		createServerArea(aParent);
 		super.createPartControl(aParent);
+		GridDataFactory.fillDefaults().grab(true, true).indent(0, 5).applyTo(getCommonViewer().getControl());
 		getCommonViewer().addDoubleClickListener(new OpenIssueListener());
 		getCommonViewer().addDoubleClickListener(new OpenReportListener());
 		getCommonViewer().addSelectionChangedListener((e) -> {
@@ -137,6 +160,139 @@ public class IssueExplorer extends CommonNavigator {
 		broker.subscribe(MARKER_CHANGED, markerChangedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 		initGettingStarted();
+	}
+	
+	private Label statusImage;
+	private Label textLabel;
+	private Label statusLabel;
+	private CButton startStopButton;
+	private Composite group;
+	
+	@Inject
+	@Optional
+	private void updateServer(@UIEventTopic(WindupRmiClient.WINDUP_SERVER_STATUS) ExecutionBuilder executionBuilder) {
+		if (statusImage != null && !statusImage.isDisposed()) {
+			updateServerGroup();
+		}
+	}
+	
+	private void createServerArea(Composite parent) {
+		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(parent);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+		
+		Group container = new Group(parent, SWT.NO_BACKGROUND);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+		
+		group = new Composite(container, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(5).margins(0, 5).spacing(0, 0).applyTo(group);
+		GridDataFactory.fillDefaults().indent(0, 0).grab(true, false).applyTo(group);
+		
+		statusImage = new Label(group, SWT.NONE);
+		statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
+		
+		Label serverLabel = new Label(group, SWT.NONE);
+		serverLabel.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER));
+		
+		textLabel = new Label(group, SWT.NONE);
+		textLabel.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		textLabel.setText(Messages.WindupServerLabel); //$NON-NLS-1$
+		
+		statusLabel = new Label(group, SWT.NONE);
+		statusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.DECORATIONS_COLOR));
+		
+		Composite buttonBar = new Composite(container, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(3).margins(0, 4).spacing(10, 0).applyTo(buttonBar);
+		GridDataFactory.fillDefaults().indent(0, 0).grab(false, false).applyTo(buttonBar);
+		
+		startStopButton = new CButton(buttonBar, SWT.NONE);
+		startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_START));
+
+		updateServerGroup();
+		
+		final Shell shell = parent.getShell();
+		startStopButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (windupClient.getExecutionBuilder() == null) {
+					windupLauncher.shutdown(new WindupServerCallbackAdapter(shell) {
+						@Override
+						public void serverShutdown(IStatus status) {
+							Boolean shutdown;
+							if (status.isOK()) {
+								shutdown = Boolean.TRUE;
+							}
+							else {
+								shutdown = Boolean.FALSE;
+								MessageDialog.openError(parent.getShell(), 
+										Messages.WindupShuttingDownError, 
+										status.getMessage());
+							}
+							if (shutdown) {
+								windupLauncher.start(new WindupServerCallbackAdapter(shell) {
+									@Override
+									public void windupNotExecutable() {
+										MessageDialog.openError(parent.getShell(), 
+												Messages.WindupNotExecutableTitle, 
+												Messages.WindupNotExecutableInfo);
+									}
+									@Override
+									public void serverStart(IStatus status) {
+										if (status.getSeverity() == IStatus.ERROR) {
+											MessageDialog.openError(parent.getShell(), 
+													Messages.WindupStartingError, 
+													status.getMessage());
+										}
+										updateServerGroup();
+									}
+								});
+							}
+						}
+					});
+				}
+				else {
+					windupLauncher.shutdown(new WindupServerCallbackAdapter(shell) {
+						@Override
+						public void serverShutdown(IStatus status) {
+							Display.getDefault().asyncExec(() -> {
+								if (status.getSeverity() == Status.ERROR || !status.isOK()) {
+									MessageDialog.openError(parent.getShell(), 
+											Messages.WindupShuttingDownError, 
+											status.getMessage());
+								}
+								updateServerGroup();
+							});
+						}
+					});
+				}
+			}
+		});
+		
+		CButton preferenceButton = new CButton(buttonBar, SWT.NONE);
+		preferenceButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_HOT));
+		preferenceButton.setColdImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_COLD));
+		preferenceButton.setToolTipText("Configure Windup"); //$NON-NLS-1$
+		
+		Composite separatorContainer = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().applyTo(separatorContainer);
+		GridDataFactory.fillDefaults().indent(0, 3).grab(true, false).applyTo(separatorContainer);
+	 }
+	
+	private void updateServerGroup() {
+		if (windupClient.getExecutionBuilder() != null) {
+			statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_RUNNING_STATUS));
+			statusLabel.setText("[Running]"); //$NON-NLS-1$
+			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
+			startStopButton.setToolTipText("Stop Windup Server"); //$NON-NLS-1$
+		}
+		else {
+			statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
+			statusLabel.setText("[Not Running]"); //$NON-NLS-1$
+			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_START));	
+			startStopButton.setToolTipText("Start Windup Server"); //$NON-NLS-1$
+		}
+		startStopButton.redraw();
+		startStopButton.update();
 	}
 	
 	private void initGettingStarted() {

@@ -45,6 +45,8 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.ui.util.WindupLauncher;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
@@ -64,6 +66,15 @@ public class IssueExplorerHandlers {
 			return null;
 		}
 		protected abstract void update(boolean enabled);
+	}
+	
+	public static class StartWindupServerHandler extends AbstractHandler {
+		@Inject private WindupLauncher windupLauncher;
+		@Override
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			//windupLauncher.launchWindup(configuration, windupStartedCallback);
+			return null;
+		}
 	}
 	
 	public static class OpenReportHandler extends AbstractHandler {
@@ -178,8 +189,11 @@ public class IssueExplorerHandlers {
 		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			markerService.deleteAllWindupMarkers();
-			markerService.updateMarkers(modelService.getRecentConfiguration());
+			ConfigurationElement configurationElement = modelService.getRecentConfiguration();
+			if (configurationElement != null) {
+				markerService.deleteAllWindupMarkers();
+				markerService.updateMarkers(modelService.getRecentConfiguration());	
+			}
 			return null;
 		}
 	}
