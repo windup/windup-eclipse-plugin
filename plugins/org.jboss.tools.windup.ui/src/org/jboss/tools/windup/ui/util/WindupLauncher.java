@@ -90,7 +90,7 @@ public class WindupLauncher {
 		monitor.worked(1);
 	}
 	
-	private static Future<IStatus> getTerminateWindupFuture(WindupRmiClient windupClient) {
+	public static Future<IStatus> getTerminateWindupFuture(WindupRmiClient windupClient) {
 		return new Future<IStatus>() {
 			private AtomicBoolean cancelled = new AtomicBoolean(false);
 			@Override
