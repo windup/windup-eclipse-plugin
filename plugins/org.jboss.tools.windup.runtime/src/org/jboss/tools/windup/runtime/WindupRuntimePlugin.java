@@ -187,4 +187,9 @@ public class WindupRuntimePlugin extends Plugin
         WindupRuntimePlugin.getDefault().getLog().log(
                     new Status(IStatus.ERROR, WindupRuntimePlugin.PLUGIN_ID, message, exception));
     }
+    
+    public static void logInfo(String message) {
+        WindupRuntimePlugin.getDefault().getLog().log(
+                    new Status(IStatus.INFO, WindupRuntimePlugin.PLUGIN_ID, message));
+    }
 }

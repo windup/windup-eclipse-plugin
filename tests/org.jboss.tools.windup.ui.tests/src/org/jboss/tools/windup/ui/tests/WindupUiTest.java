@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.tests;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
+import static org.junit.Assert.assertNotNull;
 
 import javax.inject.Inject;
 
@@ -67,10 +68,15 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected WindupRmiClient windupClient;
 	@Inject protected WindupLauncher windupLauncher;
 	
+	protected IssueExplorer issueExplorer;
+	
 	@Before
 	public void init() throws CoreException {
 		projectProvider = workbenchBot.importProject(Activator.PLUGIN_ID, null, PROJECT, false);
 		openWindupPerspective();
+		this.issueExplorer = (IssueExplorer)((CompatibilityView)partService.findPart(
+				IssueExplorer.VIEW_ID).getObject()).getView();
+		assertNotNull("Issue Explorer is NULL.", issueExplorer);
 	}
 	
 	@After
@@ -78,19 +84,16 @@ public class WindupUiTest extends WindupTest {
 		projectProvider.dispose();
 	}
 	
-	protected IssueExplorer getIssueExplorer() {
-		return (IssueExplorer)((CompatibilityView)partService.findPart(
-				IssueExplorer.VIEW_ID).getObject()).getView();
-	}
-	
 	protected void openWindupPerspective() {
-		workbenchBot.perspectiveById(WindupPerspective.ID).activate();
+		workbenchBot.perspectiveById(WindupPerspective.ID).activate();;
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
 		if (windupClient.getExecutionBuilder() != null) {
-			windupService.generateGraph(configuration, new NullProgressMonitor());
-			updateMarkers(configuration);
+			Display.getDefault().syncExec(() -> {
+				windupService.generateGraph(configuration, new NullProgressMonitor());
+				updateMarkers(configuration);
+			});
 		}
 		else {
 			windupLauncher.start(new WindupServerCallbackAdapter(Display.getDefault().getActiveShell()) {
@@ -106,14 +109,12 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	private void updateMarkers(ConfigurationElement configuration) {
-		Display.getDefault().syncExec(() -> {
-			try {
-				markerService.createWindupMarkers(configuration, new NullProgressMonitor());
-				broker.send(MARKERS_CHANGED, true);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		});
+		try {
+			markerService.createWindupMarkers(configuration, new NullProgressMonitor());
+			broker.send(MARKERS_CHANGED, true);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	protected ConfigurationElement createRunConfiguration() {
