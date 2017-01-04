@@ -10,11 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.widgets.Tree;
-import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.junit.Test;
 
@@ -24,14 +22,6 @@ import org.junit.Test;
 public class IssueExplorerTests extends WindupUiTest {
 	
 	/**
-	 * Issue Explorer should be open by default.
-	 */
-	@Test
-	public void testOpenIssueExplorerOpen() {
-		assertNotNull(partService.findPart(IssueExplorer.VIEW_ID));
-	}
-	
-	/**
 	 * Issue Explorer should contain migration issues after Windup execution. 
 	 */
 	@Test
@@ -39,9 +29,8 @@ public class IssueExplorerTests extends WindupUiTest {
 		ConfigurationElement configuration = super.createRunConfiguration();
 		markerService.deleteAllWindupMarkers();
 		super.runWindup(configuration);
-		IssueExplorer explorer = super.getIssueExplorer();
-		explorer.getCommonViewer().expandAll();
-		Tree tree = explorer.getCommonViewer().getTree();
+		issueExplorer.getCommonViewer().expandAll();
+		Tree tree = issueExplorer.getCommonViewer().getTree();
 		assertTrue(tree.getItems().length > 0);
 	}
 }

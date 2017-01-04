@@ -35,14 +35,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.windup.tooling.ExecutionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.*;
 
 @Singleton
 @Creatable
 public class WindupRmiClient {
-	
-	private static Logger logger = LoggerFactory.getLogger(WindupRmiClient.class);
 	
 	/**
 	 * Server status
@@ -61,7 +59,7 @@ public class WindupRmiClient {
 	private void init() {
 		// TODO: Move these to a preference page, and account for them being changed.
 		this.rmiPort = 1100;
-		this.windupHome = WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("windup");
+		this.windupHome = findWindupHome().toPath().resolve("bin").resolve("windup");
 	}
 	
 	public Path getWindupHome() {
@@ -73,7 +71,7 @@ public class WindupRmiClient {
 	}
 
 	public void startWindup(final IProgressMonitor monitor) {
-		logger.info("Begin start Windup."); //$NON-NLS-1$
+		logInfo("Begin start Windup."); //$NON-NLS-1$
 		monitor.worked(1);
 		CommandLine cmdLine = CommandLine.parse(windupHome.toString());
 		cmdLine.addArgument("--startServer"); //$NON-NLS-1$
@@ -82,12 +80,12 @@ public class WindupRmiClient {
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
 			public void onProcessFailed(ExecuteException e) {
-				logger.info("onProcessFailed"); //$NON-NLS-1$
+				logInfo("onProcessFailed"); //$NON-NLS-1$
 				executionBuilder = null;
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
-				logger.info("onProcessComplete"); //$NON-NLS-1$
+				logInfo("onProcessComplete"); //$NON-NLS-1$
 				executionBuilder = null;
 			}
 		};
@@ -95,7 +93,7 @@ public class WindupRmiClient {
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				logger.info(line);
+				logInfo("Message from Windup executor: " + line);
 				monitor.worked(1);
 			}
 		}));
@@ -103,7 +101,7 @@ public class WindupRmiClient {
 		executor.setExitValue(1);
 		monitor.worked(1);
 		try {
-			logger.info("Starting Windup in server mode..."); //$NON-NLS-1$
+			logInfo("Starting Windup in server mode..."); //$NON-NLS-1$
 			executor.execute(cmdLine, new HashMap<String, String>(), handler);
 		} catch (IOException e) {
 			WindupRuntimePlugin.log(e);
@@ -141,17 +139,17 @@ public class WindupRmiClient {
 	}
 
 	private static ExecutionBuilder getExecutionBuilder(int rmiPort) {
-		logger.info("Attempting to retrieve ExecutionBuilder from registry."); //$NON-NLS-1$
+		logInfo("Attempting to retrieve ExecutionBuilder from registry."); //$NON-NLS-1$
 		try {
 			Registry registry = LocateRegistry.getRegistry(rmiPort);
 	        ExecutionBuilder executionBuilder = (ExecutionBuilder) registry.lookup(ExecutionBuilder.LOOKUP_NAME);
 	        executionBuilder.clear();
-			logger.info("ExecutionBuilder retrieved from registry."); //$NON-NLS-1$
+	        logInfo("ExecutionBuilder retrieved from registry."); //$NON-NLS-1$
 	        return executionBuilder;
 		} catch (RemoteException e) {
-			WindupRuntimePlugin.logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
+			logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
 		} catch (NotBoundException e) {
-			logger.info("ExecutionBuilder not yet bound.", e); //$NON-NLS-1$
+			logError("ExecutionBuilder not yet bound.", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -160,16 +158,15 @@ public class WindupRmiClient {
 	public void shutdownWindup() {
 		ExecutionBuilder builder = WindupRmiClient.getExecutionBuilder(rmiPort);
 		if (builder != null) {
-			logger.info(""); //$NON-NLS-1$
 			try {
-				logger.info("ExecutionBuilder found in RMI Registry. Attempting to terminate it."); //$NON-NLS-1$
+				logInfo("ExecutionBuilder found in RMI Registry. Attempting to terminate it."); //$NON-NLS-1$
 				builder.terminate();
 				if (executionBuilder != null && executionBuilder != builder) {
-					logger.info("Attempting to terminate it current reference to ExecutionBuilder."); //$NON-NLS-1$
+					logInfo("Attempting to terminate it current reference to ExecutionBuilder."); //$NON-NLS-1$
 					executionBuilder.terminate();
 				}
 			} catch (RemoteException e) {
-				WindupRuntimePlugin.logError("Error while terminating a previous Windup server instance.", e); //$NON-NLS-1$ 
+				logError("Error while terminating a previous Windup server instance.", e); //$NON-NLS-1$ 
 			}
 		}
 		executionBuilder = null;

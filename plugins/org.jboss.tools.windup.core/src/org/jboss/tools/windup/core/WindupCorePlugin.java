@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.osgi.framework.BundleContext;
 
 public class WindupCorePlugin extends Plugin {
@@ -92,5 +93,9 @@ public class WindupCorePlugin extends Plugin {
 			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 		}
 		log(status);
+	}
+	
+	public static void logInfo(String message) {
+		WindupRuntimePlugin.getDefault().getLog().log(new Status(IStatus.INFO, WindupRuntimePlugin.PLUGIN_ID, message));
 	}
 }

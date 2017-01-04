@@ -171,7 +171,9 @@ public class WindupService
                 	}
                 }
                 execBuilder.ignore("\\.class$");
+                WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
                 ExecutionResults results = execBuilder.execute();
+                WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
                 modelService.populateConfiguration(configuration, input, results);
         	}
         	modelService.save();
