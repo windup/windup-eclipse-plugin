@@ -11,13 +11,16 @@
  ******************************************************************************/
 package org.jboss.tools.windup.runtime;
 
+import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.findWindupHome;
+import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logError;
+import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -35,8 +38,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.windup.tooling.ExecutionBuilder;
-
-import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.*;
 
 @Singleton
 @Creatable
