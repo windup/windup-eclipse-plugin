@@ -11,10 +11,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.runtime;
 
-import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.findWindupHome;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logError;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.rmi.NotBoundException;
@@ -22,7 +22,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,6 +34,8 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.windup.tooling.ExecutionBuilder;
@@ -48,35 +49,27 @@ public class WindupRmiClient {
 	 */
 	public static final String WINDUP_SERVER_STATUS = "windup/server/status";
 	
-	private Path windupHome;
-	private int rmiPort;
-	
 	private ExecuteWatchdog watchdog;
 	private ExecutionBuilder executionBuilder;
 	
 	@Inject private IEventBroker eventBroker;
 	
-	@PostConstruct
-	private void init() {
-		// TODO: Move these to a preference page, and account for them being changed.
-		this.rmiPort = 1100;
-		this.windupHome = findWindupHome().toPath().resolve("bin").resolve("windup");
-	}
+	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
 	public Path getWindupHome() {
-		return windupHome;
+		return new File(preferences.get(IPreferenceConstants.WINDUP_HOME, "")).toPath();
 	}
 	
 	public int getRmiPort() {
-		return rmiPort;
+		return preferences.getInt(IPreferenceConstants.RMI_PORT, 0);
 	}
 
 	public void startWindup(final IProgressMonitor monitor) {
 		logInfo("Begin start Windup."); //$NON-NLS-1$
 		monitor.worked(1);
-		CommandLine cmdLine = CommandLine.parse(windupHome.toString());
+		CommandLine cmdLine = CommandLine.parse(getWindupHome().toString());
 		cmdLine.addArgument("--startServer"); //$NON-NLS-1$
-		cmdLine.addArgument(String.valueOf(rmiPort));
+		cmdLine.addArgument(String.valueOf(getRmiPort()));
 		watchdog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
@@ -121,7 +114,7 @@ public class WindupRmiClient {
 			return true;
 		}
 		else {
-			this.executionBuilder = WindupRmiClient.getExecutionBuilder(rmiPort);
+			this.executionBuilder = WindupRmiClient.getExecutionBuilder(getRmiPort());
 			notifyServerChanged();
 			return executionBuilder != null;
 		}
@@ -136,7 +129,7 @@ public class WindupRmiClient {
 	}
 	
 	public boolean isWindupServerRunning() {
-		return getExecutionBuilder() != null || WindupRmiClient.getExecutionBuilder(rmiPort) != null;
+		return getExecutionBuilder() != null || WindupRmiClient.getExecutionBuilder(getRmiPort()) != null;
 	}
 
 	private static ExecutionBuilder getExecutionBuilder(int rmiPort) {
@@ -157,7 +150,7 @@ public class WindupRmiClient {
 	
 	@PreDestroy
 	public void shutdownWindup() {
-		ExecutionBuilder builder = WindupRmiClient.getExecutionBuilder(rmiPort);
+		ExecutionBuilder builder = WindupRmiClient.getExecutionBuilder(getRmiPort());
 		if (builder != null) {
 			try {
 				logInfo("ExecutionBuilder found in RMI Registry. Attempting to terminate it."); //$NON-NLS-1$

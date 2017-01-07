@@ -643,4 +643,18 @@
              name="Windup">
        </perspective>
     </extension>
+    <extension
+          point="org.eclipse.core.runtime.preferences">
+       <initializer
+             class="org.jboss.tools.windup.ui.preferences.PreferenceInitializer">
+       </initializer>
+    </extension>
+    <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             class="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
+             id="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
+             name="Windup">
+       </page>
+    </extension>
 </plugin>

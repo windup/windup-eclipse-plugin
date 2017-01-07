@@ -38,6 +38,9 @@ public class Messages extends NLS
 	
 	public static String WindupNotExecutableTitle;
 	public static String WindupNotExecutableInfo;
+	
+	public static String WindupPreferenceHome;
+	public static String WindupPreferenceRmiPort;
 
     public static String refresh;
 

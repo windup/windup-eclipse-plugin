@@ -40,6 +40,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -58,6 +59,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.progress.UIJob;
@@ -176,7 +178,7 @@ public class IssueExplorer extends CommonNavigator {
 		}
 	}
 	
-	private void createServerArea(Composite parent) {
+	private void createServerArea(final Composite parent) {
 		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		
@@ -272,6 +274,15 @@ public class IssueExplorer extends CommonNavigator {
 		preferenceButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_HOT));
 		preferenceButton.setColdImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_COLD));
 		preferenceButton.setToolTipText("Configure Windup"); //$NON-NLS-1$
+		preferenceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String id = "org.jboss.tools.windup.ui.preferences.WindupPreferencePage"; //$NON-NLS-1$
+				PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(parent.getShell(), 
+						id, new String[]{id}, null);
+				dialog.open();
+			}
+		});
 		
 		Composite separatorContainer = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().applyTo(separatorContainer);
