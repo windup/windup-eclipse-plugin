@@ -47,7 +47,7 @@ public class WindupRmiClient {
 	/**
 	 * Server status
 	 */
-	public static final String WINDUP_SERVER_STATUS = "windup/server/status";
+	public static final String WINDUP_SERVER_STATUS = "windup/server/status"; //$NON-NLS-1$
 	
 	private ExecuteWatchdog watchdog;
 	private ExecutionBuilder executionBuilder;
@@ -87,7 +87,7 @@ public class WindupRmiClient {
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				logInfo("Message from Windup executor: " + line);
+				logInfo("Message from Windup executor: " + line); //$NON-NLS-1$
 				monitor.worked(1);
 			}
 		}));
@@ -126,6 +126,26 @@ public class WindupRmiClient {
 	
 	public ExecutionBuilder getExecutionBuilder() {
 		return executionBuilder;
+	}
+	
+	public String getWindupVersion() {
+		String version = "unknown";
+		/*try {
+			version = executionBuilder.getVersion();
+		} catch (RemoteException e) {
+	        logInfo("Issue while attempting to retrieve Windup server version."); //$NON-NLS-1$
+		}*/
+		return version;
+	}
+	
+	public int getPort() {
+		int port = -1;
+		/*try {
+			port = executionBuilder.getPort();
+		} catch (RemoteException e) {
+			logInfo("Issue while attempting to retrieve Windup server port."); //$NON-NLS-1$
+		}*/
+		return port;
 	}
 	
 	public boolean isWindupServerRunning() {

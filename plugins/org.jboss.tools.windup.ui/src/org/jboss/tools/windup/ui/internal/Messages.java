@@ -56,6 +56,7 @@ public class Messages extends NLS
     public static String windupOption;
     public static String OPTION;
     public static String VALUE;
+    public static String Rules;
     
     public static String showInIssueExplorer;
     public static String showIssueDetails;

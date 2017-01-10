@@ -23,7 +23,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -34,7 +33,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
@@ -49,24 +47,23 @@ import org.jboss.windup.bootstrap.help.OptionDescription;
 import com.google.common.collect.Lists;
 
 /**
- * Tab for configuration Windup rules.
+ * Tab for configuration Windup options.
  */
 @SuppressWarnings("restriction")
-public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
+public class OptionsTab extends AbstractLaunchConfigurationTab {
 
-	private static final String ID = "org.jboss.tools.windup.ui.launch.WindupRulesTab"; //$NON-NLS-1$
+	private static final String ID = "org.jboss.tools.windup.ui.launch.OptionsTab"; //$NON-NLS-1$
 	
 	private ModelService modelService;
 	private ConfigurationElement configuration;
 	
 	private Button generateReportButton;
-	private TableViewer rulesDirectoryViewer;
 	private TableViewer optionsViewer;
 	
 	// TODO: We probably want to use this once we start using an external Windup launcher.
 	private WindupOptionsService optionsService;
 	
-	public OptionsRulesTab(ModelService modelService, WindupOptionsService optionsService) {
+	public OptionsTab(ModelService modelService, WindupOptionsService optionsService) {
 		this.modelService = modelService;
 		this.optionsService = optionsService;
 	}
@@ -77,7 +74,6 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		createReportGroup(container);
-		createCustomRulesGroup(container);
 		createOptionsGroup(container);
 		super.setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, ID);
@@ -92,55 +88,6 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				configuration.setGenerateReport(generateReportButton.getSelection());
-			}
-		});
-	}
-	
-	private void createCustomRulesGroup(Composite parent) {
-		Group group = SWTFactory.createGroup(parent, Messages.windupCustomRules+":", 2, 1, GridData.FILL_BOTH);
-		GridDataFactory.fillDefaults().grab(true, false).hint(70, 100).applyTo(group);
-		rulesDirectoryViewer = new TableViewer(group, SWT.MULTI|SWT.BORDER|SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(rulesDirectoryViewer.getTable());
-		rulesDirectoryViewer.setContentProvider(ArrayContentProvider.getInstance());
-		rulesDirectoryViewer.setLabelProvider(new LabelProvider());
-		createCustomRulesButtonBar(group);
-	}
-	
-	private void createCustomRulesButtonBar(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).applyTo(container);
-		GridDataFactory.fillDefaults().grab(false, true).applyTo(container);
-		
-		Button addButton = new Button(container, SWT.PUSH);
-		addButton.setText(Messages.windupAdd);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(addButton);
-		addButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
-				String directory = dialog.open();
-				if (directory != null) {
-					if (!configuration.getUserRulesDirectories().contains(directory)) {
-						configuration.getUserRulesDirectories().add(directory);
-						reloadCustomRules();
-					}
-				}
-			}
-		});
-		
-		Button removeButton = new Button(container, SWT.PUSH);
-		removeButton.setText(Messages.windupRemove);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(removeButton);
-		removeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StructuredSelection ss = (StructuredSelection)rulesDirectoryViewer.getSelection();
-				if (!ss.isEmpty()) {
-					@SuppressWarnings("unchecked")
-					List<String> paths = (List<String>)ss.toList();
-					configuration.getUserRulesDirectories().removeAll(paths);
-					reloadCustomRules();
-				}
 			}
 		});
 	}
@@ -226,19 +173,12 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 	
 	private void reload() {
 		reloadReportGroup();
-		reloadCustomRules();
 		reloadOptions();
 	}
 
 	private void reloadReportGroup() {
 		if (generateReportButton != null) {
 			generateReportButton.setSelection(configuration.isGenerateReport());
-		}
-	}
-	
-	private void reloadCustomRules() {
-		if (rulesDirectoryViewer != null) {
-			rulesDirectoryViewer.setInput(Lists.newArrayList(configuration.getUserRulesDirectories()));
 		}
 	}
 	
@@ -265,7 +205,7 @@ public class OptionsRulesTab extends AbstractLaunchConfigurationTab {
 	
 	@Override
 	public Image getImage() {
-		return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE);
+		return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_OPTIONS_TAB);
 	}
 	
 	@Override
