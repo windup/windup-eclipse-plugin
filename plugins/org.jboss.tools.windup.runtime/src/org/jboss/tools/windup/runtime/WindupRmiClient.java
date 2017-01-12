@@ -34,6 +34,7 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -53,15 +54,24 @@ public class WindupRmiClient {
 	private ExecutionBuilder executionBuilder;
 	
 	@Inject private IEventBroker eventBroker;
-	
+
+	private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
 	public Path getWindupHome() {
-		return new File(preferences.get(IPreferenceConstants.WINDUP_HOME, "")).toPath();
+		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "");
+		if (path.isEmpty()) {
+			path = defaultPreferences.get(IPreferenceConstants.WINDUP_HOME, "");
+		}
+		return new File(path).toPath();
 	}
 	
 	public int getRmiPort() {
-		return preferences.getInt(IPreferenceConstants.RMI_PORT, 0);
+		int port = preferences.getInt(IPreferenceConstants.RMI_PORT, -1);
+		if (port == -1) {
+			port = defaultPreferences.getInt(IPreferenceConstants.RMI_PORT, -1); 
+		}
+		return port; 
 	}
 
 	public void startWindup(final IProgressMonitor monitor) {

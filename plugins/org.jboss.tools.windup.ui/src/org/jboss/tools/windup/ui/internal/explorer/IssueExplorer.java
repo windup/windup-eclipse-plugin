@@ -304,6 +304,7 @@ public class IssueExplorer extends CommonNavigator {
 		}
 		startStopButton.redraw();
 		startStopButton.update();
+		statusLabel.getParent().layout(true);
 	}
 	
 	private void initGettingStarted() {
