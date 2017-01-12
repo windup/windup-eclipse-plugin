@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.RuleRepository;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupPackage;
 
@@ -31,6 +32,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.impl.WindupModelImpl#getConfigurationElements <em>Configuration Elements</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.WindupModelImpl#getMigrationPaths <em>Migration Paths</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.WindupModelImpl#getCustomRuleRepositories <em>Custom Rule Repositories</em>}</li>
  * </ul>
  *
  * @generated
@@ -55,6 +57,16 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 	 * @ordered
 	 */
 	protected EList<MigrationPath> migrationPaths;
+
+	/**
+	 * The cached value of the '{@link #getCustomRuleRepositories() <em>Custom Rule Repositories</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCustomRuleRepositories()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<RuleRepository> customRuleRepositories;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -104,6 +116,18 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<RuleRepository> getCustomRuleRepositories() {
+		if (customRuleRepositories == null) {
+			customRuleRepositories = new EObjectContainmentEList.Resolving<RuleRepository>(RuleRepository.class, this, WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES);
+		}
+		return customRuleRepositories;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -111,6 +135,8 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 				return ((InternalEList<?>)getConfigurationElements()).basicRemove(otherEnd, msgs);
 			case WindupPackage.WINDUP_MODEL__MIGRATION_PATHS:
 				return ((InternalEList<?>)getMigrationPaths()).basicRemove(otherEnd, msgs);
+			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
+				return ((InternalEList<?>)getCustomRuleRepositories()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -127,6 +153,8 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 				return getConfigurationElements();
 			case WindupPackage.WINDUP_MODEL__MIGRATION_PATHS:
 				return getMigrationPaths();
+			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
+				return getCustomRuleRepositories();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -148,6 +176,10 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 				getMigrationPaths().clear();
 				getMigrationPaths().addAll((Collection<? extends MigrationPath>)newValue);
 				return;
+			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
+				getCustomRuleRepositories().clear();
+				getCustomRuleRepositories().addAll((Collection<? extends RuleRepository>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -166,6 +198,9 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 			case WindupPackage.WINDUP_MODEL__MIGRATION_PATHS:
 				getMigrationPaths().clear();
 				return;
+			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
+				getCustomRuleRepositories().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -182,6 +217,8 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 				return configurationElements != null && !configurationElements.isEmpty();
 			case WindupPackage.WINDUP_MODEL__MIGRATION_PATHS:
 				return migrationPaths != null && !migrationPaths.isEmpty();
+			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
+				return customRuleRepositories != null && !customRuleRepositories.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

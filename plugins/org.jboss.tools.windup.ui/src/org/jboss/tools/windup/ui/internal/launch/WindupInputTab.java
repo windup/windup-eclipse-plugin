@@ -46,8 +46,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.FilteredListDialog;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.editor.launch.FilteredListDialog;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.MigrationPath;
 

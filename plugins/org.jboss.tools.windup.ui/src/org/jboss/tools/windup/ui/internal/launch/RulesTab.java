@@ -12,6 +12,7 @@ package org.jboss.tools.windup.ui.internal.launch;
 
 import static org.jboss.tools.windup.ui.internal.Messages.Rules;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,6 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.FilteredListDialog;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -85,18 +88,46 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(false, true).applyTo(container);
 		
-		Button addButton = new Button(container, SWT.PUSH);
-		addButton.setText(Messages.windupAdd);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(addButton);
-		addButton.addSelectionListener(new SelectionAdapter() {
+		Button newButton = new Button(container, SWT.PUSH);
+		newButton.setText("New..."); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(newButton);
+		newButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
 				String directory = dialog.open();
 				if (directory != null) {
+					modelService.addRuleRepository(directory);
 					if (!configuration.getUserRulesDirectories().contains(directory)) {
 						configuration.getUserRulesDirectories().add(directory);
-						reloadCustomRules();
+						reload();
+					}
+				}
+			}
+		});
+		
+		Button addButton = new Button(container, SWT.PUSH);
+		addButton.setText("Add..."); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(addButton);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FilteredListDialog dialog = new FilteredListDialog(parent.getShell(), new LabelProvider());
+				dialog.setMultipleSelection(true);
+				dialog.setMessage(Messages.selectExistingRepositories);
+				List<String> repos = modelService.computeExistingRepositories();
+				repos.removeAll(configuration.getUserRulesDirectories());
+				dialog.setElements(repos.toArray(new String[repos.size()]));
+				dialog.setTitle(Messages.selectRepositories);
+				dialog.setHelpAvailable(false);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					Object[] selected = (Object[])dialog.getResult();
+					if (selected.length > 0) {
+						List<String> packages = Lists.newArrayList();
+						Arrays.stream(selected).forEach(p -> packages.add((String)p));
+						configuration.getUserRulesDirectories().addAll(packages);
+						reload();
 					}
 				}
 			}

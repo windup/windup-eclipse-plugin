@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.WindupModel#getConfigurationElements <em>Configuration Elements</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.WindupModel#getMigrationPaths <em>Migration Paths</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.WindupModel#getCustomRuleRepositories <em>Custom Rule Repositories</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getWindupModel()
@@ -55,5 +56,21 @@ public interface WindupModel extends EObject {
 	 * @generated
 	 */
 	EList<MigrationPath> getMigrationPaths();
+
+	/**
+	 * Returns the value of the '<em><b>Custom Rule Repositories</b></em>' containment reference list.
+	 * The list contents are of type {@link org.jboss.tools.windup.windup.RuleRepository}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Custom Rule Repositories</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Custom Rule Repositories</em>' containment reference list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getWindupModel_CustomRuleRepositories()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	EList<RuleRepository> getCustomRuleRepositories();
 
 } // WindupModel

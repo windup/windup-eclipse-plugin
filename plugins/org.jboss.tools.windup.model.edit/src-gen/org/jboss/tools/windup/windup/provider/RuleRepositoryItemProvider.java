@@ -11,28 +11,27 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
-
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
-import org.jboss.tools.windup.windup.WindupFactory;
-import org.jboss.tools.windup.windup.WindupModel;
+import org.jboss.tools.windup.windup.RuleRepository;
 import org.jboss.tools.windup.windup.WindupPackage;
 
 /**
- * This is the item provider adapter for a {@link org.jboss.tools.windup.windup.WindupModel} object.
+ * This is the item provider adapter for a {@link org.jboss.tools.windup.windup.RuleRepository} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class WindupModelItemProvider 
+public class RuleRepositoryItemProvider 
 	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
@@ -46,7 +45,7 @@ public class WindupModelItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WindupModelItemProvider(AdapterFactory adapterFactory) {
+	public RuleRepositoryItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -61,51 +60,42 @@ public class WindupModelItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addLocationPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
+	 * This adds a property descriptor for the Location feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-		if (childrenFeatures == null) {
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(WindupPackage.eINSTANCE.getWindupModel_ConfigurationElements());
-			childrenFeatures.add(WindupPackage.eINSTANCE.getWindupModel_MigrationPaths());
-			childrenFeatures.add(WindupPackage.eINSTANCE.getWindupModel_CustomRuleRepositories());
-		}
-		return childrenFeatures;
+	protected void addLocationPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_RuleRepository_location_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_RuleRepository_location_feature", "_UI_RuleRepository_type"),
+				 WindupPackage.eINSTANCE.getRuleRepository_Location(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
-	}
-
-	/**
-	 * This returns WindupModel.gif.
+	 * This returns RuleRepository.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/WindupModel"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/RuleRepository"));
 	}
 
 	/**
@@ -116,7 +106,10 @@ public class WindupModelItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_WindupModel_type");
+		String label = ((RuleRepository)object).getLocation();
+		return label == null || label.length() == 0 ?
+			getString("_UI_RuleRepository_type") :
+			getString("_UI_RuleRepository_type") + " " + label;
 	}
 	
 
@@ -131,11 +124,9 @@ public class WindupModelItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(WindupModel.class)) {
-			case WindupPackage.WINDUP_MODEL__CONFIGURATION_ELEMENTS:
-			case WindupPackage.WINDUP_MODEL__MIGRATION_PATHS:
-			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+		switch (notification.getFeatureID(RuleRepository.class)) {
+			case WindupPackage.RULE_REPOSITORY__LOCATION:
+				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -151,21 +142,6 @@ public class WindupModelItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(WindupPackage.eINSTANCE.getWindupModel_ConfigurationElements(),
-				 WindupFactory.eINSTANCE.createConfigurationElement()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(WindupPackage.eINSTANCE.getWindupModel_MigrationPaths(),
-				 WindupFactory.eINSTANCE.createMigrationPath()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(WindupPackage.eINSTANCE.getWindupModel_CustomRuleRepositories(),
-				 WindupFactory.eINSTANCE.createRuleRepository()));
 	}
 
 	/**

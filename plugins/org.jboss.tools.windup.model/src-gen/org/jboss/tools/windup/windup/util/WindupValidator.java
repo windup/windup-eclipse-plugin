@@ -125,6 +125,8 @@ public class WindupValidator extends EObjectValidator {
 				return validateTechnology((Technology)value, diagnostics, context);
 			case WindupPackage.PAIR:
 				return validatePair((Pair)value, diagnostics, context);
+			case WindupPackage.RULE_REPOSITORY:
+				return validateRuleRepository((RuleRepository)value, diagnostics, context);
 			case WindupPackage.WINDUP_EXECUTION_RESULTS:
 				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
 			default:
@@ -345,6 +347,15 @@ public class WindupValidator extends EObjectValidator {
 	 */
 	public boolean validatePair(Pair pair, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint(pair, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateRuleRepository(RuleRepository ruleRepository, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(ruleRepository, diagnostics, context);
 	}
 
 	/**

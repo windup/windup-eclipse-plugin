@@ -130,22 +130,12 @@ public class WindupRmiClient {
 	
 	public String getWindupVersion() {
 		String version = "unknown";
-		/*try {
+		try {
 			version = executionBuilder.getVersion();
 		} catch (RemoteException e) {
 	        logInfo("Issue while attempting to retrieve Windup server version."); //$NON-NLS-1$
-		}*/
+		}
 		return version;
-	}
-	
-	public int getPort() {
-		int port = -1;
-		/*try {
-			port = executionBuilder.getPort();
-		} catch (RemoteException e) {
-			logInfo("Issue while attempting to retrieve Windup server port."); //$NON-NLS-1$
-		}*/
-		return port;
 	}
 	
 	public boolean isWindupServerRunning() {

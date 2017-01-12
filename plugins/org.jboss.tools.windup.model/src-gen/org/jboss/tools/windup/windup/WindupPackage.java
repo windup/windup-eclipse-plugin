@@ -388,13 +388,22 @@ public interface WindupPackage extends EPackage {
 	int WINDUP_MODEL__MIGRATION_PATHS = 1;
 
 	/**
+	 * The feature id for the '<em><b>Custom Rule Repositories</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES = 2;
+
+	/**
 	 * The number of structural features of the '<em>Model</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDUP_MODEL_FEATURE_COUNT = 2;
+	int WINDUP_MODEL_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Model</em>' class.
@@ -1262,6 +1271,43 @@ public interface WindupPackage extends EPackage {
 	int PAIR_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.RuleRepositoryImpl <em>Rule Repository</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.RuleRepositoryImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getRuleRepository()
+	 * @generated
+	 */
+	int RULE_REPOSITORY = 15;
+
+	/**
+	 * The feature id for the '<em><b>Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RULE_REPOSITORY__LOCATION = 0;
+
+	/**
+	 * The number of structural features of the '<em>Rule Repository</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RULE_REPOSITORY_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Rule Repository</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RULE_REPOSITORY_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1269,7 +1315,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 15;
+	int WINDUP_EXECUTION_RESULTS = 16;
 
 
 	/**
@@ -1496,6 +1542,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getWindupModel_MigrationPaths();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.WindupModel#getCustomRuleRepositories <em>Custom Rule Repositories</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Custom Rule Repositories</em>'.
+	 * @see org.jboss.tools.windup.windup.WindupModel#getCustomRuleRepositories()
+	 * @see #getWindupModel()
+	 * @generated
+	 */
+	EReference getWindupModel_CustomRuleRepositories();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Input <em>Input</em>}'.
@@ -1992,6 +2049,27 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPair_Value();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.RuleRepository <em>Rule Repository</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Rule Repository</em>'.
+	 * @see org.jboss.tools.windup.windup.RuleRepository
+	 * @generated
+	 */
+	EClass getRuleRepository();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.RuleRepository#getLocation <em>Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Location</em>'.
+	 * @see org.jboss.tools.windup.windup.RuleRepository#getLocation()
+	 * @see #getRuleRepository()
+	 * @generated
+	 */
+	EAttribute getRuleRepository_Location();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

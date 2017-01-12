@@ -60,6 +60,7 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.RuleRepository;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
@@ -74,6 +75,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * Service for interacting with Windup's model and editing domain.
@@ -328,6 +330,22 @@ public class ModelService {
 			return WorkspaceResourceUtils.createPlatformPluginURI(p.getPath()).toString();
 		}).collect(Collectors.toList());
 		configuration.getPackages().addAll(uris);
+	}
+	
+	public void addRuleRepository(String location) {
+		if (!model.getCustomRuleRepositories().stream().anyMatch(repo -> repo.getLocation().equals(location))) {
+			RuleRepository repo = WindupFactory.eINSTANCE.createRuleRepository();
+			repo.setLocation(location);
+			model.getCustomRuleRepositories().add(repo);
+		}
+	}
+	
+	public List<String> computeExistingRepositories() {
+		List<String> repos = Lists.newArrayList();
+		model.getCustomRuleRepositories().forEach(repo -> {
+			repos.add(repo.getLocation());
+		});
+		return repos;
 	}
 	
 	public void removePackages(ConfigurationElement configuration, List<IPackageFragment> packages) {

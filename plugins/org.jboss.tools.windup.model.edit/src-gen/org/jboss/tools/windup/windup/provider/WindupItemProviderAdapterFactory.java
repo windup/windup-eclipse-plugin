@@ -417,6 +417,29 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.RuleRepository} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected RuleRepositoryItemProvider ruleRepositoryItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.RuleRepository}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createRuleRepositoryAdapter() {
+		if (ruleRepositoryItemProvider == null) {
+			ruleRepositoryItemProvider = new RuleRepositoryItemProvider(this);
+		}
+
+		return ruleRepositoryItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -530,6 +553,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (migrationPathItemProvider != null) migrationPathItemProvider.dispose();
 		if (technologyItemProvider != null) technologyItemProvider.dispose();
 		if (pairItemProvider != null) pairItemProvider.dispose();
+		if (ruleRepositoryItemProvider != null) ruleRepositoryItemProvider.dispose();
 	}
 
 }
