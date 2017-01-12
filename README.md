@@ -39,9 +39,8 @@ Setup your local environment with Maven 3.2.x+. See the [Maven local settings.xm
 
 ## Building
 
-This project depends on [jbosstools-base](https://github.com/jbosstools/jbosstools-base) and [jbosstools-forge](https://github.com/jbosstools/jbosstools-forge). 
-
-The build will also pull in a snapshot build of [Windup](https://github.com/windup/windup).
+This project depends on [jbosstools-base](https://github.com/jbosstools/jbosstools-base) and [jbosstools-forge](https://github.com/jbosstools/jbosstools-forge). The build will also pull in a snapshot build of [Windup](https://github.com/windup/windup). To avoid needing to build the jbosstools projects before building windup-eclipse-plugin,
+be sure you have added the JBoss repositories to your Maven settings as shown [here](https://github.com/d-s/scripts-windup/blob/b6ff9e572b25f6750eaf91057fef21bab390b4bb/windup-eclipse-plugin-mvn-settings.xml).
 
 This command will then run the build:
 
