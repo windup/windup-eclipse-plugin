@@ -54,7 +54,6 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
-import org.jboss.windup.tooling.WindupToolingProgressMonitor;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.ReportLink;
@@ -119,8 +118,8 @@ public class WindupService
 
         try {
         	for (Input input : configuration.getInputs()) {
-        		WindupToolingProgressMonitor windupProgressMonitor = new WindupProgressMonitorAdapter(progress);
                 ExecutionBuilder execBuilder = windupClient.getExecutionBuilder();
+                execBuilder.clear();
             	
                 Path projectPath = WorkspaceResourceUtils.computePath(input.getUri());
                 progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, input.getName()), IProgressMonitor.UNKNOWN);
@@ -129,16 +128,14 @@ public class WindupService
                 execBuilder.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
                 execBuilder.setInput(projectPath.toString());
                 execBuilder.setOutput(outputPath.toFile().toPath().toString());
-                execBuilder.setProgressMonitor(windupProgressMonitor);
+                execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
                 execBuilder.setOption(SourceModeOption.NAME, true);
-                
+            	execBuilder.setOption(SkipReportsRenderingOption.NAME, !configuration.isGenerateReport());
+
                 MigrationPath path = configuration.getMigrationPath();
                 execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
                 if (path.getSource() != null) {
                 	execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
-                }
-                if (!configuration.isGenerateReport()) {
-                	execBuilder.setOption(SkipReportsRenderingOption.NAME, true);
                 }
                 if (!configuration.getPackages().isEmpty()) {
                 	execBuilder.setOption(ScanPackagesOption.NAME, configuration.getPackages());
