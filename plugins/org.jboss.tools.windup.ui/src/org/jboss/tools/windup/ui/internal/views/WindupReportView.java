@@ -14,6 +14,8 @@ import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_P
 import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
 import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.findProject;
 
+import java.io.File;
+
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
@@ -44,7 +46,6 @@ import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.services.WindupService;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.Preferences;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -65,6 +66,8 @@ public class WindupReportView implements IShowInTarget
      * The ID of the view as specified by the extension.
      */
     public static final String ID = "org.jboss.tools.windup.ui.views.WindupReportView"; //$NON-NLS-1$
+    
+    private static final String PREVIOUS_REPORT_PREF = "previousReport"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -116,6 +119,8 @@ public class WindupReportView implements IShowInTarget
      * </p>
      */
     private IResource currentSelection;
+    
+    private String currentReportPath;
 
     /**
      * <p>
@@ -128,6 +133,7 @@ public class WindupReportView implements IShowInTarget
         this.selectionChangedListener = null;
         this.currentSelection = null;
         this.syncronizeViewWithCurrentSelection = false;
+        this.currentReportPath = "";
     }
 
     @Inject
@@ -219,6 +225,13 @@ public class WindupReportView implements IShowInTarget
         {
             preferenceStore.setDefault(Preferences.REPORTVIEW_SYNC_SELECTION, this.syncronizeViewWithCurrentSelection);
         }
+        String previousReport = preferenceStore.getString(PREVIOUS_REPORT_PREF);
+        if (!previousReport.isEmpty()) {
+        	File file = new File(previousReport);
+    		if (file.exists()) {
+    			showReport(previousReport, true);
+    		}
+        }
     }
     
     public void setSynchronizeSelection(boolean sync) {
@@ -238,6 +251,7 @@ public class WindupReportView implements IShowInTarget
         //ISelectionService srv = (ISelectionService) site.getService(ISelectionService.class);
     	selectionService.removePostSelectionListener(this.selectionChangedListener);
         windupService.removeWindupListener(this.reportListener);
+        getPreferenceStore().setValue(PREVIOUS_REPORT_PREF, currentReportPath);
     }
     
     public void updateConfiguration(ILaunchConfiguration configuration) {
@@ -343,6 +357,7 @@ public class WindupReportView implements IShowInTarget
     }
     
     public void showReport(String path, boolean hideMessage) {
+    	this.currentReportPath = path;
         this.browser.setUrl(path);
         this.browser.setVisible(true);
         ((GridData) this.browser.getLayoutData()).exclude = false;
@@ -368,6 +383,10 @@ public class WindupReportView implements IShowInTarget
         ((GridData) this.message.getLayoutData()).exclude = false;
 
         this.browser.setVisible(!hideReport);
+        if (hideReport) {
+        	currentReportPath = "";
+        }
+        
         ((GridData) this.browser.getLayoutData()).exclude = hideReport;
 
         this.composite.layout(true);

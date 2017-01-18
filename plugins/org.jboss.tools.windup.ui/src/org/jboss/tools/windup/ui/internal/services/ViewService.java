@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.internal.services;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_STARTING;
 
 import java.io.File;
 
@@ -60,5 +61,11 @@ public class ViewService {
     			activateWindupReportView().showReport(path, true);
     		}
     	}
+    }
+    
+    @Inject
+	@Optional
+	public void launchStarting(@UIEventTopic(LAUNCH_STARTING) ConfigurationElement configuration) {
+    	activateWindupReportView().showMessage("No report available.", true);
     }
 }

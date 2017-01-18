@@ -41,6 +41,7 @@ public interface WindupConstants {
 	/**
 	 * Launch Events
 	 */
+	String LAUNCH_STARTING = "windup/launch/starting";
 	String LAUNCH_COMPLETED = "windup/launch/completed";
 	
 	/**
