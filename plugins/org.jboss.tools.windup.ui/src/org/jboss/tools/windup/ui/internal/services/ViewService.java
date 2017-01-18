@@ -66,6 +66,9 @@ public class ViewService {
     @Inject
 	@Optional
 	public void launchStarting(@UIEventTopic(LAUNCH_STARTING) ConfigurationElement configuration) {
-    	activateWindupReportView().showMessage("No report available.", true);
+    	WindupReportView view = activateWindupReportView();
+    	if (view != null) {
+    		view.showMessage("No report available.", true);
+    	}
     }
 }
