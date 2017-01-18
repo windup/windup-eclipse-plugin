@@ -137,6 +137,7 @@ public class WindupService
                 execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
                 execBuilder.setOption(SourceModeOption.NAME, true);
             	execBuilder.setOption(SkipReportsRenderingOption.NAME, !configuration.isGenerateReport());
+            	execBuilder.ignore("\\.class$");
 
                 MigrationPath path = configuration.getMigrationPath();
                 execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
@@ -144,7 +145,7 @@ public class WindupService
                 	execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
                 }
                 if (!configuration.getPackages().isEmpty()) {
-                	execBuilder.setOption(ScanPackagesOption.NAME, configuration.getPackages());
+                	execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
                 }
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
                 	File file = new File(configuration.getUserRulesDirectories().get(0));
@@ -173,7 +174,7 @@ public class WindupService
                 		execBuilder.setOption(name, optionValues);
                 	}
                 }
-                execBuilder.ignore("\\.class$");
+                
                 WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
                 ExecutionResults results = execBuilder.execute();
                 WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
