@@ -132,7 +132,6 @@ public class LaunchUtils {
 		ConfigurationElement configuration = modelService.findConfiguration(name);
 		if (configuration == null) {
 			configuration = modelService.createConfiguration(config.project.getName());
-			configuration.setGenerateReport(true);
 		}
 		
 		boolean exists = configuration.getInputs().stream().filter(i -> { 
