@@ -294,7 +294,7 @@ public class ModelService {
 		configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
 		configuration.setSourceMode(true);
 		configuration.setGenerateReport(true);
-		configuration.setMigrationPath(model.getMigrationPaths().get(model.getMigrationPaths().size()-1));
+		configuration.setMigrationPath(model.getMigrationPaths().get(1));
 		model.getConfigurationElements().add(configuration);
 		return configuration;
 	}
