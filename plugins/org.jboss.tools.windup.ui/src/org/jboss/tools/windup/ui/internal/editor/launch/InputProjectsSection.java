@@ -29,7 +29,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -117,14 +116,13 @@ public class InputProjectsSection extends AbstractSection {
 		Button removeButton = toolkit.createButton(container, Messages.windupRemove, SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(removeButton);
 		removeButton.addSelectionListener(new SelectionAdapter() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = table.getSelection();
 				if (!selection.isEmpty()) {
-					StructuredSelection ss = (StructuredSelection)selection;
-					List<IProject> projects = (List<IProject>)ss.toList();
-					modelService.deleteInput(configuration, projects);
+					//StructuredSelection ss = (StructuredSelection)selection;
+					//List<IProject> projects = (List<IProject>)ss.toList();
+					//modelService.deleteInput(configuration, projects);
 					broker.post(INPUT_CHANGED, true);
 					reloadTable();
 				}

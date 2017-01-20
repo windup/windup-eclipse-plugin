@@ -159,13 +159,15 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				
 				if (configuration.isGenerateReport()) {
 					Issue issue = modelService.findIssue(marker);
-					if (issue.getGeneratedReportLocation() != null) {
-						File report = new File(issue.getGeneratedReportLocation());
-						if (report.exists()) {
-							TreeNode reportNode = parent.getChildPath(Messages.generatedReport);
-							if (reportNode == null) {
-								reportNode = new ReportNode(Messages.generatedReport, marker);
-								parent.addChild(reportNode);
+					if (issue != null) {
+						if (issue.getGeneratedReportLocation() != null) {
+							File report = new File(issue.getGeneratedReportLocation());
+							if (report.exists()) {
+								TreeNode reportNode = parent.getChildPath(Messages.generatedReport);
+								if (reportNode == null) {
+									reportNode = new ReportNode(Messages.generatedReport, marker);
+									parent.addChild(reportNode);
+								}
 							}
 						}
 					}

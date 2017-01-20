@@ -11,6 +11,8 @@
 package org.jboss.tools.windup.model.domain;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -20,10 +22,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.jboss.tools.windup.model.Activator;
+import org.jboss.tools.windup.model.util.MavenUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Utility for working with ConfigurationElement's resources (projects and packages).
@@ -36,7 +40,7 @@ public class ConfigurationResourceUtil {
 		for (int i = 0; i < configuration.getInputs().size(); i++) {
 			Input input = configuration.getInputs().get(i);
 			IProject project = (IProject)WorkspaceResourceUtils.findResource(input.getUri());
-			if (project != null) {
+			if (project != null && project.exists() && project.isAccessible()) {
 				projects.add(project);
 			}
 		}
@@ -56,7 +60,17 @@ public class ConfigurationResourceUtil {
 	public static IPackageFragment[] computePackages(ConfigurationElement configuration) {
 		List<IPackageFragment> packages = Lists.newArrayList();
 		List<IPackageFragment> currentFragments = Lists.newArrayList(getCurrentPackages(configuration));
-		for (IProject project : getCurrentProjects(configuration)) {
+		
+		Set<IProject> projects = Sets.newHashSet(getCurrentProjects(configuration));
+
+		// Add all implicitly analyzed projects
+		for (IProject project : Lists.newArrayList(projects)) {
+			projects.addAll(MavenUtil.computeProjectInfo(project).getProjects().stream().map(info -> { 
+				return info.getProject();	
+			}).collect(Collectors.toList()));
+		}
+		
+		for (IProject project : projects) {
 			JavaProject javaProject = (JavaProject)JavaCore.create(project);
 			try {
 				for (IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()) {

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -309,7 +310,7 @@ public class ModelService {
 		});
 	}
 	
-	public void deleteInput(ConfigurationElement configuration, List<IProject> projects) {
+	public void deleteProjects(ConfigurationElement configuration, Set<IProject> projects) {
 		projects.forEach(project -> {
 			Optional<Input> input = configuration.getInputs().stream().filter(i -> {
 				return i.getName().equals(project.getName());
@@ -318,6 +319,9 @@ public class ModelService {
 				configuration.getInputs().remove(input.get());
 			}
 		});
+	}
+	
+	public void deletePackages(ConfigurationElement configuration, Set<IProject> projects) {
 		for (IPackageFragment fragment : ConfigurationResourceUtil.getCurrentPackages(configuration)) {
 			if (projects.contains(fragment.getJavaProject().getProject())) {
 				URI uri = WorkspaceResourceUtils.createPlatformPluginURI(fragment.getPath());
