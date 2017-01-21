@@ -83,7 +83,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, true).minSize(150, 250).applyTo(container);
 		createMigrationPathGroup(container);
 		createProjectsGroup(container);
 		createPackagesGroup(container);
@@ -94,7 +94,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	
 	private void createProjectsGroup(Composite parent) {
 		Group group = SWTFactory.createGroup(parent, Messages.windupProjects+":", 2, 1, GridData.FILL_BOTH);
-		GridDataFactory.fillDefaults().grab(true, true).minSize(70, 100).hint(70, 100).applyTo(group);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
 		projectsTree = new TreeViewer(group, SWT.BORDER|SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(projectsTree.getTree());
 		projectsTree.setLabelProvider(new DelegatingStyledCellLabelProvider(new InputTreeLabelProvider()));
@@ -314,7 +314,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	
 	private void createPackagesGroup(Composite parent) {
 		Group group = SWTFactory.createGroup(parent, Messages.windupPackages+":", 2, 1, GridData.FILL_BOTH);
-		GridDataFactory.fillDefaults().grab(true, true).minSize(70, 100).hint(700, 100).applyTo(group);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
 		packagesTable = new TableViewer(group, SWT.BORDER|SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(packagesTable.getTable());
 		packagesTable.setLabelProvider(new WorkbenchLabelProvider());

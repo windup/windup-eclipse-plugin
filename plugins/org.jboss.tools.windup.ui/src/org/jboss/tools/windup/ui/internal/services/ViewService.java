@@ -21,14 +21,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
+import org.osgi.service.event.Event;
 
 /**
  * Service for view related functionality.
@@ -71,4 +77,20 @@ public class ViewService {
     		view.showMessage("No report available.", true);
     	}
     }
+    
+    @Inject
+    @Optional
+    public void showIssueExplorer(@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_OPENED) Event event) {
+		Object element = event.getProperty(EventTags.ELEMENT);
+		if (element instanceof MPerspective) {
+			MPerspective perspective = (MPerspective) element;
+			if (perspective.getElementId().equals(WindupPerspectiveFactory.ID)) {
+				MPart part = partService.findPart(IssueExplorer.VIEW_ID);
+				if (part != null) {
+					partService.activate(part);
+				}
+			}
+		}
+    } 
+
 }

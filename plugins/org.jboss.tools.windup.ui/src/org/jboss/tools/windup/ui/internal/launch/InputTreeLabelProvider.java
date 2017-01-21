@@ -55,7 +55,8 @@ public class InputTreeLabelProvider extends LabelProvider implements IStyledLabe
 		if (element instanceof ProjectInfo) {
 			ProjectInfo info = (ProjectInfo)element;
 			if (!info.isParentProject()) {
-				style.append(info.getName(), StyledString.DECORATIONS_STYLER);
+				style.append(info.getName());
+				style.append(" [Submodule projects are implicitly analyzed]", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
 			else {
 				style.append(info.getProject().getName());
