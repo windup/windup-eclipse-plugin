@@ -62,6 +62,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
@@ -103,6 +104,22 @@ public class IssueExplorer extends CommonNavigator {
 	public IssueExplorer(IssueExplorerContentService contentService) {
 		this.contentService = contentService;
 		contentService.setIssuExplorer(this);
+	}
+	
+	@Override
+	protected CommonViewer createCommonViewerObject(Composite aParent) {
+		// See: https://issues.jboss.org/browse/WINDUP-1290
+		// Newly imported projects automatically get added to the tree via PackageExplorer#postAdd
+		// The primary issue with calling super.refresh is it will cause IssueExplorer's tree nodes
+		// to collapse. 
+		return new CommonViewer(getViewSite().getId(), aParent,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL) {
+			@Override
+			public void add(Object parentElement, Object[] childElements) {
+				super.add(parentElement, childElements);
+				super.refresh(parentElement);
+			}
+		};
 	}
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {

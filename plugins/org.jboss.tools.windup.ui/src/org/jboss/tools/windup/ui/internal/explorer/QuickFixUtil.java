@@ -80,7 +80,7 @@ public class QuickFixUtil {
 		IResource right = QuickFixUtil.getQuickFixedResource(left, firstQuickFix, hint);
 		QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, right, hint);
 		if (dialog.open() == IssueConstants.APPLY_FIX) {
-			QuickFixUtil.applyQuickFix(firstQuickFix, hint, marker, broker, markerService);
+			QuickFixUtil.applyQuickFix(dialog.getQuickFix(), hint, marker, broker, markerService);
 		}
 	}
 	

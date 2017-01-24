@@ -94,7 +94,7 @@ public class IssueExplorerContentService {
 	public List<IMarker> collectMarkers() {
 		List<IMarker> markers = Lists.newArrayList();
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			if (project.isAccessible()) {
+			if (project.exists() && project.isAccessible()) {
 				markers.addAll(getMarkers(
 						WINDUP_HINT_MARKER_ID, 
 						project, 
