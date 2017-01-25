@@ -657,4 +657,22 @@
              name="Windup">
        </page>
     </extension>
+    <extension
+          point="org.eclipse.ui.perspectiveExtensions">
+       <perspectiveExtension
+             targetID="org.jboss.tools.windup.ui.perspective">
+          <view
+                closeable="true"
+                id="org.eclipse.ui.navigator.ProjectExplorer"
+                minimized="false"
+                moveable="true"
+                ratio="0.50f"
+                relationship="bottom"
+                relative="org.jboss.tools.windup.ui.explorer"
+                showTitle="true"
+                standalone="false"
+                visible="true">
+          </view>
+       </perspectiveExtension>
+    </extension>
 </plugin>

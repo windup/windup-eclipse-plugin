@@ -15,7 +15,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
@@ -41,9 +40,8 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 
 		// Top left.
-		IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.33f, editorArea);//$NON-NLS-1$
+		IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.26f, editorArea);//$NON-NLS-1$
 		topLeft.addView(IssueExplorer.VIEW_ID);
-		topLeft.addView(ProjectExplorer.VIEW_ID);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		topLeft.addPlaceholder(JavaUI.ID_PACKAGES_VIEW);
 		
