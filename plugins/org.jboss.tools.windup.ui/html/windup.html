@@ -33,7 +33,7 @@
         </li>
         <li>
           <p>
-          Click <b>Run</b> to execute Windup.
+            Click <b>Run</b> to <a href="#execute-windup">execute Windup</a>.
           </p>
         </li>
         <li>
@@ -61,7 +61,7 @@
       </p>
       <h4>Input</h4>
       <p>
-        Select a <b>migration path</b>. This determines which Windup rulesets are used. The migration path defaults to <b>EAP 6 to EAP 7</b>, but can be changed to <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/2.7/single/windup-user-guide#migration_paths">any supported migration path</a>.
+        Select a <b>migration path</b>. This determines which Windup rulesets are used. The migration path defaults to <b>Anything to EAP 7</b>, but can be changed to <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/2.7/single/windup-user-guide#migration_paths">any supported migration path</a>.
       </p>
       <p>
         Select one or more <b>projects</b> to analyze. Hold the <b>Ctrl</b> key to select multiple projects in the list.
@@ -74,11 +74,30 @@
         Generate a Windup report. Check the <b>Generate Report</b> checkbox if you want to generate the Windup HTML report. The report will be shown in the <b>Windup Report</b> tab and can be found in the Issue Explorer when you group by <b>File</b>.
       </p>
       <p>
+        Set additional Windup <b>options</b>. Any option that is a boolean flag, such as <b>enableTattletale</b>, should enter <b>true</b> as the value. See the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/3.0/single/windup-user-guide#command-line-arguments">Windup User Guide</a> for a description of each Windup argument.
+      </p>
+      <h4>Rules</h4>
+      <p>
         Add a <b>custom rules directory</b> if you have any custom Windup rules.
       </p>
-      <!--TODO: Points to 2.7 docs for now, update to 3.0 docs when published?-->
+    </div>
+
+
+    <a name="execute-windup"><h3>Execute Windup</h3></a>
+    <div>
       <p>
-        Set additional Windup <b>options</b>. See the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/2.7/single/windup-user-guide#command-line-arguments">Windup User Guide</a> for a description of each Windup argument.
+        Once a run configuration has been created, you can execute Windup using that configuration in one of the following ways:
+      </p>
+      <ul>
+        <li>
+          Select the run configuration from the <b>Run Configurations</b> dialog and click <b>Run</b>.
+        </li>
+        <li>
+          Select a recent run configuration from the drop down next to the <b>Run</b> button (<img src="../icons/run_exc.png"/>).
+        </li>
+      </ul>
+      <p>
+        If the Windup server is not currently running, it will start once a run configuration is executed. If you do not plan on running Windup again in the near future, it is recommended to stop the Windup server to conserve memory on your machine.
       </p>
     </div>
 
@@ -87,7 +106,6 @@
       <p>
         Use the Issue Explorer to review migration issues identified by Windup. Different <a href="#icon-legend">icons</a> indicate the issue's severity and state.
       </p>
-
       <p>
          Change how issues are grouped by adjusting the <b>Group By</b> selections: Severity, Migration Rule, File.
       </p>
@@ -106,7 +124,10 @@
       </p>
       <h4>Manual Update</h4>
       <p>
-        Review the Windup issue details and additional resources and update the source code as necessary. Once a manual update has been made, the Windup issue will be marked stale until the next time that Windup is run on the project. You can also manually mark a Windup issue as fixed.
+        Review the Windup issue details and additional resources and update the source code as necessary. When you update a line of code marked as a Windup issue, the Windup issue will be marked with the stale icon (<img src="../icons/stale_issue.gif"/>) until the next time that Windup is run on the project.
+      </p>
+      <p>
+        You can also manually mark a Windup issue as fixed, which will mark the issue with the resolved icon (<img src="../icons/fixedIssue.gif"/>) until the next time that Windup is run on the project. To mark an issue as fixed, right-click the Windup issue in the Issue Explorer and select <b>Mark as Fixed</b>.
       </p>
       <h4>Quick Fix</h4>
       <p>
@@ -137,30 +158,32 @@
           <td>The issue is mandatory to fix for a successful migration.
         </tr>
         <tr>
-          <td><img src="../icons/quickfix_error.png"/></td>
-          <td>The issue is mandatory to fix for a successful migration. A quick fix is available.</td>
+          <td><img src="../icons/info.gif"/></td>
+          <td>The issue is optional to fix for migration.
         </tr>
         <tr>
           <td><img src="../icons/warning.png"/></td>
           <td>The issue may potentially be an issue during migration.</td>
         </tr>
         <tr>
-          <td><img src="../icons/quickfix_warning.png"/></td>
-          <td>The issue may potentially be an issue during migration. A quick fix is available.</td>
-        </tr>
-        <tr>
           <td><img src="../icons/fixedIssue.gif"/></td>
           <td>The issue has been resolved.</td>
         </tr>
         <tr>
-          <td><img src="../icons/info.gif"/></td>
-          <td>The issue is optional to fix for migration.
-        </tr>
-        <!-- Source icon and issue explorer icon aren't consistent on manual edits (? or i) -->
-        <tr>
           <td><img src="../icons/stale_issue.gif"/></td>
-          <!-- TODO: Provide more info, like the code associated w/ the issue may have been modified? Or instruct to run Windup again?-->
-          <td>The issue is stale.</td>
+          <td>The issue is stale because the code marked as an issue has been modified since the last time that Windup was run on the project.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/quickfix_error.png"/></td>
+          <td>A quick fix is available for this issue, which is mandatory to fix for a successful migration.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/quickfix_info.png"/></td>
+          <td>A quick fix is available for this issue, which is optional to fix for migration.</td>
+        </tr>
+        <tr>
+          <td><img src="../icons/quickfix_warning.png"/></td>
+          <td>A quick fix is available for this issue, which may potentially be an issue during migration.</td>
         </tr>
       </table>
     </div>
@@ -168,9 +191,9 @@
     <h3>Additional Resources</h3>
     <div>
       <ul>
-        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">Red Hat JBoss Migration Toolkit Documentation</a></li>
+        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/3.0/single/windup-eclipse-plugin-guide">Windup Eclipse Plugin Guide</a></li>
         <li><a href="http://windup.jboss.org/">Windup Website</a></li>
-        <!-- TODO: What else? Add Eclipse Plugin guide for final version -->
+        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">Red Hat JBoss Migration Toolkit Documentation</a></li>
       </ul>
     </div>
 
