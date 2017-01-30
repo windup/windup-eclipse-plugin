@@ -177,7 +177,6 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_QUICKFIX_ERROR, createImageDescriptor(IMG_QUICKFIX_ERROR));
 		reg.put(IMG_QUICKFIX_WARNING, createImageDescriptor(IMG_QUICKFIX_WARNING));
 		reg.put(IMG_QUICKFIX_INFO, createImageDescriptor(IMG_QUICKFIX_INFO));
-		reg.put(IMG_RULE, createImageDescriptor(IMG_RULE));
 		reg.put(IMG_SEVERITY, createImageDescriptor(IMG_SEVERITY));
 		reg.put(IMG_EXPANDALL, createImageDescriptor(IMG_EXPANDALL));
 		reg.put(IMG_FIXED, createImageDescriptor(IMG_FIXED));
@@ -196,6 +195,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_START_DISABLED, createImageDescriptor(IMG_START_DISABLED));
 		reg.put(IMG_STOP_DISABLED, createImageDescriptor(IMG_STOP_DISABLED));
 		reg.put(IMG_OPTIONS_TAB, createImageDescriptor(IMG_OPTIONS_TAB));
+		reg.put(IMG_RULE, createImageDescriptor(IMG_RULE));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

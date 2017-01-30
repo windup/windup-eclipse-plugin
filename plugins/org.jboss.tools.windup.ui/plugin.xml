@@ -33,6 +33,15 @@
             name="Issue Details"
             restorable="true">
       </e4view>
+      <e4view
+            allowMultiple="false"
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.rules.RulesView"
+            icon="icons/rule.gif"
+            id="org.jboss.tools.windup.ui.rules.rulesView"
+            name="Rules"
+            restorable="true">
+      </e4view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -203,7 +212,7 @@
             </command>
             <command
                   commandId="org.jboss.tools.windup.ui.groupByRule"
-                  icon="icons/rule.gif"
+                  icon="icons/rules_view.gif"
                   label="Migration Rule"
                   style="toggle">
             </command>
@@ -674,5 +683,14 @@
                 visible="true">
           </view>
        </perspectiveExtension>
+    </extension>
+    <extension
+          point="org.eclipse.wst.xml.core.catalogContributions">
+       <catalogContribution>
+          <uri
+                name="http://windup.jboss.org/schema/jboss-ruleset"
+                uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd">
+          </uri>
+       </catalogContribution>
     </extension>
 </plugin>

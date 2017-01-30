@@ -72,14 +72,14 @@ public class IssueDetailsView {
 	@Inject private ModelService modelService;
 	
 	private static final String BACKGROUND = "detailsBackground";
+	private static final Color DETAILS_BACKGROUND_COLOR;
 	
 	static {
 		if (!JFaceResources.getColorRegistry().hasValueFor(BACKGROUND)) {
 			JFaceResources.getColorRegistry().put(BACKGROUND, new RGB(231, 243, 243));
 		}
+		DETAILS_BACKGROUND_COLOR = JFaceResources.getColorRegistry().get(BACKGROUND);
 	}
-	
-	private static Color DETAILS_BACKGROUND_COLOR = JFaceResources.getColorRegistry().get(BACKGROUND);
 	
 	private ScrolledForm form;
 
