@@ -19,6 +19,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.rules.RulesView;
 
 /**
  * The Windup perspective.
@@ -34,6 +35,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addShowViewShortcut(IssueExplorer.VIEW_ID);
+		layout.addShowViewShortcut(RulesView.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		layout.addShowViewShortcut(WindupReportView.ID);
 		
@@ -42,6 +44,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		// Top left.
 		IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.26f, editorArea);//$NON-NLS-1$
 		topLeft.addView(IssueExplorer.VIEW_ID);
+		topLeft.addView(RulesView.VIEW_ID);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		topLeft.addPlaceholder(JavaUI.ID_PACKAGES_VIEW);
 		
