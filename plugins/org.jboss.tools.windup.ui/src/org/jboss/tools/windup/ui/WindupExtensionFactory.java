@@ -13,11 +13,27 @@ package org.jboss.tools.windup.ui;
 import org.jboss.tools.foundation.ui.ext.AbstractUiExtensionFactory;
 import org.osgi.framework.Bundle;
 
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
+
 /**
  * Windup e4 extension factory.
  */
 public class WindupExtensionFactory extends AbstractUiExtensionFactory {
+	
 	protected Bundle getBundle() {
 		return WindupUIPlugin.getDefault().getBundle();
+	}
+	
+	@Override
+	protected Object getInstance() throws Exception {
+		try {
+			Injector injector = WindupUIPlugin.getDefault().getInjector();
+			Class<?> type = getBundle().loadClass(data);
+			injector.getBinding(type);
+			return injector.getInstance(type);
+		} catch (ConfigurationException e) {
+		}
+		return super.getInstance();
 	}
 }

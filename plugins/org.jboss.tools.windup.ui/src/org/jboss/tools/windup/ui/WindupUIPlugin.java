@@ -25,9 +25,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.builder.standalone.StandaloneBuilderModule;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.osgi.framework.BundleContext;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * The activator class controls the plug-in life cycle for the UI components of the Windup Eclipse plugin.
@@ -52,7 +57,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_QUICKFIX_ERROR = "icons/quickfix_error.png"; //$NON-NLS-1$
     public static final String IMG_QUICKFIX_WARNING = "icons/quickfix_warning.png"; //$NON-NLS-1$
     public static final String IMG_QUICKFIX_INFO = "icons/quickfix_info.png"; //$NON-NLS-1$
-    public static final String IMG_RULE = "icons/rule.gif"; //$NON-NLS-1$
+    public static final String IMG_RULES = "icons/rules.gif"; //$NON-NLS-1$
+    public static final String IMG_RULE = "icons/rule.png"; //$NON-NLS-1$
     public static final String IMG_ARGS = "icons/variable_tab.gif"; //$NON_NLS-1$
     public static final String IMG_SEVERITY = "icons/severity.png"; //$NON-NLS-1$
     public static final String IMG_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
@@ -73,8 +79,17 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_STOP_DISABLED = "icons/stop_disabled.gif"; //$NON-NLS-1$
     public static final String IMG_OPTIONS_TAB = "icons/options_tab.gif"; //$NON-NLS-1$
     
+    public static final String IMG_XML_RULE = "icons/xml_rule.gif"; //$NON-NLS-1$
+    public static final String IMG_GROOVY_RULE = "icons/groovy_rule.gif"; //$NON-NLS-1$
+    public static final String IMG_RULE_CONTAINER = "icons/rule_container.png"; //$NON-NLS-1$
+    
+    public static final String IMG_XML_WIZ = "icons/generatexml_wiz.png"; //$NON-NLS-1$
+    public static final String IMG_JAVA_WIZ = "icons/newclass_wiz.png"; //$NON-NLS-1$
+    
     // The shared instance
     private static WindupUIPlugin plugin;
+    
+    private Injector injector;
     
     /**
      * The constructor
@@ -88,6 +103,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        getInjector();
     }
     
     @Override
@@ -195,7 +211,13 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_START_DISABLED, createImageDescriptor(IMG_START_DISABLED));
 		reg.put(IMG_STOP_DISABLED, createImageDescriptor(IMG_STOP_DISABLED));
 		reg.put(IMG_OPTIONS_TAB, createImageDescriptor(IMG_OPTIONS_TAB));
+		reg.put(IMG_RULES, createImageDescriptor(IMG_RULES));
 		reg.put(IMG_RULE, createImageDescriptor(IMG_RULE));
+		reg.put(IMG_XML_RULE, createImageDescriptor(IMG_XML_RULE));
+		reg.put(IMG_GROOVY_RULE, createImageDescriptor(IMG_GROOVY_RULE));
+		reg.put(IMG_RULE_CONTAINER, createImageDescriptor(IMG_RULE_CONTAINER));
+		reg.put(IMG_XML_WIZ, createImageDescriptor(IMG_XML_WIZ));
+		reg.put(IMG_JAVA_WIZ, createImageDescriptor(IMG_JAVA_WIZ));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {
@@ -210,4 +232,21 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		}
 		return null;
 	}
+    
+    public Injector getInjector() {
+    	if (injector == null) {
+    		injector = createInjector();
+    	}
+    	return injector;
+    }
+    
+    private Injector createInjector() {
+    	try {
+    		return Guice.createInjector(Lists.newArrayList(new WindupUiModule(), new StandaloneBuilderModule()));
+    	} catch (Exception e) {
+    		logErrorMessage("Failed to create injector");
+    		logError(e.getMessage(), e);
+    		throw new RuntimeException("Failed to create injector.", e);
+    	}
+    }
 }

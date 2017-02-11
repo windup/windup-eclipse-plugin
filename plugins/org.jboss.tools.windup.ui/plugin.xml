@@ -36,8 +36,8 @@
       <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.rules.RulesView"
-            icon="icons/rule.gif"
+            class="org.jboss.tools.windup.ui.rules.RuleRepositoryView"
+            icon="icons/rules.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
             name="Rules"
             restorable="true">
@@ -212,7 +212,7 @@
             </command>
             <command
                   commandId="org.jboss.tools.windup.ui.groupByRule"
-                  icon="icons/rules_view.gif"
+                  icon="icons/rules.gif"
                   label="Migration Rule"
                   style="toggle">
             </command>
@@ -682,6 +682,12 @@
                 standalone="false"
                 visible="true">
           </view>
+          <newWizardShortcut
+                id="org.jboss.tools.windup.ui.xml.ruleset.wizard">
+          </newWizardShortcut>
+          <newWizardShortcut
+                id="org.jboss.tools.windup.ui.java.ruleset.wizard">
+          </newWizardShortcut>
        </perspectiveExtension>
     </extension>
     <extension
@@ -692,5 +698,46 @@
                 uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd">
           </uri>
        </catalogContribution>
+    </extension>
+    <extension
+          point="org.eclipse.ui.newWizards">
+       <category
+             id="org.jboss.tools.windup.ui.windup.category"
+             name="%_UI_WIZARD_WINDUP_CATEGORY">
+       </category>
+       <wizard
+             canFinishEarly="false"
+             category="org.jboss.tools.windup.ui.windup.category"
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.NewXMLRulesetWizard"
+             finalPerspective="org.jboss.tools.windup.ui.perspective"
+             hasPages="true"
+             icon="icons/new_xml_ruleset.gif"
+             id="org.jboss.tools.windup.ui.xml.ruleset.wizard"
+             name="Windup XML Ruleset"
+             preferredPerspectives="org.jboss.tools.windup.ui.perspective">
+          <description>
+             %_UI_CREATE_NEW_XML_RULESET
+          </description>
+          <selection
+                class="org.eclipse.core.resources.IResource">
+          </selection>
+       </wizard>
+       <wizard
+             canFinishEarly="false"
+             category="org.jboss.tools.windup.ui.windup.category"
+             class="org.jboss.tools.windup.ui.rules.NewJavaRulesetWizard"
+             finalPerspective="org.jboss.tools.windup.ui.perspective"
+             hasPages="true"
+             icon="icons/new_java_ruleset.png"
+             id="org.jboss.tools.windup.ui.java.ruleset.wizard"
+             name="Windup Java Ruleset"
+             preferredPerspectives="org.jboss.tools.windup.ui.perspective">
+          <description>
+             %_UI_CREATE_NEW_JAVA_RULESET
+          </description>
+          <selection
+                class="org.eclipse.core.resources.IResource">
+          </selection>
+       </wizard>
     </extension>
 </plugin>

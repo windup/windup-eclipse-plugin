@@ -16,7 +16,7 @@ import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_INFO;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_ERROR;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_INFO;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_QUICKFIX_WARNING;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULES;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_WARNING;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_REPORT;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_STALE_ISSUE;
@@ -60,7 +60,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 	private static final Image INFO;
 	private static final Image FIXED;
 	private static final Image INFO_QUICKFIX;
-	private static final Image RULE;
+	private static final Image RULES;
 	private static final Image REPORT;
 	private static final Image STALE;
 	
@@ -72,7 +72,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		WARNING_QUICKFIX = imageRegistry.get(IMG_QUICKFIX_WARNING);
 		INFO = imageRegistry.get(IMG_INFO);
 		INFO_QUICKFIX = imageRegistry.get(IMG_QUICKFIX_INFO);
-		RULE = imageRegistry.get(IMG_RULE);
+		RULES = imageRegistry.get(IMG_RULES);
 		FIXED = imageRegistry.get(IMG_FIXED);
 		REPORT = imageRegistry.get(IMG_REPORT);
 		STALE = imageRegistry.get(IMG_STALE_ISSUE);
@@ -83,7 +83,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof RuleGroupNode) {
-			return RULE;
+			return RULES;
 		}
 		if (element instanceof ReportNode) {
 			return REPORT;

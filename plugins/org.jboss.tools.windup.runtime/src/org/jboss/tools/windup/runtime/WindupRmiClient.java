@@ -86,11 +86,13 @@ public class WindupRmiClient {
 			public void onProcessFailed(ExecuteException e) {
 				logInfo("onProcessFailed"); //$NON-NLS-1$
 				executionBuilder = null;
+				notifyServerChanged();
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
 				logInfo("onProcessComplete"); //$NON-NLS-1$
 				executionBuilder = null;
+				notifyServerChanged();
 			}
 		};
 		DefaultExecutor executor = new DefaultExecutor();

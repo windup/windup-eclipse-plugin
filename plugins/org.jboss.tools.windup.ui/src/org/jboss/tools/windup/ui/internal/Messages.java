@@ -46,6 +46,30 @@ public class Messages extends NLS
 	public static String selectRepositories;
 
     public static String refresh;
+    
+    // Rules
+    public static String refreshingRules;
+    public static String refreshingRulesError;
+    public static String systemRulesets;
+    
+    // Rule wizards
+    public static String NewXMLRuleset_title;
+    public static String NewJavaRuleset_title;
+    public static String _ERROR_BAD_FILENAME_EXTENSION;
+    public static String _UI_WIZARD_CREATE_XML_RULESET_FILE_HEADING;
+    public static String _UI_WIZARD_CREATE_JAVA_RULESET_FILE_HEADING;
+    public static String _UI_WIZARD_CREATE_XML_FILE_EXPL;
+    public static String _UI_WIZARD_CREATE_JAVA_FILE_EXPL;
+    public static String _ERROR_FILE_ALREADY_EXISTS;
+    
+    public static String NewWizard_title;
+    public static String NewRulesetWizard_generatingRuleset;
+    public static String NewRulesetWizard_generateTemplate;
+    public static String NewRulesetWizard_rulesetId;
+    public static String NewRulesetWizard_rulesetIdRequired;
+    
+    public static String openRuleset;
+    public static String errorOpeningRuleset;
 
     public static String report_has_no_information_on_resource;
 
