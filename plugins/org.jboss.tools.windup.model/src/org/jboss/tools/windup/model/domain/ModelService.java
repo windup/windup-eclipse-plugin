@@ -58,10 +58,10 @@ import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
-import org.jboss.tools.windup.windup.RuleRepository;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
@@ -76,10 +76,12 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 /**
  * Service for interacting with Windup's model and editing domain.
+ * 
+ * TODO: Initially I wanted to design our domain so that it's transactional; however, 
+ * I haven't enforced wrapping writes in a transaction, and we may want to.
  */
 @Singleton
 @Creatable
@@ -99,6 +101,7 @@ public class ModelService {
     private OptionsFacadeManager optionsFacadeManager;
     
 	@Inject private IEventBroker broker;
+	@Inject private WindupDomainListener modelListener;
 	
 	private WindupModel model;
 	private TransactionalEditingDomain domain;
@@ -107,6 +110,7 @@ public class ModelService {
 	private void initialize() {
 		domain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(DOMAIN_NAME);
 		load();
+		model.eAdapters().add(modelListener);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -289,15 +293,29 @@ public class ModelService {
 	}
 	
 	public ConfigurationElement createConfiguration(String name) {
-		ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
-		configuration.setName(name);
-		configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
-		configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
-		configuration.setSourceMode(true);
-		configuration.setGenerateReport(true);
-		configuration.setMigrationPath(model.getMigrationPaths().get(1));
-		model.getConfigurationElements().add(configuration);
-		return configuration;
+		CommandWithResult<ConfigurationElement> cmd = new CommandWithResult<ConfigurationElement>(domain) {
+			@Override
+			protected void doExecute() {
+				try {
+					ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
+					configuration.setName(name);
+					configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
+					configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
+					configuration.setSourceMode(true);
+					configuration.setGenerateReport(true);
+					configuration.setMigrationPath(model.getMigrationPaths().get(1));
+					model.getConfigurationElements().add(configuration);
+					setResultObject(configuration);
+					save();
+				} catch (Exception e) {
+					Activator.log(e);
+				}
+				setResultObject(null);
+				return;
+			}
+		};
+		domain.getCommandStack().execute(cmd);
+		return cmd.getResultObject();
 	}
 	
 	public void createInput(ConfigurationElement configuration, List<IProject> projects) {
@@ -337,20 +355,18 @@ public class ModelService {
 		configuration.getPackages().addAll(uris);
 	}
 	
-	public void addRuleRepository(String location) {
-		if (!model.getCustomRuleRepositories().stream().anyMatch(repo -> repo.getLocation().equals(location))) {
-			RuleRepository repo = WindupFactory.eINSTANCE.createRuleRepository();
-			repo.setLocation(location);
-			model.getCustomRuleRepositories().add(repo);
-		}
+	public void addRulesetRepository(String location, String rulesetId) {
+		addRulesetRepository(location, rulesetId, false);
 	}
 	
-	public List<String> computeExistingRepositories() {
-		List<String> repos = Lists.newArrayList();
-		model.getCustomRuleRepositories().forEach(repo -> {
-			repos.add(repo.getLocation());
+	public void addRulesetRepository(String location, String rulesetId, boolean isExternal) {
+		write(() -> {
+			CustomRuleProvider repo = WindupFactory.eINSTANCE.createCustomRuleProvider();
+			repo.setLocationURI(location);
+			repo.setRulesetId(rulesetId);
+			repo.setExternal(isExternal);
+			model.getCustomRuleRepositories().add(repo);
 		});
-		return repos;
 	}
 	
 	public void removePackages(ConfigurationElement configuration, List<IPackageFragment> packages) {

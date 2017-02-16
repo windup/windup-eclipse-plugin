@@ -10,13 +10,18 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.rules;
 
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.jboss.tools.windup.ui.rules.SystemRulesNode.SystemRulesetFileNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.SystemRulesNode;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
+import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
 
 import com.google.common.collect.Lists;
 
@@ -36,10 +41,20 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider {
 		else if (parentElement instanceof SystemRulesNode) {
 			return ((SystemRulesNode)parentElement).getChildren();
 		}
+		else if (parentElement instanceof CustomRulesNode) {
+			return ((CustomRulesNode)parentElement).getChildren();
+		}
 		else if (parentElement instanceof RuleProvider) {
 			List<Rule> rules = ((RuleProvider)parentElement).getRules();
 			List<Object> children = Lists.newArrayList(rules);
-			children.add(0, new SystemRulesetFileNode((RuleProvider)parentElement));
+			RuleProvider provider = (RuleProvider)parentElement;
+			children.add(0, new RulesetFileNode(new File(provider.getOrigin()), provider.getRuleProviderType()));
+			return children.stream().toArray(Object[]::new);
+		}
+		else if (parentElement instanceof CustomRuleProvider) {
+			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
+			List<Object> children = Lists.newArrayList();
+			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
 			return children.stream().toArray(Object[]::new);
 		}
 		return new Object[0];
@@ -58,8 +73,11 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider {
 		else if (element instanceof SystemRulesNode) {
 			return ((SystemRulesNode)element).getChildren().length > 0;
 		}
-		else if (element instanceof RuleProvider) {
-			return !((RuleProvider)element).getRules().isEmpty();
+		else if (element instanceof CustomRulesNode) {
+			return ((CustomRulesNode)element).getChildren().length > 0;
+		}
+		else if (element instanceof RuleProvider || element instanceof CustomRuleProvider) {
+			return true; // file node
 		}
 		return false;
 	}

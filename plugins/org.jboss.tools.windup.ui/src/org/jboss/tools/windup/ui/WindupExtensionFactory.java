@@ -15,6 +15,7 @@ import org.osgi.framework.Bundle;
 
 import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 /**
  * Windup e4 extension factory.
@@ -27,13 +28,18 @@ public class WindupExtensionFactory extends AbstractUiExtensionFactory {
 	
 	@Override
 	protected Object getInstance() throws Exception {
+		Injector injector = WindupUIPlugin.getDefault().getInjector();
+		Class<?> type = getBundle().loadClass(data);
 		try {
-			Injector injector = WindupUIPlugin.getDefault().getInjector();
-			Class<?> type = getBundle().loadClass(data);
 			injector.getBinding(type);
 			return injector.getInstance(type);
 		} catch (ConfigurationException e) {
-		}
+			try {
+				Provider<?> provider = injector.getProvider(type);
+				return provider.get();
+			} catch (ConfigurationException e2) {
+			}
+		} 
 		return super.getInstance();
 	}
 }

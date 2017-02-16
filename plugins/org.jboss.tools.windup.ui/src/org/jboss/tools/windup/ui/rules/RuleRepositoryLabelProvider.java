@@ -10,10 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.rules;
 
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_CONFIG_HOT;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_GROOVY_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE_CONTAINER;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE_REPO;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE_SET;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
 
 import org.eclipse.jface.resource.ImageRegistry;
@@ -26,7 +26,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.xml.ui.internal.util.SharedXMLEditorPluginImageHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.rules.SystemRulesNode.SystemRulesetFileNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.SystemRulesNode;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
 import org.w3c.dom.Node;
@@ -38,17 +41,17 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 	private static final Image XML_RULE_PROVIDER;
 	private static final Image GROOVY_RULE_PROVIDER;
 	
-	private static final Image SYSTEM_RULES;
+	private static final Image REPOSITORY;
 	private static final Image RULE;
-	private static final Image RULE_CONTAINER;
+	private static final Image RULE_SET;
 	
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
 		XML_RULE_PROVIDER = imageRegistry.get(IMG_XML_RULE);
 		GROOVY_RULE_PROVIDER = imageRegistry.get(IMG_GROOVY_RULE);
-		RULE_CONTAINER = imageRegistry.get(IMG_RULE_CONTAINER);
-		SYSTEM_RULES = imageRegistry.get(IMG_CONFIG_HOT);
+		REPOSITORY = imageRegistry.get(IMG_RULE_REPO);
 		RULE = imageRegistry.get(IMG_RULE);
+		RULE_SET = imageRegistry.get(IMG_RULE_SET);
 	}
 
 	@Override
@@ -57,6 +60,9 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 		if (element instanceof SystemRulesNode) {
 			return Messages.systemRulesets;
 		}
+		else if (element instanceof CustomRulesNode) {
+			return Messages.customRulesets;
+		}
 		else if (element instanceof RuleProvider) {
 			RuleProvider ruleProvider = (RuleProvider)element;
 			return ruleProvider.getProviderID();
@@ -64,8 +70,11 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 		else if (element instanceof Rule) {
 			return ((Rule)element).getRuleID();
 		}
-		else if (element instanceof SystemRulesetFileNode) {
-			return ((SystemRulesetFileNode)element).getFileName();
+		else if (element instanceof RulesetFileNode) {
+			return ((RulesetFileNode)element).getName();
+		}
+		else if (element instanceof CustomRuleProvider) {
+			return ((CustomRuleProvider)element).getRulesetId();
 		}
 		if (element instanceof Node) {
 			Node node = (Node) element;
@@ -96,14 +105,20 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 	public Image getImage(Object object) {
 		Image image = null;
 		if (object instanceof SystemRulesNode) {
-			image = SYSTEM_RULES;
+			image = REPOSITORY;
 		}
+		else if (object instanceof CustomRulesNode) {
+			image = REPOSITORY;
+		} 
 		else if (object instanceof RuleProvider) {
-			image = RULE_CONTAINER;
+			image = RULE_SET;
 		}
-		else if (object instanceof SystemRulesetFileNode) {
-			SystemRulesetFileNode node = (SystemRulesetFileNode)object;
-			switch (node.getRuleProvider().getRuleProviderType()) {
+		else if (object instanceof CustomRuleProvider) {
+			return RULE_SET;
+		}
+		else if (object instanceof RulesetFileNode) {
+			RulesetFileNode node = (RulesetFileNode)object;
+			switch (node.getRuleProviderType()) {
 				case XML:
 					image = XML_RULE_PROVIDER;
 					break;

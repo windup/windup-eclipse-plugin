@@ -14,6 +14,7 @@ import static org.jboss.tools.windup.ui.internal.Messages.Rules;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -22,7 +23,9 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -33,7 +36,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
@@ -42,6 +44,7 @@ import org.jboss.tools.windup.ui.FilteredListDialog;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 
 import com.google.common.collect.Lists;
 
@@ -54,6 +57,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	private ConfigurationElement configuration;
 	
 	private TableViewer rulesRepositoryViewer;
+	private Button removeButton;
 	
 	// TODO: We probably want to use this once we start using an external Windup launcher.
 	private WindupOptionsService optionsService;
@@ -79,7 +83,21 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 		rulesRepositoryViewer = new TableViewer(group, SWT.MULTI|SWT.BORDER|SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(rulesRepositoryViewer.getTable());
 		rulesRepositoryViewer.setContentProvider(ArrayContentProvider.getInstance());
-		rulesRepositoryViewer.setLabelProvider(new LabelProvider());
+		rulesRepositoryViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				CustomRuleProvider provider = (CustomRuleProvider)element;
+				StringBuilder builder = new StringBuilder();
+				builder.append(provider.getRulesetId());
+				builder.append(" - "); //$NON-NLS-1$
+				builder.append(provider.getLocationURI());
+				return builder.toString();				
+			}
+			@Override
+			public Image getImage(Object element) {
+				return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE_SET);
+			}
+		});
 		createCustomRulesButtonBar(group);
 	}
 	
@@ -88,52 +106,50 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(false, true).applyTo(container);
 		
-		Button newButton = new Button(container, SWT.PUSH);
-		newButton.setText("New..."); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(newButton);
-		newButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
-				String directory = dialog.open();
-				if (directory != null) {
-					modelService.addRuleRepository(directory);
-					if (!configuration.getUserRulesDirectories().contains(directory)) {
-						configuration.getUserRulesDirectories().add(directory);
-						reload();
-					}
-				}
-			}
-		});
-		
 		Button addButton = new Button(container, SWT.PUSH);
 		addButton.setText("Add..."); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(addButton);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FilteredListDialog dialog = new FilteredListDialog(parent.getShell(), new LabelProvider());
+				FilteredListDialog dialog = new FilteredListDialog(parent.getShell(), new LabelProvider() {
+					@Override
+					public String getText(Object element) {
+						CustomRuleProvider provider = (CustomRuleProvider)element;
+						StringBuilder builder = new StringBuilder();
+						builder.append(provider.getRulesetId());
+						builder.append(" - "); //$NON-NLS-1$
+						builder.append(provider.getLocationURI());
+						return builder.toString();
+					}
+					@Override
+					public Image getImage(Object element) {
+						return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE_SET);
+					}
+				});
 				dialog.setMultipleSelection(true);
 				dialog.setMessage(Messages.selectExistingRepositories);
-				List<String> repos = modelService.computeExistingRepositories();
-				repos.removeAll(configuration.getUserRulesDirectories());
-				dialog.setElements(repos.toArray(new String[repos.size()]));
+				List<CustomRuleProvider> providers = Lists.newArrayList(modelService.getModel().getCustomRuleRepositories());
+				providers = providers.stream().filter(p -> !configuration.getUserRulesDirectories().contains(p.getLocationURI())).collect(Collectors.toList());
+				dialog.setElements(providers.stream().toArray(CustomRuleProvider[]::new));
 				dialog.setTitle(Messages.selectRepositories);
 				dialog.setHelpAvailable(false);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
 					Object[] selected = (Object[])dialog.getResult();
 					if (selected.length > 0) {
-						List<String> packages = Lists.newArrayList();
-						Arrays.stream(selected).forEach(p -> packages.add((String)p));
-						configuration.getUserRulesDirectories().addAll(packages);
+						List<String> rulesets = Lists.newArrayList();
+						Arrays.stream(selected).forEach(p -> rulesets.add(((CustomRuleProvider)p).getLocationURI()));
+						modelService.write(() -> {
+							configuration.getUserRulesDirectories().addAll(rulesets);
+						});
 						reload();
 					}
 				}
 			}
 		});
 		
-		Button removeButton = new Button(container, SWT.PUSH);
+		removeButton= new Button(container, SWT.PUSH);
 		removeButton.setText(Messages.windupRemove);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(removeButton);
 		removeButton.addSelectionListener(new SelectionAdapter() {
@@ -142,12 +158,23 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 				StructuredSelection ss = (StructuredSelection)rulesRepositoryViewer.getSelection();
 				if (!ss.isEmpty()) {
 					@SuppressWarnings("unchecked")
-					List<String> paths = (List<String>)ss.toList();
-					configuration.getUserRulesDirectories().removeAll(paths);
+					List<CustomRuleProvider> providers = (List<CustomRuleProvider>)ss.toList();
+					List<String> paths = providers.stream().map(p -> p.getLocationURI()).collect(Collectors.toList());
+					modelService.write(() -> {
+						configuration.getUserRulesDirectories().removeAll(paths);
+					});
 					reloadCustomRules();
 				}
 			}
 		});
+		
+		rulesRepositoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				removeButton.setEnabled(!event.getSelection().isEmpty());
+			}
+		});
+		removeButton.setEnabled(false);
 	}
 	
 	private void reload() {
@@ -156,7 +183,16 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	
 	private void reloadCustomRules() {
 		if (rulesRepositoryViewer != null) {
-			rulesRepositoryViewer.setInput(Lists.newArrayList(configuration.getUserRulesDirectories()));
+			List<CustomRuleProvider> providers = Lists.newArrayList();
+			configuration.getUserRulesDirectories().forEach(directory -> {
+				modelService.getModel().getCustomRuleRepositories().forEach(provider -> {
+					if (directory.contains(provider.getLocationURI())) {
+						providers.add(provider);
+					}
+				});
+			});
+			
+			rulesRepositoryViewer.setInput(providers);
 		}
 	}
 	
@@ -167,7 +203,9 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy launchConfig) {
-		configuration.setName(launchConfig.getName());
+		modelService.write(() -> {
+			configuration.setName(launchConfig.getName());
+		});
 	}
 
 	@Override
@@ -177,7 +215,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	
 	@Override
 	public Image getImage() {
-		return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE);
+		return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULES);
 	}
 	
 	@Override

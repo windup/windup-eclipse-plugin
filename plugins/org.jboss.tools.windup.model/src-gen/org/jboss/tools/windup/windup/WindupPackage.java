@@ -1271,41 +1271,59 @@ public interface WindupPackage extends EPackage {
 	int PAIR_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.RuleRepositoryImpl <em>Rule Repository</em>}' class.
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl <em>Custom Rule Provider</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.RuleRepositoryImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getRuleRepository()
+	 * @see org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getCustomRuleProvider()
 	 * @generated
 	 */
-	int RULE_REPOSITORY = 15;
+	int CUSTOM_RULE_PROVIDER = 15;
 
 	/**
-	 * The feature id for the '<em><b>Location</b></em>' attribute.
+	 * The feature id for the '<em><b>Location URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RULE_REPOSITORY__LOCATION = 0;
+	int CUSTOM_RULE_PROVIDER__LOCATION_URI = 0;
 
 	/**
-	 * The number of structural features of the '<em>Rule Repository</em>' class.
+	 * The feature id for the '<em><b>Ruleset Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RULE_REPOSITORY_FEATURE_COUNT = 1;
+	int CUSTOM_RULE_PROVIDER__RULESET_ID = 1;
 
 	/**
-	 * The number of operations of the '<em>Rule Repository</em>' class.
+	 * The feature id for the '<em><b>External</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RULE_REPOSITORY_OPERATION_COUNT = 0;
+	int CUSTOM_RULE_PROVIDER__EXTERNAL = 2;
+
+	/**
+	 * The number of structural features of the '<em>Custom Rule Provider</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CUSTOM_RULE_PROVIDER_FEATURE_COUNT = 3;
+
+	/**
+	 * The number of operations of the '<em>Custom Rule Provider</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CUSTOM_RULE_PROVIDER_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
@@ -2051,25 +2069,47 @@ public interface WindupPackage extends EPackage {
 	EAttribute getPair_Value();
 
 	/**
-	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.RuleRepository <em>Rule Repository</em>}'.
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.CustomRuleProvider <em>Custom Rule Provider</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Rule Repository</em>'.
-	 * @see org.jboss.tools.windup.windup.RuleRepository
+	 * @return the meta object for class '<em>Custom Rule Provider</em>'.
+	 * @see org.jboss.tools.windup.windup.CustomRuleProvider
 	 * @generated
 	 */
-	EClass getRuleRepository();
+	EClass getCustomRuleProvider();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.RuleRepository#getLocation <em>Location</em>}'.
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.CustomRuleProvider#getLocationURI <em>Location URI</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Location</em>'.
-	 * @see org.jboss.tools.windup.windup.RuleRepository#getLocation()
-	 * @see #getRuleRepository()
+	 * @return the meta object for the attribute '<em>Location URI</em>'.
+	 * @see org.jboss.tools.windup.windup.CustomRuleProvider#getLocationURI()
+	 * @see #getCustomRuleProvider()
 	 * @generated
 	 */
-	EAttribute getRuleRepository_Location();
+	EAttribute getCustomRuleProvider_LocationURI();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.CustomRuleProvider#getRulesetId <em>Ruleset Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ruleset Id</em>'.
+	 * @see org.jboss.tools.windup.windup.CustomRuleProvider#getRulesetId()
+	 * @see #getCustomRuleProvider()
+	 * @generated
+	 */
+	EAttribute getCustomRuleProvider_RulesetId();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.CustomRuleProvider#isExternal <em>External</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>External</em>'.
+	 * @see org.jboss.tools.windup.windup.CustomRuleProvider#isExternal()
+	 * @see #getCustomRuleProvider()
+	 * @generated
+	 */
+	EAttribute getCustomRuleProvider_External();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

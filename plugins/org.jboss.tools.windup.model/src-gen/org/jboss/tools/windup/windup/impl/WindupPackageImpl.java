@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
@@ -25,7 +26,6 @@ import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.Parameter;
 import org.jboss.tools.windup.windup.Parameterized;
 import org.jboss.tools.windup.windup.QuickFix;
-import org.jboss.tools.windup.windup.RuleRepository;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
@@ -153,7 +153,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass ruleRepositoryEClass = null;
+	private EClass customRuleProviderEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -849,8 +849,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getRuleRepository() {
-		return ruleRepositoryEClass;
+	public EClass getCustomRuleProvider() {
+		return customRuleProviderEClass;
 	}
 
 	/**
@@ -858,8 +858,26 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRuleRepository_Location() {
-		return (EAttribute)ruleRepositoryEClass.getEStructuralFeatures().get(0);
+	public EAttribute getCustomRuleProvider_LocationURI() {
+		return (EAttribute)customRuleProviderEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCustomRuleProvider_RulesetId() {
+		return (EAttribute)customRuleProviderEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCustomRuleProvider_External() {
+		return (EAttribute)customRuleProviderEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -982,8 +1000,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(pairEClass, PAIR__KEY);
 		createEAttribute(pairEClass, PAIR__VALUE);
 
-		ruleRepositoryEClass = createEClass(RULE_REPOSITORY);
-		createEAttribute(ruleRepositoryEClass, RULE_REPOSITORY__LOCATION);
+		customRuleProviderEClass = createEClass(CUSTOM_RULE_PROVIDER);
+		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__LOCATION_URI);
+		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__RULESET_ID);
+		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__EXTERNAL);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -1060,7 +1080,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEClass(windupModelEClass, WindupModel.class, "WindupModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getWindupModel_ConfigurationElements(), this.getConfigurationElement(), null, "configurationElements", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getWindupModel_MigrationPaths(), this.getMigrationPath(), null, "migrationPaths", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getWindupModel_CustomRuleRepositories(), this.getRuleRepository(), null, "customRuleRepositories", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getWindupModel_CustomRuleRepositories(), this.getCustomRuleProvider(), null, "customRuleRepositories", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(inputEClass, Input.class, "Input", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getInput_Uri(), ecorePackage.getEString(), "uri", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1118,8 +1138,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getPair_Key(), ecorePackage.getEString(), "key", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPair_Value(), ecorePackage.getEString(), "value", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(ruleRepositoryEClass, RuleRepository.class, "RuleRepository", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRuleRepository_Location(), ecorePackage.getEString(), "location", null, 0, 1, RuleRepository.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(customRuleProviderEClass, CustomRuleProvider.class, "CustomRuleProvider", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCustomRuleProvider_LocationURI(), ecorePackage.getEString(), "locationURI", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCustomRuleProvider_RulesetId(), ecorePackage.getEString(), "rulesetId", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCustomRuleProvider_External(), ecorePackage.getEBoolean(), "external", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

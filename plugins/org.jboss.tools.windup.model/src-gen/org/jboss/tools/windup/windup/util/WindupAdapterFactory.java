@@ -128,8 +128,8 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 				return createPairAdapter();
 			}
 			@Override
-			public Adapter caseRuleRepository(RuleRepository object) {
-				return createRuleRepositoryAdapter();
+			public Adapter caseCustomRuleProvider(CustomRuleProvider object) {
+				return createCustomRuleProviderAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -362,16 +362,16 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.RuleRepository <em>Rule Repository</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.CustomRuleProvider <em>Custom Rule Provider</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.jboss.tools.windup.windup.RuleRepository
+	 * @see org.jboss.tools.windup.windup.CustomRuleProvider
 	 * @generated
 	 */
-	public Adapter createRuleRepositoryAdapter() {
+	public Adapter createCustomRuleProviderAdapter() {
 		return null;
 	}
 

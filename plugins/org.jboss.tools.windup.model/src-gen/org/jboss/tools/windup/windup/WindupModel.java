@@ -59,7 +59,7 @@ public interface WindupModel extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Custom Rule Repositories</b></em>' containment reference list.
-	 * The list contents are of type {@link org.jboss.tools.windup.windup.RuleRepository}.
+	 * The list contents are of type {@link org.jboss.tools.windup.windup.CustomRuleProvider}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Custom Rule Repositories</em>' containment reference list isn't clear,
@@ -71,6 +71,6 @@ public interface WindupModel extends EObject {
 	 * @model containment="true" resolveProxies="true"
 	 * @generated
 	 */
-	EList<RuleRepository> getCustomRuleRepositories();
+	EList<CustomRuleProvider> getCustomRuleRepositories();
 
 } // WindupModel

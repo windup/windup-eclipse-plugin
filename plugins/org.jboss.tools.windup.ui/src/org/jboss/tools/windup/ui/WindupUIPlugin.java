@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -57,7 +59,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_QUICKFIX_ERROR = "icons/quickfix_error.png"; //$NON-NLS-1$
     public static final String IMG_QUICKFIX_WARNING = "icons/quickfix_warning.png"; //$NON-NLS-1$
     public static final String IMG_QUICKFIX_INFO = "icons/quickfix_info.png"; //$NON-NLS-1$
-    public static final String IMG_RULES = "icons/rules.gif"; //$NON-NLS-1$
+    public static final String IMG_RULES = "icons/rules/repositories.gif"; //$NON-NLS-1$
     public static final String IMG_RULE = "icons/rule.png"; //$NON-NLS-1$
     public static final String IMG_ARGS = "icons/variable_tab.gif"; //$NON_NLS-1$
     public static final String IMG_SEVERITY = "icons/severity.png"; //$NON-NLS-1$
@@ -81,10 +83,14 @@ public class WindupUIPlugin extends AbstractUIPlugin
     
     public static final String IMG_XML_RULE = "icons/xml_rule.gif"; //$NON-NLS-1$
     public static final String IMG_GROOVY_RULE = "icons/groovy_rule.gif"; //$NON-NLS-1$
-    public static final String IMG_RULE_CONTAINER = "icons/rule_container.png"; //$NON-NLS-1$
+    
+    public static final String IMG_RULE_REPO = "icons/rules/repository.gif"; //$NON-NLS-1$
+    public static final String IMG_RULE_SET = "icons/rules/ruleset.png"; //$NON-NLS-1$
     
     public static final String IMG_XML_WIZ = "icons/generatexml_wiz.png"; //$NON-NLS-1$
     public static final String IMG_JAVA_WIZ = "icons/newclass_wiz.png"; //$NON-NLS-1$
+    
+    public static final String IMG_REMOVE_RULESET = "icons/rules/remove_ruleset.gif"; //$NON-NLS-1$
     
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -215,9 +221,11 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_RULE, createImageDescriptor(IMG_RULE));
 		reg.put(IMG_XML_RULE, createImageDescriptor(IMG_XML_RULE));
 		reg.put(IMG_GROOVY_RULE, createImageDescriptor(IMG_GROOVY_RULE));
-		reg.put(IMG_RULE_CONTAINER, createImageDescriptor(IMG_RULE_CONTAINER));
+		reg.put(IMG_RULE_SET, createImageDescriptor(IMG_RULE_SET));
 		reg.put(IMG_XML_WIZ, createImageDescriptor(IMG_XML_WIZ));
 		reg.put(IMG_JAVA_WIZ, createImageDescriptor(IMG_JAVA_WIZ));
+		reg.put(IMG_RULE_REPO, createImageDescriptor(IMG_RULE_REPO));
+		reg.put(IMG_REMOVE_RULESET, createImageDescriptor(IMG_REMOVE_RULESET));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {
@@ -249,4 +257,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     		throw new RuntimeException("Failed to create injector.", e);
     	}
     }
+    
+    public IEclipseContext getContext() {
+		return ((MApplication)PlatformUI.getWorkbench().getService(MApplication.class)).getContext();
+	}
 }

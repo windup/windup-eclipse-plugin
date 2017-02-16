@@ -33,15 +33,15 @@
             name="Issue Details"
             restorable="true">
       </e4view>
-      <e4view
+      <view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.rules.RuleRepositoryView"
-            icon="icons/rules.gif"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.RuleRepositoryView"
+            icon="icons/rules/repositories.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
-            name="Rules"
+            name="Rule Repositories"
             restorable="true">
-      </e4view>
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -379,6 +379,32 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.jboss.tools.windup.ui.rules.rulesView">
+         <command
+               commandId="org.jboss.tools.windup.ui.newXMLRulesetCommand"
+               icon="icons/rules/create_ruleset.png"
+               style="push"
+               tooltip="Create a new Ruleset add add it to this view">
+         </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.importRuleset"
+               icon="icons/rules/import_ruleset.png"
+               style="push"
+               tooltip="Import an existing local Ruleset and add it to this view">
+         </command>
+         <separator
+               name="org.jboss.tools.windup.ui.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.jboss.tools.windup.ui.refreshRulesets"
+               icon="icons/refresh.gif"
+               style="push"
+               tooltip="Refresh Rulesets">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -477,6 +503,21 @@
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$OpenReportHandler"
             id="org.jboss.tools.windup.ui.openReportCommand"
             name="Open Report">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.internal.handlers.NewXMLRulesetHandler"
+            id="org.jboss.tools.windup.ui.newXMLRulesetCommand"
+            name="New Ruleset">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.RefreshRulesetsHanlder"
+            id="org.jboss.tools.windup.ui.refreshRulesets"
+            name="Refresh Rulesets">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.ImportRulesetHandler"
+            id="org.jboss.tools.windup.ui.importRuleset"
+            name="Import Ruleset">
       </command>
    </extension>
     <extension
@@ -717,23 +758,6 @@
              preferredPerspectives="org.jboss.tools.windup.ui.perspective">
           <description>
              %_UI_CREATE_NEW_XML_RULESET
-          </description>
-          <selection
-                class="org.eclipse.core.resources.IResource">
-          </selection>
-       </wizard>
-       <wizard
-             canFinishEarly="false"
-             category="org.jboss.tools.windup.ui.windup.category"
-             class="org.jboss.tools.windup.ui.rules.NewJavaRulesetWizard"
-             finalPerspective="org.jboss.tools.windup.ui.perspective"
-             hasPages="true"
-             icon="icons/new_java_ruleset.png"
-             id="org.jboss.tools.windup.ui.java.ruleset.wizard"
-             name="Windup Java Ruleset"
-             preferredPerspectives="org.jboss.tools.windup.ui.perspective">
-          <description>
-             %_UI_CREATE_NEW_JAVA_RULESET
           </description>
           <selection
                 class="org.eclipse.core.resources.IResource">

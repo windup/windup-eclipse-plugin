@@ -165,7 +165,7 @@ public class WindupModelItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(WindupPackage.eINSTANCE.getWindupModel_CustomRuleRepositories(),
-				 WindupFactory.eINSTANCE.createRuleRepository()));
+				 WindupFactory.eINSTANCE.createCustomRuleProvider()));
 	}
 
 	/**

@@ -24,7 +24,7 @@ public class NewXMLFilePage extends WizardNewFileCreationPage {
 	protected static final int USE_CURRENT_TP = 2;
 	protected static final int USE_EXISTING_TARGET = 3;
 
-	private static String EXTENSION = "xml"; //$NON-NLS-1$
+	public static String EXTENSION = "xml"; //$NON-NLS-1$
 	
 	private Button quickstartButton;
 	private Text rulesetIdText;

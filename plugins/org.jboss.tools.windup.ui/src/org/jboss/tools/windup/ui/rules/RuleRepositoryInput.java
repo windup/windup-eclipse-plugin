@@ -12,34 +12,38 @@ package org.jboss.tools.windup.ui.rules;
 
 import java.util.List;
 
+import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.rules.RulesNode.SystemRulesNode;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
 import com.google.common.collect.Lists;
 
 public class RuleRepositoryInput {
 
-	private RuleProviderRegistry ruleProviderRegistry;
-	
+	private ModelService modelService;
+	private RuleProviderRegistry systemRuleProviderRegistry;
+
 	private List<Object> children = Lists.newArrayList();
 	
-	public RuleRepositoryInput (RuleProviderRegistry ruleProviderRegistry) {
-		this.ruleProviderRegistry = ruleProviderRegistry;
+	public RuleRepositoryInput (RuleProviderRegistry systemRuleProviderRegistry, ModelService modelService) {
+		this.systemRuleProviderRegistry = systemRuleProviderRegistry;
+		this.modelService = modelService;
 	}
 	
 	public Object[] getChildren() {
 		return children.stream().toArray(Object[]::new);
 	}
 	
-	public static RuleRepositoryInput computeInput(RuleProviderRegistry ruleProviderRegistry) {
-		RuleRepositoryInput root = new RuleRepositoryInput(ruleProviderRegistry);
+	public static RuleRepositoryInput computeInput(RuleProviderRegistry systemRuleProviderRegistry,
+			ModelService modelService) {
+		RuleRepositoryInput root = new RuleRepositoryInput(systemRuleProviderRegistry, modelService);
 		root.buildInput();
 		return root;
 	}
 	
 	private void buildInput() {
-		if (ruleProviderRegistry != null) {
-			SystemRulesNode node = new SystemRulesNode(ruleProviderRegistry);
-			children.add(node);
-		}
+		children.add(new SystemRulesNode(systemRuleProviderRegistry));
+		children.add(new CustomRulesNode(modelService));
 	}
 }

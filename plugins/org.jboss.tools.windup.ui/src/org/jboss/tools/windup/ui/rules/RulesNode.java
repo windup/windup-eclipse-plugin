@@ -15,18 +15,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.RuleProvider;
+import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
-public class SystemRulesNode {
+public class RulesNode {
 	
-	private RuleProviderRegistry ruleProviderRegistry;
+	protected RuleProviderRegistry ruleProviderRegistry;
 	
-	public SystemRulesNode (RuleProviderRegistry ruleProviderRegistry) {
+	public RulesNode (RuleProviderRegistry ruleProviderRegistry) {
 		this.ruleProviderRegistry = ruleProviderRegistry;
 	}
-	
+
 	public Object[] getChildren() {
+		if (ruleProviderRegistry == null) {
+			return new Object[0];
+		}
 		List<RuleProvider> ruleProviders = ruleProviderRegistry.getRuleProviders().stream().filter(provider -> {
 			return isFileBasedProvider(provider);
 		}).collect(Collectors.toList());
@@ -37,7 +43,7 @@ public class SystemRulesNode {
 	private boolean isFileBasedProvider(RuleProvider provider) {
 		switch (provider.getRuleProviderType()) {
 			case GROOVY:
-			case XML: 
+			case XML:
 				return true;
 			default: 
 				return false;
@@ -56,19 +62,47 @@ public class SystemRulesNode {
 		});
 	}
 	
-	public static class SystemRulesetFileNode {
-		private RuleProvider ruleProvider;
+	public static class SystemRulesNode extends RulesNode {
+		public SystemRulesNode (RuleProviderRegistry registry) {
+			super (registry);
+		}
+	}
+	
+	public static class CustomRulesNode extends RulesNode {
+				
+		private ModelService modelService;
 		
-		public SystemRulesetFileNode (RuleProvider ruleProvider) {
-			this.ruleProvider = ruleProvider;
+		public CustomRulesNode (ModelService modelService) {
+			super (null);
+			this.modelService = modelService;
 		}
 		
-		public RuleProvider getRuleProvider() {
-			return ruleProvider;
+		@Override
+		public Object[] getChildren() {
+			return modelService.getModel().getCustomRuleRepositories().stream().toArray(CustomRuleProvider[]::new);
+		}
+	}
+	
+	public static class RulesetFileNode {
+		
+		private File file;
+		private RuleProviderType type;
+
+		public RulesetFileNode (File file, RuleProviderType type) {
+			this.file = file;
+			this.type = type;
 		}
 		
-		public String getFileName() {
-			return new File(ruleProvider.getOrigin()).getName();
+		public String getName() {
+			return file.getName();
+		}
+		
+		public File getFile() {
+			return file;
+		}
+		
+		public RuleProviderType getRuleProviderType () {
+			return type;
 		}
 	}
 }

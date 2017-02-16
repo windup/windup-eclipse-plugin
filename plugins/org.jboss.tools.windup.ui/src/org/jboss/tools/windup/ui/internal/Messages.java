@@ -51,18 +51,26 @@ public class Messages extends NLS
     public static String refreshingRules;
     public static String refreshingRulesError;
     public static String systemRulesets;
+    public static String customRulesets;
+    public static String removeRuleset;
     
     // Rule wizards
     public static String NewXMLRuleset_title;
+    public static String ImportRuleset_title;
     public static String NewJavaRuleset_title;
     public static String _ERROR_BAD_FILENAME_EXTENSION;
     public static String _UI_WIZARD_CREATE_XML_RULESET_FILE_HEADING;
+    public static String _UI_WIZARD_IMPORT_XML_RULESET_FILE_HEADING;
     public static String _UI_WIZARD_CREATE_JAVA_RULESET_FILE_HEADING;
     public static String _UI_WIZARD_CREATE_XML_FILE_EXPL;
+    public static String _UI_WIZARD_IMPORT_XML_FILE_EXPL;
     public static String _UI_WIZARD_CREATE_JAVA_FILE_EXPL;
     public static String _ERROR_FILE_ALREADY_EXISTS;
     
+    public static String _UI_WIZARD_IMPORT_XML_RULESET_FILE;
+    
     public static String NewWizard_title;
+    public static String ImportRuleset_browse;
     public static String NewRulesetWizard_generatingRuleset;
     public static String NewRulesetWizard_generateTemplate;
     public static String NewRulesetWizard_rulesetId;

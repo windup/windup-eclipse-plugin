@@ -157,13 +157,13 @@ public interface WindupFactory extends EFactory {
 	Pair createPair();
 
 	/**
-	 * Returns a new object of class '<em>Rule Repository</em>'.
+	 * Returns a new object of class '<em>Custom Rule Provider</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Rule Repository</em>'.
+	 * @return a new object of class '<em>Custom Rule Provider</em>'.
 	 * @generated
 	 */
-	RuleRepository createRuleRepository();
+	CustomRuleProvider createCustomRuleProvider();
 
 	/**
 	 * Returns the package supported by this factory.

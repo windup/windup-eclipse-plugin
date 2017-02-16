@@ -165,9 +165,9 @@ public class WindupSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case WindupPackage.RULE_REPOSITORY: {
-				RuleRepository ruleRepository = (RuleRepository)theEObject;
-				T result = caseRuleRepository(ruleRepository);
+			case WindupPackage.CUSTOM_RULE_PROVIDER: {
+				CustomRuleProvider customRuleProvider = (CustomRuleProvider)theEObject;
+				T result = caseCustomRuleProvider(customRuleProvider);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -401,17 +401,17 @@ public class WindupSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Rule Repository</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Custom Rule Provider</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Rule Repository</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Custom Rule Provider</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseRuleRepository(RuleRepository object) {
+	public T caseCustomRuleProvider(CustomRuleProvider object) {
 		return null;
 	}
 

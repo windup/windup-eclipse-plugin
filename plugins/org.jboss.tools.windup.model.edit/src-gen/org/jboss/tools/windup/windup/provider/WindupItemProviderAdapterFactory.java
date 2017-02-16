@@ -417,26 +417,26 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.RuleRepository} instances.
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.CustomRuleProvider} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected RuleRepositoryItemProvider ruleRepositoryItemProvider;
+	protected CustomRuleProviderItemProvider customRuleProviderItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.RuleRepository}.
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.CustomRuleProvider}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createRuleRepositoryAdapter() {
-		if (ruleRepositoryItemProvider == null) {
-			ruleRepositoryItemProvider = new RuleRepositoryItemProvider(this);
+	public Adapter createCustomRuleProviderAdapter() {
+		if (customRuleProviderItemProvider == null) {
+			customRuleProviderItemProvider = new CustomRuleProviderItemProvider(this);
 		}
 
-		return ruleRepositoryItemProvider;
+		return customRuleProviderItemProvider;
 	}
 
 	/**
@@ -553,7 +553,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (migrationPathItemProvider != null) migrationPathItemProvider.dispose();
 		if (technologyItemProvider != null) technologyItemProvider.dispose();
 		if (pairItemProvider != null) pairItemProvider.dispose();
-		if (ruleRepositoryItemProvider != null) ruleRepositoryItemProvider.dispose();
+		if (customRuleProviderItemProvider != null) customRuleProviderItemProvider.dispose();
 	}
 
 }

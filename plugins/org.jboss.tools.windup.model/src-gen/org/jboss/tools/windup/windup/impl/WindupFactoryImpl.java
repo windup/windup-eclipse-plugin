@@ -72,7 +72,7 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 			case WindupPackage.MIGRATION_PATH: return createMigrationPath();
 			case WindupPackage.TECHNOLOGY: return createTechnology();
 			case WindupPackage.PAIR: return createPair();
-			case WindupPackage.RULE_REPOSITORY: return createRuleRepository();
+			case WindupPackage.CUSTOM_RULE_PROVIDER: return createCustomRuleProvider();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -259,9 +259,9 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RuleRepository createRuleRepository() {
-		RuleRepositoryImpl ruleRepository = new RuleRepositoryImpl();
-		return ruleRepository;
+	public CustomRuleProvider createCustomRuleProvider() {
+		CustomRuleProviderImpl customRuleProvider = new CustomRuleProviderImpl();
+		return customRuleProvider;
 	}
 
 	/**

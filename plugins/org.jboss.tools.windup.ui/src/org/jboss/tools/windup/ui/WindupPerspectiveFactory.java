@@ -44,7 +44,6 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		// Top left.
 		IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.26f, editorArea);//$NON-NLS-1$
 		topLeft.addView(IssueExplorer.VIEW_ID);
-		topLeft.addView(RuleRepositoryView.VIEW_ID);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		topLeft.addPlaceholder(JavaUI.ID_PACKAGES_VIEW);
 		
@@ -59,5 +58,6 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		bottomRight.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		bottomRight.addPlaceholder(IProgressConstants.PROGRESS_VIEW_ID);
 		bottomRight.addPlaceholder(ID_SEARCH_VIEW);
+		bottomRight.addView(RuleRepositoryView.VIEW_ID);
 	}
 }

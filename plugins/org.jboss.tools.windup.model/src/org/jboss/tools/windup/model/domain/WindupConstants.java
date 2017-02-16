@@ -45,6 +45,11 @@ public interface WindupConstants {
 	String LAUNCH_COMPLETED = "windup/launch/completed";
 	
 	/**
+	 * Ruleset Events
+	 */
+	String CUSTOM_RULESET_CHANGED = "windup/ruleset/added";
+	
+	/**
 	 * Windup completed
 	 */
 	String WINDUP_RUN_COMPLETED = "windup/run/completed";

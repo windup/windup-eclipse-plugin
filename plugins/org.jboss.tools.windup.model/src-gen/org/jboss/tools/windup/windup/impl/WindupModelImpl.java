@@ -17,8 +17,8 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.MigrationPath;
-import org.jboss.tools.windup.windup.RuleRepository;
 import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupPackage;
 
@@ -66,7 +66,7 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<RuleRepository> customRuleRepositories;
+	protected EList<CustomRuleProvider> customRuleRepositories;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -116,9 +116,9 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<RuleRepository> getCustomRuleRepositories() {
+	public EList<CustomRuleProvider> getCustomRuleRepositories() {
 		if (customRuleRepositories == null) {
-			customRuleRepositories = new EObjectContainmentEList.Resolving<RuleRepository>(RuleRepository.class, this, WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES);
+			customRuleRepositories = new EObjectContainmentEList.Resolving<CustomRuleProvider>(CustomRuleProvider.class, this, WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES);
 		}
 		return customRuleRepositories;
 	}
@@ -178,7 +178,7 @@ public class WindupModelImpl extends MinimalEObjectImpl.Container implements Win
 				return;
 			case WindupPackage.WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES:
 				getCustomRuleRepositories().clear();
-				getCustomRuleRepositories().addAll((Collection<? extends RuleRepository>)newValue);
+				getCustomRuleRepositories().addAll((Collection<? extends CustomRuleProvider>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

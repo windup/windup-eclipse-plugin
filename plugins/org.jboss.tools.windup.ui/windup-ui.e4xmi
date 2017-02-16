@@ -56,5 +56,6 @@
     <elements xsi:type="application:Addon" xmi:id="_OATG0E71Eea2x-7ba-JCLw" elementId="org.jboss.tools.windup.ui.addon.launchConfigurationService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.LaunchConfigurationService"/>
     <elements xsi:type="application:Addon" xmi:id="_pg_D0H9JEeaDaMGaik4Rpg" elementId="org.jboss.tools.windup.ui.addon.markerSyncService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerSyncService"/>
     <elements xsi:type="application:Addon" xmi:id="_ICj58Is2Eea8e9Y_llugnA" elementId="org.jboss.tools.windup.ui.addon.contextMenuService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.ContextMenuService"/>
+    <elements xsi:type="application:Addon" xmi:id="_ICj58Is2Eea8e9Y_llugnB" elementId="org.jboss.tools.windup.ui.addon.refreshService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.RefreshService"/>
   </fragments>
 </fragment:ModelFragments>
