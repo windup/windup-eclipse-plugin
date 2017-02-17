@@ -510,7 +510,7 @@
             name="New Ruleset">
       </command>
       <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.RefreshRulesetsHanlder"
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.RefreshRulesetsHandler"
             id="org.jboss.tools.windup.ui.refreshRulesets"
             name="Refresh Rulesets">
       </command>

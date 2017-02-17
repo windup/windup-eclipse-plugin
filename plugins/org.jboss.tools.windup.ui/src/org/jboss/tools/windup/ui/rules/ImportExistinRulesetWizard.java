@@ -121,7 +121,9 @@ public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
 					FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell());
 					dialog.setFilterExtensions(new String[] {NewXMLFilePage.EXTENSION}); 
 					rulesetFileLocation = dialog.open();
-					directoryText.setText(rulesetFileLocation);
+					if (rulesetFileLocation != null) {
+						directoryText.setText(rulesetFileLocation);
+					}
 					validate();
 				}
 			});
