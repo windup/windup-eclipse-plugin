@@ -1,1 +1,4 @@
 /target
+
+# ignore temporary xtend bin files
+*.xtendbin

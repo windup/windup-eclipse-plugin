@@ -184,7 +184,9 @@
                         </fileset>
                         <fileset>
                            <directory>${basedir}/xtext</directory>
-                           <followSymlinks>false</followSymlinks>
+                           <includes>
+                                <include>**/*</include>
+                            </includes>
                         </fileset>
                     </filesets>
                 </configuration>
