@@ -46,7 +46,10 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -54,12 +57,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -99,6 +105,8 @@ public class IssueExplorer extends CommonNavigator {
 	
 	@Inject private WindupLauncher windupLauncher;
 	@Inject private WindupRmiClient windupClient;
+	
+	private Text searchText;
 	
 	@Inject
 	public IssueExplorer(IssueExplorerContentService contentService) {
@@ -152,8 +160,15 @@ public class IssueExplorer extends CommonNavigator {
 	@Override
 	public void createPartControl(Composite aParent) {
 		createServerArea(aParent);
+		FormToolkit toolkit = new FormToolkit(aParent.getDisplay());
+		
+		createSearchArea(toolkit, aParent);
 		super.createPartControl(aParent);
-		GridDataFactory.fillDefaults().grab(true, true).indent(0, 5).applyTo(getCommonViewer().getControl());
+		
+		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).indent(0, 5).applyTo(getCommonViewer().getControl());
+		
+		getCommonViewer().addFilter(getRuleFilter());
+		
 		getCommonViewer().addDoubleClickListener(new OpenIssueListener());
 		getCommonViewer().addDoubleClickListener(new OpenReportListener());
 		getCommonViewer().addSelectionChangedListener((e) -> {
@@ -347,6 +362,59 @@ public class IssueExplorer extends CommonNavigator {
 			gettingStartedJob.setSystem(true);
 			gettingStartedJob.schedule();
 		}
+	}
+	
+	private void createSearchArea(FormToolkit toolkit, Composite parent) {
+		Form form = toolkit.createForm(parent);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(form);
+		Composite container = form.getBody();
+		GridLayoutFactory.fillDefaults().numColumns(1).margins(2, 0).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+		searchText = new Text(container, SWT.SEARCH | SWT.ICON_SEARCH);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(searchText);
+		searchText.addModifyListener(onSearch());
+	}
+
+	private ModifyListener onSearch() {
+		return e -> {
+			getCommonViewer().refresh();
+			getCommonViewer().expandAll();
+		};
+	}
+	
+	private ViewerFilter getRuleFilter() {
+		return new ViewerFilter() {
+			@Override
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (element instanceof MarkerNode) {
+					return isFilterMatch((MarkerNode)element);
+				}
+				return containsMarkerChild((TreeNode)element);
+			}
+		};
+	}
+	
+	private boolean containsMarkerChild(TreeNode treeNode) {
+		if (treeNode instanceof MarkerNode) {
+			return isFilterMatch((MarkerNode)treeNode);
+		}
+		for (TreeNode child : treeNode.getChildren()) {
+			if (child instanceof MarkerNode) {
+				return isFilterMatch((MarkerNode)child);
+			}
+			if (containsMarkerChild(child)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isFilterMatch(MarkerNode node) {
+		if (node.getRule() != null) {
+			return node.getRule().matches( ".*" + searchText.getText() + ".*");
+		}
+		return false;
 	}
 	
 	private EventHandler markersChangedHandler = new EventHandler() {
