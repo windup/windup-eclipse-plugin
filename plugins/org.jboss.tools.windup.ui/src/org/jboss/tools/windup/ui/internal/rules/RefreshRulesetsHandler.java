@@ -8,26 +8,27 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
-import javax.inject.Inject;
+import java.rmi.RemoteException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.PlatformUI;
 
-public class ImportRulesetHandler extends AbstractHandler {
-		
-	@Inject private IEclipseContext context;
+public class RefreshRulesetsHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ImportExistinRulesetWizard wizard = ContextInjectionFactory.make(ImportExistinRulesetWizard.class, context);
-		new WizardDialog(HandlerUtil.getActiveShell(event), wizard).open();
+		RuleRepositoryView view = (RuleRepositoryView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(RuleRepositoryView.VIEW_ID);
+		if (view != null) {
+			try {
+				view.refresh();
+			} catch (RemoteException e) {
+				// ignore. it's just a refresh
+			}
+		}
 		return null;
 	}
 }

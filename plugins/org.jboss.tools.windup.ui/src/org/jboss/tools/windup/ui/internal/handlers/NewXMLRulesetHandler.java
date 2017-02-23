@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.rules.NewXMLRulesetWizard;
+import org.jboss.tools.windup.ui.internal.rules.NewXMLRulesetWizard;
 
 public class NewXMLRulesetHandler extends AbstractHandler {
 	

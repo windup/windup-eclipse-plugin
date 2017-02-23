@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.rules.CreateRulesetOperation;
 
 public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutableExtension {
 	
@@ -71,7 +72,7 @@ public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutab
 		    	boolean generateQuickstart = startPage.generateQuickStartTemplate();
 		    	generateOperation.init(getShell().getDisplay(), (IContainer)container, fileName, rulesetId, generateQuickstart);
 				getContainer().run(false, true, generateOperation);
-				createRulesetOperation.init(((IContainer)container).getFile(new Path(fileName)).getLocation().toString(), rulesetId);
+				createRulesetOperation.init(((IContainer)container).getFile(new Path(fileName)).getLocation().toString());
 				getContainer().run(false, true, createRulesetOperation);
 			}
 		} catch (InvocationTargetException e) {

@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules
+package org.jboss.tools.windup.ui.internal.rules
 
 class XmlTemplate {
     def generateQuickstartTemplateContent(String rulesetId) {

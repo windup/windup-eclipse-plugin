@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules
+package org.jboss.tools.windup.ui.internal.rules
 
 import org.eclipse.ui.actions.WorkspaceModifyOperation
 import org.eclipse.core.runtime.IProgressMonitor
@@ -23,15 +23,13 @@ class CreateRulesetOperation extends WorkspaceModifyOperation {
     
     @Inject ModelService modelService
     var String locationURI
-    var String rulesetId
     
-    def init(String locationURI, String rulesetId) {
+    def init(String locationURI) {
         this.locationURI = locationURI
-        this.rulesetId = rulesetId;
     }
     
     override protected execute(IProgressMonitor monitor) throws CoreException, 
             InvocationTargetException, InterruptedException {
-        modelService.addRulesetRepository(locationURI, rulesetId)
+        modelService.addRulesetRepository(locationURI)
     }
 }

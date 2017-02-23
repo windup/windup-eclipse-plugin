@@ -21,7 +21,6 @@ import org.jboss.tools.windup.windup.WindupPackage;
  * </p>
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl#getLocationURI <em>Location URI</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl#getRulesetId <em>Ruleset Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl#isExternal <em>External</em>}</li>
  * </ul>
  *
@@ -47,26 +46,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected String locationURI = LOCATION_URI_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getRulesetId() <em>Ruleset Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRulesetId()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String RULESET_ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getRulesetId() <em>Ruleset Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRulesetId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String rulesetId = RULESET_ID_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isExternal() <em>External</em>}' attribute.
@@ -133,27 +112,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getRulesetId() {
-		return rulesetId;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRulesetId(String newRulesetId) {
-		String oldRulesetId = rulesetId;
-		rulesetId = newRulesetId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CUSTOM_RULE_PROVIDER__RULESET_ID, oldRulesetId, rulesetId));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isExternal() {
 		return external;
 	}
@@ -180,8 +138,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 		switch (featureID) {
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
 				return getLocationURI();
-			case WindupPackage.CUSTOM_RULE_PROVIDER__RULESET_ID:
-				return getRulesetId();
 			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
 				return isExternal();
 		}
@@ -198,9 +154,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 		switch (featureID) {
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
 				setLocationURI((String)newValue);
-				return;
-			case WindupPackage.CUSTOM_RULE_PROVIDER__RULESET_ID:
-				setRulesetId((String)newValue);
 				return;
 			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
 				setExternal((Boolean)newValue);
@@ -220,9 +173,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
 				setLocationURI(LOCATION_URI_EDEFAULT);
 				return;
-			case WindupPackage.CUSTOM_RULE_PROVIDER__RULESET_ID:
-				setRulesetId(RULESET_ID_EDEFAULT);
-				return;
 			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
 				setExternal(EXTERNAL_EDEFAULT);
 				return;
@@ -240,8 +190,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 		switch (featureID) {
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
 				return LOCATION_URI_EDEFAULT == null ? locationURI != null : !LOCATION_URI_EDEFAULT.equals(locationURI);
-			case WindupPackage.CUSTOM_RULE_PROVIDER__RULESET_ID:
-				return RULESET_ID_EDEFAULT == null ? rulesetId != null : !RULESET_ID_EDEFAULT.equals(rulesetId);
 			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
 				return external != EXTERNAL_EDEFAULT;
 		}
@@ -260,8 +208,6 @@ public class CustomRuleProviderImpl extends MinimalEObjectImpl.Container impleme
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (locationURI: ");
 		result.append(locationURI);
-		result.append(", rulesetId: ");
-		result.append(rulesetId);
 		result.append(", external: ");
 		result.append(external);
 		result.append(')');

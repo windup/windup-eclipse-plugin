@@ -61,7 +61,6 @@ public class CustomRuleProviderItemProvider
 			super.getPropertyDescriptors(object);
 
 			addLocationURIPropertyDescriptor(object);
-			addRulesetIdPropertyDescriptor(object);
 			addExternalPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -81,28 +80,6 @@ public class CustomRuleProviderItemProvider
 				 getString("_UI_CustomRuleProvider_locationURI_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_CustomRuleProvider_locationURI_feature", "_UI_CustomRuleProvider_type"),
 				 WindupPackage.eINSTANCE.getCustomRuleProvider_LocationURI(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Ruleset Id feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addRulesetIdPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_CustomRuleProvider_rulesetId_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_CustomRuleProvider_rulesetId_feature", "_UI_CustomRuleProvider_type"),
-				 WindupPackage.eINSTANCE.getCustomRuleProvider_RulesetId(),
 				 true,
 				 false,
 				 false,
@@ -172,7 +149,6 @@ public class CustomRuleProviderItemProvider
 
 		switch (notification.getFeatureID(CustomRuleProvider.class)) {
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
-			case WindupPackage.CUSTOM_RULE_PROVIDER__RULESET_ID:
 			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;

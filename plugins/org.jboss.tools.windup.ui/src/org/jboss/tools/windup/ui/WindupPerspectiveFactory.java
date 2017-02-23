@@ -18,8 +18,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
+import org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
-import org.jboss.tools.windup.ui.rules.RuleRepositoryView;
 
 /**
  * The Windup perspective.

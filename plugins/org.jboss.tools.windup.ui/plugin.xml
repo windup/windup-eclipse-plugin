@@ -36,7 +36,7 @@
       <view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.RuleRepositoryView"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView"
             icon="icons/rules/repositories.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
             name="Rule Repositories"
@@ -510,12 +510,12 @@
             name="New Ruleset">
       </command>
       <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.RefreshRulesetsHandler"
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RefreshRulesetsHandler"
             id="org.jboss.tools.windup.ui.refreshRulesets"
             name="Refresh Rulesets">
       </command>
       <command
-            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.ImportRulesetHandler"
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.ImportRulesetHandler"
             id="org.jboss.tools.windup.ui.importRuleset"
             name="Import Ruleset">
       </command>
@@ -749,7 +749,7 @@
        <wizard
              canFinishEarly="false"
              category="org.jboss.tools.windup.ui.windup.category"
-             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.rules.NewXMLRulesetWizard"
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.NewXMLRulesetWizard"
              finalPerspective="org.jboss.tools.windup.ui.perspective"
              hasPages="true"
              icon="icons/new_xml_ruleset.gif"

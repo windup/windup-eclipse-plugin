@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -27,6 +26,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.WindupModel;
 
@@ -70,16 +70,8 @@ public class RefreshService implements IResourceChangeListener {
 				}
 			}
 			
-			IFile[] rulesets = ResourcesPlugin.getWorkspace().getRoot().
-					findFilesForLocationURI(URIUtil.toURI(provider.getLocationURI()));
-			if (rulesets.length > 0) {
-				for (IFile ruleset : rulesets) {
-					if (!ruleset.exists()) {
-						providersToDelete.add(provider);
-					}
-				}
-			}
-			else {
+			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+			if (file == null || !file.exists()) {
 				providersToDelete.add(provider);
 			}
 		}

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -89,5 +90,15 @@ public class WorkspaceResourceUtils {
 			Activator.log(e);
 		}
 		return null;
+	}
+	
+	public static IFile getFile(String locationURI) {
+		IFile file = null;
+		java.net.URI location = URIUtil.toURI(locationURI);
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(location);
+		if (files.length > 0) {
+			file = files[0];
+		}
+		return file;
 	}
 }

@@ -63,7 +63,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.xml.ui,
  org.eclipse.osgi,
  org.eclipse.core.filesystem,
- org.eclipse.emf.transaction
+ org.eclipse.emf.transaction,
+ org.eclipse.wst.sse.core,
+ org.eclipse.wst.sse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,

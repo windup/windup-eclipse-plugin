@@ -1,4 +1,4 @@
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

@@ -113,7 +113,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CustomRuleProvider">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="locationURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rulesetId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="external" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
 </ecore:EPackage>

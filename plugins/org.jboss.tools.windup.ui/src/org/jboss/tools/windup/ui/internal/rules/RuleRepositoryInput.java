@@ -8,13 +8,13 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.util.List;
 
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
-import org.jboss.tools.windup.ui.rules.RulesNode.SystemRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.SystemRulesNode;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
 import com.google.common.collect.Lists;

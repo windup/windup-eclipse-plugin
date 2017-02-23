@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_GROOVY_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
@@ -26,9 +26,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.xml.ui.internal.util.SharedXMLEditorPluginImageHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
-import org.jboss.tools.windup.ui.rules.RulesNode.RulesetFileNode;
-import org.jboss.tools.windup.ui.rules.RulesNode.SystemRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.SystemRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.xml.XmlRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
@@ -74,7 +75,8 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 			return ((RulesetFileNode)element).getName();
 		}
 		else if (element instanceof CustomRuleProvider) {
-			return ((CustomRuleProvider)element).getRulesetId();
+			CustomRuleProvider provider = (CustomRuleProvider)element;
+			return XmlRulesetModelUtil.getRulesteId(provider.getLocationURI());
 		}
 		if (element instanceof Node) {
 			Node node = (Node) element;

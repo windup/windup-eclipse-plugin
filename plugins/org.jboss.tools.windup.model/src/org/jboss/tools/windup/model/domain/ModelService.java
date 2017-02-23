@@ -355,15 +355,14 @@ public class ModelService {
 		configuration.getPackages().addAll(uris);
 	}
 	
-	public void addRulesetRepository(String location, String rulesetId) {
-		addRulesetRepository(location, rulesetId, false);
+	public void addRulesetRepository(String location) {
+		addRulesetRepository(location, false);
 	}
 	
-	public CustomRuleProvider addRulesetRepository(String location, String rulesetId, boolean isExternal) {
+	public CustomRuleProvider addRulesetRepository(String location, boolean isExternal) {
 		return write(() -> {
 			CustomRuleProvider repo = WindupFactory.eINSTANCE.createCustomRuleProvider();
 			repo.setLocationURI(location);
-			repo.setRulesetId(rulesetId);
 			repo.setExternal(isExternal);
 			model.getCustomRuleRepositories().add(repo);
 			return repo;

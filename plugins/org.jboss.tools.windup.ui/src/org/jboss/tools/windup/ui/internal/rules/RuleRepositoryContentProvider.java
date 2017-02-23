@@ -8,25 +8,36 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
-import org.jboss.tools.windup.ui.rules.RulesNode.RulesetFileNode;
-import org.jboss.tools.windup.ui.rules.RulesNode.SystemRulesNode;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.SystemRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.xml.XmlRulesetContentProvider;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
 import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-@Creatable
 public class RuleRepositoryContentProvider implements ITreeContentProvider {
+	
+	private Map<CustomRuleProvider, XmlRulesetContentProvider> customProviders = Maps.newHashMap();
+	private TreeViewer treeViewer;
+	
+	public RuleRepositoryContentProvider (TreeViewer treeViewer) {
+		this.treeViewer = treeViewer;
+	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -55,7 +66,19 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider {
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
+			
+			XmlRulesetContentProvider customProvider = customProviders.get(provider);
+			if (customProvider == null) {
+				customProvider = new XmlRulesetContentProvider(provider, treeViewer);
+				customProviders.put(provider, customProvider);
+			}
+			
+			children.addAll(Lists.newArrayList(customProvider.getRules()));
+			
 			return children.stream().toArray(Object[]::new);
+		}
+		else if (parentElement instanceof Node) {
+			
 		}
 		return new Object[0];
 	}
@@ -78,6 +101,9 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider {
 		}
 		else if (element instanceof RuleProvider || element instanceof CustomRuleProvider) {
 			return true; // file node
+		}
+		else if (element instanceof Node) {
+			return getChildren(element).length > 0;
 		}
 		return false;
 	}

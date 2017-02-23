@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  */
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
@@ -26,19 +26,12 @@ public class CreateRulesetOperation extends WorkspaceModifyOperation {
   
   private String locationURI;
   
-  private String rulesetId;
-  
-  public String init(final String locationURI, final String rulesetId) {
-    String _xblockexpression = null;
-    {
-      this.locationURI = locationURI;
-      _xblockexpression = this.rulesetId = rulesetId;
-    }
-    return _xblockexpression;
+  public String init(final String locationURI) {
+    return this.locationURI = locationURI;
   }
   
   @Override
   protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-    this.modelService.addRulesetRepository(this.locationURI, this.rulesetId);
+    this.modelService.addRulesetRepository(this.locationURI);
   }
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.io.File;
 
@@ -60,8 +60,7 @@ public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
 	@Override
 	public boolean performFinish() {
 		modelService.addRulesetRepository(
-				xmlPage.getRulesetFileLocation(), 
-				xmlPage.getRulesetId(), true);
+				xmlPage.getRulesetFileLocation(), true);
 		return true;
 	}
 
@@ -69,7 +68,6 @@ public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
 	private static class ImportXMLRulesetWizardPage extends WizardPage {
 		
 		private Text directoryText;
-		private Text rulesetIdText;
 		
 		private String rulesetFileLocation;
 		
@@ -83,10 +81,6 @@ public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
 			return rulesetFileLocation; 
 		}
 		
-		public String getRulesetId() {
-			return rulesetIdText.getText().trim();
-		}
-
 		@Override
 		public void createControl(Composite parent) {
 			GridLayoutFactory.fillDefaults().applyTo(parent);
@@ -128,23 +122,6 @@ public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
 				}
 			});
 			
-			Composite bottom = new Composite(container, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 5, 0, 0).applyTo(bottom);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(bottom);
-			
-			label = new Label(bottom, SWT.NONE);
-			label.setText(Messages.NewRulesetWizard_rulesetId);
-			GridDataFactory.fillDefaults().hint(65, SWT.DEFAULT).align(SWT.BEGINNING, SWT.CENTER).applyTo(label);
-			
-			rulesetIdText = new Text(bottom, SWT.BORDER);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(rulesetIdText);
-			rulesetIdText.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validate();
-				}
-			});
-			
 			setControl(container);
 			validate();
 		}
@@ -152,7 +129,7 @@ public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
 		private void validate() {
 			String path = directoryText.getText().trim();
 			if (!path.isEmpty()) {
-				if (new File(path).exists() && !rulesetIdText.getText().trim().isEmpty()) {
+				if (new File(path).exists()) {
 					setPageComplete(true);
 				}
 				else {

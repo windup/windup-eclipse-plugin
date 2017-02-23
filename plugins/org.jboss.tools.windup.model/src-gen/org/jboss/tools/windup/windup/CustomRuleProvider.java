@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#getLocationURI <em>Location URI</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#getRulesetId <em>Ruleset Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#isExternal <em>External</em>}</li>
  * </ul>
  *
@@ -48,32 +47,6 @@ public interface CustomRuleProvider extends EObject {
 	 * @generated
 	 */
 	void setLocationURI(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Ruleset Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Ruleset Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Ruleset Id</em>' attribute.
-	 * @see #setRulesetId(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getCustomRuleProvider_RulesetId()
-	 * @model
-	 * @generated
-	 */
-	String getRulesetId();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.CustomRuleProvider#getRulesetId <em>Ruleset Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Ruleset Id</em>' attribute.
-	 * @see #getRulesetId()
-	 * @generated
-	 */
-	void setRulesetId(String value);
 
 	/**
 	 * Returns the value of the '<em><b>External</b></em>' attribute.

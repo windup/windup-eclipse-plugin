@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -67,8 +67,8 @@ import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.rules.RulesNode.CustomRulesNode;
-import org.jboss.tools.windup.ui.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
@@ -85,7 +85,7 @@ public class RuleRepositoryView extends ViewPart {
 	
 	private TreeViewer treeViewer;
 	
-	@Inject private RuleRepositoryContentProvider contentProvider;
+	private RuleRepositoryContentProvider contentProvider;
 	@Inject private WindupRmiClient windupClient;
 //	@Inject private ESelectionService l;;
 	
@@ -148,7 +148,6 @@ public class RuleRepositoryView extends ViewPart {
 	    treeViewer.addDropSupport(DND.DROP_COPY| DND.DROP_MOVE, 
 	    		new Transfer[]{LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()}, 
 	    		new RulesetDropListener(treeViewer));
-	    
 	}
 	
 	private class RulesetDropListener extends ViewerDropAdapter {
@@ -157,13 +156,13 @@ public class RuleRepositoryView extends ViewPart {
 			super(viewer);
 		}	
 		
-		private void addRulesets(String[] rulesetLocations) {
+		private void addRulesets(String[] rulesetLocations, boolean isLocal) {
 			List<CustomRuleProvider> providers = Lists.newArrayList();
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 				@Override
 				public void execute(IProgressMonitor monitor) {
 					for (String rulesetLocation : rulesetLocations) {
-						CustomRuleProvider provider = modelService.addRulesetRepository(rulesetLocation, "unknown ruleset ID", true); //$NON-NLS-1$
+						CustomRuleProvider provider = modelService.addRulesetRepository(rulesetLocation, true); //$NON-NLS-1$
 						providers.add(provider);
 					}
 				}
@@ -193,7 +192,7 @@ public class RuleRepositoryView extends ViewPart {
             			}
             		}
             		if (!locations.isEmpty()) {
-            			addRulesets(locations.stream().toArray(String[]::new));
+            			addRulesets(locations.stream().toArray(String[]::new), true);
             		}
             	}
             	else if (FileTransfer.getInstance().isSupportedType(transferType)) {
@@ -210,7 +209,7 @@ public class RuleRepositoryView extends ViewPart {
             				}
             			}
             			if (!locations.isEmpty()) {
-	            			addRulesets(locations.stream().toArray(String[]::new));
+	            			addRulesets(locations.stream().toArray(String[]::new), false);
 	            			return true;
             			}
             		}
@@ -271,6 +270,7 @@ public class RuleRepositoryView extends ViewPart {
 	private void createSystemRulesTreeViewer(Composite parent) throws RemoteException {
 		treeViewer = new TreeViewer(parent, SWT.FULL_SELECTION|SWT.MULTI|SWT.V_SCROLL|SWT.H_SCROLL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(treeViewer.getControl());
+	    contentProvider = new RuleRepositoryContentProvider(treeViewer);
 		treeViewer.setContentProvider(contentProvider);
 		treeViewer.setLabelProvider(new RuleRepositoryLabelProvider());
 		refresh();

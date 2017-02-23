@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.rules;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,6 +32,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.rules.RulesetGenerator;
 
 public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 

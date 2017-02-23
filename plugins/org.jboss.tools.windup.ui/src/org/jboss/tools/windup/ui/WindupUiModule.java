@@ -1,8 +1,8 @@
 package org.jboss.tools.windup.ui;
 
 import org.eclipse.xtext.service.AbstractGenericModule;
-import org.jboss.tools.windup.ui.rules.NewXMLRulesetWizard;
-import org.jboss.tools.windup.ui.rules.RulesetGenerator;
+import org.jboss.tools.windup.ui.internal.rules.NewXMLRulesetWizard;
+import org.jboss.tools.windup.ui.internal.rules.RulesetGenerator;
 
 import com.google.inject.Provider;
 
