@@ -25,6 +25,11 @@ import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
 
@@ -35,27 +40,93 @@ public class XmlRulesetFileOrchestrator {
 	private CustomRuleProvider ruleProvider;
 	private FileEditorInput editorInput;
 	
+	private IDocumentProvider documentProvider;
+	
 	public XmlRulesetFileOrchestrator(TreeViewer treeViewer, CustomRuleProvider ruleProvider) {
 		this.treeViewer = treeViewer;
 		this.ruleProvider = ruleProvider;
 		editorInput = new FileEditorInput(WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI()));
 	}
 	
-	public Object[] getRules() {
-		List<Object> rules = Lists.newArrayList();
-
-		return rules.stream().toArray(Object[]::new);
-	}
-	
-	private IDocument getDocument() {
+	public IDocument getDocument() {
 		return getDocumentProvider().getDocument(editorInput);
 	}
 	
 	private IDocumentProvider getDocumentProvider() {
-		return DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
+		if (documentProvider == null) {
+			documentProvider = DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
+			try {
+				documentProvider.connect(editorInput);
+			} catch (CoreException e) {
+				WindupUIPlugin.log(e);
+			}
+		}
+		return documentProvider;
 	}
 	
 	public void disconnect() {
-		getDocumentProvider().disconnect(editorInput);
+		if (documentProvider != null) {
+			documentProvider.disconnect(editorInput);
+			documentProvider = null;
+		}
+	}
+	
+	//
+	//
+	//
+	public String getRulesteId(String locationURI) {
+		String rulesetId = null;
+		IDOMModel model = getModel();
+		if (model != null) {
+			Document document = model.getDocument();
+			NodeList rulesets = document.getElementsByTagName("ruleset");  //$NON-NLS-1$
+			if (rulesets.getLength() > 0) {
+				Node ruleset = rulesets.item(0);
+				NamedNodeMap attributes = ruleset.getAttributes();
+				Node rulesetIdNode = attributes.getNamedItem("id");  //$NON-NLS-1$
+				if (rulesetIdNode != null) {
+					rulesetId = ((Attr) rulesetIdNode).getValue();
+				}
+			}
+			model.releaseFromRead();
+		}
+		return rulesetId;
+	}
+	
+	public List<Node> getRules() {
+		List<Node> rules = Lists.newArrayList();
+		IDOMModel model = getModel();
+		Document document = model.getDocument();
+		NodeList ruleNodes = document.getElementsByTagName("rule");  //$NON-NLS-1$
+		if (ruleNodes.getLength() > 0) {
+			for (int i = 0; i < ruleNodes.getLength(); i++) {
+				Node ruleNode = ruleNodes.item(i);
+				rules.add(ruleNode);
+			}
+		}
+		model.releaseFromRead();
+		return rules;
+	}
+	
+	public String getRuleId(Node node) {
+		String ruleId = "";
+		NamedNodeMap attributes = node.getAttributes();
+		Node ruleIdNode = attributes.getNamedItem("id");  //$NON-NLS-1$
+		if (ruleIdNode != null) {
+			ruleId = ((Attr) ruleIdNode).getValue();
+		}
+		return ruleId;
+	}
+	
+	public IDOMModel getModel() {
+		try {
+			IStructuredModel model = StructuredModelManager.getModelManager().getModelForRead(WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI()));
+			if (model != null && model instanceof IDOMModel) {
+				return (IDOMModel) model;
+			}
+		} catch (IOException | CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		return null;
 	}
 }

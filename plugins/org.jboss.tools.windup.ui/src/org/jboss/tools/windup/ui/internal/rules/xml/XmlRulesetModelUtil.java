@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.texteditor.DocumentProviderRegistry;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
@@ -32,7 +35,6 @@ public class XmlRulesetModelUtil {
 				Node rulesetIdNode = attributes.getNamedItem("id");  //$NON-NLS-1$
 				if (rulesetIdNode != null) {
 					rulesetId = ((Attr) rulesetIdNode).getValue();
-					System.out.println(rulesetId);
 				}
 			}
 			model.releaseFromRead();
@@ -53,6 +55,16 @@ public class XmlRulesetModelUtil {
 		}
 		model.releaseFromRead();
 		return rules;
+	}
+	
+	public static String getRuleId(Node node) {
+		String ruleId = "";
+		NamedNodeMap attributes = node.getAttributes();
+		Node ruleIdNode = attributes.getNamedItem("id");  //$NON-NLS-1$
+		if (ruleIdNode != null) {
+			ruleId = ((Attr) ruleIdNode).getValue();
+		}
+		return ruleId;
 	}
 	
 	public static IDOMModel getModel(String locationURI) {

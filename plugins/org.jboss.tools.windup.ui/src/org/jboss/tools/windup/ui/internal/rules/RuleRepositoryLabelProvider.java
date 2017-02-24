@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.wst.xml.ui.internal.util.SharedXMLEditorPluginImageHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
@@ -34,7 +33,6 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
 import org.w3c.dom.Node;
-import org.w3c.dom.ProcessingInstruction;
 
 @SuppressWarnings("restriction")
 public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabelProvider {
@@ -79,25 +77,7 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 			return XmlRulesetModelUtil.getRulesteId(provider.getLocationURI());
 		}
 		if (element instanceof Node) {
-			Node node = (Node) element;
-			switch (node.getNodeType()) {
-				case Node.ATTRIBUTE_NODE : {
-					result = node.getNodeName();
-					break;
-				}
-				case Node.DOCUMENT_TYPE_NODE : {
-					result = "DOCTYPE"; //$NON-NLS-1$
-					break;
-				}
-				case Node.ELEMENT_NODE : {
-					result = node.getNodeName();
-					break;
-				}
-				case Node.PROCESSING_INSTRUCTION_NODE : {
-					result = ((ProcessingInstruction) node).getTarget();
-					break;
-				}
-			}
+			result = XmlRulesetModelUtil.getRuleId((Node)element);
 		}
 		result = TextProcessor.process(result);
 		return result != null ? result : ""; //$NON-NLS-1$
@@ -133,41 +113,7 @@ public class RuleRepositoryLabelProvider implements ILabelProvider, IStyledLabel
 			image = RULE;
 		}
 		else if (object instanceof Node) {
-			Node node = (Node) object;
-			switch (node.getNodeType()) {
-				case Node.ATTRIBUTE_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_ATTRIBUTE);
-					break;
-				}
-				case Node.CDATA_SECTION_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_CDATASECTION);
-					break;
-				}
-				case Node.COMMENT_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_COMMENT);
-					break;
-				}
-				case Node.DOCUMENT_TYPE_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_DOCTYPE);
-					break;
-				}
-				case Node.ELEMENT_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_ELEMENT);
-					break;
-				}
-				case Node.PROCESSING_INSTRUCTION_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_PROCESSINGINSTRUCTION);
-					break;
-				}
-				case Node.TEXT_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_TXTEXT);
-					break;
-				}
-				case Node.ENTITY_REFERENCE_NODE : {
-					image = SharedXMLEditorPluginImageHelper.getImage(SharedXMLEditorPluginImageHelper.IMG_OBJ_ENTITY_REFERENCE);
-					break;
-				}
-			}
+			image = RULE;
 		}
 		return image;
 	}

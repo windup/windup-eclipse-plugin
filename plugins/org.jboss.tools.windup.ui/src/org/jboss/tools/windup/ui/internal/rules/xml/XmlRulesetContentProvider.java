@@ -14,7 +14,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.INodeNotifier;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.sse.ui.internal.contentoutline.IJFaceNodeAdapter;
 import org.eclipse.wst.sse.ui.internal.contentoutline.IJFaceNodeAdapterFactory;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMDocument;
@@ -46,17 +48,18 @@ public class XmlRulesetContentProvider implements ITreeContentProvider, CMDocume
 	private Color fCMColor = null;
 	
 	private CustomRuleProvider ruleProvider;
+	private XmlRulesetFileOrchestrator orchestrator;
 	
 	public XmlRulesetContentProvider(CustomRuleProvider ruleProvider, TreeViewer treeViewer) {
 		this.ruleProvider = ruleProvider;
 		this.fViewer = treeViewer;
-	}
-	
-	public Object[] getRules() {
-		return XmlRulesetModelUtil.getRules(ruleProvider.getLocationURI()).
-				stream().toArray(Object[]::new);
+		this.orchestrator = new XmlRulesetFileOrchestrator(treeViewer, ruleProvider);
 	}
 
+	public XmlRulesetFileOrchestrator getModel() {
+		return orchestrator;
+	}
+	
 	// CMDocumentManagerListener
 	public void cacheCleared(CMDocumentCache cache) {
 		doDelayedRefreshForViewers();
@@ -143,8 +146,9 @@ public class XmlRulesetContentProvider implements ITreeContentProvider, CMDocume
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		
 		// remove our listeners to the old state
-		if (oldInput != null) {
+		/*if (oldInput != null) {
 			Document domDoc = (Document) oldInput;
 			ModelQuery mq = ModelQueryUtil.getModelQuery(domDoc);
 			if (mq != null) {
@@ -167,12 +171,41 @@ public class XmlRulesetContentProvider implements ITreeContentProvider, CMDocume
 			if (factory != null) {
 				factory.addListener(viewer);
 			}
-		}
+		}*/
 
-		if (newInput != null) {
-			Document domDoc = (Document) newInput;
+		//if (newInput != null) {
+			//Document domDoc = (Document) newInput;
+		orchestrator.getModel().addModelStateListener(new IModelStateListener() {
+			@Override
+			public void modelResourceMoved(IStructuredModel oldModel, IStructuredModel newModel) {
+			}
+			@Override
+			public void modelResourceDeleted(IStructuredModel model) {
+			}
+			@Override
+			public void modelReinitialized(IStructuredModel structuredModel) {
+			}
+			@Override
+			public void modelDirtyStateChanged(IStructuredModel model, boolean isDirty) {
+			}
+			@Override
+			public void modelChanged(IStructuredModel model) {
+				if (!fViewer.getTree().isDisposed()) {
+					fViewer.refresh(ruleProvider);
+				}
+				else {
+					orchestrator.getModel().removeModelStateListener(this);
+				}
+			}
+			@Override
+			public void modelAboutToBeReinitialized(IStructuredModel structuredModel) {
+			}
+			@Override
+			public void modelAboutToBeChanged(IStructuredModel model) {
+			}
+		});
+			Document domDoc = (Document) orchestrator.getModel().getDocument();
 			ModelQuery mq = ModelQueryUtil.getModelQuery(domDoc);
-
 			if (mq != null) {
 				documentManager = mq.getCMDocumentManager();
 				if (documentManager != null) {
@@ -180,7 +213,7 @@ public class XmlRulesetContentProvider implements ITreeContentProvider, CMDocume
 					documentManager.addListener(this);
 				}
 			}
-		}
+		//}
 	}
 
 	public void propertyChanged(CMDocumentManager cmDocumentManager, String propertyName) {
