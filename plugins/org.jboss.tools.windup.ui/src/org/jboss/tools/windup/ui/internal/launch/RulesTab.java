@@ -89,7 +89,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 			public String getText(Object element) {
 				CustomRuleProvider provider = (CustomRuleProvider)element;
 				StringBuilder builder = new StringBuilder();
-				String parsedRulesetId = XmlRulesetModelUtil.getRulesteId(provider.getLocationURI());
+				String parsedRulesetId = XmlRulesetModelUtil.getRulesetId(provider.getLocationURI());
 				if (parsedRulesetId != null && !parsedRulesetId.isEmpty()) {
 					builder.append(parsedRulesetId);
 					builder.append(" - "); //$NON-NLS-1$
@@ -121,7 +121,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 					public String getText(Object element) {
 						CustomRuleProvider provider = (CustomRuleProvider)element;
 						StringBuilder builder = new StringBuilder();
-						String parsedRulesetId = XmlRulesetModelUtil.getRulesteId(provider.getLocationURI());
+						String parsedRulesetId = XmlRulesetModelUtil.getRulesetId(provider.getLocationURI());
 						if (parsedRulesetId != null && !parsedRulesetId.isEmpty()) {
 							builder.append(parsedRulesetId);
 							builder.append(" - "); //$NON-NLS-1$

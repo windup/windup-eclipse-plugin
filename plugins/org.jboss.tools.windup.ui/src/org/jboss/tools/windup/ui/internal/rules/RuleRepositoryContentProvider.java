@@ -21,21 +21,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.SystemRulesNode;
-import org.jboss.tools.windup.ui.internal.rules.xml.XmlRulesetContentProvider;
 import org.jboss.tools.windup.ui.internal.rules.xml.XmlRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
@@ -46,6 +47,7 @@ import org.w3c.dom.Node;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@SuppressWarnings("restriction")
 public class RuleRepositoryContentProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
 	
 	private static final Image XML_RULE_PROVIDER;
@@ -54,6 +56,8 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	private static final Image REPOSITORY;
 	private static final Image RULE;
 	private static final Image RULE_SET;
+	
+	private Map<CustomRuleProvider, IModelStateListener> listenerMap = Maps.newHashMap();
 	
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -64,7 +68,6 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		RULE_SET = imageRegistry.get(IMG_RULE_SET);
 	}
 	
-	private Map<CustomRuleProvider, XmlRulesetContentProvider> customProviders = Maps.newHashMap();
 	private TreeViewer treeViewer;
 	
 	public RuleRepositoryContentProvider (TreeViewer treeViewer) {
@@ -74,13 +77,6 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
-	}
-	
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		for (Map.Entry<CustomRuleProvider, XmlRulesetContentProvider> entry : customProviders.entrySet()) {
-			entry.getValue().inputChanged(viewer, oldInput, newInput);
-		}
 	}
 
 	@Override
@@ -105,21 +101,58 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
-			
-			XmlRulesetContentProvider customProvider = customProviders.get(provider);
-			if (customProvider == null) {
-				customProvider = new XmlRulesetContentProvider(provider, treeViewer);
-				customProviders.put(provider, customProvider);
-			}
-			
-			children.addAll(customProvider.getModel().getRules());
-			
+			children.addAll(XmlRulesetModelUtil.getRules(provider.getLocationURI()));
+			listen(provider);
 			return children.stream().toArray(Object[]::new);
 		}
-		else if (parentElement instanceof Node) {
-			
-		}
 		return new Object[0];
+	}
+	
+	private void listen(CustomRuleProvider ruleProvider) {
+		IDOMModel model = XmlRulesetModelUtil.getModel(ruleProvider.getLocationURI());
+		IModelStateListener listener = listenerMap.get(ruleProvider);
+		if (listener == null) {
+			listener = new IModelStateListener() {
+				@Override
+				public void modelResourceMoved(IStructuredModel oldModel, IStructuredModel newModel) {
+					refresh(this, model, ruleProvider);
+				}
+				@Override
+				public void modelResourceDeleted(IStructuredModel theModel) {
+					refresh(this, model, ruleProvider);
+				}
+				@Override
+				public void modelReinitialized(IStructuredModel structuredModel) {
+					refresh(this, model, ruleProvider);
+				}
+				@Override
+				public void modelDirtyStateChanged(IStructuredModel model, boolean isDirty) {
+				}
+				@Override
+				public void modelChanged(IStructuredModel theModel) {
+					refresh(this, model, ruleProvider);
+				}
+				@Override
+				public void modelAboutToBeReinitialized(IStructuredModel structuredModel) {
+				}
+				@Override
+				public void modelAboutToBeChanged(IStructuredModel model) {
+				}
+			};
+			listenerMap.put(ruleProvider, listener);
+		}
+		else {
+			model.removeModelStateListener(listener);
+		}
+		model.addModelStateListener(listener);
+	}
+	
+	private void refresh(IModelStateListener listener, IDOMModel model, CustomRuleProvider ruleProvider) {
+		model.removeModelStateListener(listener);
+		listenerMap.remove(ruleProvider);
+		if (!treeViewer.getTree().isDisposed()) {
+			treeViewer.refresh(ruleProvider);
+		}
 	}
 	
 	@Override
@@ -171,7 +204,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		}
 		else if (element instanceof CustomRuleProvider) {
 			CustomRuleProvider provider = (CustomRuleProvider)element;
-			return XmlRulesetModelUtil.getRulesteId(provider.getLocationURI());
+			return XmlRulesetModelUtil.getRulesetId(provider.getLocationURI());
 		}
 		if (element instanceof Node) {
 			result = XmlRulesetModelUtil.getRuleId((Node)element);

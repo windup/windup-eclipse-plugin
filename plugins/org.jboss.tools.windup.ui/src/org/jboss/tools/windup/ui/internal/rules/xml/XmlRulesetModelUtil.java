@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.DocumentProviderRegistry;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
@@ -23,7 +20,7 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("restriction")
 public class XmlRulesetModelUtil {
 
-	public static String getRulesteId(String locationURI) {
+	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
 		IDOMModel model = XmlRulesetModelUtil.getModel(locationURI);
 		if (model != null) {
@@ -45,15 +42,17 @@ public class XmlRulesetModelUtil {
 	public static List<Node> getRules(String locationURI) {
 		List<Node> rules = Lists.newArrayList();
 		IDOMModel model = XmlRulesetModelUtil.getModel(locationURI);
-		Document document = model.getDocument();
-		NodeList ruleNodes = document.getElementsByTagName("rule");  //$NON-NLS-1$
-		if (ruleNodes.getLength() > 0) {
-			for (int i = 0; i < ruleNodes.getLength(); i++) {
-				Node ruleNode = ruleNodes.item(i);
-				rules.add(ruleNode);
+		if (model != null) {
+			Document document = model.getDocument();
+			NodeList ruleNodes = document.getElementsByTagName("rule");  //$NON-NLS-1$
+			if (ruleNodes.getLength() > 0) {
+				for (int i = 0; i < ruleNodes.getLength(); i++) {
+					Node ruleNode = ruleNodes.item(i);
+					rules.add(ruleNode);
+				}
 			}
+			model.releaseFromRead();
 		}
-		model.releaseFromRead();
 		return rules;
 	}
 	
@@ -78,4 +77,20 @@ public class XmlRulesetModelUtil {
 		}
 		return null;
 	}
+	
+	/*
+	private IDocument getDocument() {
+		return getDocumentProvider().getDocument(editorInput);
+	}
+	
+	private IDocumentProvider getDocumentProvider() {
+		IDocumentProvider documentProvider = DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
+		try {
+			documentProvider.connect(editorInput);
+		} catch (CoreException e) {
+			WindupUIPlugin.log(e);
+		}
+		return documentProvider;
+	}
+	*/
 }

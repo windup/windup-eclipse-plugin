@@ -87,7 +87,6 @@ public class RuleRepositoryView extends ViewPart {
 	
 	private RuleRepositoryContentProvider contentProvider;
 	@Inject private WindupRmiClient windupClient;
-//	@Inject private ESelectionService l;;
 	
 	@Inject private ModelService modelService;
 	@Inject private IEclipseContext context;
@@ -272,7 +271,7 @@ public class RuleRepositoryView extends ViewPart {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(treeViewer.getControl());
 	    contentProvider = new RuleRepositoryContentProvider(treeViewer);
 		treeViewer.setContentProvider(contentProvider);
-		treeViewer.setLabelProvider(new RuleRepositoryLabelProvider());
+		treeViewer.setLabelProvider(contentProvider);
 		refresh();
 	}
 	
