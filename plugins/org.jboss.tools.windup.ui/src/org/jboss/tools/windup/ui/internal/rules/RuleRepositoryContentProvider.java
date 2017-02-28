@@ -157,7 +157,6 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	private void refresh(IModelStateListener listener, IDOMModel model, CustomRuleProvider ruleProvider) {
 		model.removeModelStateListener(listener);
 		listenerMap.remove(ruleProvider);
-		documentMap.remove(model.getDocument());
 		if (!treeViewer.getTree().isDisposed()) {
 			treeViewer.refresh(ruleProvider);
 		}
