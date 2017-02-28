@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -55,15 +56,19 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -72,6 +77,8 @@ import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -79,6 +86,7 @@ import com.google.common.io.Files;
 /**
  * View for displaying Windup rule repositories.
  */
+@SuppressWarnings("restriction")
 public class RuleRepositoryView extends ViewPart {
 	
 	public static final String VIEW_ID = "org.jboss.tools.windup.ui.rules.rulesView"; //$NON-NLS-1$
@@ -106,8 +114,11 @@ public class RuleRepositoryView extends ViewPart {
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
+				if (event.getSelection().isEmpty()) {
+					return;
+				}
 				ISelection selection = event.getSelection();
-				if (!selection.isEmpty() && selection instanceof ITreeSelection) {
+				if (selection instanceof ITreeSelection) {
 					Object element = ((ITreeSelection)selection).getFirstElement();
 					if (element instanceof RulesetFileNode) {
 						RulesetFileNode node = (RulesetFileNode)element;
@@ -116,8 +127,6 @@ public class RuleRepositoryView extends ViewPart {
 						if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 						    IWorkbenchPage page=  PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 						    try {
-						        //Desktop desktop = Desktop.getDesktop();
-						        //desktop.open(new File(node.getRuleProvider().getOrigin()).getParentFile());
 						        IDE.openEditorOnFileStore(page, fileStore);
 						    } catch (PartInitException e) {
 						    	WindupUIPlugin.log(e);
@@ -126,6 +135,37 @@ public class RuleRepositoryView extends ViewPart {
 										Messages.openRuleset, 
 										Messages.errorOpeningRuleset);
 						    }
+						}
+					}
+					else if (element instanceof Node) {
+						Node node = (Node)element;
+						Document document = node.getOwnerDocument();
+						CustomRuleProvider provider = contentProvider.getProvider(document);
+						if (provider != null) {
+							IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+							if (file != null && file.exists()) {
+								try {
+									IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+									IEditorPart editor = IDE.openEditor(page, file);
+									if (editor != null) {
+										editor.getSite().getSelectionProvider().setSelection(new StructuredSelection(node));
+										ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
+										if (node instanceof IndexedRegion && textEditor != null) {
+											int start = ((IndexedRegion) node).getStartOffset();
+											int length = ((IndexedRegion) node).getEndOffset() - start;
+											if ((start > -1) && (length > -1)) {
+												textEditor.selectAndReveal(start, length);
+											}
+										}
+									}
+								} catch (PartInitException e) {
+									WindupUIPlugin.log(e);
+							    	MessageDialog.openError(
+											Display.getDefault().getActiveShell(), 
+											Messages.openRuleset, 
+											Messages.errorOpeningRuleset);
+								}
+							}
 						}
 					}
 				}
@@ -142,7 +182,7 @@ public class RuleRepositoryView extends ViewPart {
 	    });
 	    Menu menu = menuManager.createContextMenu(treeViewer.getControl());
 	    treeViewer.getControl().setMenu(menu);
-	    getSite().registerContextMenu(menuManager, treeViewer);
+	    //getSite().registerContextMenu(menuManager, treeViewer);
 	    
 	    treeViewer.addDropSupport(DND.DROP_COPY| DND.DROP_MOVE, 
 	    		new Transfer[]{LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()}, 
@@ -249,6 +289,12 @@ public class RuleRepositoryView extends ViewPart {
 		if (!providers.isEmpty()) {
 			RemoveRulesetHandler action = ContextInjectionFactory.make(RemoveRulesetHandler.class, context);
 			action.setProviders(providers);
+			manager.add(action);
+		}
+		if (providers.size() == 1) {
+			manager.add(new Separator());
+			NewXmlRuleHandler action = ContextInjectionFactory.make(NewXmlRuleHandler.class, context);
+			action.setProvider(providers.get(0));
 			manager.add(action);
 		}
 	}

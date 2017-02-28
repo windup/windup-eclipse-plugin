@@ -42,6 +42,7 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
 import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
@@ -58,6 +59,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	private static final Image RULE_SET;
 	
 	private Map<CustomRuleProvider, IModelStateListener> listenerMap = Maps.newHashMap();
+	private Map<Document, CustomRuleProvider> documentMap = Maps.newHashMap();
 	
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -108,8 +110,13 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		return new Object[0];
 	}
 	
+	public CustomRuleProvider getProvider(Document document) {
+		return documentMap.get(document);
+	}
+	
 	private void listen(CustomRuleProvider ruleProvider) {
 		IDOMModel model = XmlRulesetModelUtil.getModel(ruleProvider.getLocationURI());
+		documentMap.put(model.getDocument(), ruleProvider);
 		IModelStateListener listener = listenerMap.get(ruleProvider);
 		if (listener == null) {
 			listener = new IModelStateListener() {
@@ -150,6 +157,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	private void refresh(IModelStateListener listener, IDOMModel model, CustomRuleProvider ruleProvider) {
 		model.removeModelStateListener(listener);
 		listenerMap.remove(ruleProvider);
+		documentMap.remove(model.getDocument());
 		if (!treeViewer.getTree().isDisposed()) {
 			treeViewer.refresh(ruleProvider);
 		}

@@ -54,6 +54,8 @@ public class Messages extends NLS
     public static String customRulesets;
     public static String removeRuleset;
     
+    public static String newXmlRule;
+    
     // Rule wizards
     public static String NewXMLRuleset_title;
     public static String ImportRuleset_title;
