@@ -42,7 +42,6 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
 import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
@@ -58,8 +57,9 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	private static final Image RULE;
 	private static final Image RULE_SET;
 	
+	private Map<Node, CustomRuleProvider> nodeMap = Maps.newHashMap();
+	
 	private Map<CustomRuleProvider, IModelStateListener> listenerMap = Maps.newHashMap();
-	private Map<Document, CustomRuleProvider> documentMap = Maps.newHashMap();
 	
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -103,20 +103,22 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
-			children.addAll(XmlRulesetModelUtil.getRules(provider.getLocationURI()));
+			List<Node> ruleNodes = XmlRulesetModelUtil.getRules(provider.getLocationURI());
+			ruleNodes.forEach(node -> nodeMap.put(node, provider));
+			children.addAll(ruleNodes);
 			listen(provider);
+			
 			return children.stream().toArray(Object[]::new);
 		}
 		return new Object[0];
 	}
 	
-	public CustomRuleProvider getProvider(Document document) {
-		return documentMap.get(document);
+	public CustomRuleProvider getProvider(Node node) {
+		return nodeMap.get(node);
 	}
 	
 	private void listen(CustomRuleProvider ruleProvider) {
 		IDOMModel model = XmlRulesetModelUtil.getModel(ruleProvider.getLocationURI());
-		documentMap.put(model.getDocument(), ruleProvider);
 		IModelStateListener listener = listenerMap.get(ruleProvider);
 		if (listener == null) {
 			listener = new IModelStateListener() {

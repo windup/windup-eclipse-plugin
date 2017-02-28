@@ -65,6 +65,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
@@ -139,8 +140,7 @@ public class RuleRepositoryView extends ViewPart {
 					}
 					else if (element instanceof Node) {
 						Node node = (Node)element;
-						Document document = node.getOwnerDocument();
-						CustomRuleProvider provider = contentProvider.getProvider(document);
+						CustomRuleProvider provider = contentProvider.getProvider(node);
 						if (provider != null) {
 							IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
 							if (file != null && file.exists()) {
