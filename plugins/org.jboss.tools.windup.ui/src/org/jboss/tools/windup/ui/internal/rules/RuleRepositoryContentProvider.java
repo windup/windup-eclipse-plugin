@@ -37,7 +37,7 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.SystemRulesNode;
-import org.jboss.tools.windup.ui.internal.rules.xml.XmlRulesetModelUtil;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
@@ -103,7 +103,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
-			List<Node> ruleNodes = XmlRulesetModelUtil.getRules(provider.getLocationURI());
+			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getLocationURI());
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
 			listen(provider);
@@ -118,7 +118,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	}
 	
 	private void listen(CustomRuleProvider ruleProvider) {
-		IDOMModel model = XmlRulesetModelUtil.getModel(ruleProvider.getLocationURI());
+		IDOMModel model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI());
 		IModelStateListener listener = listenerMap.get(ruleProvider);
 		if (listener == null) {
 			listener = new IModelStateListener() {
@@ -213,10 +213,10 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		}
 		else if (element instanceof CustomRuleProvider) {
 			CustomRuleProvider provider = (CustomRuleProvider)element;
-			return XmlRulesetModelUtil.getRulesetId(provider.getLocationURI());
+			return XMLRulesetModelUtil.getRulesetId(provider.getLocationURI());
 		}
 		if (element instanceof Node) {
-			result = XmlRulesetModelUtil.getRuleId((Node)element);
+			result = XMLRulesetModelUtil.getRuleId((Node)element);
 		}
 		result = TextProcessor.process(result);
 		return result != null ? result : ""; //$NON-NLS-1$

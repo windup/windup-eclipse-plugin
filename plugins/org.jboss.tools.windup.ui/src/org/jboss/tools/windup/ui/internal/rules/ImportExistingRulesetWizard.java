@@ -36,13 +36,13 @@ import org.eclipse.ui.IWorkbench;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.Messages;
 
-public class ImportExistinRulesetWizard extends Wizard implements IImportWizard{
+public class ImportExistingRulesetWizard extends Wizard implements IImportWizard{
 
 	@Inject private ModelService modelService;
 	
 	private ImportXMLRulesetWizardPage xmlPage;
 	
-	public ImportExistinRulesetWizard() {
+	public ImportExistingRulesetWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.ImportRuleset_title);
 	}

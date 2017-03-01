@@ -65,7 +65,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
-import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
@@ -78,7 +77,6 @@ import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
@@ -293,7 +291,7 @@ public class RuleRepositoryView extends ViewPart {
 		}
 		if (providers.size() == 1) {
 			manager.add(new Separator());
-			NewXmlRuleHandler action = ContextInjectionFactory.make(NewXmlRuleHandler.class, context);
+			NewXMLRuleHandler action = ContextInjectionFactory.make(NewXMLRuleHandler.class, context);
 			action.setProvider(providers.get(0));
 			manager.add(action);
 		}

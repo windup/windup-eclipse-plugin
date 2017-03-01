@@ -390,7 +390,10 @@ public class IssueExplorer extends CommonNavigator {
 				if (element instanceof MarkerNode) {
 					return isFilterMatch((MarkerNode)element);
 				}
-				return containsMarkerChild((TreeNode)element);
+				else if (element instanceof TreeNode) {
+					return containsMarkerChild((TreeNode)element);
+				}
+				return false; 
 			}
 		};
 	}

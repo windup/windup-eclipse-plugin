@@ -20,7 +20,7 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.w3c.dom.Node;
 
 @SuppressWarnings("restriction")
-public class XmlRulesetFileOrchestrator {
+public class XMLRulesetFileOrchestrator {
 
 	private TreeViewer treeViewer;
 	private CustomRuleProvider ruleProvider;
@@ -28,7 +28,7 @@ public class XmlRulesetFileOrchestrator {
 	private IDOMModel model;
 	private IModelStateListener modelListener;
 			
-	public XmlRulesetFileOrchestrator(TreeViewer treeViewer, CustomRuleProvider ruleProvider) {
+	public XMLRulesetFileOrchestrator(TreeViewer treeViewer, CustomRuleProvider ruleProvider) {
 		this.treeViewer = treeViewer;
 		this.ruleProvider = ruleProvider;
 		this.modelListener = createListener();
@@ -38,16 +38,16 @@ public class XmlRulesetFileOrchestrator {
 		if (this.model != null) {
 			model.removeModelStateListener(modelListener);
 		}
-		model = XmlRulesetModelUtil.getModel(ruleProvider.getLocationURI());
+		model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI());
 		model.addModelStateListener(modelListener);
 	}
 	
 	public List<Node> getRules() {
-		return XmlRulesetModelUtil.getRules(ruleProvider.getLocationURI());
+		return XMLRulesetModelUtil.getRules(ruleProvider.getLocationURI());
 	}
 	
 	public String getRulesetId() {
-		return XmlRulesetModelUtil.getRulesetId(ruleProvider.getLocationURI());
+		return XMLRulesetModelUtil.getRulesetId(ruleProvider.getLocationURI());
 	}
 	
 	private void refresh() {

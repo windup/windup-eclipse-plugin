@@ -43,7 +43,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.FilteredListDialog;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.rules.xml.XmlRulesetModelUtil;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 
@@ -89,7 +89,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 			public String getText(Object element) {
 				CustomRuleProvider provider = (CustomRuleProvider)element;
 				StringBuilder builder = new StringBuilder();
-				String parsedRulesetId = XmlRulesetModelUtil.getRulesetId(provider.getLocationURI());
+				String parsedRulesetId = XMLRulesetModelUtil.getRulesetId(provider.getLocationURI());
 				if (parsedRulesetId != null && !parsedRulesetId.isEmpty()) {
 					builder.append(parsedRulesetId);
 					builder.append(" - "); //$NON-NLS-1$
@@ -121,7 +121,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 					public String getText(Object element) {
 						CustomRuleProvider provider = (CustomRuleProvider)element;
 						StringBuilder builder = new StringBuilder();
-						String parsedRulesetId = XmlRulesetModelUtil.getRulesetId(provider.getLocationURI());
+						String parsedRulesetId = XMLRulesetModelUtil.getRulesetId(provider.getLocationURI());
 						if (parsedRulesetId != null && !parsedRulesetId.isEmpty()) {
 							builder.append(parsedRulesetId);
 							builder.append(" - "); //$NON-NLS-1$

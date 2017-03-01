@@ -18,11 +18,11 @@ import org.w3c.dom.NodeList;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("restriction")
-public class XmlRulesetModelUtil {
+public class XMLRulesetModelUtil {
 
 	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
-		IDOMModel model = XmlRulesetModelUtil.getModel(locationURI);
+		IDOMModel model = XMLRulesetModelUtil.getModel(locationURI);
 		if (model != null) {
 			Document document = model.getDocument();
 			NodeList rulesets = document.getElementsByTagName("ruleset");  //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class XmlRulesetModelUtil {
 	
 	public static List<Node> getRules(String locationURI) {
 		List<Node> rules = Lists.newArrayList();
-		IDOMModel model = XmlRulesetModelUtil.getModel(locationURI);
+		IDOMModel model = XMLRulesetModelUtil.getModel(locationURI);
 		if (model != null) {
 			Document document = model.getDocument();
 			NodeList ruleNodes = document.getElementsByTagName("rule");  //$NON-NLS-1$

@@ -26,7 +26,7 @@ public class ImportRulesetHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ImportExistinRulesetWizard wizard = ContextInjectionFactory.make(ImportExistinRulesetWizard.class, context);
+		ImportExistingRulesetWizard wizard = ContextInjectionFactory.make(ImportExistingRulesetWizard.class, context);
 		new WizardDialog(HandlerUtil.getActiveShell(event), wizard).open();
 		return null;
 	}

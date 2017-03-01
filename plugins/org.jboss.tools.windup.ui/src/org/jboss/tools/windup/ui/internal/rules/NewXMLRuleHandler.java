@@ -1,13 +1,20 @@
 package org.jboss.tools.windup.ui.internal.rules;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 
-public class NewXmlRuleHandler extends Action {
+public class NewXMLRuleHandler extends Action {
 	
+	@Inject private IEclipseContext context;
 	private CustomRuleProvider provider;
 	
 	public void setProvider(CustomRuleProvider provider) {
@@ -26,6 +33,7 @@ public class NewXmlRuleHandler extends Action {
 	
 	@Override
 	public void run() {
-		
+		NewXMLRuleWizard wizard = ContextInjectionFactory.make(NewXMLRuleWizard.class, context);
+		new WizardDialog(Display.getDefault().getActiveShell(), wizard).open();
 	}
 }
