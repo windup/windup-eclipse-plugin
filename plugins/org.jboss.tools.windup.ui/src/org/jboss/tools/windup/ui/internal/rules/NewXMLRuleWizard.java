@@ -1,9 +1,12 @@
 package org.jboss.tools.windup.ui.internal.rules;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
@@ -33,33 +36,48 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
 import org.eclipse.wst.sse.ui.StructuredTextViewerConfiguration;
 import org.eclipse.wst.sse.ui.internal.StructuredTextViewer;
 import org.eclipse.wst.sse.ui.internal.provisional.style.LineStyleProvider;
 import org.eclipse.wst.xml.core.internal.provisional.contenttype.ContentTypeIdForXML;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
-import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.explorer.TempProject;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRuleTemplate.Template;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLTemplateFactory;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLTemplateVariableProcessor;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 @SuppressWarnings("restriction")
 public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 
-	@Inject private ModelService modelService;
 	@Inject private XMLTemplateFactory templateFactory;
 	
+	private CustomRuleProvider provider;
 	private NewXMLRuleWizardPage xmlPage;
 	
 	public NewXMLRuleWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Messages.newXMLRule_title);
+	}
+	
+	public void setRuleProvider(CustomRuleProvider provider) {
+		this.provider = provider;
 	}
 	
 	@Override
@@ -74,8 +92,75 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 
 	@Override
 	public boolean performFinish() {
-		modelService.addRulesetRepository(
-				xmlPage.getRulesetFileLocation(), true);
+		SourceViewer sourceViewer = xmlPage.getTemplatePreviewer();
+		IDocument document = sourceViewer.getDocument();
+		TempProject project = new TempProject();
+		IFile file = (IFile)project.createResource(document.get());
+		IStructuredModel scratchModel;
+		try {
+			scratchModel = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(file);
+			IDOMModel model = (IDOMModel)scratchModel;
+			
+			IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(provider.getLocationURI(), true);
+			
+			// for selection
+			Node firstNode = null; 
+			Node lastNode = null;			
+			
+			if (rulesetModel != null) {
+				NodeList nodeList = model.getDocument().getChildNodes();
+				for (int i = 0; i < nodeList.getLength(); i++) {
+					Node node = nodeList.item(i);
+					Node clone = rulesetModel.getDocument().importNode(node, true);
+					
+					if (i == 0) {
+						firstNode = clone;
+					}
+					if (i == nodeList.getLength() -1) {
+						lastNode = clone;
+					}
+					
+					NodeList rules = rulesetModel.getDocument().getElementsByTagName("rules"); //$NON-NLS-1$
+					if (rules.getLength() > 0) {
+						Node rulesNode = rules.item(0);
+						rulesNode.appendChild(clone);
+					}
+					else {
+						
+						NodeList rulesetNodes = rulesetModel.getDocument().getElementsByTagName("ruleset"); //$NON-NLS-1$
+						if (rulesetNodes.getLength() == 1) {
+							Node rulesNode = rulesetModel.getDocument().createElement("rules"); //$NON-NLS-1$
+							rulesetNodes.item(0).appendChild(rulesNode);
+							rulesNode.appendChild(clone);
+						}
+					}
+				}
+				
+				FileEditorInput input = new FileEditorInput(WorkspaceResourceUtils.getFile(provider.getLocationURI()));
+				IEditorPart sharedEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(input);
+				
+				
+				if (rulesetModel.isDirty() && sharedEditor == null) {
+					rulesetModel.save();
+				}
+				
+				rulesetModel.releaseFromEdit();
+				
+				if (sharedEditor != null && firstNode != null) {
+					sharedEditor.getSite().getSelectionProvider().setSelection(new StructuredSelection(firstNode));
+					ITextEditor textEditor = sharedEditor.getAdapter(ITextEditor.class);
+					if (firstNode instanceof IndexedRegion && textEditor != null) {
+						int start = ((IndexedRegion) firstNode).getStartOffset();
+						int length = ((IndexedRegion) lastNode).getEndOffset() - start;
+						if ((start > -1) && (length > -1)) {
+							textEditor.selectAndReveal(start, length);
+						}
+					}
+				}
+			}
+		} catch (IOException | CoreException e) {
+			WindupUIPlugin.log(e);
+		}
 		return true;
 	}
 
@@ -86,17 +171,12 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 		private TableViewer templateTable;
 		private SourceViewer templatePreviewer;
 		
-		private String rulesetFileLocation;
 		private XMLTemplateVariableProcessor templateProcessor= new XMLTemplateVariableProcessor();
 		
 		public NewXMLRuleWizardPage() {
 			super("xmlRuleTemplatePage"); //$NON-NLS-1$
 			setTitle(Messages._UI_WIZARD_NEW_XML_RULE_HEADING);
 			setDescription(Messages._UI_WIZARD_NEW_XML_RULE_EXPL);
-		}
-		
-		public String getRulesetFileLocation() {
-			return rulesetFileLocation; 
 		}
 		
 		@Override
@@ -106,7 +186,7 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 			Composite container = new Composite(parent, SWT.NONE);
 			GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-			
+
 			Composite top = new Composite(container, SWT.NONE);
 			GridLayoutFactory.fillDefaults().numColumns(1).applyTo(top);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(top);
@@ -149,11 +229,9 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 					updateTemplatePreview();
 				}
 			});
-			
+			// Preview the first template.
 			templateTable.setSelection(new StructuredSelection(templates.get(0)));
-			
 			sashForm.setWeights(new int[] {30, 70});
-
 			setControl(container);
 		}
 		
@@ -166,6 +244,10 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 				Template template = (Template)ss.getFirstElement();
 				templatePreviewer.getDocument().set(template.generate());
 			}
+		}
+		
+		public SourceViewer getTemplatePreviewer() {
+			return templatePreviewer;
 		}
 		
 		private SourceViewer createSourcePreviewer(Composite parent) {
@@ -192,16 +274,15 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 		}
 		
 		private SourceViewer doCreateViewer(Composite parent, SourceViewerConfiguration viewerConfiguration) {
-			String contentTypeID = ContentTypeIdForXML.ContentTypeID_XML;
 			SourceViewer viewer = new StructuredTextViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 			viewer.getTextWidget().setFont(JFaceResources.getFont("org.eclipse.wst.sse.ui.textfont")); //$NON-NLS-1$
-			IStructuredModel scratchModel = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(contentTypeID);
+			IStructuredModel scratchModel = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(ContentTypeIdForXML.ContentTypeID_XML);
 			viewer.configure(viewerConfiguration);
 			viewer.setDocument(scratchModel.getStructuredDocument());
 			return viewer;
 		}
 		
-		protected IContentAssistProcessor getTemplateProcessor() {
+		private IContentAssistProcessor getTemplateProcessor() {
 			return templateProcessor;
 		}
 		
@@ -227,20 +308,5 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 				}
 			};
 		}
-		
-		/*private void filter() {
-			String path = filterText.getText().trim();
-			if (!path.isEmpty()) {
-				if (new File(path).exists()) {
-					setPageComplete(true);
-				}
-				else {
-					setPageComplete(false);
-				}
-			}
-			else {
-				setPageComplete(false);
-			}
-		}*/
 	}
 }

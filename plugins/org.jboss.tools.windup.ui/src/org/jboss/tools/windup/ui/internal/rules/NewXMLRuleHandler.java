@@ -34,6 +34,7 @@ public class NewXMLRuleHandler extends Action {
 	@Override
 	public void run() {
 		NewXMLRuleWizard wizard = ContextInjectionFactory.make(NewXMLRuleWizard.class, context);
+		wizard.setRuleProvider(provider);
 		new WizardDialog(Display.getDefault().getActiveShell(), wizard).open();
 	}
 }

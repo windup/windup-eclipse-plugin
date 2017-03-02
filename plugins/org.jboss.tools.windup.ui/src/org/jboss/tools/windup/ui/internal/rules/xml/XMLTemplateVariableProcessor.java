@@ -27,10 +27,6 @@ public class XMLTemplateVariableProcessor implements IContentAssistProcessor {
 			return false;
 		}
 
-		/*
-		 * Returns Object#hashCode.
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return super.hashCode();
@@ -38,23 +34,12 @@ public class XMLTemplateVariableProcessor implements IContentAssistProcessor {
 	};
 
 
-	/** the context type */
 	private TemplateContextType fContextType;
 
-	/**
-	 * Sets the context type.
-	 *
-	 * @param contextType the context type for this processor
-	 */
 	public void setContextType(TemplateContextType contextType) {
 		fContextType= contextType;
 	}
 
-	/**
-	 * Returns the context type.
-	 *
-	 * @return the context type
-	 */
 	public TemplateContextType getContextType() {
 		return fContextType;
 	}
@@ -90,7 +75,6 @@ public class XMLTemplateVariableProcessor implements IContentAssistProcessor {
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
-	/* Guesses the start position of the completion */
 	private int getStart(String string, int end) {
 		int start= end;
 
@@ -130,5 +114,4 @@ public class XMLTemplateVariableProcessor implements IContentAssistProcessor {
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
-
 }

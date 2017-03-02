@@ -118,7 +118,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	}
 	
 	private void listen(CustomRuleProvider ruleProvider) {
-		IDOMModel model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI());
+		IDOMModel model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI(), false);
 		IModelStateListener listener = listenerMap.get(ruleProvider);
 		if (listener == null) {
 			listener = new IModelStateListener() {

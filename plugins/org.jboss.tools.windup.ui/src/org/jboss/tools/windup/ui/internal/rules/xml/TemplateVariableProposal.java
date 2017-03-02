@@ -20,14 +20,6 @@ final class TemplateVariableProposal implements ICompletionProposal {
 
 	private Point fSelection;
 
-	/**
-	 * Creates a template variable proposal.
-	 *
-	 * @param variable the template variable
-	 * @param offset the offset to replace
-	 * @param length the length to replace
-	 * @param viewer the viewer
-	 */
 	public TemplateVariableProposal(TemplateVariableResolver variable, int offset, int length, ITextViewer viewer) {
 		fVariable= variable;
 		fOffset= offset;
@@ -37,7 +29,6 @@ final class TemplateVariableProposal implements ICompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-
 		try {
 			String variable= fVariable.getType().equals("dollar") ? "$$" : "${" + fVariable.getType() + '}'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			document.replace(fOffset, fLength, variable);

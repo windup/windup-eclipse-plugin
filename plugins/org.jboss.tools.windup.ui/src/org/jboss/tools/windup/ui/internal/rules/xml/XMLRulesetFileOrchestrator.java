@@ -38,7 +38,7 @@ public class XMLRulesetFileOrchestrator {
 		if (this.model != null) {
 			model.removeModelStateListener(modelListener);
 		}
-		model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI());
+		model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI(), false);
 		model.addModelStateListener(modelListener);
 	}
 	

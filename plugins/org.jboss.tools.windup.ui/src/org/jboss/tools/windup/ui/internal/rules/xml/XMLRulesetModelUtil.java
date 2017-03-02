@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.texteditor.DocumentProviderRegistry;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
@@ -22,7 +26,7 @@ public class XMLRulesetModelUtil {
 
 	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
-		IDOMModel model = XMLRulesetModelUtil.getModel(locationURI);
+		IDOMModel model = XMLRulesetModelUtil.getModel(locationURI, false);
 		if (model != null) {
 			Document document = model.getDocument();
 			NodeList rulesets = document.getElementsByTagName("ruleset");  //$NON-NLS-1$
@@ -41,7 +45,7 @@ public class XMLRulesetModelUtil {
 	
 	public static List<Node> getRules(String locationURI) {
 		List<Node> rules = Lists.newArrayList();
-		IDOMModel model = XMLRulesetModelUtil.getModel(locationURI);
+		IDOMModel model = XMLRulesetModelUtil.getModel(locationURI, false);
 		if (model != null) {
 			Document document = model.getDocument();
 			NodeList ruleNodes = document.getElementsByTagName("rule");  //$NON-NLS-1$
@@ -66,9 +70,15 @@ public class XMLRulesetModelUtil {
 		return ruleId;
 	}
 	
-	public static IDOMModel getModel(String locationURI) {
+	public static IDOMModel getModel(String locationURI, boolean edit) {
 		try {
-			IStructuredModel model = StructuredModelManager.getModelManager().getModelForRead(WorkspaceResourceUtils.getFile(locationURI));
+			IStructuredModel model = null;
+			if (!edit) {
+				model = StructuredModelManager.getModelManager().getModelForRead(WorkspaceResourceUtils.getFile(locationURI));
+			}
+			else {
+				model = StructuredModelManager.getModelManager().getModelForEdit(WorkspaceResourceUtils.getFile(locationURI));
+			}
 			if (model != null && model instanceof IDOMModel) {
 				return (IDOMModel) model;
 			}
@@ -78,12 +88,12 @@ public class XMLRulesetModelUtil {
 		return null;
 	}
 	
-	/*
-	private IDocument getDocument() {
+	
+	/*private IDocument getDocument(IEditorInput editorInput) {
 		return getDocumentProvider().getDocument(editorInput);
 	}
 	
-	private IDocumentProvider getDocumentProvider() {
+	private IDocumentProvider getDocumentProvider(IEditorInput editorInput) {
 		IDocumentProvider documentProvider = DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
 		try {
 			documentProvider.connect(editorInput);
@@ -91,6 +101,5 @@ public class XMLRulesetModelUtil {
 			WindupUIPlugin.log(e);
 		}
 		return documentProvider;
-	}
-	*/
+	}*/
 }
