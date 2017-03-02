@@ -22,7 +22,7 @@ class XMLRuleTemplate {
             "stub"
         }
         override String generate() {
-            ''' 
+            '''
             <rule id="1">
                 <!-- rule condition, when it could be fired -->
                 <when>
@@ -30,8 +30,7 @@ class XMLRuleTemplate {
                 <!-- rule operation, what to do if it is fired -->
                 <perform>
                 </perform>
-            </rule>
-            ''' 
+            </rule>''' 
         }
     }
     
