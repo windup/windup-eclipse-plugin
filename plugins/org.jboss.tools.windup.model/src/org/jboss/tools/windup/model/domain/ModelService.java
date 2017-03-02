@@ -310,7 +310,6 @@ public class ModelService {
 				} catch (Exception e) {
 					Activator.log(e);
 				}
-				return;
 			}
 		};
 		domain.getCommandStack().execute(cmd);

@@ -43,6 +43,7 @@ public class XMLRuleTemplate {
       _builder.append("</perform>");
       _builder.newLine();
       _builder.append("</rule>");
+      _builder.newLine();
       return _builder.toString();
     }
   }
@@ -77,7 +78,6 @@ public class XMLRuleTemplate {
       _builder.append("</perform>");
       _builder.newLine();
       _builder.append("</rule>");
-      _builder.newLine();
       return _builder.toString();
     }
   }
@@ -112,7 +112,6 @@ public class XMLRuleTemplate {
       _builder.append("</perform>");
       _builder.newLine();
       _builder.append("</rule>");
-      _builder.newLine();
       return _builder.toString();
     }
   }

@@ -43,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.format.IStructuredFormatProcessor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
 import org.eclipse.wst.sse.ui.StructuredTextViewerConfiguration;
@@ -50,6 +51,7 @@ import org.eclipse.wst.sse.ui.internal.StructuredTextViewer;
 import org.eclipse.wst.sse.ui.internal.provisional.style.LineStyleProvider;
 import org.eclipse.wst.xml.core.internal.provisional.contenttype.ContentTypeIdForXML;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.eclipse.wst.xml.core.internal.provisional.format.FormatProcessorXML;
 import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -126,7 +128,6 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 						rulesNode.appendChild(clone);
 					}
 					else {
-						
 						NodeList rulesetNodes = rulesetModel.getDocument().getElementsByTagName("ruleset"); //$NON-NLS-1$
 						if (rulesetNodes.getLength() == 1) {
 							Node rulesNode = rulesetModel.getDocument().createElement("rules"); //$NON-NLS-1$
@@ -139,19 +140,21 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 				FileEditorInput input = new FileEditorInput(WorkspaceResourceUtils.getFile(provider.getLocationURI()));
 				IEditorPart sharedEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(input);
 				
-				
 				if (rulesetModel.isDirty() && sharedEditor == null) {
 					rulesetModel.save();
 				}
 				
 				rulesetModel.releaseFromEdit();
 				
+				IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
+				formatProcessor.formatNode(firstNode);
+				
 				if (sharedEditor != null && firstNode != null) {
 					sharedEditor.getSite().getSelectionProvider().setSelection(new StructuredSelection(firstNode));
 					ITextEditor textEditor = sharedEditor.getAdapter(ITextEditor.class);
 					if (firstNode instanceof IndexedRegion && textEditor != null) {
 						int start = ((IndexedRegion) firstNode).getStartOffset();
-						int length = ((IndexedRegion) lastNode).getEndOffset() - start;
+						int length = ((IndexedRegion) firstNode).getEndOffset() - start;
 						if ((start > -1) && (length > -1)) {
 							textEditor.selectAndReveal(start, length);
 						}

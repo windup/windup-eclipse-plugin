@@ -30,7 +30,8 @@ class XMLRuleTemplate {
                 <!-- rule operation, what to do if it is fired -->
                 <perform>
                 </perform>
-            </rule>''' 
+            </rule>
+            ''' 
         }
     }
     
@@ -47,8 +48,7 @@ class XMLRuleTemplate {
                 <!-- rule operation, what to do if it is fired -->
                 <perform>
                 </perform>
-            </rule>
-            ''' 
+            </rule>''' 
         }
     }
     
@@ -65,8 +65,7 @@ class XMLRuleTemplate {
                 <!-- rule operation, what to do if it is fired -->
                 <perform>
                 </perform>
-            </rule>
-            ''' 
+            </rule>'''
         }
     }
 }
