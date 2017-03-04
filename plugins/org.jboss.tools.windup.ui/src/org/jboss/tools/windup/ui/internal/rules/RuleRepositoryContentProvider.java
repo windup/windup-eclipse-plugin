@@ -268,6 +268,12 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		if (element instanceof SystemRulesNode && ((SystemRulesNode)element).getChildren().length == 0) {
 			style.append(" [" + "Start Windup to view the system rulesets" + "]", StyledString.DECORATIONS_STYLER);
 		}
+		else if (element instanceof CustomRuleProvider) {
+			style.append(" (" + getChildren(element).length + ")", StyledString.COUNTER_STYLER);
+		}
+		else if (element instanceof RulesetFileNode) {
+			style.append(" [" + ((RulesetFileNode)element).getFile().getPath() + "]", StyledString.QUALIFIER_STYLER);
+		}
 		return style;
 	}
 

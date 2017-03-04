@@ -80,6 +80,7 @@ public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
 			try {
 				formatProcessor.formatFile(rulesetFile);
+				rulesetModel.save();
 			} catch (IOException e) {
 				WindupUIPlugin.log(e);
 			}
