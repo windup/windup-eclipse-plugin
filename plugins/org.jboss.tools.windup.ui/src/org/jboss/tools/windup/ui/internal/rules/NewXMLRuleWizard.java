@@ -107,7 +107,6 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 			
 			// for selection
 			Node firstNode = null; 
-			Node lastNode = null;			
 			
 			if (rulesetModel != null) {
 				NodeList nodeList = model.getDocument().getChildNodes();
@@ -117,9 +116,6 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 					
 					if (i == 0) {
 						firstNode = clone;
-					}
-					if (i == nodeList.getLength() -1) {
-						lastNode = clone;
 					}
 					
 					NodeList rules = rulesetModel.getDocument().getElementsByTagName("rules"); //$NON-NLS-1$
@@ -146,8 +142,10 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 				
 				rulesetModel.releaseFromEdit();
 				
-				IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
-				formatProcessor.formatNode(firstNode);
+				if (firstNode != null) {
+					IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
+					formatProcessor.formatNode(firstNode);
+				}
 				
 				if (sharedEditor != null && firstNode != null) {
 					sharedEditor.getSite().getSelectionProvider().setSelection(new StructuredSelection(firstNode));

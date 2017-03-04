@@ -26,10 +26,13 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.wst.sse.core.internal.format.IStructuredFormatProcessor;
+import org.eclipse.wst.xml.core.internal.provisional.format.FormatProcessorXML;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.CreateRulesetOperation;
 
+@SuppressWarnings("restriction")
 public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutableExtension {
 	
 	private IStructuredSelection selection;
@@ -74,6 +77,7 @@ public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutab
 				getContainer().run(false, true, generateOperation);
 				createRulesetOperation.init(((IContainer)container).getFile(new Path(fileName)).getLocation().toString());
 				getContainer().run(false, true, createRulesetOperation);
+				
 			}
 		} catch (InvocationTargetException e) {
 			WindupUIPlugin.log(e);

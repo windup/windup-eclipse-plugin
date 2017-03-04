@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.inject.Inject;
@@ -30,10 +31,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.rules.RulesetGenerator;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 
+@SuppressWarnings("restriction")
 public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 
 	private Display display;
@@ -56,7 +60,7 @@ public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 	@Override
 	protected void execute(IProgressMonitor monitor)
 			throws CoreException, InvocationTargetException, InterruptedException {
-		monitor.beginTask(Messages.NewRulesetWizard_generatingRuleset, 3);
+		monitor.beginTask(Messages.NewRulesetWizard_generatingRuleset, 4);
 		if (generateQuickstartTemplate) {
 			generator.generateXmlRulesetQuickstartTemplate(fileName, rulesetId, container.getLocation().toString());
 		}
@@ -66,7 +70,22 @@ public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 		monitor.worked(1);
 		container.refreshLocal(IResource.DEPTH_ONE, monitor);
 		monitor.worked(1);
-		openFile(container.getFile(new Path(fileName)));
+		
+		IFile rulesetFile = container.getFile(new Path(fileName)); 
+		
+		openFile(rulesetFile);
+		
+		IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(rulesetFile.getLocation().toString(), true);
+		if (rulesetModel != null) {
+			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
+			try {
+				formatProcessor.formatFile(rulesetFile);
+			} catch (IOException e) {
+				WindupUIPlugin.log(e);
+			}
+			monitor.worked(1);
+		}
+		
 		monitor.worked(1);
 	}
 	
@@ -89,6 +108,7 @@ public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 				try {
 					IDE.openEditor(page, file);
 				} catch (PartInitException e) {
+					WindupUIPlugin.log(e);
 				}
 			}
 		});

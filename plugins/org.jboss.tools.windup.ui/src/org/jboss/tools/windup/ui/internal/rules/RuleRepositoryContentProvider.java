@@ -264,7 +264,10 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	
 	@Override
 	public StyledString getStyledText(Object element) {
-		StyledString style = new StyledString();
+		StyledString style = new StyledString(getText(element));
+		if (element instanceof SystemRulesNode && ((SystemRulesNode)element).getChildren().length == 0) {
+			style.append(" [" + "Start Windup to view the system rulesets" + "]", StyledString.DECORATIONS_STYLER);
+		}
 		return style;
 	}
 

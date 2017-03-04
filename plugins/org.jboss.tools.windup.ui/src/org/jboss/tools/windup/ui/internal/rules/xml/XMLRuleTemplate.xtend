@@ -12,8 +12,6 @@ class XMLRuleTemplate {
     def List<Template> getTemplates() {
         var templates = newArrayList
         templates.add(new StubRuleTemplate())
-        templates.add(new StubRuleTemplate2())
-        templates.add(new StubRuleTemplate3())
         templates
     }
     
@@ -32,40 +30,6 @@ class XMLRuleTemplate {
                 </perform>
             </rule>
             ''' 
-        }
-    }
-    
-    public static class StubRuleTemplate2 implements Template {
-        override String getName() {
-            "stub2"
-        }
-        override String generate() {
-            ''' 
-            <rule id="2">
-                <!-- rule condition, when it could be fired -->
-                <when>
-                </when>
-                <!-- rule operation, what to do if it is fired -->
-                <perform>
-                </perform>
-            </rule>''' 
-        }
-    }
-    
-    public static class StubRuleTemplate3 implements Template {
-        override String getName() {
-            "stub3"
-        }
-        override String generate() {
-            ''' 
-            <rule id="3">
-                <!-- rule condition, when it could be fired -->
-                <when>
-                </when>
-                <!-- rule operation, what to do if it is fired -->
-                <perform>
-                </perform>
-            </rule>'''
         }
     }
 }

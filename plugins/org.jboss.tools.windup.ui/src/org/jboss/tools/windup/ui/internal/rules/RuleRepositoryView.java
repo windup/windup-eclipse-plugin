@@ -39,6 +39,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -315,7 +316,7 @@ public class RuleRepositoryView extends ViewPart {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(treeViewer.getControl());
 	    contentProvider = new RuleRepositoryContentProvider(treeViewer);
 		treeViewer.setContentProvider(contentProvider);
-		treeViewer.setLabelProvider(contentProvider);
+		treeViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(contentProvider));
 		refresh();
 	}
 	
