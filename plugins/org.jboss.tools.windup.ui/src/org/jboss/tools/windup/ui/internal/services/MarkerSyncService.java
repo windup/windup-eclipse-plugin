@@ -58,7 +58,7 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 			switch (delta.getKind()) {
 				case IResourceDelta.CHANGED: {
 					if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
-						Map<Issue, IMarker> map = markerService.buildIssueMarkerMap(resource);
+						Map<Issue, IMarker> map = markerService.buildHintMarkerMap(resource);
 						if (!map.isEmpty()) {
 							update(resource, map);
 						}

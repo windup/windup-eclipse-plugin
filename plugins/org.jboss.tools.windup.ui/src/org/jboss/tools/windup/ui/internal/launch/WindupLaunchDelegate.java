@@ -63,7 +63,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		else {
 			markerService.deleteAllWindupMarkers();
-			if (windupClient.getExecutionBuilder() == null) {
+			if (!windupClient.isWindupServerRunning()) {
 				launcher.start(new WindupServerCallbackAdapter(shell) {
 					@Override
 					public void windupNotExecutable() {

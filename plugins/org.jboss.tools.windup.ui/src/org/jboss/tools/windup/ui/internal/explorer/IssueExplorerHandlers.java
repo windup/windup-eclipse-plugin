@@ -39,6 +39,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
@@ -152,6 +153,7 @@ public class IssueExplorerHandlers {
 	private abstract static class AbstractIssueHandler extends AbstractHandler {
 		@Inject protected IEventBroker broker;
 		@Inject protected MarkerService markerService;
+		@Inject protected WindupRmiClient windupClient;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			return (MarkerNode)selection.getFirstElement();
@@ -203,7 +205,7 @@ public class IssueExplorerHandlers {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
 			Hint hint = (Hint)node.getIssue();
-			QuickFixUtil.previewQuickFix(hint, node.getMarker(), broker, markerService);
+			QuickFixUtil.previewQuickFix(hint, node.getMarker(), broker, markerService, windupClient);
 			return null;
 		}
 	}
@@ -218,9 +220,9 @@ public class IssueExplorerHandlers {
 						throws CoreException, InvocationTargetException, InterruptedException {
 					for (Object selected : ((StructuredSelection)selection).toList()) {
 						MarkerNode node = (MarkerNode)selected;
-						QuickFix quickFix = node.getIssue().getQuickFixes().get(0);
-						IMarker marker = node.getMarker();
-						QuickFixUtil.applyQuickFix(quickFix, (Hint)node.getIssue(), marker, broker, markerService);
+						for (QuickFix quickfix : node.getIssue().getQuickFixes()) {
+							QuickFixUtil.applyQuickFix(quickfix, broker, markerService, windupClient);
+						}
 					}
 				}
 			};
@@ -241,7 +243,7 @@ public class IssueExplorerHandlers {
 				((MarkerNode)selected).delete();
 				Dictionary<String, Object> props = new Hashtable<String, Object>();
 				props.put(WindupConstants.EVENT_ISSUE_MARKER, selected);
-				broker.send(WindupConstants.MARKER_DELETED, props);
+				broker.send(WindupConstants.MARKER_NODE_DELETED, props);
 			}
 			return null;
 		}
@@ -259,13 +261,13 @@ public class IssueExplorerHandlers {
 			
 			for (MarkerNode node : fixableNodes) {
 				Hint hint = (Hint)node.getIssue();
-				QuickFix quickFix = hint.getQuickFixes().get(0);
-				IMarker marker = node.getMarker();
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 					@Override
 					protected void execute(IProgressMonitor monitor)
 							throws CoreException, InvocationTargetException, InterruptedException {
-						QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);	
+						for (QuickFix quickfix : hint.getQuickFixes()) {
+							QuickFixUtil.applyQuickFix(quickfix, broker, markerService, windupClient);
+						}
 					}
 				};
 				try {

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
@@ -43,14 +44,17 @@ public class IssueResolutions {
 		
 		private ModelService modelService;
 		private MarkerService markerService;
+		private WindupRmiClient windupClient;
 		private IEventBroker broker;
 		private Issue issue;
 		
-		public FirstQuickFixResolution(ModelService modelService, MarkerService markerService, IEventBroker broker, Issue issue) {
+		public FirstQuickFixResolution(ModelService modelService, MarkerService markerService, IEventBroker broker, Issue issue,
+				WindupRmiClient windupClient) {
 			this.modelService = modelService;
 			this.markerService = markerService;
 			this.broker = broker;
 			this.issue = issue;
+			this.windupClient = windupClient;
 		}
 		
 		@Override
@@ -88,8 +92,9 @@ public class IssueResolutions {
 						throws CoreException, InvocationTargetException, InterruptedException {
 					for (IMarker marker : markers) {
 						Hint hint = modelService.findHint(marker);
-						QuickFix quickFix = hint.getQuickFixes().get(0);
-						QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);
+						for (QuickFix quickfix : hint.getQuickFixes()) {
+							QuickFixUtil.applyQuickFix(quickfix, broker, markerService, windupClient);
+						}
 					}
 				}
 			};

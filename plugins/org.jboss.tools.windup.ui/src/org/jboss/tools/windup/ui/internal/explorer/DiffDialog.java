@@ -27,6 +27,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -44,20 +45,15 @@ import org.jboss.tools.windup.ui.internal.Messages;
 /**
  * Dialog for viewing a difference.
  */
-public class DiffDialog extends Dialog {
+public abstract class DiffDialog extends Dialog {
 	
 	private static final int WIDTH = 950;
 	private static final int HEIGHT = 600;
 	
 	private ComparePreviewer viewer;
 	
-	protected IResource left;
-	protected IResource right;
-	
-	public DiffDialog(Shell shell, IResource left, IResource right) {
+	public DiffDialog(Shell shell) {
 		super(shell);
-		this.left = left;
-		this.right = right;
 	}
 	
 	@Override
@@ -68,7 +64,7 @@ public class DiffDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = doCreateDialogArea(parent);
-		loadPreview(left, right);
+		loadPreview();
 		return control;
 	}
 	
@@ -79,13 +75,24 @@ public class DiffDialog extends Dialog {
 		return control;
 	}
 	
-	protected void loadPreview(IResource left, IResource right) {
+	protected abstract IResource computeLeft();
+	
+	protected abstract IResource computeRight();
+	
+	protected void loadPreview() {
 		try {
-			String leftContents = FileUtils.readFileToString(left.getLocation().toFile());
-			String rightContents = FileUtils.readFileToString(right.getLocation().toFile());
-			viewer.setInput(new DiffNode(
-					new CompareElement(leftContents, left.getFileExtension(), left),
-					new CompareElement(rightContents, left.getFileExtension(), right)));
+			IResource left = computeLeft();
+			IResource right = computeRight();
+			if (left != null && right != null) {
+				String leftContents = FileUtils.readFileToString(left.getLocation().toFile());
+				String rightContents = FileUtils.readFileToString(right.getLocation().toFile());
+				viewer.setInput(new DiffNode(
+						new CompareElement(leftContents, left.getFileExtension(), left),
+						new CompareElement(rightContents, left.getFileExtension(), right)));
+			}
+			else {
+				MessageDialog.openError(viewer.getShell(), "Quickfix Error", "Error while computing quickfix sources"); //$NON-NLS-1$
+			}
 		} catch (IOException e) {
 			WindupUIPlugin.log(e);
 		}
@@ -172,9 +179,5 @@ public class DiffDialog extends Dialog {
 				close();
 			}
 		});
-	}
-	
-	public IResource getRight() {
-		return right;
 	}
 }
