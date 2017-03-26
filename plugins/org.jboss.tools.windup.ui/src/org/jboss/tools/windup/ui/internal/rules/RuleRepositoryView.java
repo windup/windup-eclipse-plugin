@@ -329,12 +329,12 @@ public class RuleRepositoryView extends ViewPart {
 	}
 	
 	public void refresh() throws RemoteException {
-		if (windupClient.getExecutionBuilder() != null) {
+		if (windupClient.isWindupServerRunning()) {
 			Job fetchJob = new Job(Messages.refreshingRules) { //$NON-NLS-1$
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					RuleProviderRegistry systemRuleProviderRegistry = null;
-					if (windupClient.getExecutionBuilder() != null) {
+					if (windupClient.isWindupServerRunning()) {
 						try {
 							systemRuleProviderRegistry = windupClient.getExecutionBuilder().getSystemRuleProviderRegistry();
 						} catch (RemoteException e) {
