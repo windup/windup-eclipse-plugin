@@ -18,7 +18,15 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.text.java.JavaFormattingContext;
+import org.eclipse.jdt.internal.ui.text.java.JavaFormattingStrategy;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.formatter.IFormattingContext;
+import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.model.domain.WindupConstants;
@@ -40,6 +48,7 @@ import com.google.common.base.Objects;
 /**
  * Utility for interacting with quick fixes.
  */
+@SuppressWarnings("restriction")
 public class QuickFixUtil {
 	
 	public static void applyQuickFix(QuickFix quickfix, IEventBroker broker, MarkerService markerService, WindupRmiClient windupClient) {
@@ -152,6 +161,7 @@ public class QuickFixUtil {
 	        	if (windupClient.isWindupServerRunning()) {
 	        		ExecutionBuilder builder = windupClient.getExecutionBuilder();
 		        	String preview = builder.transform(quickFix.getTransformationId(), locationDTO);
+		        	preview = QuickFixUtil.format(marker.getResource(), preview);
 		        	return project.createResource(preview);
 	        	}
 	        } catch (RemoteException e) {
@@ -175,5 +185,20 @@ public class QuickFixUtil {
 	
 	public static boolean isIssueFixable(Issue issue) {
 		return !issue.isStale() && !issue.isFixed() && !issue.getQuickFixes().isEmpty();
+	}
+	
+	private static String format(IResource resource, String contents) {
+		/*
+		 * Java Formatting
+		 */
+		if (JavaCore.create(resource) != null) {
+			MultiPassContentFormatter formatter= new MultiPassContentFormatter(IJavaPartitions.JAVA_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE);
+			formatter.setMasterStrategy(new JavaFormattingStrategy());
+			Document document = new Document(contents);
+			formatter.format(document, new Region(0, document.getLength()));
+			
+			return document.get();
+		}
+		return contents;
 	}
 }
