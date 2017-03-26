@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
@@ -50,11 +50,11 @@ public class MarkerSyncServiceTest extends WindupUiTest {
 					}
 					return false;
 				}).findFirst().get();
-		IFile file = ModelService.getIssueResource(hint);
+		IFile file = WorkspaceResourceUtils.getFile(hint.getFileAbsolutePath());
 		QuickFix quickFix = hint.getQuickFixes().get(0);
 		IMarker marker = MarkerService.findMarker(file, hint, modelService);
 		IResource original = marker.getResource();
-		IResource newResource = QuickFixUtil.getQuickFixedResource(original, quickFix, hint);
+		IResource newResource = QuickFixUtil.getQuickFixedResource(quickFix, marker, windupClient, markerService);
 		DocumentUtils.replace(original, newResource);
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);

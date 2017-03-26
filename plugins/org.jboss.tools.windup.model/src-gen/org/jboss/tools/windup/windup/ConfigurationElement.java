@@ -23,6 +23,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getOptions <em>Options</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -249,5 +250,31 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<Pair> getOptions();
+
+	/**
+	 * Returns the value of the '<em><b>Report Directory</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Report Directory</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Report Directory</em>' attribute.
+	 * @see #setReportDirectory(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_ReportDirectory()
+	 * @model
+	 * @generated
+	 */
+	String getReportDirectory();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Report Directory</em>' attribute.
+	 * @see #getReportDirectory()
+	 * @generated
+	 */
+	void setReportDirectory(String value);
 
 } // ConfigurationElement

@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -62,6 +61,7 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
@@ -274,9 +274,24 @@ public class ModelService {
 		return null;
 	}
 	
+	public QuickFix findQuickfix(IMarker marker) {
+		URI uri = URI.createURI(marker.getAttribute(WindupMarker.QUICKFIX_URI_ID, ""));
+		return (QuickFix)getModel().eResource().getEObject(uri.fragment());
+	}
+	
+	
 	public Issue findIssue(IMarker marker) {
-		URI uri = URI.createURI(marker.getAttribute(WindupMarker.URI_ID, ""));
-		return (Issue)getModel().eResource().getEObject(uri.fragment());
+		String markerUri = marker.getAttribute(WindupMarker.URI_ID, null);
+		if (markerUri == null) {
+			// Why? Is this our quickfix Marker? This never happened before.
+			return null;
+		}
+		URI uri = URI.createURI(markerUri);
+		Object element = getModel().eResource().getEObject(uri.fragment());
+		if (element instanceof Issue) {
+			return (Issue)element;
+		}
+		return null;
 	}
 	
 	public org.jboss.tools.windup.windup.Hint findHint(IMarker marker) {
@@ -437,25 +452,18 @@ public class ModelService {
 		return path;
 	}
 	
-	public static IFile getIssueResource(Issue issue) {
-		return getResource(issue.getFileAbsolutePath());
-	}
-	
-	private static IFile getResource(String path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(path));
-	}
-	
 	/**
 	 * Populates the configuration element with the execution results.
 	 */
-	public void populateConfiguration(ConfigurationElement configuration, Input input, ExecutionResults results) {
+	public void populateConfiguration(ConfigurationElement configuration, Input input, IPath reportDirectory, ExecutionResults results) {
     	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
+        configuration.setReportDirectory(reportDirectory.toString());
         for (Hint wHint : results.getHints()) {
         	String path = wHint.getFile().getAbsolutePath();
-        	IFile resource = ModelService.getResource(path);
+        	IFile resource = WorkspaceResourceUtils.getResource(path);
 			if (resource == null) {
 				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
 				continue;
@@ -468,12 +476,21 @@ public class ModelService {
         	hint.setOriginalLineSource(line);
 
         	for (Quickfix fix : wHint.getQuickfixes()) {
-        		org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
+    			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
         		quickFix.setName(fix.getName());
         		quickFix.setQuickFixType(fix.getType().toString());
         		quickFix.setSearchString(fix.getSearch());
         		quickFix.setReplacementString(fix.getReplacement());
         		quickFix.setNewLine(fix.getNewline());
+        		quickFix.setTransformationId(fix.getTransformationID());
+        		
+        		if (fix.getFile() != null) {
+        			quickFix.setFile(fix.getFile().getAbsolutePath());
+        		}
+        		else {
+        			// Fallback for quickfixes not assigned to file. Assume quickfix applies to file associated with the hint.
+        			quickFix.setFile(path);
+        		}
         		hint.getQuickFixes().add(quickFix);
         	}
 
@@ -504,7 +521,7 @@ public class ModelService {
 	
 	private void linkReports(ExecutionResults results, List<Issue> issues) {
 		for (Issue issue : issues) {
-			IFile resource = ModelService.getIssueResource(issue);
+			IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
 			if (resource == null) {
 				Activator.logErrorMessage("ModelService:: No resource associated with issue file: " + issue.getFileAbsolutePath());
 				continue;
