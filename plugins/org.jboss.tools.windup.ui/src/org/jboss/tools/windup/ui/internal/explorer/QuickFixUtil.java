@@ -19,20 +19,21 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.text.java.JavaFormattingContext;
 import org.eclipse.jdt.internal.ui.text.java.JavaFormattingStrategy;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
@@ -196,9 +197,23 @@ public class QuickFixUtil {
 			formatter.setMasterStrategy(new JavaFormattingStrategy());
 			Document document = new Document(contents);
 			formatter.format(document, new Region(0, document.getLength()));
-			
 			return document.get();
 		}
+		/*
+		 * XML Formatting
+		 */
+		IDOMModel xmlModel = XMLRulesetModelUtil.getModel(resource.getLocation().toString(), true);
+		if (xmlModel != null) {
+			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
+			try {
+				Document document = new Document(contents);
+				formatProcessor.formatDocument(document, 0, document.getLength());
+				return document.get();
+			} catch (Exception e) {
+				WindupUIPlugin.log(e);
+			}
+		}
+		
 		return contents;
 	}
 }

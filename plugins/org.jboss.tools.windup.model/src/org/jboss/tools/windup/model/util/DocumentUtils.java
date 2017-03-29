@@ -46,6 +46,17 @@ public class DocumentUtils {
 		}
 		return "";
 	}
+
+	public static int getLineNumbers(IResource resource) {
+		try {
+			String contents = FileUtils.readFileToString(resource.getLocation().toFile());
+			Document document = new Document(contents);
+			return document.getNumberOfLines();
+		} catch (Exception e) {
+			Activator.log(e);
+		}
+		return 0;
+	}
 	
 	/**
 	 * Returns true if the line of text within the specified resource differs from that of
