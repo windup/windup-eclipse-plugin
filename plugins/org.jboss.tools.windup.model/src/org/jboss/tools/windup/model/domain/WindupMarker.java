@@ -22,10 +22,14 @@ public interface WindupMarker {
 	 * The id for windup hint markers
 	 */
 	static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
+	
+	static final String WINDUP_QUICKFIX_ID = "org.jboss.tools.windup.core.quickfixMarker"; //$NON-NLS-1$
 
 	static final String CONFIGURATION_ID = "CONFIGURATION_ID"; //$NON-NLS-1$
 	static final String URI_ID = "URI_ID"; //$NON-NLS-1$
 	static final String ELEMENT_ID = "ELEMENT_ID"; //$NON-NLS-1$
+	
+	static final String QUICKFIX_URI_ID = "QUICKFIX_URI_ID"; //$NON-NLS-1$
 	
 	static final String TITLE = "TITLE_ID";//$NON-NLS-1$
 	static final String HINT = "HINT_ID"; //$NON-NLS-1$
@@ -33,8 +37,6 @@ public interface WindupMarker {
 	static final String EFFORT = "EFFORT_ID"; //$NON-NLS-1$
 	static final String RULE_ID = "RULE_ID"; //$NON-NLS-1$
 	static final String SOURCE_SNIPPET = "SOURCE_ID"; //$NON-NLS-1$
-	static final String LINE = "LINE_ID"; //$NON-NLS-1$ 
-	static final String COLUMN = "COLUMN_ID"; //$NON-NLS-1$
 	static final String LENGTH = "LENGTH_ID";//$NON-NLS-1$
 	 
 	static final String CLASSIFICATION = "CLASSIFICATION_ID"; //$NON-NLS-1$

@@ -17,6 +17,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.internal.issues.IssueResolutions.FirstQuickFixResolution;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
@@ -28,12 +29,16 @@ public class IssueResolutionGenerator implements IMarkerResolutionGenerator2 {
 	
 	@Inject private ModelService modelService;
 	@Inject private MarkerService markerService;
+	@Inject private WindupRmiClient windupClient;
 	@Inject private IEventBroker broker;
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		Issue issue = modelService.findIssue(marker);
-		return collectResolutions(issue);
+		if (issue != null) {
+			return collectResolutions(issue);
+		}
+		return new IMarkerResolution[0];
 	}
 
 	@Override 
@@ -43,7 +48,7 @@ public class IssueResolutionGenerator implements IMarkerResolutionGenerator2 {
 	
 	private IMarkerResolution[] collectResolutions(Issue issue) {
 		if (!issue.getQuickFixes().isEmpty()) {
-			return new IMarkerResolution[]{new FirstQuickFixResolution(modelService, markerService, broker, issue)};
+			return new IMarkerResolution[]{new FirstQuickFixResolution(modelService, markerService, broker, issue, windupClient)};
 		}
 		return new IMarkerResolution[0];
 	}

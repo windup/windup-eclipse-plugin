@@ -45,6 +45,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupMarker;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
@@ -71,6 +72,7 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 	@Inject private MarkerService markerService;
 	@Inject private EPartService partService;
 	@Inject private ModelService modelService;
+	@Inject private WindupRmiClient windupClient;
 	
 	private List<IMarker> markers = Lists.newArrayList();
 	
@@ -94,7 +96,7 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 		Issue issue = modelService.findIssue(marker);
 		if (issue instanceof Hint) {
 			Hint hint = (Hint)issue;
-			QuickFixUtil.previewQuickFix(hint, marker, broker, markerService);
+			QuickFixUtil.previewQuickFix(hint, marker, broker, markerService, windupClient);
 		}
 	}
 	
@@ -102,9 +104,9 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 		IMarker marker = markers.get(0);
 		Issue issue = modelService.findIssue(marker);
 		if (issue instanceof Hint) {
-			Hint hint = (Hint)issue;
-			QuickFix quickFix = hint.getQuickFixes().get(0);
-			QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);
+			for (QuickFix quickfix : issue.getQuickFixes()) {
+				QuickFixUtil.applyQuickFix(quickfix, broker, markerService, windupClient);
+			}
 		}
 	}
 	

@@ -278,13 +278,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__OPTIONS = PARAMETERIZED_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Report Directory</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__REPORT_DIRECTORY = PARAMETERIZED_FEATURE_COUNT + 10;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 10;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 11;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1079,13 +1088,40 @@ public interface WindupPackage extends EPackage {
 	int QUICK_FIX__QUICK_FIX_TYPE = NAMED_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__ID = NAMED_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Transformation Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__TRANSFORMATION_ID = NAMED_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>File</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__FILE = NAMED_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Quick Fix</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 4;
+	int QUICK_FIX_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1477,6 +1513,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getConfigurationElement_Options();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Report Directory</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_ReportDirectory();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -1951,6 +1998,39 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getQuickFix_QuickFixType();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getId()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_Id();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getTransformationId <em>Transformation Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Transformation Id</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getTransformationId()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_TransformationId();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getFile <em>File</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>File</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getFile()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_File();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.MigrationPath <em>Migration Path</em>}'.

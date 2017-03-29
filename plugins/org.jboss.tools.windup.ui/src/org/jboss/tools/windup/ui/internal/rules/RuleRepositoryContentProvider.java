@@ -266,13 +266,13 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	public StyledString getStyledText(Object element) {
 		StyledString style = new StyledString(getText(element));
 		if (element instanceof SystemRulesNode && ((SystemRulesNode)element).getChildren().length == 0) {
-			style.append(" [" + "Start Windup to view the system rulesets" + "]", StyledString.DECORATIONS_STYLER);
+			style.append(" [" + "Start Windup to view the system rules" + "]", StyledString.DECORATIONS_STYLER);
 		}
-		else if (element instanceof CustomRuleProvider) {
-			style.append(" (" + getChildren(element).length + ")", StyledString.COUNTER_STYLER);
+		else if (element instanceof CustomRuleProvider || element instanceof RuleProvider) {
+			style.append(" (" + (getChildren(element).length - 1) + ")", StyledString.COUNTER_STYLER);
 		}
 		else if (element instanceof RulesetFileNode) {
-			style.append(" [" + ((RulesetFileNode)element).getFile().getPath() + "]", StyledString.QUALIFIER_STYLER);
+			style.append(" [" + ((RulesetFileNode)element).getFile().getPath() + "]", StyledString.DECORATIONS_STYLER);
 		}
 		return style;
 	}

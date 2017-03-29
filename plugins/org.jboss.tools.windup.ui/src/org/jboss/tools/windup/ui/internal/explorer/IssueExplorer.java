@@ -15,7 +15,7 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MA
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_DELETED;
+import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_NODE_DELETED;
 
 import java.io.File;
 import java.util.List;
@@ -190,7 +190,8 @@ public class IssueExplorer extends CommonNavigator {
 		getCommonViewer().setComparator(new IssueExplorerComparator());
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
-		broker.subscribe(MARKER_DELETED, markerDeletedHandler);
+		broker.subscribe(WindupConstants.MARKER_DELETED, markerDeletedHandler);
+		broker.subscribe(MARKER_NODE_DELETED, markerNodeDeletedHandler);
 		broker.subscribe(MARKER_CHANGED, markerChangedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 		initGettingStarted();
@@ -248,7 +249,7 @@ public class IssueExplorer extends CommonNavigator {
 		startStopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (windupClient.getExecutionBuilder() == null) {
+				if (!windupClient.isWindupServerRunning()) {
 					windupLauncher.shutdown(new WindupServerCallbackAdapter(shell) {
 						@Override
 						public void serverShutdown(IStatus status) {
@@ -322,7 +323,7 @@ public class IssueExplorer extends CommonNavigator {
 	 }
 	
 	private void updateServerGroup() {
-		if (windupClient.getExecutionBuilder() != null) {
+		if (windupClient.isWindupServerRunning()) {
 			statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_RUNNING_STATUS));
 			statusLabel.setText("[Running - " + windupClient.getWindupVersion() + "]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
@@ -430,6 +431,37 @@ public class IssueExplorer extends CommonNavigator {
 	};
 	
 	private EventHandler markerDeletedHandler = new EventHandler() {
+		@Override
+		public void handleEvent(Event event) {
+			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
+			Object node = findIssueNode(marker);
+			if (node != null) {
+				TreeNode treeNode = (TreeNode)node;
+				TreeNode parent = treeNode.getParent();
+				Object segment = treeNode.getSegment();
+				while (parent != null) {
+					parent.removeChild(segment);
+					getCommonViewer().remove(node);
+					getCommonViewer().refresh(parent, true);
+					if (!parent.getChildren().isEmpty() && 
+							parent.getChildren().size() == 1 &&
+								parent.getChildren().get(0) instanceof ReportNode) {
+						segment = parent.getSegment();
+						parent = parent.getParent();
+					}
+					else if (parent.getChildren().isEmpty()) {
+						segment = parent.getSegment();
+						parent = parent.getParent();
+					}
+					else {
+						break;
+					}
+				}
+			}
+		}
+	};
+	
+	private EventHandler markerNodeDeletedHandler = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
 			MarkerNode node = (MarkerNode)event.getProperty(EVENT_ISSUE_MARKER);
@@ -578,6 +610,7 @@ public class IssueExplorer extends CommonNavigator {
 		super.dispose();
 		broker.unsubscribe(markersChangedHandler);
 		broker.unsubscribe(markerDeletedHandler);
+		broker.unsubscribe(markerNodeDeletedHandler);
 		broker.unsubscribe(markerChangedHandler);
 		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();
