@@ -59,8 +59,9 @@ public interface WindupConstants {
 	 */
 	String ACTIVE_CONFIG = "windup/config/selected";
 	String SYNCH = "windup/config/synch";
-	String MARKER_DELETED = "windup/issues/deleted";
+	String MARKER_NODE_DELETED = "windup/issues/deleted";
 	String MARKERS_CHANGED = "windup/issue/markers";
+	String MARKER_DELETED = "windup/marker/deleted";
 	String GROUPS_CHANGED = "windup/issue/groups";
 	String INPUT_CHANGED = "windup/configuration/input";
 	String MARKER_CHANGED = "windup/marker/changed";

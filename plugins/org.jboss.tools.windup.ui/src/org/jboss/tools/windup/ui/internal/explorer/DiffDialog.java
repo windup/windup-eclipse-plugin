@@ -14,6 +14,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.compare.CompareConfiguration;
@@ -24,10 +28,35 @@ import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.jdt.internal.ui.preferences.formatter.FormatterProfileManager;
+import org.eclipse.jdt.internal.ui.preferences.formatter.FormatterProfileStore;
+import org.eclipse.jdt.internal.ui.preferences.formatter.IProfileVersioner;
+import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileManager;
+import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileStore;
+import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileVersioner;
+import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.jdt.internal.ui.text.java.JavaFormattingContext;
+import org.eclipse.jdt.internal.ui.text.java.JavaFormattingStrategy;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.formatter.FormattingContextProperties;
+import org.eclipse.jface.text.formatter.IContentFormatterExtension;
+import org.eclipse.jface.text.formatter.IFormattingContext;
+import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,26 +67,23 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.preferences.IWorkingCopyManager;
+import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 
 /**
  * Dialog for viewing a difference.
  */
-public class DiffDialog extends Dialog {
+public abstract class DiffDialog extends Dialog {
 	
 	private static final int WIDTH = 950;
 	private static final int HEIGHT = 600;
 	
 	private ComparePreviewer viewer;
 	
-	protected IResource left;
-	protected IResource right;
-	
-	public DiffDialog(Shell shell, IResource left, IResource right) {
+	public DiffDialog(Shell shell) {
 		super(shell);
-		this.left = left;
-		this.right = right;
 	}
 	
 	@Override
@@ -68,7 +94,7 @@ public class DiffDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = doCreateDialogArea(parent);
-		loadPreview(left, right);
+		loadPreview();
 		return control;
 	}
 	
@@ -79,13 +105,24 @@ public class DiffDialog extends Dialog {
 		return control;
 	}
 	
-	protected void loadPreview(IResource left, IResource right) {
+	protected abstract IResource computeLeft();
+	
+	protected abstract IResource computeRight();
+	
+	protected void loadPreview() {
 		try {
-			String leftContents = FileUtils.readFileToString(left.getLocation().toFile());
-			String rightContents = FileUtils.readFileToString(right.getLocation().toFile());
-			viewer.setInput(new DiffNode(
-					new CompareElement(leftContents, left.getFileExtension(), left),
-					new CompareElement(rightContents, left.getFileExtension(), right)));
+			IResource left = computeLeft();
+			IResource right = computeRight();
+			if (left != null && right != null) {
+				String leftContents = FileUtils.readFileToString(left.getLocation().toFile());
+				String rightContents = FileUtils.readFileToString(right.getLocation().toFile());
+				viewer.setInput(new DiffNode(
+						new CompareElement(leftContents, left.getFileExtension(), left),
+						new CompareElement(rightContents, left.getFileExtension(), right)));
+			}
+			else {
+				MessageDialog.openError(viewer.getShell(), "Quickfix Error", "Error while computing quickfix sources"); //$NON-NLS-1$
+			}
 		} catch (IOException e) {
 			WindupUIPlugin.log(e);
 		}
@@ -172,9 +209,5 @@ public class DiffDialog extends Dialog {
 				close();
 			}
 		});
-	}
-	
-	public IResource getRight() {
-		return right;
 	}
 }
