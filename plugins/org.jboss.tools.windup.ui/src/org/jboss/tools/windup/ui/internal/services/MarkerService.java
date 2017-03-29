@@ -13,14 +13,11 @@ package org.jboss.tools.windup.ui.internal.services;
 import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 import static org.jboss.tools.windup.model.domain.WindupMarker.CLASSIFICATION;
-import static org.jboss.tools.windup.model.domain.WindupMarker.COLUMN;
 import static org.jboss.tools.windup.model.domain.WindupMarker.CONFIGURATION_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.DESCRIPTION;
 import static org.jboss.tools.windup.model.domain.WindupMarker.EFFORT;
 import static org.jboss.tools.windup.model.domain.WindupMarker.ELEMENT_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.HINT;
-import static org.jboss.tools.windup.model.domain.WindupMarker.LENGTH;
-import static org.jboss.tools.windup.model.domain.WindupMarker.LINE;
 import static org.jboss.tools.windup.model.domain.WindupMarker.RULE_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SOURCE_SNIPPET;
@@ -30,6 +27,7 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICA
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -55,6 +53,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WindupMarker;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
@@ -63,6 +63,7 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
+import org.jboss.tools.windup.windup.QuickFix;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -138,7 +139,7 @@ public class MarkerService {
 		for (Input input : configuration.getInputs()) {
 			if (input.getWindupResult() != null) {
 				for (Issue issue : input.getWindupResult().getIssues()) {
-					IFile resource = ModelService.getIssueResource(issue);
+					IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
 					if (resource == null) {
 						WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
 						continue;
@@ -186,10 +187,9 @@ public class MarkerService {
 			
 			marker.setAttribute(TITLE, hint.getTitle());
 			marker.setAttribute(HINT, hint.getHint());
-			marker.setAttribute(LINE, hint.getLineNumber());
-			marker.setAttribute(COLUMN, hint.getColumn());
-			marker.setAttribute(LENGTH, hint.getLength());
-			
+			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+			marker.setAttribute(IMarker.CHAR_START, hint.getColumn());
+			marker.setAttribute(IMarker.CHAR_END, hint.getLength());
 			marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
 		}
 		else {
@@ -203,6 +203,24 @@ public class MarkerService {
 			marker.setAttribute(IMarker.CHAR_END, 0);
 		}
         marker.setAttribute(IMarker.USER_EDITABLE, false);
+        createQuickfixMarkers(issue);
+	}
+	
+	private void createQuickfixMarkers(Issue issue) {
+		for (QuickFix quickfix : issue.getQuickFixes()) {
+			IFile resource = WorkspaceResourceUtils.getResource(quickfix.getFile());
+			try {
+				IMarker marker = resource.createMarker(WindupMarker.WINDUP_QUICKFIX_ID);
+				marker.setAttribute(WindupMarker.QUICKFIX_URI_ID, EcoreUtil.getURI(quickfix).toString());
+				marker.setAttribute(IMarker.LINE_NUMBER, -1);
+				marker.setAttribute(IMarker.CHAR_START, -1);
+				marker.setAttribute(IMarker.CHAR_END, -1);
+				marker.setAttribute(IMarker.MESSAGE, quickfix.getName());
+				//marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			} catch (CoreException e) {
+				WindupUIPlugin.log(e);
+			}
+		}
 	}
 	
 	/**
@@ -220,30 +238,87 @@ public class MarkerService {
 	/**
 	 * Deletes all Windup markers assigned to the specified resource.
 	 */
-	private void deleteWindupMarkers(IResource input) {
+	public void deleteWindupMarkers(IResource input) {
 		try {
 			input.deleteMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
 			input.deleteMarkers(WINDUP_CLASSIFICATION_MARKER_ID, true, IResource.DEPTH_INFINITE);
+			input.deleteMarkers(WindupMarker.WINDUP_QUICKFIX_ID, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
 	}
 	
-	/**
-	 * Returns issue/marker pairs associated with the specified resource. 
+	/*
+	 * TODO: We need a better strategy for mapping markers to issues and issues to markers.
+	 * It's too expensive to continuously be traversing all resources workspace resources.
+	 * IMarkers have IDs, the Issue can save this ID, we then just need a way to find the 
+	 * IMarker with the ID without always traversing the resources in the workspace. 
+	 * Since the IMarker will never change, we should be able to just traverse the workspace
+	 * one time, then cache the Windup markers in an ID to IMarker map. From that point
+	 * forward, we should be able to go to that map. In the event files change, etc,
+	 * just ensure the IMarker exists once pulled from the Map. Each time we run Windup,
+	 * we re-populate the Map. 
 	 */
-	public Map<Issue, IMarker> buildIssueMarkerMap(IResource resource) {
+	public IMarker findMarker(Issue issue) {
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (project.exists() && project.isAccessible()) {
+				List<IMarker> markers = MarkerUtil.getMarkers(
+						WINDUP_HINT_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE);
+				
+				for (IMarker marker : markers) {
+					Issue markerIssue = modelService.findIssue(marker);
+					if (Objects.equal(issue, markerIssue)) {
+						return marker;
+					}
+				}
+				
+				markers = MarkerUtil.getMarkers(
+						WINDUP_CLASSIFICATION_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE);
+				
+				for (IMarker marker : markers) {
+					Issue markerIssue = modelService.findIssue(marker);
+					if (Objects.equal(issue, markerIssue)) {
+						return marker;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns hint/marker pairs associated with the specified resource. 
+	 */
+	public Map<Issue, IMarker> buildHintMarkerMap(IResource resource) {
 		Map<Issue, IMarker> map = Maps.newHashMap();
 		try {
 			IMarker[] markers = resource.findMarkers(WINDUP_HINT_MARKER_ID, true, IResource.DEPTH_INFINITE);
 			for (IMarker marker : markers) {
-				map.put(modelService.findIssue(marker), marker);
+				Issue issue = modelService.findIssue(marker);
+				if (issue != null) {
+					map.put(issue, marker);
+				}
 			}
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
 		return map;
 	}
+	
+	public IMarker findMarker(QuickFix quickfix) {
+		for (IMarker marker : MarkerUtil.collectQuickfixMarkers()) {
+			QuickFix markerQuickfix = modelService.findQuickfix(marker);
+			if (Objects.equal(quickfix, markerQuickfix)) {
+				return marker;
+			}
+		}
+		return null;
+	}
+	
 	
 	public static IMarker findMarker(IResource resource, Issue issue, ModelService modelService) {
 		IMarker result = null;
