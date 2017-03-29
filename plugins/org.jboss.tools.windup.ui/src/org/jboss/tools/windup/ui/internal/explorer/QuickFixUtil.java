@@ -15,18 +15,21 @@ import java.rmi.RemoteException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.apache.commons.io.FileUtils;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.text.java.JavaFormattingStrategy;
-import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.WindupConstants;
@@ -193,7 +196,7 @@ public class QuickFixUtil {
 		 * Java Formatting
 		 */
 		if (JavaCore.create(resource) != null) {
-			MultiPassContentFormatter formatter= new MultiPassContentFormatter(IJavaPartitions.JAVA_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE);
+			MultiPassContentFormatter formatter= new MultiPassContentFormatter(/*IJavaPartitions.JAVA_PARTITIONING*/"__dftl_partitioning", IDocument.DEFAULT_CONTENT_TYPE);
 			formatter.setMasterStrategy(new JavaFormattingStrategy());
 			Document document = new Document(contents);
 			formatter.format(document, new Region(0, document.getLength()));
@@ -206,9 +209,12 @@ public class QuickFixUtil {
 		if (xmlModel != null) {
 			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
 			try {
-				Document document = new Document(contents);
-				formatProcessor.formatDocument(document, 0, document.getLength());
-				return document.get();
+				TempProject project = new TempProject();
+				IFile file = (IFile)project.createResource(contents);
+				IStructuredModel model = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(file);
+				formatProcessor.formatModel(model);
+				StructuredModelManager.getModelManager().saveStructuredDocument(model.getStructuredDocument(), file);
+				return FileUtils.readFileToString(file.getLocation().toFile());
 			} catch (Exception e) {
 				WindupUIPlugin.log(e);
 			}
