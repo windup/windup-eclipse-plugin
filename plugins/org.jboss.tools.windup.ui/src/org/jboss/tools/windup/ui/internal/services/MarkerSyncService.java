@@ -31,6 +31,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 
@@ -58,7 +59,7 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 			switch (delta.getKind()) {
 				case IResourceDelta.CHANGED: {
 					if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
-						Map<Issue, IMarker> map = markerService.buildIssueMarkerMap(resource);
+						Map<Issue, IMarker> map = markerService.buildHintMarkerMap(resource);
 						if (!map.isEmpty()) {
 							update(resource, map);
 						}
@@ -76,8 +77,15 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 		for (Issue issue : map.keySet()) {
 			if (issue instanceof Hint && !issue.isStale() && !issue.isFixed()) {
 				IMarker marker = map.get(issue);
-				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, ((Hint)issue).getLineNumber());
-				if (DocumentUtils.differs(resource, lineNumber-1, issue.getOriginalLineSource())) {
+				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, ((Hint)issue).getLineNumber()) - 1;
+				
+				int lineNumbers = DocumentUtils.getLineNumbers(resource);
+				if (lineNumber < lineNumbers || lineNumber > lineNumbers) {
+					MarkerUtil.deleteMarker(marker);
+					continue;
+				}
+				
+				if (DocumentUtils.differs(resource, lineNumber, issue.getOriginalLineSource())) {
 					issue.setStale(true);
 					try {
 						Map<String, Object> attributes = marker.getAttributes();
@@ -104,12 +112,12 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 		broker.post(WindupConstants.MARKER_CHANGED, props);
 	}
 	
-	@PostConstruct
+	//@PostConstruct
 	private void init() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_BUILD);
 	}
 	
-	@PreDestroy
+	//@PreDestroy
 	private void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
