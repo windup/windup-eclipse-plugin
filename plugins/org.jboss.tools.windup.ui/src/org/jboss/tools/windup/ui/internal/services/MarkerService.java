@@ -191,6 +191,7 @@ public class MarkerService {
 			marker.setAttribute(IMarker.CHAR_START, hint.getColumn());
 			marker.setAttribute(IMarker.CHAR_END, hint.getLength());
 			marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
+			hint.setMarker(marker);
 		}
 		else {
 			Classification classification = (Classification)issue;
@@ -212,11 +213,12 @@ public class MarkerService {
 			try {
 				IMarker marker = resource.createMarker(WindupMarker.WINDUP_QUICKFIX_ID);
 				marker.setAttribute(WindupMarker.QUICKFIX_URI_ID, EcoreUtil.getURI(quickfix).toString());
-				marker.setAttribute(IMarker.LINE_NUMBER, -1);
+				// TODO: Is this causing the markers to be messy in editor
+				/*marker.setAttribute(IMarker.LINE_NUMBER, -1);
 				marker.setAttribute(IMarker.CHAR_START, -1);
-				marker.setAttribute(IMarker.CHAR_END, -1);
+				marker.setAttribute(IMarker.CHAR_END, -1);*/
 				marker.setAttribute(IMarker.MESSAGE, quickfix.getName());
-				//marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+				quickfix.setMarker(marker);
 			} catch (CoreException e) {
 				WindupUIPlugin.log(e);
 			}

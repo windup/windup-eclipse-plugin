@@ -824,13 +824,22 @@ public interface WindupPackage extends EPackage {
 	int HINT__SOURCE_SNIPPET = ISSUE_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__MARKER = ISSUE_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Hint</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HINT_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 6;
+	int HINT_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of operations of the '<em>Hint</em>' class.
@@ -1115,13 +1124,22 @@ public interface WindupPackage extends EPackage {
 	int QUICK_FIX__FILE = NAMED_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__MARKER = NAMED_ELEMENT_FEATURE_COUNT + 7;
+
+	/**
 	 * The number of structural features of the '<em>Quick Fix</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 7;
+	int QUICK_FIX_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1882,6 +1900,17 @@ public interface WindupPackage extends EPackage {
 	EAttribute getHint_SourceSnippet();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Hint#getMarker <em>Marker</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Marker</em>'.
+	 * @see org.jboss.tools.windup.windup.Hint#getMarker()
+	 * @see #getHint()
+	 * @generated
+	 */
+	EAttribute getHint_Marker();
+
+	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Classification <em>Classification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2031,6 +2060,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getQuickFix_File();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getMarker <em>Marker</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Marker</em>'.
+	 * @see org.jboss.tools.windup.windup.QuickFix#getMarker()
+	 * @see #getQuickFix()
+	 * @generated
+	 */
+	EAttribute getQuickFix_Marker();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.MigrationPath <em>Migration Path</em>}'.

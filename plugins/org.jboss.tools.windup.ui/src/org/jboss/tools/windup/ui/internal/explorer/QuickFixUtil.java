@@ -56,8 +56,9 @@ import com.google.common.base.Objects;
 public class QuickFixUtil {
 	
 	public static void applyQuickFix(QuickFix quickfix, IEventBroker broker, MarkerService markerService, WindupRmiClient windupClient) {
-		IMarker quickfixMarker = markerService.findMarker(quickfix);
-		if (quickfixMarker != null) {
+		Object marker = quickfix.getMarker();
+		if (marker != null) {
+			IMarker quickfixMarker = (IMarker)marker;
 			IResource newResource = QuickFixUtil.getQuickFixedResource(quickfix, quickfixMarker, windupClient, markerService);
 			DocumentUtils.replace(quickfixMarker.getResource(), newResource);
 			MarkerUtil.deleteMarker(quickfixMarker);
@@ -84,8 +85,16 @@ public class QuickFixUtil {
 			IResource quickfixResource = quickfixMarker.getResource();
 			
 			Hint hint = (Hint)quickfix.eContainer();
-			IMarker hintMarker = markerService.findMarker(hint);
-
+			IMarker hintMarker;
+			marker = hint.getMarker();
+			if (marker != null) {
+				hintMarker = (IMarker)marker;
+			}
+			else {
+				hintMarker = markerService.findMarker(hint);
+				hint.setMarker(hintMarker);
+			}
+			
 			/*
 			 * This is temporary. We're deleting all Windup markers associated with a resource that has been 
 			 * transformed by the quickfix. Ideally, we should only delete the onese that have become stale,

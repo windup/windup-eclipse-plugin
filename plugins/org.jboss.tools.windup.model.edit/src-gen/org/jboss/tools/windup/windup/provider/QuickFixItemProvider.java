@@ -52,6 +52,7 @@ public class QuickFixItemProvider extends NamedElementItemProvider {
 			addIdPropertyDescriptor(object);
 			addTransformationIdPropertyDescriptor(object);
 			addFilePropertyDescriptor(object);
+			addMarkerPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -211,6 +212,28 @@ public class QuickFixItemProvider extends NamedElementItemProvider {
 	}
 
 	/**
+	 * This adds a property descriptor for the Marker feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addMarkerPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_QuickFix_marker_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_QuickFix_marker_feature", "_UI_QuickFix_type"),
+				 WindupPackage.eINSTANCE.getQuickFix_Marker(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns QuickFix.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -255,6 +278,7 @@ public class QuickFixItemProvider extends NamedElementItemProvider {
 			case WindupPackage.QUICK_FIX__ID:
 			case WindupPackage.QUICK_FIX__TRANSFORMATION_ID:
 			case WindupPackage.QUICK_FIX__FILE:
+			case WindupPackage.QUICK_FIX__MARKER:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}
