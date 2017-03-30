@@ -669,6 +669,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getHint_Marker() {
+		return (EAttribute)hintEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getClassification() {
 		return classificationEClass;
 	}
@@ -788,6 +797,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EAttribute getQuickFix_File() {
 		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getQuickFix_Marker() {
+		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -1000,6 +1018,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(hintEClass, HINT__COLUMN);
 		createEAttribute(hintEClass, HINT__LENGTH);
 		createEAttribute(hintEClass, HINT__SOURCE_SNIPPET);
+		createEAttribute(hintEClass, HINT__MARKER);
 
 		classificationEClass = createEClass(CLASSIFICATION);
 		createEAttribute(classificationEClass, CLASSIFICATION__CLASSIFICATION);
@@ -1017,6 +1036,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(quickFixEClass, QUICK_FIX__ID);
 		createEAttribute(quickFixEClass, QUICK_FIX__TRANSFORMATION_ID);
 		createEAttribute(quickFixEClass, QUICK_FIX__FILE);
+		createEAttribute(quickFixEClass, QUICK_FIX__MARKER);
 
 		migrationPathEClass = createEClass(MIGRATION_PATH);
 		createEAttribute(migrationPathEClass, MIGRATION_PATH__ID);
@@ -1141,6 +1161,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getHint_Column(), ecorePackage.getEInt(), "column", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_Length(), ecorePackage.getEInt(), "length", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_SourceSnippet(), ecorePackage.getEString(), "sourceSnippet", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getHint_Marker(), ecorePackage.getEJavaObject(), "marker", null, 0, 1, Hint.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(classificationEClass, Classification.class, "Classification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getClassification_Classification(), ecorePackage.getEString(), "classification", null, 0, 1, Classification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1158,6 +1179,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getQuickFix_Id(), ecorePackage.getEString(), "id", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getQuickFix_TransformationId(), ecorePackage.getEString(), "transformationId", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getQuickFix_File(), ecorePackage.getEString(), "file", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getQuickFix_Marker(), ecorePackage.getEJavaObject(), "marker", null, 0, 1, QuickFix.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(migrationPathEClass, MigrationPath.class, "MigrationPath", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMigrationPath_Id(), ecorePackage.getEString(), "id", null, 0, 1, MigrationPath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

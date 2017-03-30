@@ -112,12 +112,12 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 		broker.post(WindupConstants.MARKER_CHANGED, props);
 	}
 	
-	@PostConstruct
+	//@PostConstruct
 	private void init() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_BUILD);
 	}
 	
-	@PreDestroy
+	//@PreDestroy
 	private void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}

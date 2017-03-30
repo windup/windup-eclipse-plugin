@@ -51,6 +51,7 @@ public class HintItemProvider extends IssueItemProvider {
 			addColumnPropertyDescriptor(object);
 			addLengthPropertyDescriptor(object);
 			addSourceSnippetPropertyDescriptor(object);
+			addMarkerPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -188,6 +189,28 @@ public class HintItemProvider extends IssueItemProvider {
 	}
 
 	/**
+	 * This adds a property descriptor for the Marker feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addMarkerPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Hint_marker_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Hint_marker_feature", "_UI_Hint_type"),
+				 WindupPackage.eINSTANCE.getHint_Marker(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns Hint.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -231,6 +254,7 @@ public class HintItemProvider extends IssueItemProvider {
 			case WindupPackage.HINT__COLUMN:
 			case WindupPackage.HINT__LENGTH:
 			case WindupPackage.HINT__SOURCE_SNIPPET:
+			case WindupPackage.HINT__MARKER:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

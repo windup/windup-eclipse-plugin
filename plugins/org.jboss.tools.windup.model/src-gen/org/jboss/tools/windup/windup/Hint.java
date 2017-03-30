@@ -18,6 +18,7 @@ package org.jboss.tools.windup.windup;
  *   <li>{@link org.jboss.tools.windup.windup.Hint#getColumn <em>Column</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Hint#getLength <em>Length</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Hint#getSourceSnippet <em>Source Snippet</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Hint#getMarker <em>Marker</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getHint()
@@ -180,5 +181,31 @@ public interface Hint extends Issue {
 	 * @generated
 	 */
 	void setSourceSnippet(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Marker</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Marker</em>' attribute.
+	 * @see #setMarker(Object)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getHint_Marker()
+	 * @model transient="true"
+	 * @generated
+	 */
+	Object getMarker();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Hint#getMarker <em>Marker</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Marker</em>' attribute.
+	 * @see #getMarker()
+	 * @generated
+	 */
+	void setMarker(Object value);
 
 } // Hint
