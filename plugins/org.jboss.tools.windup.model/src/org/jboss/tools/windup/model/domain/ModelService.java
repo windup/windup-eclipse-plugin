@@ -33,7 +33,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
@@ -61,7 +60,6 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
-import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
@@ -274,37 +272,13 @@ public class ModelService {
 		return null;
 	}
 	
-	public QuickFix findQuickfix(IMarker marker) {
-		URI uri = URI.createURI(marker.getAttribute(WindupMarker.QUICKFIX_URI_ID, ""));
-		return (QuickFix)getModel().eResource().getEObject(uri.fragment());
-	}
-	
-	
-	public Issue findIssue(IMarker marker) {
-		String markerUri = marker.getAttribute(WindupMarker.URI_ID, null);
-		if (markerUri == null) {
-			// Why? Is this our quickfix Marker? This never happened before.
-			return null;
-		}
-		URI uri = URI.createURI(markerUri);
-		Object element = getModel().eResource().getEObject(uri.fragment());
-		if (element instanceof Issue) {
-			return (Issue)element;
-		}
-		return null;
-	}
-	
-	public org.jboss.tools.windup.windup.Hint findHint(IMarker marker) {
-		Issue issue = findIssue(marker);
-		if (issue instanceof org.jboss.tools.windup.windup.Hint) {
-			return (org.jboss.tools.windup.windup.Hint)issue;
-		}
-		return null;
-	}
-	
 	public void deleteConfiguration(ConfigurationElement configuration) {
 		model.getConfigurationElements().remove(configuration);
 		broker.post(CONFIG_DELETED, configuration);
+	}
+	
+	public void deleteIssue(Issue issue) {
+		((WindupResult)issue.eContainer()).getIssues().remove(issue);
 	}
 	
 	public ConfigurationElement createConfiguration(String name) {
@@ -477,13 +451,12 @@ public class ModelService {
 
         	for (Quickfix fix : wHint.getQuickfixes()) {
     			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
-        		quickFix.setName(fix.getName());
         		quickFix.setQuickFixType(fix.getType().toString());
         		quickFix.setSearchString(fix.getSearch());
         		quickFix.setReplacementString(fix.getReplacement());
         		quickFix.setNewLine(fix.getNewline());
         		quickFix.setTransformationId(fix.getTransformationID());
-        		
+        		quickFix.setName(fix.getName());
         		if (fix.getFile() != null) {
         			quickFix.setFile(fix.getFile().getAbsolutePath());
         		}

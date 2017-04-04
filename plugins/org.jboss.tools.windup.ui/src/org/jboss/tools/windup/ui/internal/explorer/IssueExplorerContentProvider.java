@@ -33,12 +33,12 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueConstants.Severity;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
@@ -90,20 +90,20 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private List<IMarker> markers;
 		private NavigatorContentServiceContentProvider contentProvider;
 		private IssueGroupService groupService;
-		private ModelService modelService;
 		private IEclipseContext context;
 		private ConfigurationElement configuration;
+		private MarkerLookupService markerService;
 		private BidiMap nodeMap = new DualHashBidiMap();
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
-				ModelService modelService) {
+				MarkerLookupService markerService, ConfigurationElement configuration) {
 			this.markers = markers;
 			this.groupService = groupService;
-			this.modelService = modelService;
 			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
 			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
-			this.configuration = modelService.getRecentConfiguration();
+			this.configuration = configuration;
+			this.markerService = markerService;
 			// TODO: Correct this temporary hack to get flat package layout.
 			INavigatorContentService contentService = explorer.getCommonViewer().getNavigatorContentService();
 			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
@@ -158,7 +158,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				parent = resourceNode;
 				
 				if (configuration.isGenerateReport()) {
-					Issue issue = modelService.findIssue(marker);
+					Issue issue = markerService.find(marker);
 					if (issue != null) {
 						if (issue.getGeneratedReportLocation() != null) {
 							File report = new File(issue.getGeneratedReportLocation());
@@ -188,7 +188,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			if (groupService.isGroupByRule()) {
 				String ruleId = marker.getAttribute(WindupMarker.RULE_ID, WindupConstants.DEFAULT_RULE_ID);
 				String title = "";
-				Issue issue = modelService.findIssue(marker);
+				Issue issue = markerService.find(marker);
 				if (issue instanceof Hint) {
 					title = ((Hint)issue).getTitle();
 				}
@@ -201,7 +201,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				parent = ruleNode;
 			}
 			
-			Issue issue = modelService.findIssue(marker);
+			Issue issue = markerService.find(marker);
 			if (issue != null) {
 				IEclipseContext child = context.createChild();
 				child.set(IMarker.class, marker);

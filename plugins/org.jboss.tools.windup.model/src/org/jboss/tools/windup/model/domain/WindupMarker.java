@@ -29,8 +29,6 @@ public interface WindupMarker {
 	static final String URI_ID = "URI_ID"; //$NON-NLS-1$
 	static final String ELEMENT_ID = "ELEMENT_ID"; //$NON-NLS-1$
 	
-	static final String QUICKFIX_URI_ID = "QUICKFIX_URI_ID"; //$NON-NLS-1$
-	
 	static final String TITLE = "TITLE_ID";//$NON-NLS-1$
 	static final String HINT = "HINT_ID"; //$NON-NLS-1$
 	static final String SEVERITY = "SEVERITY_ID"; //$NON-NLS-1$

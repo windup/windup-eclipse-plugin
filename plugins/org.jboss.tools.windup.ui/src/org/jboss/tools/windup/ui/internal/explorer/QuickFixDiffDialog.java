@@ -28,9 +28,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.QuickFix;
 
@@ -43,23 +41,21 @@ public class QuickFixDiffDialog extends DiffDialog {
 	private Hint hint;
 	private QuickFix quickfix;
 	
-	private WindupRmiClient windupClient;
-	private MarkerService markerService;
+	private QuickFixUtil quickfixService;
 	
 	private IResource left;
 	private IMarker marker;
 	
-	public QuickFixDiffDialog(Shell shell, Hint hint, WindupRmiClient windupClient, MarkerService markerService) {
+	public QuickFixDiffDialog(Shell shell, Hint hint, QuickFixUtil quickfixService) {
 		super(shell);
-		this.windupClient = windupClient;
 		this.quickfix =  hint.getQuickFixes().get(0);
-		this.hint = hint; 
-		this.markerService = markerService;
+		this.hint = hint;
+		this.quickfixService = quickfixService;
 	}
 	
 	@Override
 	protected IResource computeLeft() {
-		marker = markerService.findMarker(quickfix);
+		marker = (IMarker)quickfix.getMarker();
 		if (marker != null && marker.exists()) {
 			left = marker.getResource();
 			return left;
@@ -70,7 +66,7 @@ public class QuickFixDiffDialog extends DiffDialog {
 	@Override
 	protected IResource computeRight() {
 		if (left != null) {
-			return QuickFixUtil.getQuickFixedResource(quickfix, marker, windupClient, markerService);
+			return quickfixService.getQuickFixedResource(quickfix, marker);
 		}
 		return null;
 	}
