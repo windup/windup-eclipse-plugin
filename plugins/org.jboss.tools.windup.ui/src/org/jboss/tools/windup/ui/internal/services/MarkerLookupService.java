@@ -142,6 +142,15 @@ public class MarkerLookupService {
 		}
 	}
 	
+	private void notifyDeleted(IMarker marker, EObject element) {
+		if (element instanceof Issue) {
+			IssueExplorer explorer = getExplorer();
+			if (explorer != null) {
+				explorer.delete((Issue)element);
+			}
+		}
+	}
+	
 	public void setFixed(Issue issue) {
 		issue.setFixed(true);
 		IMarker oldMarker = (IMarker)issue.getMarker();
@@ -197,6 +206,7 @@ public class MarkerLookupService {
 		elementToMarkerMap.remove(element);
 		resourceElementsMap.remove(marker.getResource(), element);
 		deleteMarker(marker);
+		notifyDeleted(marker, element);
 	}
 	
 	public void clear() {

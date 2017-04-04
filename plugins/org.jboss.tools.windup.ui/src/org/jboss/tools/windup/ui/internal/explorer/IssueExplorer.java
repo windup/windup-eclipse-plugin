@@ -414,34 +414,36 @@ public class IssueExplorer extends CommonNavigator {
 	
 	public void clear() {
 		getCommonViewer().getTree().removeAll();
+		getCommonViewer().setSelection(StructuredSelection.EMPTY);
 	}
 	
 	public void buildTree()	{
 		refresh();
 	}
 	
-	public void deleteMarkerNode(MarkerNode markerNode) {
-		IMarker marker = markerNode.getMarker();
-		modelService.deleteIssue(markerNode.getIssue());
-		markerService.delete(marker, markerNode.getIssue());
-		TreeNode parent = markerNode.getParent();
-		Object segment = markerNode.getSegment();
-		while (parent != null) {
-			parent.removeChild(segment);
-			getCommonViewer().remove(markerNode);
-			getCommonViewer().refresh(parent, true);
-			if (!parent.getChildren().isEmpty() && 
-					parent.getChildren().size() == 1 &&
-						parent.getChildren().get(0) instanceof ReportNode) {
-				segment = parent.getSegment();
-				parent = parent.getParent();
-			}
-			else if (parent.getChildren().isEmpty()) {
-				segment = parent.getSegment();
-				parent = parent.getParent();
-			}
-			else {
-				break;
+	public void delete(Issue issue) {
+		IMarker marker = (IMarker)issue.getMarker();
+		MarkerNode markerNode = contentService.findMarkerNode(marker);
+		if (markerNode != null) {
+			TreeNode parent = markerNode.getParent();
+			Object segment = markerNode.getSegment();
+			while (parent != null) {
+				parent.removeChild(segment);
+				getCommonViewer().remove(markerNode);
+				getCommonViewer().refresh(parent, true);
+				if (!parent.getChildren().isEmpty() && 
+						parent.getChildren().size() == 1 &&
+							parent.getChildren().get(0) instanceof ReportNode) {
+					segment = parent.getSegment();
+					parent = parent.getParent();
+				}
+				else if (parent.getChildren().isEmpty()) {
+					segment = parent.getSegment();
+					parent = parent.getParent();
+				}
+				else {
+					break;
+				}
 			}
 		}
 	}
