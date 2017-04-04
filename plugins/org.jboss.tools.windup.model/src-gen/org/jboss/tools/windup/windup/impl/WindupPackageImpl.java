@@ -20,6 +20,7 @@ import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.Link;
+import org.jboss.tools.windup.windup.MarkerElement;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.NamedElement;
 import org.jboss.tools.windup.windup.Pair;
@@ -154,6 +155,13 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	private EClass customRuleProviderEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass markerElementEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -669,15 +677,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getHint_Marker() {
-		return (EAttribute)hintEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getClassification() {
 		return classificationEClass;
 	}
@@ -804,15 +803,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getQuickFix_Marker() {
-		return (EAttribute)quickFixEClass.getEStructuralFeatures().get(7);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getMigrationPath() {
 		return migrationPathEClass;
 	}
@@ -930,6 +920,24 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMarkerElement() {
+		return markerElementEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMarkerElement_Marker() {
+		return (EAttribute)markerElementEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -1018,7 +1026,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(hintEClass, HINT__COLUMN);
 		createEAttribute(hintEClass, HINT__LENGTH);
 		createEAttribute(hintEClass, HINT__SOURCE_SNIPPET);
-		createEAttribute(hintEClass, HINT__MARKER);
 
 		classificationEClass = createEClass(CLASSIFICATION);
 		createEAttribute(classificationEClass, CLASSIFICATION__CLASSIFICATION);
@@ -1036,7 +1043,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(quickFixEClass, QUICK_FIX__ID);
 		createEAttribute(quickFixEClass, QUICK_FIX__TRANSFORMATION_ID);
 		createEAttribute(quickFixEClass, QUICK_FIX__FILE);
-		createEAttribute(quickFixEClass, QUICK_FIX__MARKER);
 
 		migrationPathEClass = createEClass(MIGRATION_PATH);
 		createEAttribute(migrationPathEClass, MIGRATION_PATH__ID);
@@ -1054,6 +1060,9 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		customRuleProviderEClass = createEClass(CUSTOM_RULE_PROVIDER);
 		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__LOCATION_URI);
 		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__EXTERNAL);
+
+		markerElementEClass = createEClass(MARKER_ELEMENT);
+		createEAttribute(markerElementEClass, MARKER_ELEMENT__MARKER);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -1091,10 +1100,12 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		parameterEClass.getESuperTypes().add(this.getNamedElement());
 		parameterizedEClass.getESuperTypes().add(this.getNamedElement());
 		inputEClass.getESuperTypes().add(this.getNamedElement());
+		issueEClass.getESuperTypes().add(this.getMarkerElement());
 		hintEClass.getESuperTypes().add(this.getIssue());
 		classificationEClass.getESuperTypes().add(this.getIssue());
-		quickFixEClass.getESuperTypes().add(this.getNamedElement());
+		quickFixEClass.getESuperTypes().add(this.getMarkerElement());
 		migrationPathEClass.getESuperTypes().add(this.getNamedElement());
+		markerElementEClass.getESuperTypes().add(this.getNamedElement());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(namedElementEClass, NamedElement.class, "NamedElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1161,7 +1172,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getHint_Column(), ecorePackage.getEInt(), "column", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_Length(), ecorePackage.getEInt(), "length", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_SourceSnippet(), ecorePackage.getEString(), "sourceSnippet", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getHint_Marker(), ecorePackage.getEJavaObject(), "marker", null, 0, 1, Hint.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(classificationEClass, Classification.class, "Classification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getClassification_Classification(), ecorePackage.getEString(), "classification", null, 0, 1, Classification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1179,7 +1189,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getQuickFix_Id(), ecorePackage.getEString(), "id", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getQuickFix_TransformationId(), ecorePackage.getEString(), "transformationId", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getQuickFix_File(), ecorePackage.getEString(), "file", null, 0, 1, QuickFix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getQuickFix_Marker(), ecorePackage.getEJavaObject(), "marker", null, 0, 1, QuickFix.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(migrationPathEClass, MigrationPath.class, "MigrationPath", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMigrationPath_Id(), ecorePackage.getEString(), "id", null, 0, 1, MigrationPath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1197,6 +1206,9 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEClass(customRuleProviderEClass, CustomRuleProvider.class, "CustomRuleProvider", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCustomRuleProvider_LocationURI(), ecorePackage.getEString(), "locationURI", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCustomRuleProvider_External(), ecorePackage.getEBoolean(), "external", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(markerElementEClass, MarkerElement.class, "MarkerElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMarkerElement_Marker(), ecorePackage.getEJavaObject(), "marker", null, 0, 1, MarkerElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

@@ -6,7 +6,6 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.tools.windup.windup.WindupPackage;
 
@@ -25,12 +24,11 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getTransformationId <em>Transformation Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getFile <em>File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getMarker <em>Marker</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class QuickFixImpl extends NamedElementImpl implements QuickFix {
+public class QuickFixImpl extends MarkerElementImpl implements QuickFix {
 	/**
 	 * The default value of the '{@link #getNewLine() <em>New Line</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -170,26 +168,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 	 * @ordered
 	 */
 	protected String file = FILE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getMarker() <em>Marker</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMarker()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object MARKER_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getMarker() <em>Marker</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMarker()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object marker = MARKER_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -362,27 +340,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getMarker() {
-		return marker;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setMarker(Object newMarker) {
-		Object oldMarker = marker;
-		marker = newMarker;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.QUICK_FIX__MARKER, oldMarker, marker));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -400,8 +357,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 				return getTransformationId();
 			case WindupPackage.QUICK_FIX__FILE:
 				return getFile();
-			case WindupPackage.QUICK_FIX__MARKER:
-				return getMarker();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -434,9 +389,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 				return;
 			case WindupPackage.QUICK_FIX__FILE:
 				setFile((String)newValue);
-				return;
-			case WindupPackage.QUICK_FIX__MARKER:
-				setMarker(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -471,9 +423,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 			case WindupPackage.QUICK_FIX__FILE:
 				setFile(FILE_EDEFAULT);
 				return;
-			case WindupPackage.QUICK_FIX__MARKER:
-				setMarker(MARKER_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -500,8 +449,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 				return TRANSFORMATION_ID_EDEFAULT == null ? transformationId != null : !TRANSFORMATION_ID_EDEFAULT.equals(transformationId);
 			case WindupPackage.QUICK_FIX__FILE:
 				return FILE_EDEFAULT == null ? file != null : !FILE_EDEFAULT.equals(file);
-			case WindupPackage.QUICK_FIX__MARKER:
-				return MARKER_EDEFAULT == null ? marker != null : !MARKER_EDEFAULT.equals(marker);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -530,8 +477,6 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 		result.append(transformationId);
 		result.append(", file: ");
 		result.append(file);
-		result.append(", marker: ");
-		result.append(marker);
 		result.append(')');
 		return result.toString();
 	}

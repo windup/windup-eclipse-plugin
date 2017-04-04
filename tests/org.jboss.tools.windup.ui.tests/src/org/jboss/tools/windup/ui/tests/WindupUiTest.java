@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
 import static org.junit.Assert.assertNotNull;
 
 import javax.inject.Inject;
@@ -33,7 +32,9 @@ import org.jboss.tools.windup.model.util.NameUtil;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.tests.swtbot.WorkbenchBot;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
@@ -63,10 +64,13 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected WindupService windupService;
 	
 	@Inject protected IEventBroker broker;
-	@Inject protected MarkerService markerService;
 	
 	@Inject protected WindupRmiClient windupClient;
 	@Inject protected WindupLauncher windupLauncher;
+	
+	@Inject protected MarkerLookupService markerService;
+	@Inject protected QuickFixUtil quickfixService;
+	@Inject protected ViewService viewService;
 	
 	protected IssueExplorer issueExplorer;
 	
@@ -91,8 +95,10 @@ public class WindupUiTest extends WindupTest {
 	protected void runWindup(ConfigurationElement configuration) {
 		if (windupClient.getExecutionBuilder() != null) {
 			Display.getDefault().syncExec(() -> {
+            	viewService.launchStarting();
 				windupService.generateGraph(configuration, new NullProgressMonitor());
-				updateMarkers(configuration);
+				viewService.renderReport(configuration);
+            	markerService.generateMarkersForConfiguration(configuration);
 			});
 		}
 		else {
@@ -100,20 +106,13 @@ public class WindupUiTest extends WindupTest {
 				@Override
 				public void serverStart(IStatus status) {
 					if (status.isOK() && windupClient.getExecutionBuilder() != null) {
+		            	viewService.launchStarting();
 						windupService.generateGraph(configuration, new NullProgressMonitor());
-						updateMarkers(configuration);
+						viewService.renderReport(configuration);
+		            	markerService.generateMarkersForConfiguration(configuration);
 					}
 				}
 			});
-		}
-	}
-	
-	private void updateMarkers(ConfigurationElement configuration) {
-		try {
-			markerService.createWindupMarkers(configuration, new NullProgressMonitor());
-			broker.send(MARKERS_CHANGED, true);
-		} catch (CoreException e) {
-			e.printStackTrace();
 		}
 	}
 	

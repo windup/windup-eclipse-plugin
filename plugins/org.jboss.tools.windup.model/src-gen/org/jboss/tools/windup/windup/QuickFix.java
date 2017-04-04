@@ -18,14 +18,13 @@ package org.jboss.tools.windup.windup;
  *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getId <em>Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getTransformationId <em>Transformation Id</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getFile <em>File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getMarker <em>Marker</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getQuickFix()
  * @model
  * @generated
  */
-public interface QuickFix extends NamedElement {
+public interface QuickFix extends MarkerElement {
 	/**
 	 * Returns the value of the '<em><b>New Line</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -207,31 +206,5 @@ public interface QuickFix extends NamedElement {
 	 * @generated
 	 */
 	void setFile(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Marker</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Marker</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Marker</em>' attribute.
-	 * @see #setMarker(Object)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getQuickFix_Marker()
-	 * @model unique="false" transient="true"
-	 * @generated
-	 */
-	Object getMarker();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.QuickFix#getMarker <em>Marker</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Marker</em>' attribute.
-	 * @see #getMarker()
-	 * @generated
-	 */
-	void setMarker(Object value);
 
 } // QuickFix

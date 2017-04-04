@@ -13,8 +13,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -46,7 +44,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *
  * @generated
  */
-public class IssueImpl extends MinimalEObjectImpl.Container implements Issue {
+public class IssueImpl extends MarkerElementImpl implements Issue {
 	/**
 	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->

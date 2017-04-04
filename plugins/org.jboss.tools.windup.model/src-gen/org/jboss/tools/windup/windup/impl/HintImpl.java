@@ -25,7 +25,6 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getColumn <em>Column</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getLength <em>Length</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getSourceSnippet <em>Source Snippet</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getMarker <em>Marker</em>}</li>
  * </ul>
  *
  * @generated
@@ -150,26 +149,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	 * @ordered
 	 */
 	protected String sourceSnippet = SOURCE_SNIPPET_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getMarker() <em>Marker</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMarker()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object MARKER_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getMarker() <em>Marker</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMarker()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object marker = MARKER_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -321,27 +300,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getMarker() {
-		return marker;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setMarker(Object newMarker) {
-		Object oldMarker = marker;
-		marker = newMarker;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.HINT__MARKER, oldMarker, marker));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -357,8 +315,6 @@ public class HintImpl extends IssueImpl implements Hint {
 				return getLength();
 			case WindupPackage.HINT__SOURCE_SNIPPET:
 				return getSourceSnippet();
-			case WindupPackage.HINT__MARKER:
-				return getMarker();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -388,9 +344,6 @@ public class HintImpl extends IssueImpl implements Hint {
 				return;
 			case WindupPackage.HINT__SOURCE_SNIPPET:
 				setSourceSnippet((String)newValue);
-				return;
-			case WindupPackage.HINT__MARKER:
-				setMarker(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -422,9 +375,6 @@ public class HintImpl extends IssueImpl implements Hint {
 			case WindupPackage.HINT__SOURCE_SNIPPET:
 				setSourceSnippet(SOURCE_SNIPPET_EDEFAULT);
 				return;
-			case WindupPackage.HINT__MARKER:
-				setMarker(MARKER_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -449,8 +399,6 @@ public class HintImpl extends IssueImpl implements Hint {
 				return length != LENGTH_EDEFAULT;
 			case WindupPackage.HINT__SOURCE_SNIPPET:
 				return SOURCE_SNIPPET_EDEFAULT == null ? sourceSnippet != null : !SOURCE_SNIPPET_EDEFAULT.equals(sourceSnippet);
-			case WindupPackage.HINT__MARKER:
-				return MARKER_EDEFAULT == null ? marker != null : !MARKER_EDEFAULT.equals(marker);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -477,8 +425,6 @@ public class HintImpl extends IssueImpl implements Hint {
 		result.append(length);
 		result.append(", sourceSnippet: ");
 		result.append(sourceSnippet);
-		result.append(", marker: ");
-		result.append(marker);
 		result.append(')');
 		return result.toString();
 	}

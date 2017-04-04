@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -23,7 +21,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -33,7 +30,8 @@ import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -47,10 +45,11 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	@Inject private WindupLauncher launcher;
 	
 	@Inject private WindupService windupService;
-	@Inject private IEventBroker broker;
 	@Inject private ModelService modelService;
-	@Inject private MarkerService markerService;
 	@Inject private WindupRmiClient windupClient;
+	@Inject private MarkerLookupService markerService;
+	@Inject private ViewService viewService;
+	
 	@Inject @Named (IServiceConstants.ACTIVE_SHELL) Shell shell;
 	
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) {
@@ -62,7 +61,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			});
 		}
 		else {
-			markerService.deleteAllWindupMarkers();
+			markerService.clear();
 			if (!windupClient.isWindupServerRunning()) {
 				launcher.start(new WindupServerCallbackAdapter(shell) {
 					@Override
@@ -96,9 +95,11 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		Job job = new Job(NLS.bind(Messages.generate_windup_report_for, configuration.getName())) {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
+            	viewService.launchStarting();
             	IStatus status = windupService.generateGraph(configuration, monitor);
-            	broker.post(LAUNCH_COMPLETED, configuration);
-                return status;
+            	viewService.renderReport(configuration);
+            	markerService.generateMarkersForConfiguration(configuration);
+            	return status;
             }
         };
         job.setUser(true);

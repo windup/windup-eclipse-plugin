@@ -544,123 +544,6 @@ public interface WindupPackage extends EPackage {
 	int ISSUE = 7;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__ELEMENT_ID = 0;
-
-	/**
-	 * The feature id for the '<em><b>Links</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__LINKS = 1;
-
-	/**
-	 * The feature id for the '<em><b>File Absolute Path</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__FILE_ABSOLUTE_PATH = 2;
-
-	/**
-	 * The feature id for the '<em><b>Severity</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__SEVERITY = 3;
-
-	/**
-	 * The feature id for the '<em><b>Rule Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__RULE_ID = 4;
-
-	/**
-	 * The feature id for the '<em><b>Effort</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__EFFORT = 5;
-
-	/**
-	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__FIXED = 6;
-
-	/**
-	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__GENERATED_REPORT_LOCATION = 7;
-
-	/**
-	 * The feature id for the '<em><b>Quick Fixes</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__QUICK_FIXES = 8;
-
-	/**
-	 * The feature id for the '<em><b>Original Line Source</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__ORIGINAL_LINE_SOURCE = 9;
-
-	/**
-	 * The feature id for the '<em><b>Stale</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE__STALE = 10;
-
-	/**
-	 * The number of structural features of the '<em>Issue</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE_FEATURE_COUNT = 11;
-
-	/**
-	 * The number of operations of the '<em>Issue</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ISSUE_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.HintImpl <em>Hint</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -669,6 +552,293 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	int HINT = 8;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.ClassificationImpl <em>Classification</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.ClassificationImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getClassification()
+	 * @generated
+	 */
+	int CLASSIFICATION = 9;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.LinkImpl <em>Link</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.LinkImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getLink()
+	 * @generated
+	 */
+	int LINK = 10;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.QuickFixImpl <em>Quick Fix</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.QuickFixImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getQuickFix()
+	 * @generated
+	 */
+	int QUICK_FIX = 11;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MigrationPathImpl <em>Migration Path</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.MigrationPathImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getMigrationPath()
+	 * @generated
+	 */
+	int MIGRATION_PATH = 12;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.TechnologyImpl <em>Technology</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.TechnologyImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getTechnology()
+	 * @generated
+	 */
+	int TECHNOLOGY = 13;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.PairImpl <em>Pair</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.PairImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getPair()
+	 * @generated
+	 */
+	int PAIR = 14;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl <em>Custom Rule Provider</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getCustomRuleProvider()
+	 * @generated
+	 */
+	int CUSTOM_RULE_PROVIDER = 15;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MarkerElementImpl <em>Marker Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.MarkerElementImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getMarkerElement()
+	 * @generated
+	 */
+	int MARKER_ELEMENT = 16;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MARKER_ELEMENT__NAME = NAMED_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MARKER_ELEMENT__MARKER = NAMED_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Marker Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MARKER_ELEMENT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MARKER_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP = NAMED_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Marker Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MARKER_ELEMENT_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__NAME = MARKER_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__MARKER = MARKER_ELEMENT__MARKER;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__ELEMENT_ID = MARKER_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Links</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__LINKS = MARKER_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>File Absolute Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__FILE_ABSOLUTE_PATH = MARKER_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Severity</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__SEVERITY = MARKER_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Rule Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__RULE_ID = MARKER_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Effort</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__EFFORT = MARKER_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__FIXED = MARKER_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Generated Report Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__GENERATED_REPORT_LOCATION = MARKER_ELEMENT_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Quick Fixes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__QUICK_FIXES = MARKER_ELEMENT_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Original Line Source</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__ORIGINAL_LINE_SOURCE = MARKER_ELEMENT_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Stale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__STALE = MARKER_ELEMENT_FEATURE_COUNT + 10;
+
+	/**
+	 * The number of structural features of the '<em>Issue</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE_FEATURE_COUNT = MARKER_ELEMENT_FEATURE_COUNT + 11;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE___VALIDATE__DIAGNOSTICCHAIN_MAP = MARKER_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Issue</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE_OPERATION_COUNT = MARKER_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__NAME = ISSUE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__MARKER = ISSUE__MARKER;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -824,22 +994,22 @@ public interface WindupPackage extends EPackage {
 	int HINT__SOURCE_SNIPPET = ISSUE_FEATURE_COUNT + 5;
 
 	/**
-	 * The feature id for the '<em><b>Marker</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HINT__MARKER = ISSUE_FEATURE_COUNT + 6;
-
-	/**
 	 * The number of structural features of the '<em>Hint</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HINT_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 7;
+	int HINT_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 6;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT___VALIDATE__DIAGNOSTICCHAIN_MAP = ISSUE___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Hint</em>' class.
@@ -851,14 +1021,22 @@ public interface WindupPackage extends EPackage {
 	int HINT_OPERATION_COUNT = ISSUE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.ClassificationImpl <em>Classification</em>}' class.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.ClassificationImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getClassification()
 	 * @generated
+	 * @ordered
 	 */
-	int CLASSIFICATION = 9;
+	int CLASSIFICATION__NAME = ISSUE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Marker</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__MARKER = ISSUE__MARKER;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -987,6 +1165,15 @@ public interface WindupPackage extends EPackage {
 	int CLASSIFICATION_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 2;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION___VALIDATE__DIAGNOSTICCHAIN_MAP = ISSUE___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Classification</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -994,16 +1181,6 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION_OPERATION_COUNT = ISSUE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.LinkImpl <em>Link</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.LinkImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getLink()
-	 * @generated
-	 */
-	int LINK = 10;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -1042,86 +1219,13 @@ public interface WindupPackage extends EPackage {
 	int LINK_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.QuickFixImpl <em>Quick Fix</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.QuickFixImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getQuickFix()
-	 * @generated
-	 */
-	int QUICK_FIX = 11;
-
-	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX__NAME = NAMED_ELEMENT__NAME;
-
-	/**
-	 * The feature id for the '<em><b>New Line</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__NEW_LINE = NAMED_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Replacement String</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__REPLACEMENT_STRING = NAMED_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Search String</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__SEARCH_STRING = NAMED_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Quick Fix Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__QUICK_FIX_TYPE = NAMED_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__ID = NAMED_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Transformation Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__TRANSFORMATION_ID = NAMED_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>File</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int QUICK_FIX__FILE = NAMED_ELEMENT_FEATURE_COUNT + 6;
+	int QUICK_FIX__NAME = MARKER_ELEMENT__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Marker</b></em>' attribute.
@@ -1130,7 +1234,70 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX__MARKER = NAMED_ELEMENT_FEATURE_COUNT + 7;
+	int QUICK_FIX__MARKER = MARKER_ELEMENT__MARKER;
+
+	/**
+	 * The feature id for the '<em><b>New Line</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__NEW_LINE = MARKER_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Replacement String</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__REPLACEMENT_STRING = MARKER_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Search String</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__SEARCH_STRING = MARKER_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Quick Fix Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__QUICK_FIX_TYPE = MARKER_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__ID = MARKER_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Transformation Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__TRANSFORMATION_ID = MARKER_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>File</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int QUICK_FIX__FILE = MARKER_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of structural features of the '<em>Quick Fix</em>' class.
@@ -1139,7 +1306,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 8;
+	int QUICK_FIX_FEATURE_COUNT = MARKER_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1148,7 +1315,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX___VALIDATE__DIAGNOSTICCHAIN_MAP = NAMED_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+	int QUICK_FIX___VALIDATE__DIAGNOSTICCHAIN_MAP = MARKER_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Quick Fix</em>' class.
@@ -1157,17 +1324,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int QUICK_FIX_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MigrationPathImpl <em>Migration Path</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.MigrationPathImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getMigrationPath()
-	 * @generated
-	 */
-	int MIGRATION_PATH = 12;
+	int QUICK_FIX_OPERATION_COUNT = MARKER_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1233,16 +1390,6 @@ public interface WindupPackage extends EPackage {
 	int MIGRATION_PATH_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.TechnologyImpl <em>Technology</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.TechnologyImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getTechnology()
-	 * @generated
-	 */
-	int TECHNOLOGY = 13;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1279,16 +1426,6 @@ public interface WindupPackage extends EPackage {
 	int TECHNOLOGY_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.PairImpl <em>Pair</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.PairImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getPair()
-	 * @generated
-	 */
-	int PAIR = 14;
-
-	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1323,16 +1460,6 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int PAIR_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl <em>Custom Rule Provider</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getCustomRuleProvider()
-	 * @generated
-	 */
-	int CUSTOM_RULE_PROVIDER = 15;
 
 	/**
 	 * The feature id for the '<em><b>Location URI</b></em>' attribute.
@@ -1378,7 +1505,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 16;
+	int WINDUP_EXECUTION_RESULTS = 17;
 
 
 	/**
@@ -1900,17 +2027,6 @@ public interface WindupPackage extends EPackage {
 	EAttribute getHint_SourceSnippet();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Hint#getMarker <em>Marker</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Marker</em>'.
-	 * @see org.jboss.tools.windup.windup.Hint#getMarker()
-	 * @see #getHint()
-	 * @generated
-	 */
-	EAttribute getHint_Marker();
-
-	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Classification <em>Classification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2062,17 +2178,6 @@ public interface WindupPackage extends EPackage {
 	EAttribute getQuickFix_File();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.QuickFix#getMarker <em>Marker</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Marker</em>'.
-	 * @see org.jboss.tools.windup.windup.QuickFix#getMarker()
-	 * @see #getQuickFix()
-	 * @generated
-	 */
-	EAttribute getQuickFix_Marker();
-
-	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.MigrationPath <em>Migration Path</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2210,6 +2315,27 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCustomRuleProvider_External();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.MarkerElement <em>Marker Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Marker Element</em>'.
+	 * @see org.jboss.tools.windup.windup.MarkerElement
+	 * @generated
+	 */
+	EClass getMarkerElement();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.MarkerElement#getMarker <em>Marker</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Marker</em>'.
+	 * @see org.jboss.tools.windup.windup.MarkerElement#getMarker()
+	 * @see #getMarkerElement()
+	 * @generated
+	 */
+	EAttribute getMarkerElement_Marker();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

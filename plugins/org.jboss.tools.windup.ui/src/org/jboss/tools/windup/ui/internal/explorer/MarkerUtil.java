@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.NLS;
-import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueConstants.Severity;
@@ -37,23 +36,7 @@ import com.google.common.collect.Lists;
  */
 public class MarkerUtil {
 	
-	public static void deleteMarker(IMarker marker) {
-		try {
-			marker.delete();
-		} catch (CoreException e) {
-			WindupUIPlugin.log(e);
-		}
-	}
-	
-	public static List<IMarker> collectWindupMarkers(IResource resource) {
-		List<IMarker> markers = Lists.newArrayList();
-		markers.addAll(MarkerUtil.getMarkers(WINDUP_HINT_MARKER_ID, resource, IResource.DEPTH_INFINITE));
-		markers.addAll(MarkerUtil.getMarkers(WINDUP_CLASSIFICATION_MARKER_ID, resource, IResource.DEPTH_INFINITE));
-		markers.addAll(MarkerUtil.getMarkers(WindupMarker.WINDUP_QUICKFIX_ID, resource, IResource.DEPTH_INFINITE));
-		return markers;
-	}
-	
-	public static List<IMarker> collectWindupMarkers() {
+	public static List<IMarker> collectWindupIssueMarkers() {
 		List<IMarker> markers = Lists.newArrayList();
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			if (project.exists() && project.isAccessible()) {
@@ -70,10 +53,18 @@ public class MarkerUtil {
 		return markers;
 	}
 	
-	public static List<IMarker> collectQuickfixMarkers() {
+	public static List<IMarker> collectAllWindupMarkers() {
 		List<IMarker> markers = Lists.newArrayList();
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			if (project.exists() && project.isAccessible()) {
+				markers.addAll(getMarkers(
+						WINDUP_HINT_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE));
+				markers.addAll(getMarkers(
+						WINDUP_CLASSIFICATION_MARKER_ID, 
+						project,
+						IResource.DEPTH_INFINITE));
 				markers.addAll(getMarkers(
 						WINDUP_QUICKFIX_ID, 
 						project, 

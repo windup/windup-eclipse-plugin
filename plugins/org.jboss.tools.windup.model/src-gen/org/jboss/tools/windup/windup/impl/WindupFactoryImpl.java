@@ -73,6 +73,7 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 			case WindupPackage.TECHNOLOGY: return createTechnology();
 			case WindupPackage.PAIR: return createPair();
 			case WindupPackage.CUSTOM_RULE_PROVIDER: return createCustomRuleProvider();
+			case WindupPackage.MARKER_ELEMENT: return createMarkerElement();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -262,6 +263,16 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 	public CustomRuleProvider createCustomRuleProvider() {
 		CustomRuleProviderImpl customRuleProvider = new CustomRuleProviderImpl();
 		return customRuleProvider;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MarkerElement createMarkerElement() {
+		MarkerElementImpl markerElement = new MarkerElementImpl();
+		return markerElement;
 	}
 
 	/**
