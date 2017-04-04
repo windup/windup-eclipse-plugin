@@ -42,6 +42,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getMigrationPath <em>Migration Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getOptions <em>Options</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getReportDirectory <em>Report Directory</em>}</li>
  * </ul>
  *
  * @generated
@@ -196,6 +197,26 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<Pair> options;
+
+	/**
+	 * The default value of the '{@link #getReportDirectory() <em>Report Directory</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getReportDirectory()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String REPORT_DIRECTORY_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getReportDirectory() <em>Report Directory</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getReportDirectory()
+	 * @generated
+	 * @ordered
+	 */
+	protected String reportDirectory = REPORT_DIRECTORY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -412,6 +433,27 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getReportDirectory() {
+		return reportDirectory;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setReportDirectory(String newReportDirectory) {
+		String oldReportDirectory = reportDirectory;
+		reportDirectory = newReportDirectory;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY, oldReportDirectory, reportDirectory));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -452,6 +494,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getUserRulesDirectories();
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				return getOptions();
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
+				return getReportDirectory();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -499,6 +543,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getOptions().clear();
 				getOptions().addAll((Collection<? extends Pair>)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
+				setReportDirectory((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -541,6 +588,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				getOptions().clear();
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
+				setReportDirectory(REPORT_DIRECTORY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -573,6 +623,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return userRulesDirectories != null && !userRulesDirectories.isEmpty();
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				return options != null && !options.isEmpty();
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
+				return REPORT_DIRECTORY_EDEFAULT == null ? reportDirectory != null : !REPORT_DIRECTORY_EDEFAULT.equals(reportDirectory);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -601,6 +653,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(generateReport);
 		result.append(", userRulesDirectories: ");
 		result.append(userRulesDirectories);
+		result.append(", reportDirectory: ");
+		result.append(reportDirectory);
 		result.append(')');
 		return result.toString();
 	}

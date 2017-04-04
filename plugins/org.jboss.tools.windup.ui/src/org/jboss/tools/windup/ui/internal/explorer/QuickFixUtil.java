@@ -10,45 +10,108 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.io.File;
+import java.rmi.RemoteException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.apache.commons.io.FileUtils;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.text.java.JavaFormattingStrategy;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.util.DocumentUtils;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
+import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.data.QuickfixType;
+import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
+
+import com.google.common.base.Objects;
 
 /**
- * Utility for interacting with quick fixes.
+ * Service for interacting with quick fixes.
  */
+
+@SuppressWarnings("restriction")
+@Creatable
+@Singleton
 public class QuickFixUtil {
 	
-	public static void applyQuickFix(QuickFix quickFix, Hint hint, IMarker marker, 
-			IEventBroker broker, MarkerService markerService) {
+	@Inject private MarkerLookupService markerService;
+	@Inject private WindupRmiClient windupClient;
+	
+	public void applyQuickFix(QuickFix quickfix) {
+		IMarker quickfixMarker =(IMarker)quickfix.getMarker();
+		IResource newResource = getQuickFixedResource(quickfix, quickfixMarker);
+		DocumentUtils.replace(quickfixMarker.getResource(), newResource);
+		markerService.delete(quickfixMarker, quickfix);
+		
+		/*
+		 * We don't know what the transformation did to the file, so we clear all Windup marker associated with it.
+		 */
+		if (QuickfixType.TRANSFORMATION.toString().equals(quickfix.getQuickFixType())) {
+			/*
+			 * TODO: But if there's multiple issues associated with this resource, we now no longer can see them.
+			 * But if we don't, if lines of code associated with hints are changed, they'll get marked as invalid,
+			 * which doens't look good in UI. 
+			 */
+			//markerService.deleteWindupMarkers(marker.getResource());
+		}
+		
+		/*
+		 * What we could do is, go through the Windup markers on the marker.getResource(), 
+		 * and if the issue has become stale (ie., the lines associated with an issue have changed) 
+		 * then delete the issue. Issue - MarkerSyncService doesn't run by now, so issues haven't been
+		 * marked as stale. Of course, this would include other stale issues not created by
+		 * the quickfix, but we probably could specially mark those if necessary to prevent deleting them.
+		 */
+		IResource quickfixResource = quickfixMarker.getResource();
+		
+		Hint hint = (Hint)quickfix.eContainer();
+		IMarker hintMarker = (IMarker)hint.getMarker();
+		if (hintMarker.exists()) {
+			/*
+			 * This is temporary. We're deleting all Windup markers associated with a resource that has been 
+			 * transformed by the quickfix. Ideally, we should only delete the ones that have become stale,
+			 * but because the MarkerSync service hasn't yet been notified, we're clearing all of them for now.
+			 */
+			IResource hintResource = hintMarker.getResource();
+			if (!Objects.equal(hintResource, quickfixResource)) {
+				markerService.clear(quickfixResource);
+			}
+			
+			if (!hint.isFixed()) {
+				if (hintMarker != null && hintMarker.exists())	{
+					markerService.setFixed(hint);
+				}
+			}
+		}
+	}
+	
+	public IResource getQuickFixedResource(QuickFix quickFix, IMarker marker) {
+		Hint hint = (Hint)quickFix.eContainer();
 		IResource original = marker.getResource();
-		IResource newResource = QuickFixUtil.getQuickFixedResource(original, quickFix, hint);
-		DocumentUtils.replace(original, newResource);
-		QuickFixUtil.setFixed(hint, marker, broker, markerService);
-	}
-	
-	public static void setFixed(Issue issue, IMarker marker, IEventBroker broker, MarkerService markerService) {
-		Dictionary<String, Object> props = new Hashtable<String, Object>();
-		IMarker updatedMarker = markerService.createFixedMarker(marker, issue);
-		props.put(WindupConstants.EVENT_ISSUE_MARKER, marker);
-		props.put(WindupConstants.EVENT_ISSUE_MARKER_UPDATE, updatedMarker);
-		broker.post(WindupConstants.MARKER_CHANGED, props);
-	}
-	
-	public static IResource getQuickFixedResource(IResource original, QuickFix quickFix, Hint hint) {
 		TempProject project = new TempProject();
 		if (QuickfixType.REPLACE.toString().equals(quickFix.getQuickFixType())) {
 			int lineNumber = hint.getLineNumber()-1;
@@ -64,24 +127,84 @@ public class QuickFixUtil {
 		}
 		else if (QuickfixType.INSERT_LINE.toString().equals(quickFix.getQuickFixType())) {
 			int lineNumber = hint.getLineNumber();
-			lineNumber = lineNumber > 1 ? lineNumber - 2 : lineNumber - 1;
+			lineNumber = lineNumber > 1 ? lineNumber - 2 : lineNumber-1;
 			String newLine = quickFix.getReplacementString();
 			Document document = DocumentUtils.insertLine(original, lineNumber, newLine);
 			return project.createResource(document.get());
 		}
+		else if (QuickfixType.TRANSFORMATION.toString().equals(quickFix.getQuickFixType())) {
+			
+			// TODO: Quickfixes need their own location info.
+			int lineNumber = hint.getLineNumber(); // marker.getAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+			int column = hint.getColumn(); // marker.getAttribute(IMarker.CHAR_START, hint.getColumn());
+			int length = hint.getLength(); //marker.getAttribute(IMarker.CHAR_END, hint.getLength());
+			
+			Input input = (Input)hint.eContainer().eContainer();
+			ConfigurationElement configuration = (ConfigurationElement)input.eContainer();
+			String reportBaseLocation = configuration.getReportDirectory();
+			File reportDirectory = new File(reportBaseLocation);
+			
+	        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+	        		reportDirectory,
+	        		original.getLocation().toFile(),
+	        		lineNumber,
+	        		column,
+	        		length);
+	        try {
+	        	if (windupClient.isWindupServerRunning()) {
+	        		ExecutionBuilder builder = windupClient.getExecutionBuilder();
+		        	String preview = builder.transform(quickFix.getTransformationId(), locationDTO);
+		        	preview = format(marker.getResource(), preview);
+		        	return project.createResource(preview);
+	        	}
+	        } catch (RemoteException e) {
+	        	WindupUIPlugin.log(e);
+	        }
+	        
+		}
 		return null;
 	}
 	
-	public static void previewQuickFix(Hint hint, IMarker marker, IEventBroker broker,
-			MarkerService markerService) {
-		IResource left = marker.getResource();
+	public void previewQuickFix(Hint hint, IMarker marker) {
 		Shell shell = Display.getCurrent().getActiveShell();
-		QuickFix firstQuickFix = hint.getQuickFixes().get(0); 
-		IResource right = QuickFixUtil.getQuickFixedResource(left, firstQuickFix, hint);
-		QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, left, right, hint);
+		QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, hint, this);
 		if (dialog.open() == IssueConstants.APPLY_FIX) {
-			QuickFixUtil.applyQuickFix(dialog.getQuickFix(), hint, marker, broker, markerService);
+			for (QuickFix quickfix : dialog.getQuickfixes()) {
+				applyQuickFix(quickfix);
+			}
 		}
+	}
+	
+	private String format(IResource resource, String contents) {
+		/*
+		 * Java Formatting
+		 */
+		if (JavaCore.create(resource) != null) {
+			MultiPassContentFormatter formatter= new MultiPassContentFormatter(/*IJavaPartitions.JAVA_PARTITIONING*/"__dftl_partitioning", IDocument.DEFAULT_CONTENT_TYPE);
+			formatter.setMasterStrategy(new JavaFormattingStrategy());
+			Document document = new Document(contents);
+			formatter.format(document, new Region(0, document.getLength()));
+			return document.get();
+		}
+		/*
+		 * XML Formatting
+		 */
+		IDOMModel xmlModel = XMLRulesetModelUtil.getModel(resource.getLocation().toString(), true);
+		if (xmlModel != null) {
+			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
+			try {
+				TempProject project = new TempProject();
+				IFile file = (IFile)project.createResource(contents);
+				IStructuredModel model = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(file);
+				formatProcessor.formatModel(model);
+				StructuredModelManager.getModelManager().saveStructuredDocument(model.getStructuredDocument(), file);
+				return FileUtils.readFileToString(file.getLocation().toFile());
+			} catch (Exception e) {
+				WindupUIPlugin.log(e);
+			}
+		}
+		
+		return contents;
 	}
 	
 	public static boolean isIssueFixable(Issue issue) {

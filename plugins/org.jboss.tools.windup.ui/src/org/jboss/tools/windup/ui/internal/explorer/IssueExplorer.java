@@ -10,16 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER;
-import static org.jboss.tools.windup.model.domain.WindupConstants.EVENT_ISSUE_MARKER_UPDATE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKERS_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_CHANGED;
-import static org.jboss.tools.windup.model.domain.WindupConstants.MARKER_DELETED;
 
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -58,8 +52,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -79,6 +71,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
@@ -105,6 +98,7 @@ public class IssueExplorer extends CommonNavigator {
 	
 	@Inject private WindupLauncher windupLauncher;
 	@Inject private WindupRmiClient windupClient;
+	@Inject private MarkerLookupService markerService;
 	
 	private Text searchText;
 	
@@ -182,16 +176,14 @@ public class IssueExplorer extends CommonNavigator {
 				context.set(IMarker.class, type);
 				if (selection instanceof ReportNode) {
 					ReportNode reportNode = (ReportNode)selection;
-					Issue issue = modelService.findIssue(reportNode.getMarker());
+					IMarker marker = reportNode.getMarker();
+					Issue issue = markerService.find(marker);
 					updateReportView(issue, false, partService);
 				}
 			}
 		});
 		getCommonViewer().setComparator(new IssueExplorerComparator());
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
-		broker.subscribe(MARKERS_CHANGED, markersChangedHandler);
-		broker.subscribe(MARKER_DELETED, markerDeletedHandler);
-		broker.subscribe(MARKER_CHANGED, markerChangedHandler);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 		initGettingStarted();
 	}
@@ -248,7 +240,7 @@ public class IssueExplorer extends CommonNavigator {
 		startStopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (windupClient.getExecutionBuilder() == null) {
+				if (!windupClient.isWindupServerRunning()) {
 					windupLauncher.shutdown(new WindupServerCallbackAdapter(shell) {
 						@Override
 						public void serverShutdown(IStatus status) {
@@ -322,7 +314,7 @@ public class IssueExplorer extends CommonNavigator {
 	 }
 	
 	private void updateServerGroup() {
-		if (windupClient.getExecutionBuilder() != null) {
+		if (windupClient.isWindupServerRunning()) {
 			statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_RUNNING_STATUS));
 			statusLabel.setText("[Running - " + windupClient.getWindupVersion() + "]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
@@ -420,52 +412,47 @@ public class IssueExplorer extends CommonNavigator {
 		return false;
 	}
 	
-	private EventHandler markersChangedHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			refresh();
-			// TODO: restore previously expanded nodes, selection, scrolls, etc.
-			getCommonViewer().collapseAll();
-		}
-	};
+	public void clear() {
+		getCommonViewer().getTree().removeAll();
+	}
 	
-	private EventHandler markerDeletedHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			MarkerNode node = (MarkerNode)event.getProperty(EVENT_ISSUE_MARKER);
-			TreeNode parent = node.getParent();
-			Object segment = node.getSegment();
-			while (parent != null) {
-				parent.removeChild(segment);
-				getCommonViewer().remove(node);
-				getCommonViewer().refresh(parent, true);
-				if (parent.getChildren().isEmpty()) {
-					segment = parent.getSegment();
-					parent = parent.getParent();
-				}
-				else {
-					break;
-				}
+	public void buildTree()	{
+		refresh();
+	}
+	
+	public void deleteMarkerNode(MarkerNode markerNode) {
+		IMarker marker = markerNode.getMarker();
+		modelService.deleteIssue(markerNode.getIssue());
+		markerService.delete(marker, markerNode.getIssue());
+		TreeNode parent = markerNode.getParent();
+		Object segment = markerNode.getSegment();
+		while (parent != null) {
+			parent.removeChild(segment);
+			getCommonViewer().remove(markerNode);
+			getCommonViewer().refresh(parent, true);
+			if (!parent.getChildren().isEmpty() && 
+					parent.getChildren().size() == 1 &&
+						parent.getChildren().get(0) instanceof ReportNode) {
+				segment = parent.getSegment();
+				parent = parent.getParent();
+			}
+			else if (parent.getChildren().isEmpty()) {
+				segment = parent.getSegment();
+				parent = parent.getParent();
+			}
+			else {
+				break;
 			}
 		}
-	};
+	}
 	
-	private EventHandler markerChangedHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			IMarker marker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER);
-			IMarker updatedMarker = (IMarker)event.getProperty(EVENT_ISSUE_MARKER_UPDATE);
-			Object node = findIssueNode(marker);
-			contentService.updateNodeMapping(marker, updatedMarker);
-			if (node != null) {
-				MarkerNode markerNode = (MarkerNode)node;
-				markerNode.setMarker(updatedMarker);
-				Display.getDefault().syncExec(() -> {
-					getCommonViewer().refresh(node, true);
-				});
-			}
-		}
-	};
+	public void update(Issue issue, IMarker oldMarker) {
+		IMarker newMarker = (IMarker)issue.getMarker();
+		MarkerNode markerNode = contentService.findMarkerNode(oldMarker);
+		markerNode.setMarker(newMarker);
+		contentService.updateNodeMapping(oldMarker, newMarker);
+		getCommonViewer().refresh(markerNode, true);
+	}
 	
 	private EventHandler groupsChangedHandler = new EventHandler() {
 		@Override
@@ -475,36 +462,6 @@ public class IssueExplorer extends CommonNavigator {
 			getCommonViewer().collapseAll();
 		}
 	};
-	
-	private Object findIssueNode(IMarker marker) {
- 		List<TreeItem> treeItems = Lists.newArrayList();
-		collectTreeItems(getCommonViewer().getTree(), treeItems);
-		for (TreeItem item : treeItems) {
-			Object data = item.getData();
-			if (data instanceof MarkerNode) {
-				MarkerNode node = (MarkerNode)data;
-				if (Objects.equals(marker, node.getMarker())) {
-					return node;
-				}
-			}
-		}
-		return null;
-	}
-	
-	private static void collectTreeItems(Tree tree, List<TreeItem> treeItems) {
-	    for(TreeItem item : tree.getItems()) {
-	    	treeItems.add(item);
-	    	collectTreeItems(item, treeItems);
-	    }
-	}
-	
-	private static void collectTreeItems(TreeItem currentItem, List<TreeItem> treeItems) {
-	    TreeItem[] children = currentItem.getItems();
-	    for(int i = 0; i < children.length; i++) {
-	        treeItems.add(children[i]);
-	        collectTreeItems(children[i], treeItems);
-	    }
-	}
 	
 	private void refresh() {
 		if (getCommonViewer() != null && !getCommonViewer().getTree().isDisposed()) {
@@ -541,7 +498,8 @@ public class IssueExplorer extends CommonNavigator {
 				Object element = ss.getFirstElement();
 				if (element instanceof ReportNode) {
 					ReportNode node = (ReportNode)element;
-					Issue issue = modelService.findIssue(node.getMarker());
+					IMarker marker = node.getMarker();
+					Issue issue = markerService.find(marker);
 					updateReportView(issue, true, partService);
 				}
 			}
@@ -576,9 +534,6 @@ public class IssueExplorer extends CommonNavigator {
 	@Override
 	public void dispose() {
 		super.dispose();
-		broker.unsubscribe(markersChangedHandler);
-		broker.unsubscribe(markerDeletedHandler);
-		broker.unsubscribe(markerChangedHandler);
 		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();
 		groupService.save();
