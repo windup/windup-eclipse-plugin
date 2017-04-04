@@ -16,16 +16,14 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
@@ -41,15 +39,13 @@ public class IssueResolutions {
 		
 		private static String LABEL = "Apply first quick fix for the selected migration issue."; //$NON-NLS-1$ 
 		
-		private ModelService modelService;
-		private MarkerService markerService;
-		private IEventBroker broker;
+		private QuickFixUtil quickfixService;
+		private MarkerLookupService markerService;
 		private Issue issue;
 		
-		public FirstQuickFixResolution(ModelService modelService, MarkerService markerService, IEventBroker broker, Issue issue) {
-			this.modelService = modelService;
+		public FirstQuickFixResolution(QuickFixUtil quickfixService, MarkerLookupService markerService, Issue issue) {
+			this.quickfixService = quickfixService;
 			this.markerService = markerService;
-			this.broker = broker;
 			this.issue = issue;
 		}
 		
@@ -72,7 +68,7 @@ public class IssueResolutions {
 		public IMarker[] findOtherMarkers(IMarker[] markers) {
 			List<IMarker> others = Lists.newArrayList();
 			for (IMarker marker : markers) {
-				Hint hint = modelService.findHint(marker);
+				Hint hint = markerService.find(marker);
 				if (this.issue != hint && !hint.isStale() && !hint.isFixed() && !hint.getQuickFixes().isEmpty()) {
 					others.add(marker);
 				}
@@ -87,9 +83,10 @@ public class IssueResolutions {
 				protected void execute(IProgressMonitor monitor)
 						throws CoreException, InvocationTargetException, InterruptedException {
 					for (IMarker marker : markers) {
-						Hint hint = modelService.findHint(marker);
-						QuickFix quickFix = hint.getQuickFixes().get(0);
-						QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);
+						Hint hint = markerService.find(marker);
+						for (QuickFix quickfix : hint.getQuickFixes()) {
+							quickfixService.applyQuickFix(quickfix);
+						}
 					}
 				}
 			};

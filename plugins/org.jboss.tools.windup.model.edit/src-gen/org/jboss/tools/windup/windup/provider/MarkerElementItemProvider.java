@@ -8,29 +8,29 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
-import org.jboss.tools.windup.windup.Classification;
+import org.jboss.tools.windup.windup.MarkerElement;
 import org.jboss.tools.windup.windup.WindupPackage;
 
 /**
- * This is the item provider adapter for a {@link org.jboss.tools.windup.windup.Classification} object.
+ * This is the item provider adapter for a {@link org.jboss.tools.windup.windup.MarkerElement} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ClassificationItemProvider extends IssueItemProvider {
+public class MarkerElementItemProvider 
+	extends NamedElementItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ClassificationItemProvider(AdapterFactory adapterFactory) {
+	public MarkerElementItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -45,26 +45,25 @@ public class ClassificationItemProvider extends IssueItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addClassificationPropertyDescriptor(object);
-			addDescriptionPropertyDescriptor(object);
+			addMarkerPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Classification feature.
+	 * This adds a property descriptor for the Marker feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addClassificationPropertyDescriptor(Object object) {
+	protected void addMarkerPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Classification_classification_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Classification_classification_feature", "_UI_Classification_type"),
-				 WindupPackage.eINSTANCE.getClassification_Classification(),
+				 getString("_UI_MarkerElement_marker_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_MarkerElement_marker_feature", "_UI_MarkerElement_type"),
+				 WindupPackage.eINSTANCE.getMarkerElement_Marker(),
 				 true,
 				 false,
 				 false,
@@ -74,36 +73,14 @@ public class ClassificationItemProvider extends IssueItemProvider {
 	}
 
 	/**
-	 * This adds a property descriptor for the Description feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addDescriptionPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Classification_description_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Classification_description_feature", "_UI_Classification_type"),
-				 WindupPackage.eINSTANCE.getClassification_Description(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This returns Classification.gif.
+	 * This returns MarkerElement.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Classification"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/MarkerElement"));
 	}
 
 	/**
@@ -114,10 +91,10 @@ public class ClassificationItemProvider extends IssueItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Classification)object).getName();
+		String label = ((MarkerElement)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Classification_type") :
-			getString("_UI_Classification_type") + " " + label;
+			getString("_UI_MarkerElement_type") :
+			getString("_UI_MarkerElement_type") + " " + label;
 	}
 	
 
@@ -132,9 +109,8 @@ public class ClassificationItemProvider extends IssueItemProvider {
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Classification.class)) {
-			case WindupPackage.CLASSIFICATION__CLASSIFICATION:
-			case WindupPackage.CLASSIFICATION__DESCRIPTION:
+		switch (notification.getFeatureID(MarkerElement.class)) {
+			case WindupPackage.MARKER_ELEMENT__MARKER:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

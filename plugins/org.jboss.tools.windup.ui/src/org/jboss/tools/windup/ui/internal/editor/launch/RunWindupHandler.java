@@ -11,7 +11,6 @@
 package org.jboss.tools.windup.ui.internal.editor.launch;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
-import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_COMPLETED;
 
 import javax.inject.Inject;
 
@@ -21,11 +20,12 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
 /**
@@ -33,8 +33,9 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
  */
 public class RunWindupHandler {
 
-	@Inject WindupService windup;
-	@Inject private IEventBroker broker;
+	@Inject private WindupService windupService;
+	@Inject private ViewService viewService;
+	@Inject private MarkerLookupService markerService;
 	private ConfigurationElement configuration;
 	
 	@Inject
@@ -48,9 +49,11 @@ public class RunWindupHandler {
 		Job job = new Job(NLS.bind(Messages.generate_windup_report_for, configuration.getName())) {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
-            	IStatus status = windup.generateGraph(configuration, monitor);
-                broker.post(LAUNCH_COMPLETED, configuration);
-                return status;
+            	viewService.launchStarting();
+            	IStatus status = windupService.generateGraph(configuration, monitor);
+            	viewService.renderReport(configuration);
+            	markerService.generateMarkersForConfiguration(configuration);
+            	return status;
             }
         };
         job.setUser(true);

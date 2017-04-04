@@ -166,6 +166,15 @@ public interface WindupFactory extends EFactory {
 	CustomRuleProvider createCustomRuleProvider();
 
 	/**
+	 * Returns a new object of class '<em>Marker Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Marker Element</em>'.
+	 * @generated
+	 */
+	MarkerElement createMarkerElement();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

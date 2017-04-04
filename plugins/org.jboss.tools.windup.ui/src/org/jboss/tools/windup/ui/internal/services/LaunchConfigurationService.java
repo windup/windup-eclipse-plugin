@@ -37,7 +37,7 @@ import com.google.common.base.Objects;
 public class LaunchConfigurationService implements ILaunchConfigurationListener {
 	
 	@Inject private ModelService modelService;
-	@Inject private MarkerService markerService;
+	@Inject private MarkerLookupService markerService;
 	
 	@PostConstruct
 	private void init() {
@@ -62,7 +62,7 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 		ConfigurationElement lastConfiguration = modelService.getRecentConfiguration();
 		if (configuration != null) {
 			if (configuration.getName().equals(lastConfiguration.getName())) {
-				markerService.deleteAllWindupMarkers();
+				markerService.clear();
 			}
 			modelService.deleteConfiguration(configuration);
 		}
