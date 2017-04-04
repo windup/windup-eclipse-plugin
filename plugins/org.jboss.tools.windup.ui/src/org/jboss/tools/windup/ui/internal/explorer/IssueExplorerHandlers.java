@@ -223,11 +223,15 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class DeleteIssueHandler extends AbstractIssueHandler {
+		@Inject private ModelService modelService;
+		@Inject private MarkerLookupService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				getIssueExplorer().deleteMarkerNode((MarkerNode)selected);
+				MarkerNode node = (MarkerNode)selected;
+				modelService.deleteIssue(node.getIssue());
+				markerService.delete(node.getMarker(), node.getIssue());
 			}
 			return null;
 		}

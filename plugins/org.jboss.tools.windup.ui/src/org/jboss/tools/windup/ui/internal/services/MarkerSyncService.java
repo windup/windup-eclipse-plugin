@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.Hint;
@@ -74,11 +75,15 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 			int lineNumbers = DocumentUtils.getLineNumbers(marker.getResource());
 			
 			if (lineNumber < lineNumbers || lineNumber > lineNumbers) {
-				markerService.delete(marker, hint);
+				Display.getDefault().asyncExec(() -> {
+					markerService.delete(marker, hint);
+				});
 			}
 			
 			else if (DocumentUtils.differs(marker.getResource(), lineNumber, hint.getOriginalLineSource())) {
-				markerService.setStale(hint);
+				Display.getDefault().asyncExec(() -> {
+					markerService.setStale(hint);
+				});
 			}
 		}
 	}
