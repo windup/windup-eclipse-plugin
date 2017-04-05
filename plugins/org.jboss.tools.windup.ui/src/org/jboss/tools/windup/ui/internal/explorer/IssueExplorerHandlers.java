@@ -11,8 +11,6 @@
 package org.jboss.tools.windup.ui.internal.explorer;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,14 +36,13 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
-import org.jboss.tools.windup.ui.internal.services.MarkerService;
-import org.jboss.tools.windup.ui.util.WindupLauncher;
+import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
@@ -68,25 +65,16 @@ public class IssueExplorerHandlers {
 		protected abstract void update(boolean enabled);
 	}
 	
-	public static class StartWindupServerHandler extends AbstractHandler {
-		@Inject private WindupLauncher windupLauncher;
-		@Override
-		public Object execute(ExecutionEvent event) throws ExecutionException {
-			//windupLauncher.launchWindup(configuration, windupStartedCallback);
-			return null;
-		}
-	}
-	
 	public static class OpenReportHandler extends AbstractHandler {
 		@Inject private EPartService partService;
-		@Inject private ModelService modelService;
+		@Inject private MarkerLookupService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			TreeNode node = (TreeNode)selection.getFirstElement();
 			if (node instanceof MarkerNode) {
 				IMarker marker = ((MarkerNode) node).getMarker();
-				Issue issue = modelService.findIssue(marker);
+				Issue issue = markerService.find(marker);
 				IssueExplorer.updateReportView(issue, true, partService);
 			}
 			return null;
@@ -139,34 +127,35 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class DeleteAllIssuesHandler extends AbstractHandler {
-		@Inject private MarkerService markerService;
-		@Inject private IEventBroker broker;
+		@Inject private MarkerLookupService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			markerService.deleteAllWindupMarkers();
-			broker.post(WindupConstants.MARKERS_CHANGED, true);
+			markerService.clear();
 			return null;
 		}
 	}
 	
 	private abstract static class AbstractIssueHandler extends AbstractHandler {
 		@Inject protected IEventBroker broker;
-		@Inject protected MarkerService markerService;
+		@Inject protected WindupRmiClient windupClient;
+		@Inject protected EPartService partService;
+		@Inject protected QuickFixUtil quickfixService;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			return (MarkerNode)selection.getFirstElement();
 		}
+		protected IssueExplorer getIssueExplorer() {
+			return (IssueExplorer)partService.findPart(IssueExplorer.VIEW_ID).getObject();
+		}
 	}
 	
 	public static class MarkIssueFixedHandler extends AbstractIssueHandler {
+		@Inject private MarkerLookupService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				MarkerNode node = (MarkerNode)selected;
-				Issue issue = node.getIssue();
-				IMarker marker = node.getMarker();
-				QuickFixUtil.setFixed(issue, marker, broker, markerService);
+				markerService.setFixed(((MarkerNode)selected).getIssue());
 			}
 			return null;
 		}
@@ -186,24 +175,24 @@ public class IssueExplorerHandlers {
 	
 	public static class RefreshIssuesHandler extends AbstractIssueHandler {
 		@Inject private ModelService modelService;
-		@Inject private MarkerService markerService;
+		@Inject private MarkerLookupService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			ConfigurationElement configurationElement = modelService.getRecentConfiguration();
-			if (configurationElement != null) {
-				markerService.deleteAllWindupMarkers();
-				markerService.updateMarkers(modelService.getRecentConfiguration());	
+			ConfigurationElement configuration = modelService.getRecentConfiguration();
+			if (configuration != null) {
+				markerService.generateMarkersForConfiguration(configuration);
 			}
 			return null;
 		}
 	}
 	
 	public static class PreviewQuickFixHandler extends AbstractIssueHandler {
+		@Inject private QuickFixUtil quickfixService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
 			Hint hint = (Hint)node.getIssue();
-			QuickFixUtil.previewQuickFix(hint, node.getMarker(), broker, markerService);
+			quickfixService.previewQuickFix(hint, node.getMarker());
 			return null;
 		}
 	}
@@ -218,9 +207,9 @@ public class IssueExplorerHandlers {
 						throws CoreException, InvocationTargetException, InterruptedException {
 					for (Object selected : ((StructuredSelection)selection).toList()) {
 						MarkerNode node = (MarkerNode)selected;
-						QuickFix quickFix = node.getIssue().getQuickFixes().get(0);
-						IMarker marker = node.getMarker();
-						QuickFixUtil.applyQuickFix(quickFix, (Hint)node.getIssue(), marker, broker, markerService);
+						for (QuickFix quickfix : node.getIssue().getQuickFixes()) {
+							quickfixService.applyQuickFix(quickfix);
+						}
 					}
 				}
 			};
@@ -234,14 +223,15 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class DeleteIssueHandler extends AbstractIssueHandler {
+		@Inject private ModelService modelService;
+		@Inject private MarkerLookupService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			for (Object selected : ((StructuredSelection)selection).toList()) {
-				((MarkerNode)selected).delete();
-				Dictionary<String, Object> props = new Hashtable<String, Object>();
-				props.put(WindupConstants.EVENT_ISSUE_MARKER, selected);
-				broker.send(WindupConstants.MARKER_DELETED, props);
+				MarkerNode node = (MarkerNode)selected;
+				modelService.deleteIssue(node.getIssue());
+				markerService.delete(node.getMarker(), node.getIssue());
 			}
 			return null;
 		}
@@ -259,13 +249,13 @@ public class IssueExplorerHandlers {
 			
 			for (MarkerNode node : fixableNodes) {
 				Hint hint = (Hint)node.getIssue();
-				QuickFix quickFix = hint.getQuickFixes().get(0);
-				IMarker marker = node.getMarker();
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 					@Override
 					protected void execute(IProgressMonitor monitor)
 							throws CoreException, InvocationTargetException, InterruptedException {
-						QuickFixUtil.applyQuickFix(quickFix, hint, marker, broker, markerService);	
+						for (QuickFix quickfix : hint.getQuickFixes()) {
+							quickfixService.applyQuickFix(quickfix);
+						}
 					}
 				};
 				try {

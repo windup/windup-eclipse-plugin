@@ -440,6 +440,29 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.MarkerElement} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MarkerElementItemProvider markerElementItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.MarkerElement}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMarkerElementAdapter() {
+		if (markerElementItemProvider == null) {
+			markerElementItemProvider = new MarkerElementItemProvider(this);
+		}
+
+		return markerElementItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -554,6 +577,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (technologyItemProvider != null) technologyItemProvider.dispose();
 		if (pairItemProvider != null) pairItemProvider.dispose();
 		if (customRuleProviderItemProvider != null) customRuleProviderItemProvider.dispose();
+		if (markerElementItemProvider != null) markerElementItemProvider.dispose();
 	}
 
 }

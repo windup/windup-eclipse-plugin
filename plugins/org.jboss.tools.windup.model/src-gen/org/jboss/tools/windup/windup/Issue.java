@@ -4,8 +4,6 @@ package org.jboss.tools.windup.windup;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Issue</b></em>'.
@@ -32,7 +30,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface Issue extends EObject {
+public interface Issue extends MarkerElement {
 	/**
 	 * Returns the value of the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
