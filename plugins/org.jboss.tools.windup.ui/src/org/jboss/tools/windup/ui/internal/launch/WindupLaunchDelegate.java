@@ -30,7 +30,7 @@ import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
@@ -47,7 +47,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	@Inject private WindupService windupService;
 	@Inject private ModelService modelService;
 	@Inject private WindupRmiClient windupClient;
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	@Inject private ViewService viewService;
 	
 	@Inject @Named (IServiceConstants.ACTIVE_SHELL) Shell shell;

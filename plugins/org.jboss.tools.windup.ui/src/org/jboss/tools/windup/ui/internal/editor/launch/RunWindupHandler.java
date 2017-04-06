@@ -24,7 +24,7 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -35,7 +35,7 @@ public class RunWindupHandler {
 
 	@Inject private WindupService windupService;
 	@Inject private ViewService viewService;
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	private ConfigurationElement configuration;
 	
 	@Inject

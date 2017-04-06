@@ -72,7 +72,7 @@ public class IssueExplorerPropertyTesters {
 		for (TreeNode child : node.getChildren()) {
 			if (child instanceof MarkerNode) {
 				Issue issue = ((MarkerNode)child).getIssue();
-				if (QuickFixUtil.isIssueFixable(issue)) {
+				if (QuickfixService.isIssueFixable(issue)) {
 					return true;
 				}
 			}

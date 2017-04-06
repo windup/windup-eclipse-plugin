@@ -37,7 +37,7 @@ import com.google.common.base.Objects;
 public class LaunchConfigurationService implements ILaunchConfigurationListener {
 	
 	@Inject private ModelService modelService;
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	
 	@PostConstruct
 	private void init() {

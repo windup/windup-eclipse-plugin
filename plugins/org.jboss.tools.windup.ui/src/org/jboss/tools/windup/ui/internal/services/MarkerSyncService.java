@@ -34,7 +34,7 @@ import org.jboss.tools.windup.windup.MarkerElement;
  */
 public class MarkerSyncService implements IResourceChangeListener, IResourceDeltaVisitor {
 	
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {

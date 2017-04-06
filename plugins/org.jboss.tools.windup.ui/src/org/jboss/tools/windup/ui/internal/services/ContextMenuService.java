@@ -46,7 +46,7 @@ import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
+import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
@@ -65,9 +65,9 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 	private IVerticalRulerInfo ruler;
 	private ITextEditor editor;
 	
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	@Inject private EPartService partService;
-	@Inject private QuickFixUtil quickfixService;
+	@Inject private QuickfixService quickfixService;
 	
 	private List<IMarker> markers = Lists.newArrayList();
 	

@@ -32,8 +32,8 @@ import org.jboss.tools.windup.model.util.NameUtil;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.tests.swtbot.WorkbenchBot;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
@@ -68,8 +68,8 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected WindupRmiClient windupClient;
 	@Inject protected WindupLauncher windupLauncher;
 	
-	@Inject protected MarkerLookupService markerService;
-	@Inject protected QuickFixUtil quickfixService;
+	@Inject protected MarkerService markerService;
+	@Inject protected QuickfixService quickfixService;
 	@Inject protected ViewService viewService;
 	
 	protected IssueExplorer issueExplorer;

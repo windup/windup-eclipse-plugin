@@ -26,7 +26,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNodeBuilder;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 
 /**
  * A service for computing the issue explorer's input.
@@ -39,7 +39,7 @@ public class IssueExplorerContentService {
 	@Inject private IEclipseContext context;
 	@Inject private ModelService modelService;
 	@Inject @Optional private IssueExplorer issueExplorer;
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	
 	public void setIssuExplorer(IssueExplorer issueExplorer) {
 		this.issueExplorer = issueExplorer;
