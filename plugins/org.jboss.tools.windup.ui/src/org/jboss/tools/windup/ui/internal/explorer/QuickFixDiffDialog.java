@@ -41,12 +41,12 @@ public class QuickFixDiffDialog extends DiffDialog {
 	private Hint hint;
 	private QuickFix quickfix;
 	
-	private QuickFixUtil quickfixService;
+	private QuickfixService quickfixService;
 	
 	private IResource left;
 	private IMarker marker;
 	
-	public QuickFixDiffDialog(Shell shell, Hint hint, QuickFixUtil quickfixService) {
+	public QuickFixDiffDialog(Shell shell, Hint hint, QuickfixService quickfixService) {
 		super(shell);
 		this.quickfix =  hint.getQuickFixes().get(0);
 		this.hint = hint;

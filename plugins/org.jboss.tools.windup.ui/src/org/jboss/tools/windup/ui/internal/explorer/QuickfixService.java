@@ -37,7 +37,7 @@ import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Input;
@@ -56,9 +56,9 @@ import com.google.common.base.Objects;
 @SuppressWarnings("restriction")
 @Creatable
 @Singleton
-public class QuickFixUtil {
+public class QuickfixService {
 	
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	@Inject private WindupRmiClient windupClient;
 	
 	public void applyQuickFix(QuickFix quickfix) {
@@ -67,25 +67,6 @@ public class QuickFixUtil {
 		DocumentUtils.replace(quickfixMarker.getResource(), newResource);
 		markerService.delete(quickfixMarker, quickfix);
 		
-		/*
-		 * We don't know what the transformation did to the file, so we clear all Windup marker associated with it.
-		 */
-		if (QuickfixType.TRANSFORMATION.toString().equals(quickfix.getQuickFixType())) {
-			/*
-			 * TODO: But if there's multiple issues associated with this resource, we now no longer can see them.
-			 * But if we don't, if lines of code associated with hints are changed, they'll get marked as invalid,
-			 * which doens't look good in UI. 
-			 */
-			//markerService.deleteWindupMarkers(marker.getResource());
-		}
-		
-		/*
-		 * What we could do is, go through the Windup markers on the marker.getResource(), 
-		 * and if the issue has become stale (ie., the lines associated with an issue have changed) 
-		 * then delete the issue. Issue - MarkerSyncService doesn't run by now, so issues haven't been
-		 * marked as stale. Of course, this would include other stale issues not created by
-		 * the quickfix, but we probably could specially mark those if necessary to prevent deleting them.
-		 */
 		IResource quickfixResource = quickfixMarker.getResource();
 		
 		Hint hint = (Hint)quickfix.eContainer();

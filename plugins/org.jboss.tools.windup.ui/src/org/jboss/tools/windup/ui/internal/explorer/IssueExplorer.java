@@ -71,7 +71,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
@@ -98,7 +98,7 @@ public class IssueExplorer extends CommonNavigator {
 	
 	@Inject private WindupLauncher windupLauncher;
 	@Inject private WindupRmiClient windupClient;
-	@Inject private MarkerLookupService markerService;
+	@Inject private MarkerService markerService;
 	
 	private Text searchText;
 	

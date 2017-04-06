@@ -42,7 +42,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer.IssueExplorerSe
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
@@ -67,7 +67,7 @@ public class IssueExplorerHandlers {
 	
 	public static class OpenReportHandler extends AbstractHandler {
 		@Inject private EPartService partService;
-		@Inject private MarkerLookupService markerService;
+		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -127,7 +127,7 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class DeleteAllIssuesHandler extends AbstractHandler {
-		@Inject private MarkerLookupService markerService;
+		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			markerService.clear();
@@ -139,7 +139,7 @@ public class IssueExplorerHandlers {
 		@Inject protected IEventBroker broker;
 		@Inject protected WindupRmiClient windupClient;
 		@Inject protected EPartService partService;
-		@Inject protected QuickFixUtil quickfixService;
+		@Inject protected QuickfixService quickfixService;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
 			return (MarkerNode)selection.getFirstElement();
@@ -150,7 +150,7 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class MarkIssueFixedHandler extends AbstractIssueHandler {
-		@Inject private MarkerLookupService markerService;
+		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -175,7 +175,7 @@ public class IssueExplorerHandlers {
 	
 	public static class RefreshIssuesHandler extends AbstractIssueHandler {
 		@Inject private ModelService modelService;
-		@Inject private MarkerLookupService markerService;
+		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			ConfigurationElement configuration = modelService.getRecentConfiguration();
@@ -187,7 +187,7 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class PreviewQuickFixHandler extends AbstractIssueHandler {
-		@Inject private QuickFixUtil quickfixService;
+		@Inject private QuickfixService quickfixService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
@@ -224,7 +224,7 @@ public class IssueExplorerHandlers {
 	
 	public static class DeleteIssueHandler extends AbstractIssueHandler {
 		@Inject private ModelService modelService;
-		@Inject private MarkerLookupService markerService;
+		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -273,7 +273,7 @@ public class IssueExplorerHandlers {
 			if (child instanceof MarkerNode) {
 				MarkerNode childNode = (MarkerNode)child;
 				Issue issue = childNode.getIssue();
-				if (QuickFixUtil.isIssueFixable(issue)) {
+				if (QuickfixService.isIssueFixable(issue)) {
 					nodes.add(childNode);
 				}
 			}

@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
@@ -39,11 +39,11 @@ public class IssueResolutions {
 		
 		private static String LABEL = "Apply first quick fix for the selected migration issue."; //$NON-NLS-1$ 
 		
-		private QuickFixUtil quickfixService;
-		private MarkerLookupService markerService;
+		private QuickfixService quickfixService;
+		private MarkerService markerService;
 		private Issue issue;
 		
-		public FirstQuickFixResolution(QuickFixUtil quickfixService, MarkerLookupService markerService, Issue issue) {
+		public FirstQuickFixResolution(QuickfixService quickfixService, MarkerService markerService, Issue issue) {
 			this.quickfixService = quickfixService;
 			this.markerService = markerService;
 			this.issue = issue;

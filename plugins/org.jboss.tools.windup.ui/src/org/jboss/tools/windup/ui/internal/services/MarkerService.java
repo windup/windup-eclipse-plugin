@@ -96,7 +96,7 @@ import com.google.common.collect.Multimap;
  */
 @Creatable
 @Singleton
-public class MarkerLookupService {
+public class MarkerService {
 
 	private BiMap<MarkerElement, IMarker> elementToMarkerMap = HashBiMap.create();
 	private BiMap<IMarker, MarkerElement> markerToElementMap = elementToMarkerMap.inverse();
@@ -298,8 +298,8 @@ public class MarkerLookupService {
 			marker.setAttribute(TITLE, hint.getTitle());
 			marker.setAttribute(HINT, hint.getHint());
 			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
-			marker.setAttribute(IMarker.CHAR_START, hint.getColumn());
-			marker.setAttribute(IMarker.CHAR_END, hint.getLength());
+			//marker.setAttribute(IMarker.CHAR_START, hint.getColumn());
+			//marker.setAttribute(IMarker.CHAR_END, hint.getLength());
 			marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
 		}
 		else {

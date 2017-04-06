@@ -15,9 +15,9 @@ import javax.inject.Inject;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
-import org.jboss.tools.windup.ui.internal.explorer.QuickFixUtil;
+import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
 import org.jboss.tools.windup.ui.internal.issues.IssueResolutions.FirstQuickFixResolution;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
 
 /**
@@ -25,8 +25,8 @@ import org.jboss.tools.windup.windup.Issue;
  */
 public class IssueResolutionGenerator implements IMarkerResolutionGenerator2 {
 	
-	@Inject private MarkerLookupService markerService;
-	@Inject private QuickFixUtil quickfixService;
+	@Inject private MarkerService markerService;
+	@Inject private QuickfixService quickfixService;
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {

@@ -38,7 +38,7 @@ import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueConstants.Severity;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
-import org.jboss.tools.windup.ui.internal.services.MarkerLookupService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
@@ -92,12 +92,12 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private IssueGroupService groupService;
 		private IEclipseContext context;
 		private ConfigurationElement configuration;
-		private MarkerLookupService markerService;
+		private MarkerService markerService;
 		private BidiMap nodeMap = new DualHashBidiMap();
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
-				MarkerLookupService markerService, ConfigurationElement configuration) {
+				MarkerService markerService, ConfigurationElement configuration) {
 			this.markers = markers;
 			this.groupService = groupService;
 			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
