@@ -10,20 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import static org.jboss.tools.windup.ui.internal.Messages.issueDeleteError;
-import static org.jboss.tools.windup.ui.internal.Messages.operationError;
-
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueConstants.Severity;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.windup.Hint;
@@ -90,15 +82,5 @@ public class MarkerNode extends TreeNode {
 	
 	public String getRule() {
 		return marker.getAttribute(WindupMarker.RULE_ID, WindupConstants.DEFAULT_RULE_ID);
-	}
-	
-	public void delete() {
-		try {
-			marker.delete();
-		} catch (CoreException e) {
-			WindupUIPlugin.log(e);
-			MessageDialog.open(MessageDialog.ERROR, Display.getDefault().getActiveShell(), 
-					operationError, issueDeleteError, SWT.NONE);
-		}
 	}
 }

@@ -39,7 +39,7 @@
             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView"
             icon="icons/rules/repositories.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
-            name="Rule Repositories"
+            name="Rules"
             restorable="true">
       </view>
    </extension>

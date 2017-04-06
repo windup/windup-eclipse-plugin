@@ -33,10 +33,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -274,22 +272,13 @@ public class ModelService {
 		return null;
 	}
 	
-	public Issue findIssue(IMarker marker) {
-		URI uri = URI.createURI(marker.getAttribute(WindupMarker.URI_ID, ""));
-		return (Issue)getModel().eResource().getEObject(uri.fragment());
-	}
-	
-	public org.jboss.tools.windup.windup.Hint findHint(IMarker marker) {
-		Issue issue = findIssue(marker);
-		if (issue instanceof org.jboss.tools.windup.windup.Hint) {
-			return (org.jboss.tools.windup.windup.Hint)issue;
-		}
-		return null;
-	}
-	
 	public void deleteConfiguration(ConfigurationElement configuration) {
 		model.getConfigurationElements().remove(configuration);
 		broker.post(CONFIG_DELETED, configuration);
+	}
+	
+	public void deleteIssue(Issue issue) {
+		((WindupResult)issue.eContainer()).getIssues().remove(issue);
 	}
 	
 	public ConfigurationElement createConfiguration(String name) {
@@ -437,25 +426,18 @@ public class ModelService {
 		return path;
 	}
 	
-	public static IFile getIssueResource(Issue issue) {
-		return getResource(issue.getFileAbsolutePath());
-	}
-	
-	private static IFile getResource(String path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(path));
-	}
-	
 	/**
 	 * Populates the configuration element with the execution results.
 	 */
-	public void populateConfiguration(ConfigurationElement configuration, Input input, ExecutionResults results) {
+	public void populateConfiguration(ConfigurationElement configuration, Input input, IPath reportDirectory, ExecutionResults results) {
     	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
+        configuration.setReportDirectory(reportDirectory.toString());
         for (Hint wHint : results.getHints()) {
         	String path = wHint.getFile().getAbsolutePath();
-        	IFile resource = ModelService.getResource(path);
+        	IFile resource = WorkspaceResourceUtils.getResource(path);
 			if (resource == null) {
 				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
 				continue;
@@ -468,12 +450,20 @@ public class ModelService {
         	hint.setOriginalLineSource(line);
 
         	for (Quickfix fix : wHint.getQuickfixes()) {
-        		org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
-        		quickFix.setName(fix.getName());
+    			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
         		quickFix.setQuickFixType(fix.getType().toString());
         		quickFix.setSearchString(fix.getSearch());
         		quickFix.setReplacementString(fix.getReplacement());
         		quickFix.setNewLine(fix.getNewline());
+        		quickFix.setTransformationId(fix.getTransformationID());
+        		quickFix.setName(fix.getName());
+        		if (fix.getFile() != null) {
+        			quickFix.setFile(fix.getFile().getAbsolutePath());
+        		}
+        		else {
+        			// Fallback for quickfixes not assigned to file. Assume quickfix applies to file associated with the hint.
+        			quickFix.setFile(path);
+        		}
         		hint.getQuickFixes().add(quickFix);
         	}
 
@@ -504,7 +494,7 @@ public class ModelService {
 	
 	private void linkReports(ExecutionResults results, List<Issue> issues) {
 		for (Issue issue : issues) {
-			IFile resource = ModelService.getIssueResource(issue);
+			IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
 			if (resource == null) {
 				Activator.logErrorMessage("ModelService:: No resource associated with issue file: " + issue.getFileAbsolutePath());
 				continue;

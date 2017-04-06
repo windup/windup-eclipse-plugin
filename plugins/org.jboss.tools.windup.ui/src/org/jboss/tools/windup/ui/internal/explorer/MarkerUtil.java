@@ -11,11 +11,16 @@
 package org.jboss.tools.windup.ui.internal.explorer;
 
 import static org.jboss.tools.windup.model.domain.WindupMarker.ELEMENT_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_QUICKFIX_ID;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
@@ -30,6 +35,44 @@ import com.google.common.collect.Lists;
  * Utility for working with resource markers.
  */
 public class MarkerUtil {
+	
+	public static List<IMarker> collectWindupIssueMarkers() {
+		List<IMarker> markers = Lists.newArrayList();
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (project.exists() && project.isAccessible()) {
+				markers.addAll(getMarkers(
+						WINDUP_HINT_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE));
+				markers.addAll(getMarkers(
+						WINDUP_CLASSIFICATION_MARKER_ID, 
+						project,
+						IResource.DEPTH_INFINITE));
+			}
+		}
+		return markers;
+	}
+	
+	public static List<IMarker> collectAllWindupMarkers() {
+		List<IMarker> markers = Lists.newArrayList();
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (project.exists() && project.isAccessible()) {
+				markers.addAll(getMarkers(
+						WINDUP_HINT_MARKER_ID, 
+						project, 
+						IResource.DEPTH_INFINITE));
+				markers.addAll(getMarkers(
+						WINDUP_CLASSIFICATION_MARKER_ID, 
+						project,
+						IResource.DEPTH_INFINITE));
+				markers.addAll(getMarkers(
+						WINDUP_QUICKFIX_ID, 
+						project, 
+						IResource.DEPTH_INFINITE));
+			}
+		}
+		return markers;
+	}
 	
 	public static List<IMarker> getMarkers(String type, IResource resource, int depth) {
 		if (resource.getType() == IResource.PROJECT) {

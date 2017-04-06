@@ -28,4 +28,15 @@
             type="org.eclipse.core.resources.textmarker">
       </super>
    </extension>
+    <extension
+          id="quickfixMarker"
+          name="%_quickfixMarker.name"
+          point="org.eclipse.core.resources.markers">
+       <persistent
+             value="true">
+       </persistent>
+       <super
+             type="org.eclipse.core.resources.marker">
+       </super>
+    </extension>
 </plugin>

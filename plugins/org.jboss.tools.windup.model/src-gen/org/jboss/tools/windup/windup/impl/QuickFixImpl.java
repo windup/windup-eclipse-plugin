@@ -5,9 +5,7 @@ package org.jboss.tools.windup.windup.impl;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.jboss.tools.windup.windup.QuickFix;
 import org.jboss.tools.windup.windup.WindupPackage;
 
@@ -23,11 +21,14 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getReplacementString <em>Replacement String</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getSearchString <em>Search String</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getQuickFixType <em>Quick Fix Type</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getTransformationId <em>Transformation Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.QuickFixImpl#getFile <em>File</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class QuickFixImpl extends NamedElementImpl implements QuickFix {
+public class QuickFixImpl extends MarkerElementImpl implements QuickFix {
 	/**
 	 * The default value of the '{@link #getNewLine() <em>New Line</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -107,6 +108,66 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 	 * @ordered
 	 */
 	protected String quickFixType = QUICK_FIX_TYPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTransformationId() <em>Transformation Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransformationId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TRANSFORMATION_ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTransformationId() <em>Transformation Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransformationId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String transformationId = TRANSFORMATION_ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getFile() <em>File</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFile()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String FILE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getFile() <em>File</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFile()
+	 * @generated
+	 * @ordered
+	 */
+	protected String file = FILE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -216,6 +277,69 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setId(String newId) {
+		String oldId = id;
+		id = newId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.QUICK_FIX__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getTransformationId() {
+		return transformationId;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTransformationId(String newTransformationId) {
+		String oldTransformationId = transformationId;
+		transformationId = newTransformationId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.QUICK_FIX__TRANSFORMATION_ID, oldTransformationId, transformationId));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getFile() {
+		return file;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setFile(String newFile) {
+		String oldFile = file;
+		file = newFile;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.QUICK_FIX__FILE, oldFile, file));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -227,6 +351,12 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 				return getSearchString();
 			case WindupPackage.QUICK_FIX__QUICK_FIX_TYPE:
 				return getQuickFixType();
+			case WindupPackage.QUICK_FIX__ID:
+				return getId();
+			case WindupPackage.QUICK_FIX__TRANSFORMATION_ID:
+				return getTransformationId();
+			case WindupPackage.QUICK_FIX__FILE:
+				return getFile();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -250,6 +380,15 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 				return;
 			case WindupPackage.QUICK_FIX__QUICK_FIX_TYPE:
 				setQuickFixType((String)newValue);
+				return;
+			case WindupPackage.QUICK_FIX__ID:
+				setId((String)newValue);
+				return;
+			case WindupPackage.QUICK_FIX__TRANSFORMATION_ID:
+				setTransformationId((String)newValue);
+				return;
+			case WindupPackage.QUICK_FIX__FILE:
+				setFile((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -275,6 +414,15 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 			case WindupPackage.QUICK_FIX__QUICK_FIX_TYPE:
 				setQuickFixType(QUICK_FIX_TYPE_EDEFAULT);
 				return;
+			case WindupPackage.QUICK_FIX__ID:
+				setId(ID_EDEFAULT);
+				return;
+			case WindupPackage.QUICK_FIX__TRANSFORMATION_ID:
+				setTransformationId(TRANSFORMATION_ID_EDEFAULT);
+				return;
+			case WindupPackage.QUICK_FIX__FILE:
+				setFile(FILE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -295,6 +443,12 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 				return SEARCH_STRING_EDEFAULT == null ? searchString != null : !SEARCH_STRING_EDEFAULT.equals(searchString);
 			case WindupPackage.QUICK_FIX__QUICK_FIX_TYPE:
 				return QUICK_FIX_TYPE_EDEFAULT == null ? quickFixType != null : !QUICK_FIX_TYPE_EDEFAULT.equals(quickFixType);
+			case WindupPackage.QUICK_FIX__ID:
+				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+			case WindupPackage.QUICK_FIX__TRANSFORMATION_ID:
+				return TRANSFORMATION_ID_EDEFAULT == null ? transformationId != null : !TRANSFORMATION_ID_EDEFAULT.equals(transformationId);
+			case WindupPackage.QUICK_FIX__FILE:
+				return FILE_EDEFAULT == null ? file != null : !FILE_EDEFAULT.equals(file);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -317,6 +471,12 @@ public class QuickFixImpl extends NamedElementImpl implements QuickFix {
 		result.append(searchString);
 		result.append(", quickFixType: ");
 		result.append(quickFixType);
+		result.append(", id: ");
+		result.append(id);
+		result.append(", transformationId: ");
+		result.append(transformationId);
+		result.append(", file: ");
+		result.append(file);
 		result.append(')');
 		return result.toString();
 	}
