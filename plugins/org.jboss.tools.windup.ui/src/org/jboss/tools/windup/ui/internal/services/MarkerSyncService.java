@@ -74,7 +74,7 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 			int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, hint.getLineNumber()) - 1;
 			int lineNumbers = DocumentUtils.getLineNumbers(marker.getResource());
 			
-			if (lineNumber < lineNumbers || lineNumber > lineNumbers) {
+			if (lineNumber > lineNumbers || lineNumbers == 0) {
 				Display.getDefault().asyncExec(() -> {
 					markerService.delete(marker, hint);
 				});
