@@ -8,11 +8,47 @@
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>org.jboss.tools.windup</groupId>
-	<artifactId>site</artifactId>
+	<artifactId>windup.site</artifactId>
+	<name>windup.site</name>
 	<packaging>eclipse-repository</packaging>
 
 	<properties>
 		<update.site.name>JBoss Tools - Windup</update.site.name>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>deploy-to-jboss.org</id>
+			<build>
+				<!-- update site is copied to a repository.zip file -->
+				<finalName>repository</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-snapshot-updatezip</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>deploy</phase>
+								<configuration>
+									<arguments>
+									<arg>-s</arg>
+									<arg>${project.build.directory}</arg>
+									<arg>-t</arg>
+									<arg>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</arg>
+									<arg>-i</arg>
+									<arg>repository.zip</arg>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
