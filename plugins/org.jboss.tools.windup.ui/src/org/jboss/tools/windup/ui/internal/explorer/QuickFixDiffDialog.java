@@ -10,7 +10,11 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
- import org.eclipse.core.resources.IResource;
+import java.io.File;
+import java.util.List;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -27,7 +31,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.QuickFix;
-import org.jboss.windup.tooling.data.QuickfixType;
 
 /**
  * Diff dialog for previewing Windup quick fixes.
@@ -36,23 +39,47 @@ public class QuickFixDiffDialog extends DiffDialog {
 	
 	private TableViewer table;
 	private Hint hint;
-	private QuickFix quickFix;
+	private QuickFix quickfix;
 	
-	public QuickFixDiffDialog(Shell shell, IResource left, IResource right, Hint hint) {
-		super(shell, left, right);
-		this.hint = hint; 
+	private QuickfixService quickfixService;
+	
+	private IResource left;
+	private IMarker marker;
+	
+	public QuickFixDiffDialog(Shell shell, Hint hint, QuickfixService quickfixService) {
+		super(shell);
+		this.quickfix =  hint.getQuickFixes().get(0);
+		this.hint = hint;
+		this.quickfixService = quickfixService;
+	}
+	
+	@Override
+	protected IResource computeLeft() {
+		marker = (IMarker)quickfix.getMarker();
+		if (marker != null && marker.exists()) {
+			left = marker.getResource();
+			return left;
+		}
+		return null;
+	}
+	
+	@Override
+	protected IResource computeRight() {
+		if (left != null) {
+			return quickfixService.getQuickFixedResource(quickfix, marker);
+		}
+		return null;
 	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		if (hint.getQuickFixes().size() == 1) {
-			this.quickFix = hint.getQuickFixes().get(0);
 			return super.createDialogArea(parent);
 		}
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		table = new TableViewer(container, SWT.BORDER|SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
+		table = new TableViewer(container, SWT.BORDER|SWT.FULL_SELECTION|SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL);
 		buildColumns();
 		table.getTable().setHeaderVisible(true);
 		table.getTable().setLinesVisible(true);
@@ -63,9 +90,8 @@ public class QuickFixDiffDialog extends DiffDialog {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!event.getSelection().isEmpty()) {
-					QuickFixDiffDialog.this.quickFix = (QuickFix)((StructuredSelection)event.getSelection()).getFirstElement();
-					QuickFixDiffDialog.this.right = QuickFixUtil.getQuickFixedResource(left, quickFix, hint);
-					loadPreview(left, right);
+					QuickFixDiffDialog.this.quickfix = (QuickFix)((StructuredSelection)event.getSelection()).getFirstElement();
+					QuickFixDiffDialog.this.loadPreview();
 				}
 			}
 		});
@@ -74,20 +100,21 @@ public class QuickFixDiffDialog extends DiffDialog {
 		return control;
 	}
 	
-	public QuickFix getQuickFix() {
-		return this.quickFix;
+	public List<QuickFix> getQuickfixes() {
+		return hint.getQuickFixes();
 	}
 	
 	private void buildColumns() {
 		// Type Column
 		TableViewerColumn column = new TableViewerColumn(table, SWT.NONE);
 		column.getColumn().setWidth(200);
-		column.getColumn().setText(Messages.ComparePreviewer_quickFixType);
+		column.getColumn().setText(Messages.ComparePreviewer_quickFixFile);
 		column.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				QuickFix fix = (QuickFix)element;
-				return fix.getQuickFixType();
+				int start = fix.getFile().lastIndexOf(File.separator);
+				return fix.getFile().substring(start+1, fix.getFile().length());
 			}
 		});
 		// Text Column
@@ -98,17 +125,7 @@ public class QuickFixDiffDialog extends DiffDialog {
 			@Override
 			public String getText(Object element) {
 				QuickFix fix = (QuickFix)element;
-				String label = "";
-				if (QuickfixType.REPLACE.toString().equals(fix.getQuickFixType())) {
-					label = fix.getReplacementString();
-				}
-				else if (QuickfixType.DELETE_LINE.toString().equals(fix.getQuickFixType())) {
-					label = Messages.ComparePreviewer_quickFixNoText;
-				}
-				else if (QuickfixType.INSERT_LINE.toString().equals(fix.getQuickFixType())) {
-					label = fix.getNewLine();
-				}
-				return label;
+				return fix.getName();
 			}
 		});
 	}

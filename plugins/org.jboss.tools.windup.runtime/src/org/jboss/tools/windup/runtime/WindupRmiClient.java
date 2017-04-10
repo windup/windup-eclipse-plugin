@@ -51,6 +51,7 @@ public class WindupRmiClient {
 	public static final String WINDUP_SERVER_STATUS = "windup/server/status"; //$NON-NLS-1$
 	
 	private ExecuteWatchdog watchdog;
+	
 	private ExecutionBuilder executionBuilder;
 	
 	@Inject private IEventBroker eventBroker;
@@ -114,7 +115,7 @@ public class WindupRmiClient {
 		}
 	}
 	
-	public boolean isWindupServerStarted() {
+	public boolean isWindupServerRunning() {
 		return executionBuilder != null;
 	}
 	
@@ -122,7 +123,7 @@ public class WindupRmiClient {
 	 * @return true if the ExecutionBuilder is not null, false otherwise.
 	 */
 	public boolean updateWindupServer() {
-		if (isWindupServerStarted()) {
+		if (isWindupServerRunning()) {
 			return true;
 		}
 		else {
@@ -150,10 +151,6 @@ public class WindupRmiClient {
 		return version;
 	}
 	
-	public boolean isWindupServerRunning() {
-		return getExecutionBuilder() != null || WindupRmiClient.getExecutionBuilder(getRmiPort()) != null;
-	}
-
 	private static ExecutionBuilder getExecutionBuilder(int rmiPort) {
 		logInfo("Attempting to retrieve ExecutionBuilder from registry."); //$NON-NLS-1$
 		try {
@@ -169,7 +166,7 @@ public class WindupRmiClient {
 		}
 		return null;
 	}
-	
+
 	@PreDestroy
 	public void shutdownWindup() {
 		ExecutionBuilder builder = WindupRmiClient.getExecutionBuilder(getRmiPort());

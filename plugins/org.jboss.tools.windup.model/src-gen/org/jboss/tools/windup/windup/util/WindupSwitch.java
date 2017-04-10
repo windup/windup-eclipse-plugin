@@ -116,6 +116,8 @@ public class WindupSwitch<T> extends Switch<T> {
 			case WindupPackage.ISSUE: {
 				Issue issue = (Issue)theEObject;
 				T result = caseIssue(issue);
+				if (result == null) result = caseMarkerElement(issue);
+				if (result == null) result = caseNamedElement(issue);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -123,6 +125,8 @@ public class WindupSwitch<T> extends Switch<T> {
 				Hint hint = (Hint)theEObject;
 				T result = caseHint(hint);
 				if (result == null) result = caseIssue(hint);
+				if (result == null) result = caseMarkerElement(hint);
+				if (result == null) result = caseNamedElement(hint);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -130,6 +134,8 @@ public class WindupSwitch<T> extends Switch<T> {
 				Classification classification = (Classification)theEObject;
 				T result = caseClassification(classification);
 				if (result == null) result = caseIssue(classification);
+				if (result == null) result = caseMarkerElement(classification);
+				if (result == null) result = caseNamedElement(classification);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -142,6 +148,7 @@ public class WindupSwitch<T> extends Switch<T> {
 			case WindupPackage.QUICK_FIX: {
 				QuickFix quickFix = (QuickFix)theEObject;
 				T result = caseQuickFix(quickFix);
+				if (result == null) result = caseMarkerElement(quickFix);
 				if (result == null) result = caseNamedElement(quickFix);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -168,6 +175,13 @@ public class WindupSwitch<T> extends Switch<T> {
 			case WindupPackage.CUSTOM_RULE_PROVIDER: {
 				CustomRuleProvider customRuleProvider = (CustomRuleProvider)theEObject;
 				T result = caseCustomRuleProvider(customRuleProvider);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case WindupPackage.MARKER_ELEMENT: {
+				MarkerElement markerElement = (MarkerElement)theEObject;
+				T result = caseMarkerElement(markerElement);
+				if (result == null) result = caseNamedElement(markerElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -412,6 +426,21 @@ public class WindupSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseCustomRuleProvider(CustomRuleProvider object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Marker Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Marker Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMarkerElement(MarkerElement object) {
 		return null;
 	}
 

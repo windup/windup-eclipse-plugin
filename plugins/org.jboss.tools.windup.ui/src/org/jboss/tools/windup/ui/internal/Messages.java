@@ -229,7 +229,7 @@ public class Messages extends NLS
     
     // Compare
     public static String resourceCompareTwoWayTooltip;
-    public static String ComparePreviewer_quickFixType;
+    public static String ComparePreviewer_quickFixFile;
     public static String ComparePreviewer_quickFixText;
     public static String ComparePreviewer_quickFixNoText;
     

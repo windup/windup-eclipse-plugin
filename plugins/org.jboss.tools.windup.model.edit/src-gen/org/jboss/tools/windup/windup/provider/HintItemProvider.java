@@ -206,7 +206,7 @@ public class HintItemProvider extends IssueItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Hint)object).getElementId();
+		String label = ((Hint)object).getName();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Hint_type") :
 			getString("_UI_Hint_type") + " " + label;

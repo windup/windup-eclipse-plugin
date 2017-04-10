@@ -62,7 +62,7 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 		ConfigurationElement lastConfiguration = modelService.getRecentConfiguration();
 		if (configuration != null) {
 			if (configuration.getName().equals(lastConfiguration.getName())) {
-				markerService.deleteAllWindupMarkers();
+				markerService.clear();
 			}
 			modelService.deleteConfiguration(configuration);
 		}
