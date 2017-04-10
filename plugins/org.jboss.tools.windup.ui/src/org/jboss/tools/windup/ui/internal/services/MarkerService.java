@@ -16,7 +16,6 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKE
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_QUICKFIX_ID;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -221,8 +220,8 @@ public class MarkerService {
 	}
 	
 	public void clear(IResource resource) {
-		for (Iterator<MarkerElement> iter = resourceElementsMap.get(resource).iterator(); iter.hasNext();) {
-			EObject element = iter.next();
+		List<MarkerElement> elements = Lists.newArrayList(resourceElementsMap.get(resource));
+		for (MarkerElement element : elements) {
 			IMarker marker = findMarker(element);
 			delete(marker, element);
 		}

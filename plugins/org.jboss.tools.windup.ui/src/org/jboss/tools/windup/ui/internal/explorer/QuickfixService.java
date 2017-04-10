@@ -88,6 +88,9 @@ public class QuickfixService {
 				}
 			}
 		}
+		else {
+			markerService.clear(quickfixResource);
+		}
 	}
 	
 	public IResource getQuickFixedResource(QuickFix quickFix, IMarker marker) {
