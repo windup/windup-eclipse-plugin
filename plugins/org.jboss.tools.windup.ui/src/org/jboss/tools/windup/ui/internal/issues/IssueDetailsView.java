@@ -52,7 +52,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
 
 import com.google.common.collect.Lists;
@@ -69,7 +69,7 @@ public class IssueDetailsView {
 	private Composite placeholder;
 	private Composite stack;
 	
-	@Inject private ModelService modelService;
+	@Inject private MarkerService markerService;
 	
 	private static final String BACKGROUND = "detailsBackground";
 	private static final Color DETAILS_BACKGROUND_COLOR;
@@ -114,7 +114,7 @@ public class IssueDetailsView {
 		if (detailsComposite != null && !detailsComposite.isDisposed()) {
 			Composite top = placeholder;
 			if (marker != null) {
-				Issue issue = modelService.findIssue(marker);
+				Issue issue = markerService.find(marker);
 				if (issue != null) {
 					detailsComposite.setIssue(marker, issue);
 					top = detailsComposite;

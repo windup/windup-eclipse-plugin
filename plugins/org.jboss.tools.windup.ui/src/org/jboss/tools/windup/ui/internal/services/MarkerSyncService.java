@@ -10,10 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -27,12 +23,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.Hint;
-import org.jboss.tools.windup.windup.Issue;
+import org.jboss.tools.windup.windup.MarkerElement;
 
 /**
  * Service for synchronizing Windup markers with resources changes.
@@ -40,7 +35,6 @@ import org.jboss.tools.windup.windup.Issue;
 public class MarkerSyncService implements IResourceChangeListener, IResourceDeltaVisitor {
 	
 	@Inject private MarkerService markerService;
-	@Inject private IEventBroker broker;
 	
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
@@ -58,9 +52,10 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 			switch (delta.getKind()) {
 				case IResourceDelta.CHANGED: {
 					if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
-						Map<Issue, IMarker> map = markerService.buildIssueMarkerMap(resource);
-						if (!map.isEmpty()) {
-							update(resource, map);
+						for (MarkerElement element : markerService.find(resource)) {
+							if (element instanceof Hint) {
+								update((Hint)element);
+							}
 						}
 					}
 				}
@@ -72,41 +67,31 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 	/**
 	 * Marks issues as stale if the issue's original line of code differs from the current. 
 	 */
-	private void update(IResource resource, Map<Issue, IMarker> map) {
-		for (Issue issue : map.keySet()) {
-			if (issue instanceof Hint && !issue.isStale() && !issue.isFixed()) {
-				IMarker marker = map.get(issue);
-				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, ((Hint)issue).getLineNumber());
-				if (DocumentUtils.differs(resource, lineNumber-1, issue.getOriginalLineSource())) {
-					issue.setStale(true);
-					try {
-						Map<String, Object> attributes = marker.getAttributes();
-						marker.delete();
-						IMarker updatedMarker = MarkerService.createMarker(issue, resource);
-						updatedMarker.setAttributes(attributes);
-						updatedMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-						setStale(marker, updatedMarker);
-					} catch (CoreException e) {
-						WindupUIPlugin.log(e);
-					}
-				}
+	private void update(Hint hint) {
+		if (!hint.isStale() && !hint.isFixed()) {
+			IMarker marker = (IMarker)hint.getMarker();
+			
+			int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, hint.getLineNumber()) - 1;
+			int lineNumbers = DocumentUtils.getLineNumbers(marker.getResource());
+			
+			if (lineNumber > lineNumbers || lineNumbers == 0) {
+				Display.getDefault().asyncExec(() -> {
+					markerService.delete(marker, hint);
+				});
+			}
+			
+			else if (DocumentUtils.differs(marker.getResource(), lineNumber, hint.getOriginalLineSource())) {
+				Display.getDefault().asyncExec(() -> {
+					markerService.setStale(hint);
+				});
 			}
 		}
-	}
-	
-	/**
-	 * Updates the specified marker's severity to 'stale'.
-	 */
-	private void setStale(IMarker original, IMarker update) {
-		Dictionary<String, Object> props = new Hashtable<String, Object>();
-		props.put(WindupConstants.EVENT_ISSUE_MARKER, original);
-		props.put(WindupConstants.EVENT_ISSUE_MARKER_UPDATE, update);
-		broker.post(WindupConstants.MARKER_CHANGED, props);
 	}
 	
 	@PostConstruct
 	private void init() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_BUILD);
+		
 	}
 	
 	@PreDestroy

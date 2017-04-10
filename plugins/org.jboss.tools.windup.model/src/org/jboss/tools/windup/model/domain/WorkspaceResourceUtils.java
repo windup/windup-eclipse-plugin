@@ -101,4 +101,8 @@ public class WorkspaceResourceUtils {
 		}
 		return file;
 	}
+	
+	public static IFile getResource(String absolutePath) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(absolutePath));
+	}
 }
