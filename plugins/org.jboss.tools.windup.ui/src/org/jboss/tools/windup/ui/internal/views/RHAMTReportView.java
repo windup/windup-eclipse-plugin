@@ -56,7 +56,7 @@ import org.jboss.tools.windup.ui.internal.Utils;
  * A view to display Windup Reports.
  * </p>
  */
-public class WindupReportView implements IShowInTarget
+public class RHAMTReportView implements IShowInTarget
 {
 	@Inject private MPart part;
 	@Inject private WindupService windupService;
@@ -65,7 +65,7 @@ public class WindupReportView implements IShowInTarget
     /**
      * The ID of the view as specified by the extension.
      */
-    public static final String ID = "org.jboss.tools.windup.ui.views.WindupReportView"; //$NON-NLS-1$
+    public static final String ID = "org.jboss.tools.windup.ui.views.RHAMTReportView"; //$NON-NLS-1$
     
     private static final String PREVIOUS_REPORT_PREF = "previousReport"; //$NON-NLS-1$
 
@@ -127,7 +127,7 @@ public class WindupReportView implements IShowInTarget
      * Required default constructor for this view since it is created via extension point.
      * </p>
      */
-    public WindupReportView()
+    public RHAMTReportView()
     {
         this.browser = null;
         this.selectionChangedListener = null;
@@ -161,7 +161,7 @@ public class WindupReportView implements IShowInTarget
 				/*
                  * if update on selection and the current selection is not the same as the containing workbench part
                  */
-                if (WindupReportView.this.syncronizeViewWithCurrentSelection && part != WindupReportView.this.part)
+                if (RHAMTReportView.this.syncronizeViewWithCurrentSelection && part != RHAMTReportView.this.part)
                 {
                     /*
                      * if editor selection else if some other sort of selection
@@ -198,8 +198,8 @@ public class WindupReportView implements IShowInTarget
                 /*
                  * if the current selection is in the project that just had a report generated, refresh the view
                  */
-                if (WindupReportView.this.currentSelection != null
-                            && WindupReportView.this.currentSelection.getProject().equals(project))
+                if (RHAMTReportView.this.currentSelection != null
+                            && RHAMTReportView.this.currentSelection.getProject().equals(project))
                 {
 
                     // refresh has to take place in the display thread
@@ -207,7 +207,7 @@ public class WindupReportView implements IShowInTarget
                     {
                         public void run()
                         {
-                            WindupReportView.this.refresh();
+                            RHAMTReportView.this.refresh();
                         }
                     });
                 }

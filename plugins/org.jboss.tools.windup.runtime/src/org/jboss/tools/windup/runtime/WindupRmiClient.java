@@ -76,7 +76,7 @@ public class WindupRmiClient {
 	}
 
 	public void startWindup(final IProgressMonitor monitor) {
-		logInfo("Begin start Windup."); //$NON-NLS-1$
+		logInfo("Begin start RHAMT."); //$NON-NLS-1$
 		monitor.worked(1);
 		CommandLine cmdLine = CommandLine.parse(getWindupHome().toString());
 		cmdLine.addArgument("--startServer"); //$NON-NLS-1$
@@ -100,7 +100,7 @@ public class WindupRmiClient {
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				logInfo("Message from Windup executor: " + line); //$NON-NLS-1$
+				logInfo("Message from RHAMT executor: " + line); //$NON-NLS-1$
 				monitor.worked(1);
 			}
 		}));
@@ -108,7 +108,7 @@ public class WindupRmiClient {
 		executor.setExitValue(1);
 		monitor.worked(1);
 		try {
-			logInfo("Starting Windup in server mode..."); //$NON-NLS-1$
+			logInfo("Starting RHAMT in server mode..."); //$NON-NLS-1$
 			executor.execute(cmdLine, null, handler);
 		} catch (IOException e) {
 			WindupRuntimePlugin.log(e);
@@ -146,7 +146,7 @@ public class WindupRmiClient {
 		try {
 			version = executionBuilder.getVersion();
 		} catch (RemoteException e) {
-	        logInfo("Issue while attempting to retrieve Windup server version."); //$NON-NLS-1$
+	        logInfo("Issue while attempting to retrieve RHAMT server version."); //$NON-NLS-1$
 		}
 		return version;
 	}
@@ -179,7 +179,7 @@ public class WindupRmiClient {
 					executionBuilder.terminate();
 				}
 			} catch (RemoteException e) {
-				logError("Error while terminating a previous Windup server instance.", e); //$NON-NLS-1$ 
+				logError("Error while terminating a previous RHAMT server instance.", e); //$NON-NLS-1$ 
 			}
 		}
 		executionBuilder = null;
