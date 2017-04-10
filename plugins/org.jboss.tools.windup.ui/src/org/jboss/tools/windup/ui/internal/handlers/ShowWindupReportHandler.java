@@ -16,7 +16,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
 
 /**
  * Loads the Windup report for the current selection in the Windup report view.
@@ -25,6 +25,6 @@ public class ShowWindupReportHandler {
 	@Execute
 	public void show(@Named(IServiceConstants.ACTIVE_SELECTION) ISelection selection, 
 			ViewService viewService) {
-		((WindupReportView)viewService.activateWindupReportView()).updateSelection(selection);
+		((RHAMTReportView)viewService.activateWindupReportView()).updateSelection(selection);
 	}
 }

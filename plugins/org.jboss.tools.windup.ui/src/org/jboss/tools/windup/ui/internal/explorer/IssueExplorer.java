@@ -72,7 +72,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.Issue;
@@ -511,11 +511,11 @@ public class IssueExplorer extends CommonNavigator {
 	public static void updateReportView(Issue issue, boolean open, EPartService partService) {
 		if (issue.getGeneratedReportLocation() != null) {
 			File file = new File(issue.getGeneratedReportLocation());
-			MPart part = partService.findPart(WindupReportView.ID);
-			WindupReportView view = (WindupReportView)part.getObject();
+			MPart part = partService.findPart(RHAMTReportView.ID);
+			RHAMTReportView view = (RHAMTReportView)part.getObject();
 			if (file.exists()) {
 				if (open) {
-					view = (WindupReportView)partService.showPart(part, PartState.ACTIVATE).getObject();
+					view = (RHAMTReportView)partService.showPart(part, PartState.ACTIVATE).getObject();
 				}
 				if (view != null) {
 					view.showReport(issue.getGeneratedReportLocation(), true);

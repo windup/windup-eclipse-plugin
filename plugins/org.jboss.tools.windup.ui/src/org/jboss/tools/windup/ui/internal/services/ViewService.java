@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.osgi.service.event.Event;
@@ -47,12 +47,12 @@ public class ViewService {
 	@Inject private MApplication application;
 	@Inject private ModelService modelService;
 	
-	public WindupReportView activateWindupReportView() {
+	public RHAMTReportView activateWindupReportView() {
 		application.getChildren().get(0).getContext().activate();
-		MPlaceholder holder = partService.createSharedPart(WindupReportView.ID, false);
+		MPlaceholder holder = partService.createSharedPart(RHAMTReportView.ID, false);
 		MPart part = (MPart)holder.getRef();
 		partService.showPart(part, PartState.ACTIVATE);
-		return (WindupReportView)part.getObject();
+		return (RHAMTReportView)part.getObject();
 	}
 	
 	public void renderReport(ConfigurationElement configuration) {
@@ -70,7 +70,7 @@ public class ViewService {
     
 	public void launchStarting() {
 		Display.getDefault().asyncExec(() -> {
-	    	WindupReportView view = activateWindupReportView();
+	    	RHAMTReportView view = activateWindupReportView();
 			if (view != null) {
 				view.showMessage("No report available.", true);
 			}
