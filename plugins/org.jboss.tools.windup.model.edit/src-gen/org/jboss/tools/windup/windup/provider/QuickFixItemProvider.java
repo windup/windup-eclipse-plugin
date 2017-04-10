@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
@@ -23,7 +22,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class QuickFixItemProvider extends NamedElementItemProvider {
+public class QuickFixItemProvider extends MarkerElementItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -49,6 +48,9 @@ public class QuickFixItemProvider extends NamedElementItemProvider {
 			addReplacementStringPropertyDescriptor(object);
 			addSearchStringPropertyDescriptor(object);
 			addQuickFixTypePropertyDescriptor(object);
+			addIdPropertyDescriptor(object);
+			addTransformationIdPropertyDescriptor(object);
+			addFilePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -142,6 +144,72 @@ public class QuickFixItemProvider extends NamedElementItemProvider {
 	}
 
 	/**
+	 * This adds a property descriptor for the Id feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIdPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_QuickFix_id_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_QuickFix_id_feature", "_UI_QuickFix_type"),
+				 WindupPackage.eINSTANCE.getQuickFix_Id(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Transformation Id feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTransformationIdPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_QuickFix_transformationId_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_QuickFix_transformationId_feature", "_UI_QuickFix_type"),
+				 WindupPackage.eINSTANCE.getQuickFix_TransformationId(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the File feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addFilePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_QuickFix_file_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_QuickFix_file_feature", "_UI_QuickFix_type"),
+				 WindupPackage.eINSTANCE.getQuickFix_File(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns QuickFix.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -183,6 +251,9 @@ public class QuickFixItemProvider extends NamedElementItemProvider {
 			case WindupPackage.QUICK_FIX__REPLACEMENT_STRING:
 			case WindupPackage.QUICK_FIX__SEARCH_STRING:
 			case WindupPackage.QUICK_FIX__QUICK_FIX_TYPE:
+			case WindupPackage.QUICK_FIX__ID:
+			case WindupPackage.QUICK_FIX__TRANSFORMATION_ID:
+			case WindupPackage.QUICK_FIX__FILE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

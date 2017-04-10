@@ -2,7 +2,6 @@
  */
 package org.jboss.tools.windup.windup;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Quick Fix</b></em>'.
@@ -16,13 +15,16 @@ package org.jboss.tools.windup.windup;
  *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getReplacementString <em>Replacement String</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getSearchString <em>Search String</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getQuickFixType <em>Quick Fix Type</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getId <em>Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getTransformationId <em>Transformation Id</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.QuickFix#getFile <em>File</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getQuickFix()
  * @model
  * @generated
  */
-public interface QuickFix extends NamedElement {
+public interface QuickFix extends MarkerElement {
 	/**
 	 * Returns the value of the '<em><b>New Line</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -126,5 +128,83 @@ public interface QuickFix extends NamedElement {
 	 * @generated
 	 */
 	void setQuickFixType(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Id</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Id</em>' attribute.
+	 * @see #setId(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getQuickFix_Id()
+	 * @model
+	 * @generated
+	 */
+	String getId();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.QuickFix#getId <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id</em>' attribute.
+	 * @see #getId()
+	 * @generated
+	 */
+	void setId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Transformation Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Transformation Id</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Transformation Id</em>' attribute.
+	 * @see #setTransformationId(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getQuickFix_TransformationId()
+	 * @model
+	 * @generated
+	 */
+	String getTransformationId();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.QuickFix#getTransformationId <em>Transformation Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Transformation Id</em>' attribute.
+	 * @see #getTransformationId()
+	 * @generated
+	 */
+	void setTransformationId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>File</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>File</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>File</em>' attribute.
+	 * @see #setFile(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getQuickFix_File()
+	 * @model
+	 * @generated
+	 */
+	String getFile();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.QuickFix#getFile <em>File</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>File</em>' attribute.
+	 * @see #getFile()
+	 * @generated
+	 */
+	void setFile(String value);
 
 } // QuickFix

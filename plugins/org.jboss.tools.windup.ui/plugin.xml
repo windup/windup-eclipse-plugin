@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="%category.windup.name"
+            name="%category.RHAMT.name"
             id="org.jboss.tools.windup.ui.view.category.windup">
       </category>
       <view
@@ -18,10 +18,10 @@
       <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
+            class="org.jboss.tools.windup.ui.internal.views.RHAMTReportView"
             icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.views.WindupReportView"
-            name="%view.windup_report.name"
+            id="org.jboss.tools.windup.ui.views.RHAMTReportView"
+            name="%view.RHAMT_report.name"
             restorable="true">
       </e4view>
       <e4view
@@ -39,7 +39,7 @@
             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView"
             icon="icons/rules/repositories.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
-            name="Rule Repositories"
+            name="Rules"
             restorable="true">
       </view>
    </extension>
@@ -690,7 +690,7 @@
              fixed="false"
              icon="icons/windup.png"
              id="org.jboss.tools.windup.ui.perspective"
-             name="Windup">
+             name="RHAMT">
        </perspective>
     </extension>
     <extension
@@ -754,7 +754,7 @@
              hasPages="true"
              icon="icons/new_xml_ruleset.gif"
              id="org.jboss.tools.windup.ui.xml.ruleset.wizard"
-             name="Windup XML Ruleset"
+             name="RHAMT XML Ruleset"
              preferredPerspectives="org.jboss.tools.windup.ui.perspective">
           <description>
              %_UI_CREATE_NEW_XML_RULESET

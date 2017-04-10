@@ -13,7 +13,6 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import javax.inject.Inject;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
@@ -73,7 +72,7 @@ public class IssueExplorerPropertyTesters {
 		for (TreeNode child : node.getChildren()) {
 			if (child instanceof MarkerNode) {
 				Issue issue = ((MarkerNode)child).getIssue();
-				if (QuickFixUtil.isIssueFixable(issue)) {
+				if (QuickfixService.isIssueFixable(issue)) {
 					return true;
 				}
 			}
@@ -87,13 +86,12 @@ public class IssueExplorerPropertyTesters {
 	}
 	
 	public static class ReportPropertyTester extends PropertyTester {
-		@Inject private ModelService modelService;
 		@Override
 		public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 			if (HAS_REPORT.equals(property)) {
 				if (element instanceof MarkerNode) {
 					MarkerNode node = (MarkerNode)element;
-					Issue issue = modelService.findIssue(node.getMarker());
+					Issue issue = node.getIssue();
 					if (issue.getGeneratedReportLocation() != null) {
 						return true;
 					}

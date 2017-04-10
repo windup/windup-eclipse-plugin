@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
@@ -39,7 +38,6 @@ import org.jboss.tools.windup.model.OptionFacades;
 import org.jboss.tools.windup.model.OptionFacades.OptionTypeFacade;
 import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
@@ -77,9 +75,7 @@ public class WindupService
     private Map<IProject, ExecutionResults> projectToResults = new HashMap<>();
     
     @Inject private ModelService modelService;
-
     @Inject private WindupRmiClient windupClient; 
-    @Inject private IEventBroker broker;
     
     /**
      * Returns an {@link Iterable} with all {@link Hint}s returned by Windup during the last run.
@@ -110,8 +106,6 @@ public class WindupService
     }
     
     public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
-    	
-    	broker.post(WindupConstants.LAUNCH_STARTING, configuration);
     	
     	progress.subTask(Messages.startingWindup);
     	modelService.synch(configuration);
@@ -178,7 +172,7 @@ public class WindupService
                 WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
                 ExecutionResults results = execBuilder.execute();
                 WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
-                modelService.populateConfiguration(configuration, input, results);
+                modelService.populateConfiguration(configuration, input, outputPath, results);
         	}
         	modelService.save();
             status = Status.OK_STATUS;
