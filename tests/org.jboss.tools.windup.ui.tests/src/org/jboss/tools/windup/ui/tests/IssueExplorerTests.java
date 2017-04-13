@@ -14,16 +14,17 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.widgets.Tree;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests surrounding the Issue Explorer.
  */
 public class IssueExplorerTests extends WindupUiTest {
-	
 	/**
-	 * Issue Explorer should contain migration issues after Windup execution. 
+	 * Issue Explorer should contain migration issues after Windup execution.
 	 */
+	@Ignore
 	@Test
 	public void testIssueExplorerPopulated() {
 		ConfigurationElement configuration = super.createRunConfiguration();

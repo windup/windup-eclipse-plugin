@@ -704,7 +704,7 @@
        <page
              class="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
              id="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
-             name="Windup">
+             name="RHAMT">
        </page>
     </extension>
     <extension
