@@ -93,7 +93,8 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
-		if (windupClient.getExecutionBuilder() != null) {
+		markerService.clear();
+		if (windupClient.isWindupServerRunning()) {
 			Display.getDefault().syncExec(() -> {
             	viewService.launchStarting();
 				windupService.generateGraph(configuration, new NullProgressMonitor());

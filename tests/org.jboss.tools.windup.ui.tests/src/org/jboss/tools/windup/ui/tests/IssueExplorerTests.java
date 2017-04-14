@@ -28,7 +28,6 @@ public class IssueExplorerTests extends WindupUiTest {
 	@Test
 	public void testIssueExplorerPopulated() {
 		ConfigurationElement configuration = super.createRunConfiguration();
-		markerService.clear();
 		super.runWindup(configuration);
 		issueExplorer.getCommonViewer().expandAll();
 		Tree tree = issueExplorer.getCommonViewer().getTree();
