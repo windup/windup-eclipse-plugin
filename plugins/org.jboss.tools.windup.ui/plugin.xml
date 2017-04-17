@@ -18,10 +18,10 @@
       <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.internal.views.RHAMTReportView"
+            class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
             icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.views.RHAMTReportView"
-            name="%view.RHAMT_report.name"
+            id="org.jboss.tools.windup.ui.views.WindupReportView"
+            name="%view.windup_report.name"
             restorable="true">
       </e4view>
       <e4view

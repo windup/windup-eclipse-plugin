@@ -12,7 +12,7 @@ package org.jboss.tools.windup.ui.internal.handlers;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
+import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
  *	Refreshes the Windup report view.
@@ -20,6 +20,6 @@ import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
 public class RefreshWindupReportHandler {
 	@Execute
 	public void refresh(MPart part) {
-		((RHAMTReportView)part.getObject()).refresh();
+		((WindupReportView)part.getObject()).refresh();
 	}
 }
