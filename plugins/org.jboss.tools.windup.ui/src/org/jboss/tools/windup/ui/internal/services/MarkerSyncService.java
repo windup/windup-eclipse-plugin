@@ -75,13 +75,13 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 			int lineNumbers = DocumentUtils.getLineNumbers(marker.getResource());
 			
 			if (lineNumber > lineNumbers || lineNumbers == 0) {
-				Display.getDefault().asyncExec(() -> {
+				Display.getDefault().syncExec(() -> {
 					markerService.delete(marker, hint);
 				});
 			}
 			
 			else if (DocumentUtils.differs(marker.getResource(), lineNumber, hint.getOriginalLineSource())) {
-				Display.getDefault().asyncExec(() -> {
+				Display.getDefault().syncExec(() -> {
 					markerService.setStale(hint);
 				});
 			}

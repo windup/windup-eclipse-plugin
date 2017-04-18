@@ -10,12 +10,11 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.tests;
 
-import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.junit.Test;
 
 public class WindupExecutionTest extends WindupUiTest {
 
@@ -27,7 +26,6 @@ public class WindupExecutionTest extends WindupUiTest {
 				configuration.getInputs().get(0).getWindupResult());
 	}
 
-	@Ignore
 	@Test
 	public void testWindupExecutionIssues() {
 		ConfigurationElement configuration = super.createRunConfiguration();
