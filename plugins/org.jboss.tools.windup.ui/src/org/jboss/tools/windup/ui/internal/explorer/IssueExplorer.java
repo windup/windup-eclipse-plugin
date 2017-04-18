@@ -72,7 +72,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
-import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
+import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.Issue;
@@ -192,7 +192,7 @@ public class IssueExplorer extends CommonNavigator {
 	private Label textLabel;
 	private Label statusLabel;
 	private CButton startStopButton;
-	private Composite group;
+	//private Composite group;
 	
 	@Inject
 	@Optional
@@ -210,21 +210,21 @@ public class IssueExplorer extends CommonNavigator {
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		
-		group = new Composite(container, SWT.NONE);
+		/*group = new Composite(container, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(5).margins(0, 5).spacing(0, 0).applyTo(group);
-		GridDataFactory.fillDefaults().indent(0, 0).grab(true, false).applyTo(group);
+		GridDataFactory.fillDefaults().indent(0, 0).grab(true, false).applyTo(group);*/
 		
-		statusImage = new Label(group, SWT.NONE);
+		statusImage = new Label(container/*group*/, SWT.NONE);
 		statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
 		
-		Label serverLabel = new Label(group, SWT.NONE);
+		Label serverLabel = new Label(container/*group*/, SWT.NONE);
 		serverLabel.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER));
 		
-		textLabel = new Label(group, SWT.NONE);
+		textLabel = new Label(container/*group*/, SWT.NONE);
 		textLabel.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		textLabel.setText(Messages.WindupServerLabel); //$NON-NLS-1$
 		
-		statusLabel = new Label(group, SWT.NONE);
+		statusLabel = new Label(container/*group*/, SWT.NONE);
 		statusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.DECORATIONS_COLOR));
 		
 		Composite buttonBar = new Composite(container, SWT.NONE);
@@ -511,11 +511,11 @@ public class IssueExplorer extends CommonNavigator {
 	public static void updateReportView(Issue issue, boolean open, EPartService partService) {
 		if (issue.getGeneratedReportLocation() != null) {
 			File file = new File(issue.getGeneratedReportLocation());
-			MPart part = partService.findPart(RHAMTReportView.ID);
-			RHAMTReportView view = (RHAMTReportView)part.getObject();
+			MPart part = partService.findPart(WindupReportView.ID);
+			WindupReportView view = (WindupReportView)part.getObject();
 			if (file.exists()) {
 				if (open) {
-					view = (RHAMTReportView)partService.showPart(part, PartState.ACTIVATE).getObject();
+					view = (WindupReportView)partService.showPart(part, PartState.ACTIVATE).getObject();
 				}
 				if (view != null) {
 					view.showReport(issue.getGeneratedReportLocation(), true);

@@ -13,7 +13,7 @@ package org.jboss.tools.windup.ui.internal.handlers;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
+import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
  * Synchronizes the the Windup view with the active selection.
@@ -21,6 +21,6 @@ import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
 public class SyncSelectionHandler {
 	@Execute
 	public void sync(MPart part, MToolItem item) {
-		((RHAMTReportView)part.getObject()).setSynchronizeSelection(item.isSelected());
+		((WindupReportView)part.getObject()).setSynchronizeSelection(item.isSelected());
 	}
 }

@@ -81,6 +81,18 @@ public class WindupUiTest extends WindupTest {
 		this.issueExplorer = (IssueExplorer)((CompatibilityView)partService.findPart(
 				IssueExplorer.VIEW_ID).getObject()).getView();
 		assertNotNull("Issue Explorer is NULL.", issueExplorer);
+		System.out.println("@Before::init:: start RHAMT server.");
+		windupLauncher.start(new WindupServerCallbackAdapter(Display.getDefault().getActiveShell()) {
+			@Override
+			public void serverStart(IStatus status) {
+				if (status.isOK() && windupClient.getExecutionBuilder() != null) {
+					System.out.println("@Before::init:: RHAMT server started successfully.");
+				}
+				else {
+					System.out.println("@Before::init:: RHAMT server failed to start.");
+				}
+			}
+		});
 	}
 	
 	@After
@@ -93,9 +105,10 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
-		markerService.clear();
 		if (windupClient.isWindupServerRunning()) {
+			System.out.println("RHAMT server already running.");
 			Display.getDefault().syncExec(() -> {
+				markerService.clear();
             	viewService.launchStarting();
 				windupService.generateGraph(configuration, new NullProgressMonitor());
 				viewService.renderReport(configuration);
@@ -103,10 +116,14 @@ public class WindupUiTest extends WindupTest {
 			});
 		}
 		else {
+			System.out.println("RHAMT server not running. Attempting to start it.");
 			windupLauncher.start(new WindupServerCallbackAdapter(Display.getDefault().getActiveShell()) {
 				@Override
 				public void serverStart(IStatus status) {
+					System.out.println("Finished attempt to start RHAMT server.");
 					if (status.isOK() && windupClient.getExecutionBuilder() != null) {
+						System.out.println("RHAMT server started successfully.");
+						markerService.clear();
 		            	viewService.launchStarting();
 						windupService.generateGraph(configuration, new NullProgressMonitor());
 						viewService.renderReport(configuration);

@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.views.RHAMTReportView;
+import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.osgi.service.event.Event;
@@ -47,12 +47,12 @@ public class ViewService {
 	@Inject private MApplication application;
 	@Inject private ModelService modelService;
 	
-	public RHAMTReportView activateWindupReportView() {
+	public WindupReportView activateWindupReportView() {
 		application.getChildren().get(0).getContext().activate();
-		MPlaceholder holder = partService.createSharedPart(RHAMTReportView.ID, false);
+		MPlaceholder holder = partService.createSharedPart(WindupReportView.ID, false);
 		MPart part = (MPart)holder.getRef();
 		partService.showPart(part, PartState.ACTIVATE);
-		return (RHAMTReportView)part.getObject();
+		return (WindupReportView)part.getObject();
 	}
 	
 	public void renderReport(ConfigurationElement configuration) {
@@ -61,16 +61,19 @@ public class ViewService {
     		IPath path = modelService.getGeneratedReport(configuration, input);
     		File file = new File(path.toString());
     		if (file.exists()) {
-    			Display.getDefault().asyncExec(() -> {
-    				activateWindupReportView().showReport(path, true);
-    			});
+    			final WindupReportView view = activateWindupReportView();
+    			if (view != null) {
+    				Display.getDefault().asyncExec(() -> {
+        				view.showReport(path, true);
+        			});
+    			}
     		}
     	}
     }
     
 	public void launchStarting() {
 		Display.getDefault().asyncExec(() -> {
-	    	RHAMTReportView view = activateWindupReportView();
+	    	WindupReportView view = activateWindupReportView();
 			if (view != null) {
 				view.showMessage("No report available.", true);
 			}

@@ -44,7 +44,7 @@ public class WindupLauncher {
 	private static Logger logger = LoggerFactory.getLogger(WindupLauncher.class);
 	
 	// TODO: Move to preference item.
-	public static final long WINDUP_START_DURATION_TIMEOUT = 35000;
+	public static final long WINDUP_START_DURATION_TIMEOUT = 45000;
 	public static final long WINDUP_STOP_DURATION_TIMEOUT = 35000;
 
 	@Inject private WindupRmiClient windupClient;
