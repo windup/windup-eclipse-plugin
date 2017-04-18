@@ -48,7 +48,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -192,7 +191,6 @@ public class IssueExplorer extends CommonNavigator {
 	private Label textLabel;
 	private Label statusLabel;
 	private CButton startStopButton;
-	//private Composite group;
 	
 	@Inject
 	@Optional
@@ -206,29 +204,29 @@ public class IssueExplorer extends CommonNavigator {
 		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		
-		Group container = new Group(parent, SWT.NO_BACKGROUND);
-		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+		Composite top = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().spacing(0, 0).numColumns(2).applyTo(top);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(top);
 		
-		/*group = new Composite(container, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(5).margins(0, 5).spacing(0, 0).applyTo(group);
-		GridDataFactory.fillDefaults().indent(0, 0).grab(true, false).applyTo(group);*/
+		Composite container = new Composite(top, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(5).margins(0, 5).spacing(0, 0).applyTo(container);
+		GridDataFactory.fillDefaults().indent(0, 0).grab(true, false).applyTo(container);
 		
-		statusImage = new Label(container/*group*/, SWT.NONE);
+		statusImage = new Label(container, SWT.NONE);
 		statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
 		
-		Label serverLabel = new Label(container/*group*/, SWT.NONE);
+		Label serverLabel = new Label(container, SWT.NONE);
 		serverLabel.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER));
 		
-		textLabel = new Label(container/*group*/, SWT.NONE);
+		textLabel = new Label(container, SWT.NONE);
 		textLabel.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		textLabel.setText(Messages.WindupServerLabel); //$NON-NLS-1$
 		
-		statusLabel = new Label(container/*group*/, SWT.NONE);
+		statusLabel = new Label(container, SWT.NONE);
 		statusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.DECORATIONS_COLOR));
 		
-		Composite buttonBar = new Composite(container, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(3).margins(0, 4).spacing(10, 0).applyTo(buttonBar);
+		Composite buttonBar = new Composite(top, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(3).margins(0, 5).spacing(12, 0).applyTo(buttonBar);
 		GridDataFactory.fillDefaults().indent(0, 0).grab(false, false).applyTo(buttonBar);
 		
 		startStopButton = new CButton(buttonBar, SWT.NONE);
