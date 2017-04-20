@@ -19,6 +19,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView;
+import org.jboss.tools.windup.ui.internal.server.WindupServerView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
@@ -38,6 +39,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(RuleRepositoryView.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		layout.addShowViewShortcut(WindupReportView.ID);
+		layout.addShowViewShortcut(WindupServerView.VIEW_ID);
 		
 		String editorArea = layout.getEditorArea();
 
@@ -59,5 +61,9 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		bottomRight.addPlaceholder(IProgressConstants.PROGRESS_VIEW_ID);
 		bottomRight.addPlaceholder(ID_SEARCH_VIEW);
 		bottomRight.addView(RuleRepositoryView.VIEW_ID);
+		
+		// Bottom far-right.
+		//IFolderLayout bottomFarRight = layout.createFolder("bottomFarRight", IPageLayout.RIGHT, 0.5f, "bottomRight");//$NON-NLS-1$
+		//bottomFarRight.addView(WindupServerView.ID);
 	}
 }

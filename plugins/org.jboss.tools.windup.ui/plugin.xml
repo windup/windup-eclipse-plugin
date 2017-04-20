@@ -15,6 +15,14 @@
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
+      <view
+            allowMultiple="false"
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.server.WindupServerView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.server"
+            name="Server">
+      </view>
       <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
@@ -708,6 +716,28 @@
        </page>
     </extension>
     <extension
+      point="org.eclipse.ui.decorators">
+   <decorator
+         class="org.jboss.tools.windup.ui.internal.server.WindupServerDecorator"
+         icon="icons/server.gif"
+         id="org.jboss.tools.windup.ui.serverDecorator"
+         label="%serverStateDecoratorLabel"
+         lightweight="true"
+         location="BOTTOM_RIGHT"
+         state="true">
+      <enablement>
+         <or>
+            <objectClass
+                  name="org.eclipse.wst.server.core.IServer">
+            </objectClass>
+            <objectClass
+                  name="org.eclipse.wst.server.ui.internal.view.servers.ModuleServer">
+            </objectClass>
+         </or>
+      </enablement>
+   </decorator>
+</extension>
+    <extension
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
              targetID="org.jboss.tools.windup.ui.perspective">
@@ -719,6 +749,17 @@
                 ratio="0.50f"
                 relationship="bottom"
                 relative="org.jboss.tools.windup.ui.explorer"
+                showTitle="true"
+                standalone="false"
+                visible="true">
+          </view>
+          <view
+                closeable="true"
+                id="org.jboss.tools.windup.ui.server"
+                minimized="false"
+                moveable="true"
+                relationship="stack"
+                relative="org.eclipse.ui.navigator.ProjectExplorer"
                 showTitle="true"
                 standalone="false"
                 visible="true">

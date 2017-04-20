@@ -187,7 +187,7 @@ public class IssueExplorer extends CommonNavigator {
 		initGettingStarted();
 	}
 	
-	private Label statusImage;
+	private Label serverImage;
 	private Label textLabel;
 	private Label statusLabel;
 	private CButton startStopButton;
@@ -195,7 +195,7 @@ public class IssueExplorer extends CommonNavigator {
 	@Inject
 	@Optional
 	private void updateServer(@UIEventTopic(WindupRmiClient.WINDUP_SERVER_STATUS) ExecutionBuilder executionBuilder) {
-		if (statusImage != null && !statusImage.isDisposed()) {
+		if (textLabel != null && !textLabel.isDisposed()) {
 			updateServerGroup();
 		}
 	}
@@ -209,14 +209,11 @@ public class IssueExplorer extends CommonNavigator {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(top);
 		
 		Composite container = new Composite(top, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(5).margins(0, 5).spacing(0, 0).applyTo(container);
+		GridLayoutFactory.fillDefaults().numColumns(4).margins(0, 5).spacing(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().indent(0, 0).grab(true, false).applyTo(container);
 		
-		statusImage = new Label(container, SWT.NONE);
-		statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
-		
-		Label serverLabel = new Label(container, SWT.NONE);
-		serverLabel.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER));
+		serverImage = new Label(container, SWT.NONE);
+		serverImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER));
 		
 		textLabel = new Label(container, SWT.NONE);
 		textLabel.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -313,13 +310,15 @@ public class IssueExplorer extends CommonNavigator {
 	
 	private void updateServerGroup() {
 		if (windupClient.isWindupServerRunning()) {
-			statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_RUNNING_STATUS));
+			//serverImage
+			//statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_RUNNING_STATUS));
 			statusLabel.setText("[Running - " + windupClient.getWindupVersion() + "]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
 			startStopButton.setToolTipText("Stop Windup Server"); //$NON-NLS-1$
 		}
 		else {
-			statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
+			//serverImage
+			//statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
 			statusLabel.setText("[Not Running]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_START));	
 			startStopButton.setToolTipText("Start Windup Server"); //$NON-NLS-1$

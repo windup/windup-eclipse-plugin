@@ -75,8 +75,6 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_SERVER_NOT_STARTE = "icons/server_not_started.gif"; //$NON-NLS-1$
     public static final String IMG_START = "icons/start.gif"; //$NON-NLS-1$
     public static final String IMG_STOP = "icons/stop.gif"; //$NON-NLS-1$
-    public static final String IMG_SERVER_RUNNING_STATUS = "icons/server_running_status.gif"; //$NON-NLS-1$
-    public static final String IMG_SERVER_NOT_RUNNING_STATUS = "icons/server_not_running_status.png"; //$NON-NLS-1$
     public static final String IMG_START_DISABLED = "icons/start_disabled.gif"; //$NON-NLS-1$
     public static final String IMG_STOP_DISABLED = "icons/stop_disabled.gif"; //$NON-NLS-1$
     public static final String IMG_OPTIONS_TAB = "icons/options_tab.gif"; //$NON-NLS-1$
@@ -213,8 +211,6 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_LAUNCH_BG, createImageDescriptor(IMG_LAUNCH_BG));
 		reg.put(IMG_START, createImageDescriptor(IMG_START));
 		reg.put(IMG_STOP, createImageDescriptor(IMG_STOP));
-		reg.put(IMG_SERVER_RUNNING_STATUS, createImageDescriptor(IMG_SERVER_RUNNING_STATUS));
-		reg.put(IMG_SERVER_NOT_RUNNING_STATUS, createImageDescriptor(IMG_SERVER_NOT_RUNNING_STATUS));
 		reg.put(IMG_START_DISABLED, createImageDescriptor(IMG_START_DISABLED));
 		reg.put(IMG_STOP_DISABLED, createImageDescriptor(IMG_STOP_DISABLED));
 		reg.put(IMG_OPTIONS_TAB, createImageDescriptor(IMG_OPTIONS_TAB));
