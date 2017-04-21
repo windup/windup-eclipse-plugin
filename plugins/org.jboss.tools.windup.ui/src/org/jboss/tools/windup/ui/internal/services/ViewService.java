@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
-import org.jboss.tools.windup.ui.internal.server.WindupServerView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
@@ -62,12 +61,12 @@ public class ViewService {
     		IPath path = modelService.getGeneratedReport(configuration, input);
     		File file = new File(path.toString());
     		if (file.exists()) {
-    			final WindupReportView view = activateWindupReportView();
-    			if (view != null) {
-    				Display.getDefault().asyncExec(() -> {
-        				view.showReport(path, true);
-        			});
-    			}
+				Display.getDefault().asyncExec(() -> {
+					final WindupReportView view = activateWindupReportView();
+	    			if (view != null) {
+	    				view.showReport(path, true);
+	    			}
+    			});
     		}
     	}
     }
@@ -88,11 +87,7 @@ public class ViewService {
 		if (element instanceof MPerspective) {
 			MPerspective perspective = (MPerspective) element;
 			if (perspective.getElementId().equals(WindupPerspectiveFactory.ID)) {
-				MPart part = partService.findPart(WindupServerView.VIEW_ID);
-				if (part != null) {
-					partService.activate(part);
-				}
-				part = partService.findPart(IssueExplorer.VIEW_ID);
+				MPart part = partService.findPart(IssueExplorer.VIEW_ID);
 				if (part != null) {
 					partService.activate(part);
 				}

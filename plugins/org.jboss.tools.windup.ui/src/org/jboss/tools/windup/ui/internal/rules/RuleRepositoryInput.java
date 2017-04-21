@@ -15,7 +15,6 @@ import java.util.List;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.SystemRulesNode;
-import org.jboss.tools.windup.ui.internal.server.WindupServerNode;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
 import com.google.common.collect.Lists;
@@ -44,7 +43,6 @@ public class RuleRepositoryInput {
 	}
 	
 	private void buildInput() {
-		children.add(new WindupServerNode());
 		children.add(new SystemRulesNode(systemRuleProviderRegistry));
 		children.add(new CustomRulesNode(modelService));
 	}
