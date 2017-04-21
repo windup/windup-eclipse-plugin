@@ -18,8 +18,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
+import org.jboss.tools.windup.ui.internal.rhamt.explorer.WindupExplorer;
 import org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView;
-import org.jboss.tools.windup.ui.internal.server.WindupServerView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
@@ -39,7 +39,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(RuleRepositoryView.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		layout.addShowViewShortcut(WindupReportView.ID);
-		layout.addShowViewShortcut(WindupServerView.VIEW_ID);
+		layout.addShowViewShortcut(WindupExplorer.VIEW_ID);
 		
 		String editorArea = layout.getEditorArea();
 

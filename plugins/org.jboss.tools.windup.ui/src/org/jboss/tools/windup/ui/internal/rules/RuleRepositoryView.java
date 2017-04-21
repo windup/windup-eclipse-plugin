@@ -360,9 +360,11 @@ public class RuleRepositoryView extends ViewPart {
 	}
 	
 	private void refreshRulesTree(RuleProviderRegistry systemRuleProviderRegistry) {
-		Display.getDefault().asyncExec(() -> {
-			treeViewer.setInput(RuleRepositoryInput.computeInput(systemRuleProviderRegistry, modelService));
-		});
+		if (treeViewer != null && !treeViewer.getTree().isDisposed()) {
+			Display.getDefault().asyncExec(() -> {
+				treeViewer.setInput(RuleRepositoryInput.computeInput(systemRuleProviderRegistry, modelService));
+			});
+		}
 	}
 
 	@Override

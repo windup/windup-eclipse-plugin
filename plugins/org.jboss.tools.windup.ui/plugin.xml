@@ -18,10 +18,10 @@
       <view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.server.WindupServerView"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rhamt.explorer.WindupExplorer"
             icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.server"
-            name="Server">
+            id="org.jboss.tools.windup.ui.rhamt.explorer"
+            name="Explorer">
       </view>
       <e4view
             allowMultiple="false"
@@ -728,10 +728,7 @@
       <enablement>
          <or>
             <objectClass
-                  name="org.eclipse.wst.server.core.IServer">
-            </objectClass>
-            <objectClass
-                  name="org.eclipse.wst.server.ui.internal.view.servers.ModuleServer">
+                  name="org.jboss.tools.windup.ui.internal.server.WindupServerNode">
             </objectClass>
          </or>
       </enablement>
@@ -755,7 +752,7 @@
           </view>
           <view
                 closeable="true"
-                id="org.jboss.tools.windup.ui.server"
+                id="org.jboss.tools.windup.ui.rhamt.explorer"
                 minimized="false"
                 moveable="true"
                 relationship="stack"
