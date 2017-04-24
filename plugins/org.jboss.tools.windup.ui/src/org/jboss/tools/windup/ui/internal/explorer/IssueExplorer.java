@@ -376,6 +376,9 @@ public class IssueExplorer extends CommonNavigator {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
+				if (element instanceof ReportNode) {
+					return true;
+				}
 				if (element instanceof MarkerNode) {
 					return isFilterMatch((MarkerNode)element);
 				}
