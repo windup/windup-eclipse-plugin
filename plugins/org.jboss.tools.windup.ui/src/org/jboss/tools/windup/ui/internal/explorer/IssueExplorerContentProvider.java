@@ -21,7 +21,9 @@ import javax.inject.Inject;
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.internal.ui.navigator.IExtensionStateConstants;
@@ -33,6 +35,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -41,6 +44,7 @@ import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 
 import com.google.common.collect.Lists;
@@ -93,17 +97,20 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private IEclipseContext context;
 		private ConfigurationElement configuration;
 		private MarkerService markerService;
+		private ModelService modelService;
 		private BidiMap nodeMap = new DualHashBidiMap();
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
-				MarkerService markerService, ConfigurationElement configuration) {
+				MarkerService markerService, ConfigurationElement configuration,
+				ModelService modelService) {
 			this.markers = markers;
 			this.groupService = groupService;
 			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
 			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
 			this.configuration = configuration;
 			this.markerService = markerService;
+			this.modelService = modelService;
 			// TODO: Correct this temporary hack to get flat package layout.
 			INavigatorContentService contentService = explorer.getCommonViewer().getNavigatorContentService();
 			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
@@ -143,6 +150,21 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 					if (child == null) {
 						child = new TreeNode(segment);
 						node.addChild(child);
+						if (segment instanceof IProject) {
+							if (configuration.isGenerateReport()) {
+								Input input = configuration.getInputs().get(0);
+					    		IPath reportPath = modelService.getGeneratedReport(configuration, input);
+					    		File report = new File(reportPath.toString());
+								if (report.exists()) {
+									TreeNode reportNode = child.getChildPath(Messages.generatedReport);
+									if (reportNode == null) {
+										reportNode = new RootReportNode(Messages.generatedReport, 
+												reportPath.toString());
+										child.addChild(reportNode);
+									}
+								}
+							}
+						}
 					}
 					build(root, child, path, marker, ++index);
 					return;
@@ -298,6 +320,17 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		}
 		public IMarker getMarker() {
 			return marker;
+		}
+	}
+	
+	public static class RootReportNode extends TreeNode {
+		private String reportLocation;
+		public RootReportNode(Object segment, String reportLocation) {
+			super(segment);
+			this.reportLocation = reportLocation;
+		}
+		public String getReportLocation() {
+			return reportLocation;
 		}
 	}
 }

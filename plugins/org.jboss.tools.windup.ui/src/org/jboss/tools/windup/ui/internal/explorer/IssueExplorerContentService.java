@@ -78,7 +78,8 @@ public class IssueExplorerContentService {
 	}
 	
 	private Object[] createNodeGroups(List<IMarker> markers) {
-		TreeNodeBuilder builder = new TreeNodeBuilder(markers, issueExplorer, groupService, context, markerService, modelService.getRecentConfiguration());
+		TreeNodeBuilder builder = new TreeNodeBuilder(markers, issueExplorer, groupService, context, 
+				markerService, modelService.getRecentConfiguration(), modelService);
 		Object[] input = builder.build();
 		this.nodeMap = builder.getNodeMap();
 		return input;

@@ -38,6 +38,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RootReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RuleGroupNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.SeverityNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
@@ -85,7 +86,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		if (element instanceof RuleGroupNode) {
 			return RULE;
 		}
-		if (element instanceof ReportNode) {
+		if (element instanceof ReportNode || element instanceof RootReportNode) {
 			return REPORT;
 		}
 		if (element instanceof SeverityNode) {

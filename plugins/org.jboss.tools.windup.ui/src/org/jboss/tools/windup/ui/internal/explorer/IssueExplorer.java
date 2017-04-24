@@ -67,6 +67,7 @@ import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RootReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
@@ -177,7 +178,10 @@ public class IssueExplorer extends CommonNavigator {
 					ReportNode reportNode = (ReportNode)selection;
 					IMarker marker = reportNode.getMarker();
 					Issue issue = markerService.find(marker);
-					updateReportView(issue, false, partService);
+					String reportLocation = issue.getGeneratedReportLocation();
+					if (reportLocation != null) {
+						updateReportView(reportLocation, false, partService);
+					}
 				}
 			}
 		});
@@ -376,7 +380,7 @@ public class IssueExplorer extends CommonNavigator {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (element instanceof ReportNode) {
+				if (element instanceof ReportNode || element instanceof RootReportNode) {
 					return true;
 				}
 				if (element instanceof MarkerNode) {
@@ -502,24 +506,29 @@ public class IssueExplorer extends CommonNavigator {
 					ReportNode node = (ReportNode)element;
 					IMarker marker = node.getMarker();
 					Issue issue = markerService.find(marker);
-					updateReportView(issue, true, partService);
+					String reportLocation = issue.getGeneratedReportLocation();
+					if (reportLocation != null) {
+						updateReportView(reportLocation, true, partService);
+					}
+				}
+				else if (element instanceof RootReportNode) {
+					String reportLocation = ((RootReportNode)element).getReportLocation();
+					updateReportView(reportLocation, true, partService);
 				}
 			}
 		}
 	}
 	
-	public static void updateReportView(Issue issue, boolean open, EPartService partService) {
-		if (issue.getGeneratedReportLocation() != null) {
-			File file = new File(issue.getGeneratedReportLocation());
-			MPart part = partService.findPart(WindupReportView.ID);
-			WindupReportView view = (WindupReportView)part.getObject();
-			if (file.exists()) {
-				if (open) {
-					view = (WindupReportView)partService.showPart(part, PartState.ACTIVATE).getObject();
-				}
-				if (view != null) {
-					view.showReport(issue.getGeneratedReportLocation(), true);
-				}
+	public static void updateReportView(String reportLocation, boolean open, EPartService partService) {
+		File file = new File(reportLocation);
+		MPart part = partService.findPart(WindupReportView.ID);
+		WindupReportView view = (WindupReportView)part.getObject();
+		if (file.exists()) {
+			if (open) {
+				view = (WindupReportView)partService.showPart(part, PartState.ACTIVATE).getObject();
+			}
+			if (view != null) {
+				view.showReport(reportLocation, true);
 			}
 		}
 	}

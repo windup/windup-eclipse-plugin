@@ -75,7 +75,10 @@ public class IssueExplorerHandlers {
 			if (node instanceof MarkerNode) {
 				IMarker marker = ((MarkerNode) node).getMarker();
 				Issue issue = markerService.find(marker);
-				IssueExplorer.updateReportView(issue, true, partService);
+				String reportLocation = issue.getGeneratedReportLocation();
+				if (reportLocation != null) {
+					IssueExplorer.updateReportView(reportLocation, true, partService);
+				}
 			}
 			return null;
 		}
