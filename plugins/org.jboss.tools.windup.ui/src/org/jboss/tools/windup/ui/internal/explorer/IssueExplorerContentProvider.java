@@ -22,6 +22,7 @@ import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -100,6 +101,9 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private ModelService modelService;
 		private BidiMap nodeMap = new DualHashBidiMap();
 		
+		// Used for explorer linking
+		private Map<IResource, TreeNode> resourceMap = Maps.newHashMap();
+		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
 				IssueGroupService groupService, IEclipseContext context,
 				MarkerService markerService, ConfigurationElement configuration,
@@ -116,6 +120,10 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
 			m.setBooleanProperty(IExtensionStateConstants.Values.IS_LAYOUT_FLAT, true);
 			this.context = context;
+		}
+		
+		public Map<IResource, TreeNode> getResourceMap() {
+			return resourceMap;
 		}
 		
 		public TreeNode[] build() {
@@ -176,6 +184,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				if (resourceNode == null) {
 					resourceNode = new TreeNode(marker.getResource());
 					parent.addChild(resourceNode);
+					resourceMap.put(marker.getResource(), resourceNode);
 				}
 				parent = resourceNode;
 				

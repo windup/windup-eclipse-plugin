@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.internal.explorer;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,6 +19,7 @@ import javax.inject.Singleton;
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -27,6 +29,8 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNodeBuilder;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
+
+import com.google.common.collect.Maps;
 
 /**
  * A service for computing the issue explorer's input.
@@ -40,6 +44,8 @@ public class IssueExplorerContentService {
 	@Inject private ModelService modelService;
 	@Inject @Optional private IssueExplorer issueExplorer;
 	@Inject private MarkerService markerService;
+	
+	private Map<IResource, TreeNode> resourceMap = Maps.newHashMap();
 	
 	public void setIssuExplorer(IssueExplorer issueExplorer) {
 		this.issueExplorer = issueExplorer;
@@ -82,11 +88,16 @@ public class IssueExplorerContentService {
 				markerService, modelService.getRecentConfiguration(), modelService);
 		Object[] input = builder.build();
 		this.nodeMap = builder.getNodeMap();
+		this.resourceMap = builder.getResourceMap();
 		return input;
 	}
 
 	public MarkerNode findMarkerNode(IMarker marker) {
 		return (MarkerNode)nodeMap.get(marker);
+	}
+	
+	public TreeNode findResourceNode(IResource resource) {
+		return resourceMap.get(resource);
 	}
 	
 	public void updateNodeMapping(IMarker original, IMarker updatedMarker) {

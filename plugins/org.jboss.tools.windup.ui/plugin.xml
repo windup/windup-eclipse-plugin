@@ -591,7 +591,7 @@
           <options>
              <property
                    name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
-                   value="true">
+                   value="false">
              </property>
              <property
                    name="org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"
@@ -804,5 +804,13 @@
                 class="org.eclipse.core.resources.IResource">
           </selection>
        </wizard>
+    </extension>
+    <extension
+          point="org.eclipse.ui.navigator.linkHelper">
+       <linkHelper
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.LinkHelper"
+             id="org.jboss.tools.windup.ui.internal.explorer.linkHelper">
+          <editorInputEnablement></editorInputEnablement>
+       </linkHelper>
     </extension>
 </plugin>

@@ -18,6 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -114,7 +115,7 @@ public class IssueExplorer extends CommonNavigator {
 		// Newly imported projects automatically get added to the tree via PackageExplorer#postAdd
 		// The primary issue with calling super.refresh is it will cause IssueExplorer's tree nodes
 		// to collapse. 
-		return new CommonViewer(getViewSite().getId(), aParent,
+		CommonViewer viewer = new CommonViewer(getViewSite().getId(), aParent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL) {
 			@Override
 			public void add(Object parentElement, Object[] childElements) {
@@ -122,6 +123,12 @@ public class IssueExplorer extends CommonNavigator {
 				super.refresh(parentElement);
 			}
 		};
+		viewer.setUseHashlookup(false);
+		return viewer;
+	}
+	
+	public TreeNode computeNode(IResource resource) {
+		return contentService.findResourceNode(resource);
 	}
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
