@@ -15,14 +15,6 @@
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
-      <view
-            allowMultiple="false"
-            category="org.jboss.tools.windup.ui.view.category.windup"
-            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.server.WindupServerView"
-            icon="icons/windup.png"
-            id="org.jboss.tools.windup.ui.server"
-            name="Server">
-      </view>
       <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"

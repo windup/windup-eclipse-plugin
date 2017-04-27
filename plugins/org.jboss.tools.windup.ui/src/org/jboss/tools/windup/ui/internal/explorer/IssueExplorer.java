@@ -427,8 +427,8 @@ public class IssueExplorer extends CommonNavigator {
 	
 	private boolean containsFilterNode(TreeNode treeNode, Object parentElement) {
 		if (treeNode instanceof ReportNode || treeNode instanceof RootReportNode) {
-			// Few special cases with ReportNode
-			return false;
+			// TODO: Few special cases with ReportNode
+			return true;
 		}
 		
 		if (isFilterMatch(treeNode)) {
