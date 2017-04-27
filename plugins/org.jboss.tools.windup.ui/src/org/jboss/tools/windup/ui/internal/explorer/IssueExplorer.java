@@ -40,6 +40,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -59,6 +60,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.progress.UIJob;
@@ -86,6 +88,7 @@ import com.google.common.collect.Lists;
 /**
  * Explorer view for displaying and navigating Windup issues, classifications, etc. 
  */
+@SuppressWarnings("restriction")
 public class IssueExplorer extends CommonNavigator {
 	
 	public static final String VIEW_ID = "org.jboss.tools.windup.ui.explorer"; //$NON-NLS-1$
@@ -382,45 +385,54 @@ public class IssueExplorer extends CommonNavigator {
 		};
 	}
 	
+	// Creating local copy here b/c we cannot get a reference to the one. 
+	private IssueExplorerLabelProvider filterLabelProvider = new IssueExplorerLabelProvider();
+	
 	private ViewerFilter getRuleFilter() {
 		return new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (element instanceof ReportNode || element instanceof RootReportNode) {
-					return true;
-				}
-				if (element instanceof MarkerNode) {
-					return isFilterMatch((MarkerNode)element);
-				}
-				else if (element instanceof TreeNode) {
-					return containsMarkerChild((TreeNode)element);
+				if (element instanceof TreeNode) {
+					return containsFilterNode((TreeNode)element, parentElement);
 				}
 				return false; 
 			}
 		};
 	}
 	
-	private boolean containsMarkerChild(TreeNode treeNode) {
-		if (treeNode instanceof MarkerNode) {
-			return isFilterMatch((MarkerNode)treeNode);
+	private boolean containsFilterNode(TreeNode treeNode, Object parentElement) {
+		if (treeNode instanceof ReportNode) {
+			// Few special cases with ReportNode
+			return false;
 		}
+		
+		if (isFilterMatch(treeNode)) {
+			return true;
+		}
+		
 		for (TreeNode child : treeNode.getChildren()) {
-			if (child instanceof MarkerNode) {
-				return isFilterMatch((MarkerNode)child);
-			}
-			if (containsMarkerChild(child)) {
+			if (containsFilterNode(child, parentElement)) {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 	
-	private boolean isFilterMatch(MarkerNode node) {
-		if (node.getRule() != null) {
-			return node.getRule().matches( ".*" + searchText.getText() + ".*");
+	private boolean isFilterMatch(TreeNode node) {
+		String text = searchText.getText();
+		if (text.trim().isEmpty()) {
+			return true;
 		}
-		return false;
+		String pattern = text + "*";
+		// Include leading wild cards.
+		if (!(text.charAt(0) == '*')) {
+			pattern = "*" + pattern;
+		}
+		StringMatcher matcher = new StringMatcher(pattern, true, false);
+		String nodeText = ((StyledString)filterLabelProvider.getStyledText(node)).getString();
+		return matcher.match(nodeText);
 	}
 	
 	public void clear() {
