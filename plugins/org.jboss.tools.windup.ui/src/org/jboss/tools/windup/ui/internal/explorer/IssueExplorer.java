@@ -39,6 +39,8 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
@@ -130,8 +132,25 @@ public class IssueExplorer extends CommonNavigator {
 		return viewer;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public TreeNode computeNode(IResource resource) {
-		return contentService.findResourceNode(resource);
+		TreeNode node = contentService.findResourceNode(resource);
+		ISelection selection = getCommonViewer().getSelection();
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			List<Object> elements = ((IStructuredSelection)selection).toList();
+			for (Object element : elements) {
+				if (element instanceof TreeNode) {
+					TreeNode currentNode = (TreeNode)element;
+					while (currentNode != null) {
+						if (currentNode.getSegment() != null && currentNode.getSegment().equals(resource)) {
+							return null;
+						}
+						currentNode = currentNode.getParent();
+					}
+				}	
+			}
+		}
+		return node;
 	}
 	
 	private IssueExplorerService explorerSerivce = new IssueExplorerService() {
