@@ -85,6 +85,7 @@ import org.jboss.windup.tooling.ExecutionBuilder;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -142,7 +143,7 @@ public class IssueExplorer extends CommonNavigator {
 				if (element instanceof TreeNode) {
 					TreeNode currentNode = (TreeNode)element;
 					while (currentNode != null) {
-						if (currentNode.getSegment() != null && currentNode.getSegment().equals(resource)) {
+						if (currentNode.getSegment() != null && Objects.equal(currentNode.getSegment(), resource)) {
 							return null;
 						}
 						currentNode = currentNode.getParent();
@@ -396,6 +397,10 @@ public class IssueExplorer extends CommonNavigator {
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(searchText);
 		searchText.addModifyListener(onSearch());
 	}
+	
+	public String getFilterText() {
+		return searchText.getText().trim();
+	}
 
 	private ModifyListener onSearch() {
 		return e -> {
@@ -421,7 +426,7 @@ public class IssueExplorer extends CommonNavigator {
 	}
 	
 	private boolean containsFilterNode(TreeNode treeNode, Object parentElement) {
-		if (treeNode instanceof ReportNode) {
+		if (treeNode instanceof ReportNode || treeNode instanceof RootReportNode) {
 			// Few special cases with ReportNode
 			return false;
 		}
@@ -439,19 +444,23 @@ public class IssueExplorer extends CommonNavigator {
 		return false;
 	}
 	
-	private boolean isFilterMatch(TreeNode node) {
-		String text = searchText.getText();
-		if (text.trim().isEmpty()) {
-			return true;
-		}
+	public static StringMatcher getFilterMatcher(String text) {
 		String pattern = text + "*";
 		// Include leading wild cards.
 		if (!(text.charAt(0) == '*')) {
 			pattern = "*" + pattern;
 		}
-		StringMatcher matcher = new StringMatcher(pattern, true, false);
+		return  new StringMatcher(pattern, true, false);
+	}
+	
+	private boolean isFilterMatch(TreeNode node) {
+		String text = searchText.getText();
+		if (text.trim().isEmpty()) {
+			return true;
+		}
+		
 		String nodeText = ((StyledString)filterLabelProvider.getStyledText(node)).getString();
-		return matcher.match(nodeText);
+		return getFilterMatcher(text).match(nodeText);
 	}
 	
 	public void clear() {

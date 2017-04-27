@@ -31,8 +31,16 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.TextStyle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.misc.StringMatcher.Position;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
@@ -50,6 +58,7 @@ import com.google.common.collect.Maps;
 /**
  * The label provider for the Windup explorer.
  */
+@SuppressWarnings("restriction")
 public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyledLabelProvider {
 	
 	private Map<String, Image> imageCache = Maps.newHashMap();
@@ -79,7 +88,11 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		STALE = imageRegistry.get(IMG_STALE_ISSUE);
 	}
 	
+	private static Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+	
 	private WorkbenchLabelProvider workbenchProvider = new WorkbenchLabelProvider();
+	
+	private IssueExplorer issueExplorer;
 	
 	@Override
 	public Image getImage(Object element) {
@@ -205,13 +218,27 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 	public String getDescription(Object anElement) {
 		return null;
 	}
+	
+	private String getFiltertText() {
+		String filterText = "";
+		if (issueExplorer == null) {
+			issueExplorer = (IssueExplorer)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(IssueExplorer.VIEW_ID);
+		}
+		if (issueExplorer != null) {
+			filterText = issueExplorer.getFilterText();
+		}
+		return filterText;
+	}
 
 	@Override
 	public StyledString getStyledText(Object element) {
+		String filterText = getFiltertText(); 
+		
+		StyledString style = new StyledString();
+		
 		if (element instanceof MarkerNode) {
 			MarkerNode markerNode = (MarkerNode)element;
 			
-			StyledString style = new StyledString();
 			Issue issue = markerNode.getIssue();
 			
 			if (issue instanceof Hint) {
@@ -224,14 +251,13 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 			else {
 				style.append(markerNode.getFileName());
 			}
-			return style;
 		}
-		if (element instanceof TreeNode) {
+		
+		else if (element instanceof TreeNode) {
 			TreeNode node = (TreeNode)element;
 			String label = getLabel(node);
-			
-			StyledString style = new StyledString(label);
-			
+			style.append(label);
+						
 			if (node instanceof RuleGroupNode) {
 				RuleGroupNode ruleNode = (RuleGroupNode)node;
 				style.append(" [rule id: " + ruleNode.getRuleId() + "]", StyledString.DECORATIONS_STYLER);
@@ -240,9 +266,22 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 			if (node.isLeafParent()) {
 				style.append(" (" + node.getChildren().size() + ")", StyledString.COUNTER_STYLER);
 			}
-			return style;
 		}
-		return null;
+		
+		if (!filterText.isEmpty()) {
+			StringMatcher matcher = IssueExplorer.getFilterMatcher(filterText);
+			String label = style.getString();
+			Position position = matcher.find(label, 0, label.length());
+			if (position != null && (position.getEnd() - position.getStart()) > 0) {
+				style.setStyle(position.getStart(), position.getEnd() - position.getStart(), new Styler() {
+					@Override
+					public void applyStyles(TextStyle textStyle) {
+						textStyle.background = YELLOW;
+					}
+				});
+			}
+		}
+		return style;
 	}
 
 	@Override
