@@ -64,6 +64,9 @@ public class WindupRmiClient {
 		if (path.isEmpty()) {
 			path = defaultPreferences.get(IPreferenceConstants.WINDUP_HOME, "");
 		}
+		if (path.isEmpty()) {
+			path = WindupRuntimePlugin.getDefaultWindupHome();
+		}
 		return new File(path).toPath();
 	}
 	
@@ -71,6 +74,9 @@ public class WindupRmiClient {
 		int port = preferences.getInt(IPreferenceConstants.RMI_PORT, -1);
 		if (port == -1) {
 			port = defaultPreferences.getInt(IPreferenceConstants.RMI_PORT, -1); 
+		}
+		if (port == -1) {
+			port = IPreferenceConstants.DEFAULT_RMI_PORT;
 		}
 		return port; 
 	}

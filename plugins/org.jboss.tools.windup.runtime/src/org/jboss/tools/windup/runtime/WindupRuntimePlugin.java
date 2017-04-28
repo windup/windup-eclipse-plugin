@@ -58,6 +58,10 @@ public class WindupRuntimePlugin extends Plugin
      * </p>
      */
     private static WindupRuntimePlugin plugin;
+    
+    public static String getDefaultWindupHome() {
+		return WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("windup").toString();
+	}
 
     /**
      * Returns the root directory of the embedded Windup installation.

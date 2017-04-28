@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.preferences;
 
-import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.findWindupHome;
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -20,9 +18,10 @@ import org.jboss.tools.windup.runtime.IPreferenceConstants;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
+	
 	@Override
 	public void initializeDefaultPreferences() {
-		String windupHome = findWindupHome().toPath().resolve("bin").resolve("windup").toString();
+		String windupHome = WindupRuntimePlugin.getDefaultWindupHome(); 
 		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 		defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, windupHome);
 		defaultPreferences.put(IPreferenceConstants.RMI_PORT, String.valueOf(IPreferenceConstants.DEFAULT_RMI_PORT));
