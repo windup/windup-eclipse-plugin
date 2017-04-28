@@ -136,6 +136,9 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 				});
 				dialog.setMultipleSelection(true);
 				dialog.setMessage(Messages.selectExistingRepositories);
+				
+				modelService.cleanCustomRuleRepositories(configuration);
+				
 				List<CustomRuleProvider> providers = Lists.newArrayList(modelService.getModel().getCustomRuleRepositories());
 				providers = providers.stream().filter(p -> !configuration.getUserRulesDirectories().contains(p.getLocationURI())).collect(Collectors.toList());
 				dialog.setElements(providers.stream().toArray(CustomRuleProvider[]::new));
@@ -146,6 +149,12 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 					Object[] selected = (Object[])dialog.getResult();
 					if (selected.length > 0) {
 						List<String> rulesets = Lists.newArrayList();
+						
+						// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
+						selected = new Object[] {selected[0]};
+						modelService.write(() -> configuration.getUserRulesDirectories().clear());
+						// 
+						
 						Arrays.stream(selected).forEach(p -> rulesets.add(((CustomRuleProvider)p).getLocationURI()));
 						modelService.write(() -> {
 							configuration.getUserRulesDirectories().addAll(rulesets);
@@ -190,6 +199,8 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	
 	private void reloadCustomRules() {
 		if (rulesRepositoryViewer != null) {
+			modelService.cleanCustomRuleRepositories(configuration);
+			
 			List<CustomRuleProvider> providers = Lists.newArrayList();
 			configuration.getUserRulesDirectories().forEach(directory -> {
 				modelService.getModel().getCustomRuleRepositories().forEach(provider -> {
@@ -197,7 +208,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 						providers.add(provider);
 					}
 				});
-			});
+			});			
 			
 			rulesRepositoryViewer.setInput(providers);
 		}

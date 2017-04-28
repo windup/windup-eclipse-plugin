@@ -385,6 +385,21 @@ public class ModelService {
 		});
 	}
 	
+	public void cleanCustomRuleRepositories(ConfigurationElement configuration) {
+		// Delete non-existing registered providers.
+		for (Iterator<CustomRuleProvider> iter = getModel().getCustomRuleRepositories().iterator(); iter.hasNext();) {
+			if (!new File(iter.next().getLocationURI()).exists()) {
+				write(() -> iter.remove());
+			}
+		}
+		// Delete non-existing referenced locations.
+		for (Iterator<String> iter = configuration.getUserRulesDirectories().iterator(); iter.hasNext();) {
+			if (!new File(iter.next()).exists()) {
+				write(() -> iter.remove());
+			}
+		}
+	}
+	
 	@PreDestroy
 	private void dispose() {
 		save();

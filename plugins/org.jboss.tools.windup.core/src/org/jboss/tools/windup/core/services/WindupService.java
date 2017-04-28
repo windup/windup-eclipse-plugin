@@ -141,7 +141,9 @@ public class WindupService
                 if (!configuration.getPackages().isEmpty()) {
                 	execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
                 }
+                modelService.cleanCustomRuleRepositories(configuration);
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
+					// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
                 	File file = new File(configuration.getUserRulesDirectories().get(0));
                 	execBuilder.setOption(UserRulesDirectoryOption.NAME, file);
                 }
