@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -184,6 +185,13 @@ public class IssueExplorerHandlers {
 			ConfigurationElement configuration = modelService.getRecentConfiguration();
 			if (configuration != null) {
 				markerService.generateMarkersForConfiguration(configuration);
+				// https://issues.jboss.org/browse/WINDUP-1361
+				Display.getDefault().asyncExec(() -> {
+					IssueExplorer explorer = (IssueExplorer)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(IssueExplorer.VIEW_ID);
+					if (explorer != null) {
+						explorer.buildTree();
+					}
+				});
 			}
 			return null;
 		}

@@ -61,6 +61,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	private Button removeButton;
 	
 	// TODO: We probably want to use this once we start using an external Windup launcher.
+	@SuppressWarnings("unused")
 	private WindupOptionsService optionsService;
 	
 	public RulesTab(ModelService modelService, WindupOptionsService optionsService) {
