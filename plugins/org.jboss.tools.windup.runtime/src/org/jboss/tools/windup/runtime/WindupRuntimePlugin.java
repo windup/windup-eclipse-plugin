@@ -60,7 +60,7 @@ public class WindupRuntimePlugin extends Plugin
     private static WindupRuntimePlugin plugin;
     
     public static String getDefaultWindupHome() {
-		return WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("windup").toString();
+		return WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("rhamt-cli").toString();
 	}
 
     /**
