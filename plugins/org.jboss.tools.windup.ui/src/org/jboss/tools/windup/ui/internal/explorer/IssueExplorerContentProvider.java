@@ -159,6 +159,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 						child = new TreeNode(segment);
 						node.addChild(child);
 						if (segment instanceof IProject) {
+							resourceMap.put((IProject)segment, child);
 							if (configuration.isGenerateReport() && !configuration.getInputs().isEmpty()) {
 								Input input = configuration.getInputs().get(0);
 					    		IPath reportPath = modelService.getGeneratedReport(configuration, input);

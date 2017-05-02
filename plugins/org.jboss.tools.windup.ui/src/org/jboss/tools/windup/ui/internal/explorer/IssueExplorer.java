@@ -14,10 +14,12 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.GROUPS_CHANGED
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +33,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.jdt.core.IOpenable;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -73,6 +77,8 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RootReportNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RuleGroupNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.SeverityNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
@@ -425,14 +431,48 @@ public class IssueExplorer extends CommonNavigator {
 		};
 	}
 	
-	private boolean containsFilterNode(TreeNode treeNode, Object parentElement) {
-		if (treeNode instanceof ReportNode || treeNode instanceof RootReportNode) {
-			// TODO: Few special cases with ReportNode
+	private boolean doesParentMatchFilter(TreeNode treeNode) {
+		if (isFilterMatch(treeNode)) {
 			return true;
 		}
+		if (treeNode.getParent() != null) {
+			TreeNode parentNode = treeNode.getParent();
+			if ((parentNode instanceof RuleGroupNode || parentNode.getSegment() instanceof IResource ||
+					parentNode instanceof SeverityNode || parentNode.getSegment() instanceof IOpenable) &&
+					!(parentNode.getSegment() instanceof IProject)) {
+				return doesParentMatchFilter(treeNode.getParent());
+			}
+		}
+		return false;
+	}
+	
+	private boolean containsFilterNode(TreeNode treeNode, Object parentElement) {
 		
 		if (isFilterMatch(treeNode)) {
 			return true;
+		}
+		
+		if (treeNode instanceof MarkerNode) {
+			if (doesParentMatchFilter(treeNode)) {
+				return true;
+			}
+		}
+		
+		if (treeNode instanceof ReportNode || treeNode instanceof RootReportNode) {
+			TreeNode parentNode = treeNode.getParent();
+			if (parentNode.getSegment() instanceof IResource) {
+				IResource resource = (IResource)parentNode.getSegment();
+				TreeNode resourceNode = contentService.findResourceNode(resource);
+				List<TreeNode> children = resourceNode.getChildren().stream().filter(node -> {
+					return !Objects.equal(node, treeNode);
+				}).collect(Collectors.toList());
+				for (TreeNode childNode : children) {
+					if (containsFilterNode(childNode, parentElement)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		
 		for (TreeNode child : treeNode.getChildren()) {

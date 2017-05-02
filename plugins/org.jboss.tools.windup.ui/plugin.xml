@@ -386,7 +386,7 @@
                commandId="org.jboss.tools.windup.ui.newXMLRulesetCommand"
                icon="icons/rules/create_ruleset.png"
                style="push"
-               tooltip="Create a new Ruleset add add it to this view">
+               tooltip="Create a new Ruleset and add it to this view">
          </command>
          <command
                commandId="org.jboss.tools.windup.ui.importRuleset"
