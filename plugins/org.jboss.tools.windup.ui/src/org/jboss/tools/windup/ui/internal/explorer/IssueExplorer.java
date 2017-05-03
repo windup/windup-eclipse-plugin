@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -34,7 +35,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jdt.core.IOpenable;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -438,7 +438,7 @@ public class IssueExplorer extends CommonNavigator {
 		if (treeNode.getParent() != null) {
 			TreeNode parentNode = treeNode.getParent();
 			if ((parentNode instanceof RuleGroupNode || parentNode.getSegment() instanceof IResource ||
-					parentNode instanceof SeverityNode || parentNode.getSegment() instanceof IOpenable) &&
+					parentNode instanceof SeverityNode || parentNode.getSegment() instanceof IOpenable || parentNode.getSegment() instanceof IContainer) &&
 					!(parentNode.getSegment() instanceof IProject)) {
 				return doesParentMatchFilter(treeNode.getParent());
 			}

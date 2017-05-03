@@ -40,7 +40,8 @@ Bundle-ClassPath: .,
  xtext/org.eclipse.xtext.generator-2.11.0.jar,
  xtext/org.eclipse.xtext-2.11.0.jar,
  xtext/org.eclipse.xtext.util-2.11.0.jar,
- xtext/org.eclipse.xtext.xbase.lib-2.11.0.jar
+ xtext/org.eclipse.xtext.xbase.lib-2.11.0.jar,
+ lib/markdown4j-2.2.jar
 Export-Package: org.eclipse.xtend.core,
  org.eclipse.xtend.core.compiler,
  org.eclipse.xtend.core.compiler.batch,
@@ -264,5 +265,6 @@ Export-Package: org.eclipse.xtend.core,
  org.jboss.windup.tooling.data,
  org.jboss.windup.tooling.quickfix,
  org.jboss.windup.tooling.rules,
- org.jboss.windup.util
+ org.jboss.windup.util,
+ org.markdown4j
 Import-Package: org.slf4j

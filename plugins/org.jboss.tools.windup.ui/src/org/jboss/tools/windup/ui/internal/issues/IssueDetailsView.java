@@ -16,16 +16,9 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.RULE_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SOURCE_SNIPPET;
 import static org.jboss.tools.windup.model.domain.WindupMarker.TITLE;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelEffort;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelHint;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelInfo;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelRuleId;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelSeverity;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelSource;
-import static org.jboss.tools.windup.ui.internal.Messages.issueLabelTitle;
 import static org.jboss.tools.windup.ui.internal.Messages.noIssueDetails;
 
-import java.util.List;
+import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -37,25 +30,18 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.program.Program;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
-
-import com.google.common.collect.Lists;
+import org.markdown4j.Markdown4jProcessor;
 
 /**
  * View for displaying the details of an Issue.
@@ -70,16 +56,6 @@ public class IssueDetailsView {
 	private Composite stack;
 	
 	@Inject private MarkerService markerService;
-	
-	private static final String BACKGROUND = "detailsBackground";
-	private static final Color DETAILS_BACKGROUND_COLOR;
-	
-	static {
-		if (!JFaceResources.getColorRegistry().hasValueFor(BACKGROUND)) {
-			JFaceResources.getColorRegistry().put(BACKGROUND, new RGB(231, 243, 243));
-		}
-		DETAILS_BACKGROUND_COLOR = JFaceResources.getColorRegistry().get(BACKGROUND);
-	}
 	
 	private ScrolledForm form;
 
@@ -129,63 +105,19 @@ public class IssueDetailsView {
 		stack.layout(true, true);
 		form.reflow(true);
 	}
-
+	
 	private static class DetailsComposite extends Composite {
 
 		private IMarker marker;
-		private FormToolkit toolkit;
-		
-		private Label titleText;
-		private Label hintText;
-		private Label severityText;
-		private Label effortText;
-		private Label ruleIdText;
-		private Label sourceText;
-		
-		private InfoSection infoSection;
+		private Browser browser;
 		
 		@Inject
 		public DetailsComposite(Composite parent, FormToolkit toolkit) {
 			super(parent, SWT.NONE);
-			this.toolkit = toolkit;
 			GridLayoutFactory.fillDefaults().applyTo(this);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
-			createControls(this);
-		}
-		
-		private void createControls(Composite parent) {
-			Composite container = toolkit.createComposite(parent);
-			GridLayoutFactory.fillDefaults().applyTo(container);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-			
-			this.titleText = createSection(container, issueLabelTitle);
-			this.hintText = createSection(container, issueLabelHint);
-			this.severityText = createSection(container, issueLabelSeverity);
-			this.effortText = createSection(container, issueLabelEffort);
-			this.ruleIdText = createSection(container, issueLabelRuleId);
-			
-			DetailsComposite.createHeaderLabel(toolkit, container, issueLabelInfo);
-			infoSection = new InfoSection(container, toolkit);
-			
-			this.sourceText = createSection(container, issueLabelSource);
-		}
-		
-		private Label createSection(Composite parent, String header) {
-			DetailsComposite.createHeaderLabel(toolkit, parent, header);
-			return DetailsComposite.createDeailsLabel(toolkit, parent);
-		}
-		
-		private static Label createHeaderLabel(FormToolkit toolkit, Composite parent, String text) {
-			Label label = toolkit.createLabel(parent, text);
-			label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.HEADER_FONT));
-			return label;
-		}
-		
-		private static Label createDeailsLabel(FormToolkit toolkit, Composite parent) {
-			Label label = toolkit.createLabel(parent, "", SWT.WRAP);
-			label.setBackground(DETAILS_BACKGROUND_COLOR);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(label);
-			return label;
+			browser = new Browser(this, SWT.NONE);
+	        browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		}
 		
 		public void setIssue(IMarker marker, Issue issue) {
@@ -194,70 +126,39 @@ public class IssueDetailsView {
 		}
 		
 		private void refresh(Issue issue) {
-			titleText.setText(marker.getAttribute(TITLE, noIssueDetails));
-			hintText.setText(marker.getAttribute(HINT, noIssueDetails));
-			severityText.setText(marker.getAttribute(SEVERITY, noIssueDetails));
-			effortText.setText(marker.getAttribute(EFFORT, noIssueDetails));
-			ruleIdText.setText(marker.getAttribute(RULE_ID, noIssueDetails));
-			sourceText.setText(marker.getAttribute(SOURCE_SNIPPET, noIssueDetails));
-			infoSection.update(issue);
-		}
-	}
-	
-	private static class InfoSection extends Composite {
-		
-		private FormToolkit toolkit;
-		private List<Composite> sections = Lists.newArrayList();
-		private Label noDetailsLabel;
-		
-		public InfoSection(Composite parent, FormToolkit toolkit) {
-			super(parent, SWT.NONE);
-			this.toolkit = toolkit;
-			GridLayoutFactory.fillDefaults().applyTo(this);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
+			browser.setText(buildText(issue));
 		}
 		
-		private void disposePlaceholder() {
-			if (noDetailsLabel != null && !noDetailsLabel.isDisposed()) {
-				noDetailsLabel.dispose();
-				noDetailsLabel = null;
+		private String buildText(Issue issue) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("<p><b>Title</b></p>");
+			builder.append(marker.getAttribute(TITLE, noIssueDetails));
+			builder.append("<p><b>Hint</b></p>");
+			Markdown4jProcessor markdownProcessor = new Markdown4jProcessor();
+			try {
+				builder.append(markdownProcessor.process(marker.getAttribute(HINT, noIssueDetails)));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		}
-		
-		private void createPlaceholder() {
-			if (noDetailsLabel == null || noDetailsLabel.isDisposed()) {
-				noDetailsLabel = DetailsComposite.createDeailsLabel(toolkit, this);
-				noDetailsLabel.setText(noIssueDetails);
-			}
-		}
-		
-		public void update(Issue issue) {
-			sections.forEach(section -> section.dispose());
+			builder.append("<p><b>Severity</b></p>");
+			builder.append(marker.getAttribute(SEVERITY, noIssueDetails));
+			builder.append("<p><b>Effort</b></p>");
+			builder.append(marker.getAttribute(EFFORT, noIssueDetails));
+			builder.append("<p><b>Rule ID</b></p>");
+			builder.append(marker.getAttribute(RULE_ID, noIssueDetails));
+			builder.append("<p><b>More Information</b></p>");
 			if (issue.getLinks().isEmpty()) {
-				createPlaceholder();
+				builder.append(noIssueDetails);
 			}
-			else {
-				disposePlaceholder();
-				for (final org.jboss.tools.windup.windup.Link link : issue.getLinks()) {
-					Composite group = toolkit.createComposite(this);
-					group.setBackground(DETAILS_BACKGROUND_COLOR);
-					sections.add(group);
-					GridLayoutFactory.fillDefaults().spacing(0, 3).numColumns(1).applyTo(group);
-					GridDataFactory.fillDefaults().grab(true, false).applyTo(group);;
-					Label label = new Label(group, SWT.NONE);
-					label.setText(link.getDescription());
-					GridDataFactory.fillDefaults().indent(5, 0).applyTo(label);
-					Hyperlink hyperLink = toolkit.createHyperlink(group, link.getUrl(), SWT.NO_FOCUS);
-					hyperLink.setBackground(DETAILS_BACKGROUND_COLOR);
-					hyperLink.addHyperlinkListener(new HyperlinkAdapter() {
-						@Override
-						public void linkActivated(HyperlinkEvent e) {
-							Program.launch(link.getUrl());
-						}
-					});
-					GridDataFactory.fillDefaults().indent(15, 0).applyTo(hyperLink);
-				}
+			for (final org.jboss.tools.windup.windup.Link link : issue.getLinks()) {
+				builder.append("<p>" + link.getDescription() + "<br/>");
+				builder.append("<ul><li>");
+				builder.append("<a href=\"" + link.getUrl() + "\"" + ">" + link.getUrl() + "</a>");
+				builder.append("</ul></li></p>");
 			}
+			builder.append("<p><b>Source</b></p>");
+			builder.append(marker.getAttribute(SOURCE_SNIPPET, noIssueDetails));
+			return builder.toString();
 		}
 	}
 }
