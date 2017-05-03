@@ -34,7 +34,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -42,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.internal.browser.BrowserViewer;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.jboss.tools.windup.core.IWindupListener;
@@ -56,6 +56,7 @@ import org.jboss.tools.windup.ui.internal.Utils;
  * A view to display Windup Reports.
  * </p>
  */
+@SuppressWarnings("restriction")
 public class WindupReportView implements IShowInTarget
 {
 	@Inject private MPart part;
@@ -81,7 +82,7 @@ public class WindupReportView implements IShowInTarget
      * Widget used to display the HTML Windup report.
      * </p>
      */
-    private Browser browser;
+    private BrowserViewer browserViewer;
 
     /**
      * <p>
@@ -129,7 +130,7 @@ public class WindupReportView implements IShowInTarget
      */
     public WindupReportView()
     {
-        this.browser = null;
+        this.browserViewer = null;
         this.selectionChangedListener = null;
         this.currentSelection = null;
         this.syncronizeViewWithCurrentSelection = false;
@@ -151,8 +152,8 @@ public class WindupReportView implements IShowInTarget
         this.message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         this.message.setVisible(false);
 
-        this.browser = new Browser(this.composite, SWT.NONE);
-        this.browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        this.browserViewer = new BrowserViewer(this.composite, BrowserViewer.LOCATION_BAR|BrowserViewer.BUTTON_BAR);
+        this.browserViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // react to selection changes
         this.selectionChangedListener = new ISelectionListener() {
@@ -241,7 +242,7 @@ public class WindupReportView implements IShowInTarget
     @Focus
     public void setFocus()
     {
-        this.browser.setFocus();
+        this.browserViewer.setFocus();
     }
 
     @PreDestroy
@@ -358,9 +359,9 @@ public class WindupReportView implements IShowInTarget
     
     public void showReport(String path, boolean hideMessage) {
     	this.currentReportPath = path;
-        this.browser.setUrl(path);
-        this.browser.setVisible(true);
-        ((GridData) this.browser.getLayoutData()).exclude = false;
+        this.browserViewer.setURL(path);
+        this.browserViewer.setVisible(true);
+        ((GridData) this.browserViewer.getLayoutData()).exclude = false;
 
         this.message.setVisible(!hideMessage);
         ((GridData) this.message.getLayoutData()).exclude = hideMessage;
@@ -382,12 +383,12 @@ public class WindupReportView implements IShowInTarget
         this.message.setVisible(true);
         ((GridData) this.message.getLayoutData()).exclude = false;
 
-        this.browser.setVisible(!hideReport);
+        this.browserViewer.setVisible(!hideReport);
         if (hideReport) {
         	currentReportPath = "";
         }
         
-        ((GridData) this.browser.getLayoutData()).exclude = hideReport;
+        ((GridData) this.browserViewer.getLayoutData()).exclude = hideReport;
 
         this.composite.layout(true);
     }
