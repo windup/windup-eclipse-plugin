@@ -18,12 +18,14 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.SOURCE_SNIPPET;
 import static org.jboss.tools.windup.model.domain.WindupMarker.TITLE;
 import static org.jboss.tools.windup.ui.internal.Messages.noIssueDetails;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -31,7 +33,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -39,6 +40,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.internal.browser.BrowserViewer;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
 import org.markdown4j.Markdown4jProcessor;
@@ -46,6 +49,7 @@ import org.markdown4j.Markdown4jProcessor;
 /**
  * View for displaying the details of an Issue.
  */
+@SuppressWarnings("restriction")
 public class IssueDetailsView {
 	
 	public static final String ID = "org.jboss.tools.windup.ui.issue.details";
@@ -109,15 +113,15 @@ public class IssueDetailsView {
 	private static class DetailsComposite extends Composite {
 
 		private IMarker marker;
-		private Browser browser;
+		private BrowserViewer browserViewer;
 		
 		@Inject
 		public DetailsComposite(Composite parent, FormToolkit toolkit) {
 			super(parent, SWT.NONE);
 			GridLayoutFactory.fillDefaults().applyTo(this);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
-			browser = new Browser(this, SWT.NONE);
-	        browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			browserViewer = new BrowserViewer(this, BrowserViewer.LOCATION_BAR|BrowserViewer.BUTTON_BAR);
+	        browserViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		}
 		
 		public void setIssue(IMarker marker, Issue issue) {
@@ -126,7 +130,14 @@ public class IssueDetailsView {
 		}
 		
 		private void refresh(Issue issue) {
-			browser.setText(buildText(issue));
+			String html = buildText(issue);
+			try {
+				File htmlFile = File.createTempFile("tmp", ".html");
+				FileUtils.write(htmlFile, html);
+				browserViewer.setURL(htmlFile.getAbsolutePath());;
+			} catch (Exception e) {
+				WindupUIPlugin.log(e);
+			}
 		}
 		
 		private String buildText(Issue issue) {
