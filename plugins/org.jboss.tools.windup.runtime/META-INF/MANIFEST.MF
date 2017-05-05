@@ -41,7 +41,7 @@ Bundle-ClassPath: .,
  xtext/org.eclipse.xtext-2.11.0.jar,
  xtext/org.eclipse.xtext.util-2.11.0.jar,
  xtext/org.eclipse.xtext.xbase.lib-2.11.0.jar,
- lib/markdown4j-2.2.jar
+ libs/markdown4j-2.2.jar
 Export-Package: org.eclipse.xtend.core,
  org.eclipse.xtend.core.compiler,
  org.eclipse.xtend.core.compiler.batch,
