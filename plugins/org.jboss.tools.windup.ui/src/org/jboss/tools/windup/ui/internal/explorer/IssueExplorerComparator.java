@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RootReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 
 import com.google.common.base.Objects;
@@ -37,10 +38,10 @@ public class IssueExplorerComparator extends ResourceComparator {
 				return compareLineNumber(n1, n2);
 			}
 		}
-		if (o1 instanceof ReportNode) {
+		if (o1 instanceof ReportNode || o1 instanceof RootReportNode) {
 			return -1;
 		}
-		if (o2 instanceof ReportNode) {
+		if (o2 instanceof ReportNode || o1 instanceof RootReportNode) {
 			return 1;
 		}
 		if (o1 instanceof TreeNode) {
