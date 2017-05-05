@@ -170,10 +170,10 @@ public class WindupLauncher {
 					FutureUtils.waitForFuture(WINDUP_START_DURATION_TIMEOUT, future, monitor);
 				} catch (ExecutionException | TimeoutException | InterruptedException e) {
 					WindupUIPlugin.log(e);
-					
 				} finally {
 					monitor.done();
 				}
+				monitor.done();
 				return Status.OK_STATUS;
 			}
 		};
