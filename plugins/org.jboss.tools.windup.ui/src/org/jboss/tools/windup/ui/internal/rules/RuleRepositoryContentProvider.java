@@ -108,7 +108,8 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
-			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getLocationURI());
+			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
 			listen(provider);

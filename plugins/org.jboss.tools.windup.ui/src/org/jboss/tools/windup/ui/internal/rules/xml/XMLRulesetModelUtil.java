@@ -63,7 +63,6 @@ public class XMLRulesetModelUtil {
 	}
 	
 	public static List<Node> getExternalRules(String locationURI) {
-		List<Node> rules = Lists.newArrayList();
 		Shell shell = Display.getDefault().getActiveShell();
 		
 		IProject project = new TempProject().createTmpProject();
@@ -85,24 +84,15 @@ public class XMLRulesetModelUtil {
 			new WorkspaceOperationRunner().run(true, true, op);
 		} catch (Exception e) {
 			WindupUIPlugin.log(e);
-			return rules;
+			return Lists.newArrayList();
 		}
 
-		IDOMModel model = XMLRulesetModelUtil.getModel(newFileHandle, false);
-		if (model != null) {
-			Document document = model.getDocument();
-			collectNodes("rule", rules, document); //$NON-NLS-1$
-			collectNodes("file-mapping", rules, document); //$NON-NLS-1$
-			collectNodes("package-mapping", rules, document); //$NON-NLS-1$
-			collectNodes("javaclass-ignore", rules, document); //$NON-NLS-1$
-			model.releaseFromRead();
-		}
-		return rules;
+		return XMLRulesetModelUtil.getRules(newFileHandle);
 	}
 	
-	public static List<Node> getRules(String locationURI) {
+	public static List<Node> getRules(IFile file) {
 		List<Node> rules = Lists.newArrayList();
-		IDOMModel model = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(locationURI), false);
+		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		if (model != null) {
 			Document document = model.getDocument();
 			collectNodes("rule", rules, document); //$NON-NLS-1$
