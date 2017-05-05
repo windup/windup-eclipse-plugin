@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.w3c.dom.Node;
 
@@ -38,7 +39,7 @@ public class XMLRulesetFileOrchestrator {
 		if (this.model != null) {
 			model.removeModelStateListener(modelListener);
 		}
-		model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI(), false);
+		model = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI()), false);
 		model.addModelStateListener(modelListener);
 	}
 	

@@ -103,7 +103,7 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard{
 			scratchModel = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(file);
 			IDOMModel model = (IDOMModel)scratchModel;
 			
-			IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(provider.getLocationURI(), true);
+			IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(provider.getLocationURI()), true);
 			
 			// for selection
 			Node firstNode = null; 

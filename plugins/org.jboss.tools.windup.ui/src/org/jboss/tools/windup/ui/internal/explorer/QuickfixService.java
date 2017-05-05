@@ -33,6 +33,7 @@ import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.model.util.DocumentUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -173,7 +174,7 @@ public class QuickfixService {
 		/*
 		 * XML Formatting
 		 */
-		IDOMModel xmlModel = XMLRulesetModelUtil.getModel(resource.getLocation().toString(), true);
+		IDOMModel xmlModel = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(resource.getLocation().toString()), true);
 		if (xmlModel != null) {
 			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
 			try {

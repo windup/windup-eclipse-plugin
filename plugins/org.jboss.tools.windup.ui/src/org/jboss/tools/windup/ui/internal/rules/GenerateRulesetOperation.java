@@ -33,6 +33,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
@@ -75,7 +76,7 @@ public class GenerateRulesetOperation extends WorkspaceModifyOperation {
 		
 		openFile(rulesetFile);
 		
-		IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(rulesetFile.getLocation().toString(), true);
+		IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(rulesetFile.getLocation().toString()), true);
 		if (rulesetModel != null) {
 			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
 			try {

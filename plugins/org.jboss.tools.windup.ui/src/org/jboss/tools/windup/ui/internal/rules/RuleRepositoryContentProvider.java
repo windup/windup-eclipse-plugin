@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -32,6 +33,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
@@ -57,9 +59,9 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	private static final Image RULE;
 	private static final Image RULE_SET;
 	
-	private Map<Node, CustomRuleProvider> nodeMap = Maps.newHashMap();
+	private Map<Node, Object> nodeMap = Maps.newHashMap();
 	
-	private Map<CustomRuleProvider, IModelStateListener> listenerMap = Maps.newHashMap();
+	private Map<Object, IModelStateListener> listenerMap = Maps.newHashMap();
 	
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -93,10 +95,13 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			return ((CustomRulesNode)parentElement).getChildren();
 		}
 		else if (parentElement instanceof RuleProvider) {
-			List<Rule> rules = ((RuleProvider)parentElement).getRules();
-			List<Object> children = Lists.newArrayList(rules);
 			RuleProvider provider = (RuleProvider)parentElement;
-			children.add(0, new RulesetFileNode(new File(provider.getOrigin()), provider.getRuleProviderType()));
+			List<Object> children = Lists.newArrayList();
+			children.add(new RulesetFileNode(new File(provider.getOrigin()), provider.getRuleProviderType()));
+			List<Node> ruleNodes = XMLRulesetModelUtil.getExternalRules(provider.getOrigin());
+			ruleNodes.forEach(node -> nodeMap.put(node, provider));
+			children.addAll(ruleNodes);
+			listen(provider);
 			return children.stream().toArray(Object[]::new);
 		}
 		else if (parentElement instanceof CustomRuleProvider) {
@@ -113,12 +118,20 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		return new Object[0];
 	}
 	
-	public CustomRuleProvider getProvider(Node node) {
+	public Object getProvider(Node node) {
 		return nodeMap.get(node);
 	}
 	
-	private void listen(CustomRuleProvider ruleProvider) {
-		IDOMModel model = XMLRulesetModelUtil.getModel(ruleProvider.getLocationURI(), false);
+	private void listen(Object ruleProvider) {
+		IFile file = null;
+		if (ruleProvider instanceof CustomRuleProvider) {
+			String locationUri = ((CustomRuleProvider)ruleProvider).getLocationURI();
+			file = WorkspaceResourceUtils.getFile(locationUri);
+		}
+		else if (ruleProvider instanceof RuleProvider) {
+			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)ruleProvider);
+		}
+		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		IModelStateListener listener = listenerMap.get(ruleProvider);
 		if (listener == null) {
 			listener = new IModelStateListener() {
@@ -156,7 +169,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		model.addModelStateListener(listener);
 	}
 	
-	private void refresh(IModelStateListener listener, IDOMModel model, CustomRuleProvider ruleProvider) {
+	private void refresh(IModelStateListener listener, IDOMModel model, Object ruleProvider) {
 		model.removeModelStateListener(listener);
 		listenerMap.remove(ruleProvider);
 		if (!treeViewer.getTree().isDisposed()) {

@@ -35,7 +35,7 @@ import org.jboss.tools.windup.ui.internal.Messages;
  */
 public class TempProject {
 	
-	private static final String TMP_PROJECT_NAME = ".org.jboss.toos.windup.compare.tmp"; //$NON-NLS-1$
+	public static final String TMP_PROJECT_NAME = ".org.jboss.toos.windup.compare.tmp"; //$NON-NLS-1$
 	
 	private final static String TMP_PROJECT_FILE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 			+ "<projectDescription>\n" //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class TempProject {
 	private final static String TMP_FOLDER_NAME = "tmpFolder"; //$NON-NLS-1$
 	private final static String TMP_FILE_NAME = "tmpFile"; //$NON-NLS-1$
 	
-	private IProject createTmpProject() throws CoreException {
+	public IProject createTmpProject() {
 		IProject project = getTmpProject();
 		if (!project.isAccessible()) {
 			try {
@@ -79,14 +79,18 @@ public class TempProject {
 				getTmpFolder(project);
 			} catch (IOException ioe) {
 				return project;
-			} catch (CoreException ce) {
-				throw new CoreException(ce.getStatus());
+			} catch (CoreException e) {
+				WindupUIPlugin.log(e);
 			}
 		}
-		if (!project.isOpen()) {
-			project.open(null);
+		try {
+			if (!project.isOpen()) {
+				project.open(null);
+			}
+			project.setHidden(true);
+		} catch (Exception e) {
+			WindupUIPlugin.log(e);
 		}
-		project.setHidden(true);
 		return project;
 	}
 	

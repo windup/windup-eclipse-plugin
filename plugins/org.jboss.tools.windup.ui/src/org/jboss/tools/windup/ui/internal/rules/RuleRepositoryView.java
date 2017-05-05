@@ -75,8 +75,10 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.ExecutionBuilder;
+import org.jboss.windup.tooling.rules.RuleProvider;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.w3c.dom.Node;
 
@@ -139,9 +141,16 @@ public class RuleRepositoryView extends ViewPart {
 					}
 					else if (element instanceof Node) {
 						Node node = (Node)element;
-						CustomRuleProvider provider = contentProvider.getProvider(node);
+						Object provider = contentProvider.getProvider(node);
 						if (provider != null) {
-							IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+							IFile file = null;
+							if (provider instanceof CustomRuleProvider) {
+								String locationUri = ((CustomRuleProvider)provider).getLocationURI();
+								file = WorkspaceResourceUtils.getFile(locationUri);
+							}
+							else if (provider instanceof RuleProvider) {
+								file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)provider);
+							}
 							if (file != null && file.exists()) {
 								try {
 									IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
