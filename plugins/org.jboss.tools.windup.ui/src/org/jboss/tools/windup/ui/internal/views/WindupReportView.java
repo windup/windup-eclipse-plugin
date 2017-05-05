@@ -227,11 +227,16 @@ public class WindupReportView implements IShowInTarget
             preferenceStore.setDefault(Preferences.REPORTVIEW_SYNC_SELECTION, this.syncronizeViewWithCurrentSelection);
         }
         String previousReport = preferenceStore.getString(PREVIOUS_REPORT_PREF);
+        boolean showPlaceholder = true;
         if (!previousReport.isEmpty()) {
         	File file = new File(previousReport);
     		if (file.exists()) {
+    			showPlaceholder = false;
     			showReport(previousReport, true);
     		}
+        }
+        if (showPlaceholder) {
+        	showMessage("No report available.", true);
         }
     }
     
