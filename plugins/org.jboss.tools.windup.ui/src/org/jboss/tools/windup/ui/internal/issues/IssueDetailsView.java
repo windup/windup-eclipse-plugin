@@ -20,6 +20,8 @@ import static org.jboss.tools.windup.ui.internal.Messages.noIssueDetails;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,6 +29,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -44,7 +48,16 @@ import org.eclipse.ui.internal.browser.BrowserViewer;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.windup.Issue;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.DocumentType;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.markdown4j.Markdown4jProcessor;
+import org.osgi.framework.Bundle;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * View for displaying the details of an Issue.
@@ -132,8 +145,45 @@ public class IssueDetailsView {
 		private void refresh(Issue issue) {
 			String html = buildText(issue);
 			try {
+				Bundle bundle = WindupUIPlugin.getDefault().getBundle();
+				
 				File htmlFile = File.createTempFile("tmp", ".html");
-				FileUtils.write(htmlFile, html);
+				Document doc = Jsoup.parse(html);
+				
+				Elements codeElements = doc.getElementsByTag("code");
+				codeElements.forEach(element -> {
+					Set<String> classNames = element.classNames();
+					Set<String> newNames = Sets.newHashSet();
+					classNames.forEach(className -> {
+						// prismjs requires prefix, i'm not sure about another/easier workaround.
+						newNames.add("language-"+className);
+					});
+					element.classNames(newNames);
+				});
+				
+				DocumentType type = new DocumentType("html", "", "", "");
+				doc.insertChildren(0, Lists.newArrayList(type));
+				
+				Element head = doc.head();
+				Element css = doc.createElement("link");
+				
+			    URL fileURL = FileLocator.find(bundle, new Path("html/prism.css"), null);
+			    String srcPath = FileLocator.resolve(fileURL).getPath();
+				
+				css.attr("href", srcPath);
+				css.attr("rel", "stylesheet");
+				head.appendChild(css);
+				
+				Element body = doc.body();
+				Element script = doc.createElement("script");
+				
+				fileURL = FileLocator.find(bundle, new Path("html/prism.js"), null);
+				srcPath = FileLocator.resolve(fileURL).getPath();
+				
+				script.attr("src", srcPath);
+				body.appendChild(script);
+				
+				FileUtils.write(htmlFile, doc.html());
 				browserViewer.setURL(htmlFile.getAbsolutePath());;
 			} catch (Exception e) {
 				WindupUIPlugin.log(e);
@@ -142,22 +192,22 @@ public class IssueDetailsView {
 		
 		private String buildText(Issue issue) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("<p><b>Title</b></p>");
+			builder.append("<h3>Title</h3>");
 			builder.append(marker.getAttribute(TITLE, noIssueDetails));
-			builder.append("<p><b>Hint</b></p>");
+			builder.append("<h3>Hint</h3>");
 			Markdown4jProcessor markdownProcessor = new Markdown4jProcessor();
 			try {
 				builder.append(markdownProcessor.process(marker.getAttribute(HINT, noIssueDetails)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			builder.append("<p><b>Severity</b></p>");
+			builder.append("<h3>Severity</h3>");
 			builder.append(marker.getAttribute(SEVERITY, noIssueDetails));
-			builder.append("<p><b>Effort</b></p>");
+			builder.append("<h3>Effort</h3>");
 			builder.append(marker.getAttribute(EFFORT, noIssueDetails));
-			builder.append("<p><b>Rule ID</b></p>");
+			builder.append("<h3>Rule ID</h3>");
 			builder.append(marker.getAttribute(RULE_ID, noIssueDetails));
-			builder.append("<p><b>More Information</b></p>");
+			builder.append("<h3>More Information</h3>");
 			if (issue.getLinks().isEmpty()) {
 				builder.append(noIssueDetails);
 			}
@@ -167,7 +217,7 @@ public class IssueDetailsView {
 				builder.append("<a href=\"" + link.getUrl() + "\"" + ">" + link.getUrl() + "</a>");
 				builder.append("</ul></li></p>");
 			}
-			builder.append("<p><b>Source</b></p>");
+			builder.append("<h3>Source</h3>");
 			builder.append(marker.getAttribute(SOURCE_SNIPPET, noIssueDetails));
 			return builder.toString();
 		}
