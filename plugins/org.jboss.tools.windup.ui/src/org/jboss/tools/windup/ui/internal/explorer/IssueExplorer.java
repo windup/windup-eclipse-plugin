@@ -506,10 +506,16 @@ public class IssueExplorer extends CommonNavigator {
 	public void clear() {
 		getCommonViewer().getTree().removeAll();
 		getCommonViewer().setSelection(StructuredSelection.EMPTY);
+		
+		boolean visible = getCommonViewer().getTree().getItemCount() > 0;
+		searchText.setVisible(visible);
 	}
 	
 	public void buildTree()	{
 		refresh();
+		
+		boolean visible = getCommonViewer().getTree().getItemCount() > 0;
+		searchText.setVisible(visible);
 	}
 	
 	public void delete(Issue issue) {
