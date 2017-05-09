@@ -3,7 +3,9 @@ package org.jboss.tools.windup.ui.internal.rules.xml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.URIUtil;
@@ -12,27 +14,46 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.undo.CreateFileOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.eclipse.xtext.util.Pair;
+import org.eclipse.xtext.util.Tuples;
+import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.TempProject;
+import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
+import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
+import org.jboss.windup.tooling.rules.RuleProviderRegistry;
+import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("restriction")
@@ -140,6 +161,100 @@ public class XMLRulesetModelUtil {
 			WindupUIPlugin.log(e);
 		}
 		return null;
+	}
+	
+	public static void openRuleInEditor(Object provider, Node ruleNode) {
+		IFile file = null;
+		if (provider instanceof CustomRuleProvider) {
+			String locationUri = ((CustomRuleProvider)provider).getLocationURI();
+			file = WorkspaceResourceUtils.getFile(locationUri);
+		}
+		else if (provider instanceof RuleProvider) {
+			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)provider);
+		}
+		
+		if (file != null && file.exists()) {
+			try {
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IEditorPart editor = IDE.openEditor(page, file);
+				if (editor != null) {
+					editor.getSite().getSelectionProvider().setSelection(new StructuredSelection(ruleNode));
+					ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
+					if (ruleNode instanceof IndexedRegion && textEditor != null) {
+						int start = ((IndexedRegion) ruleNode).getStartOffset();
+						int length = ((IndexedRegion) ruleNode).getEndOffset() - start;
+						if ((start > -1) && (length > -1)) {
+							textEditor.selectAndReveal(start, length);
+						}
+					}
+				}
+			} catch (PartInitException e) {
+				WindupUIPlugin.log(e);
+		    	MessageDialog.openError(
+						Display.getDefault().getActiveShell(), 
+						Messages.openRuleset, 
+						Messages.errorOpeningRuleset);
+			}
+		}
+	}
+	
+	public static Pair<Object, Node> findRuleProvider(String ruleId, RuleProviderRegistry ruleProviderRegistry, ModelService modelService) {
+		List<RuleProvider> systemRuleProviders = XMLRulesetModelUtil.readSystemRuleProviders(ruleProviderRegistry);
+		for (RuleProvider ruleProvider : systemRuleProviders) {
+			for (Rule rule : ruleProvider.getRules()) {
+				if (Objects.equal(ruleId, rule.getRuleID())) {
+					List<Node> ruleNodes = XMLRulesetModelUtil.getExternalRules(ruleProvider.getOrigin());
+					for (Node ruleNode : ruleNodes) {
+						String ruleNodeId = XMLRulesetModelUtil.getRuleId(ruleNode);
+						if (Objects.equal(ruleId, ruleNodeId)) {
+							return Tuples.create(ruleProvider, ruleNode);
+						}
+					}
+				}
+			}
+		}
+		for (CustomRuleProvider ruleProvider : modelService.getModel().getCustomRuleRepositories()) {
+			List<Object> children = Lists.newArrayList();
+			children.add(new RulesetFileNode(new File(ruleProvider.getLocationURI()), RuleProviderType.XML));
+			IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
+			for (Node ruleNode : XMLRulesetModelUtil.getRules(file)) {
+				String ruleNodeId = XMLRulesetModelUtil.getRuleId(ruleNode);
+				if (Objects.equal(ruleId, ruleNodeId)) {
+					return Tuples.create(ruleProvider, ruleNode);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static List<RuleProvider> readSystemRuleProviders(RuleProviderRegistry ruleProviderRegistry) {
+		List<RuleProvider> ruleProviders = ruleProviderRegistry.getRuleProviders().stream().filter(provider -> {
+			return isFileBasedProvider(provider);
+		}).collect(Collectors.toList());
+		sortRuleProviders(ruleProviders);
+		return ruleProviders;
+	}
+	
+	private static boolean isFileBasedProvider(RuleProvider provider) {
+		switch (provider.getRuleProviderType()) {
+			case GROOVY:
+			case XML:
+				return true;
+			default: 
+				return false;
+		}
+	}
+	
+	private static void sortRuleProviders(List<RuleProvider> ruleProviders) {
+		Collections.sort(ruleProviders, (RuleProvider provider1, RuleProvider provider2) -> {
+			if (provider1.getProviderID() == null) {
+				return -1;
+			}
+			if (provider2.getProviderID() == null) {
+				return 1;
+			}
+			return provider1.getProviderID().compareTo(provider2.getProviderID());
+		});
 	}
 	
 	

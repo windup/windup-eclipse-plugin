@@ -378,6 +378,23 @@
                      </test></iterate></and>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.jboss.tools.windup.ui.openRuleDefinition"
+               icon="icons/rule.png"
+               label="Open Rule Defintion"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <test
+                           property="org.jboss.tools.windup.ui.hasRuleDefinition"
+                           value="false">
+                     </test></iterate></and>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -519,6 +536,11 @@
             id="org.jboss.tools.windup.ui.importRuleset"
             name="Import Ruleset">
       </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.OpenRuleDefinitionHandler"
+            id="org.jboss.tools.windup.ui.openRuleDefinition"
+            name="Open Rule Definition">
+      </command>
    </extension>
     <extension
              point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -631,6 +653,13 @@
              id="org.jboss.tools.windup.ui.hasReportTester"
              namespace="org.jboss.tools.windup.ui"
              properties="hasReport"
+             type="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
+       </propertyTester>
+       <propertyTester
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerPropertyTesters$RuleDefinitionPropertyTester"
+             id="org.jboss.tools.windup.ui.hasRuleDefinitionTester"
+             namespace="org.jboss.tools.windup.ui"
+             properties="hasRuleDefinition"
              type="org.jboss.tools.windup.ui.internal.explorer.MarkerNode">
        </propertyTester>
     </extension>

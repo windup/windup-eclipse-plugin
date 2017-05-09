@@ -57,19 +57,15 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -78,7 +74,6 @@ import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.ExecutionBuilder;
-import org.jboss.windup.tooling.rules.RuleProvider;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.w3c.dom.Node;
 
@@ -143,37 +138,7 @@ public class RuleRepositoryView extends ViewPart {
 						Node node = (Node)element;
 						Object provider = contentProvider.getProvider(node);
 						if (provider != null) {
-							IFile file = null;
-							if (provider instanceof CustomRuleProvider) {
-								String locationUri = ((CustomRuleProvider)provider).getLocationURI();
-								file = WorkspaceResourceUtils.getFile(locationUri);
-							}
-							else if (provider instanceof RuleProvider) {
-								file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)provider);
-							}
-							if (file != null && file.exists()) {
-								try {
-									IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-									IEditorPart editor = IDE.openEditor(page, file);
-									if (editor != null) {
-										editor.getSite().getSelectionProvider().setSelection(new StructuredSelection(node));
-										ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
-										if (node instanceof IndexedRegion && textEditor != null) {
-											int start = ((IndexedRegion) node).getStartOffset();
-											int length = ((IndexedRegion) node).getEndOffset() - start;
-											if ((start > -1) && (length > -1)) {
-												textEditor.selectAndReveal(start, length);
-											}
-										}
-									}
-								} catch (PartInitException e) {
-									WindupUIPlugin.log(e);
-							    	MessageDialog.openError(
-											Display.getDefault().getActiveShell(), 
-											Messages.openRuleset, 
-											Messages.errorOpeningRuleset);
-								}
-							}
+							XMLRulesetModelUtil.openRuleInEditor(provider, node);
 						}
 					}
 				}
