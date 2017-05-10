@@ -214,9 +214,11 @@ public class IssueExplorer extends CommonNavigator {
 					ReportNode reportNode = (ReportNode)selection;
 					IMarker marker = reportNode.getMarker();
 					Issue issue = markerService.find(marker);
-					String reportLocation = issue.getGeneratedReportLocation();
-					if (reportLocation != null) {
-						updateReportView(reportLocation, false, partService);
+					if (issue != null) {
+						String reportLocation = issue.getGeneratedReportLocation();
+						if (reportLocation != null) {
+							updateReportView(reportLocation, false, partService);
+						}
 					}
 				}
 			}
@@ -522,15 +524,15 @@ public class IssueExplorer extends CommonNavigator {
 		IMarker marker = (IMarker)issue.getMarker();
 		MarkerNode markerNode = contentService.findMarkerNode(marker);
 		if (markerNode != null) {
+			getCommonViewer().remove(markerNode);
 			TreeNode parent = markerNode.getParent();
 			Object segment = markerNode.getSegment();
 			while (parent != null) {
+				TreeNode childNode = parent.getChildPath(segment);
+				getCommonViewer().remove(childNode);
 				parent.removeChild(segment);
-				getCommonViewer().remove(markerNode);
 				getCommonViewer().refresh(parent, true);
-				if (!parent.getChildren().isEmpty() && 
-						parent.getChildren().size() == 1 &&
-							parent.getChildren().get(0) instanceof ReportNode) {
+				if (isEmptyParent(parent)) {
 					segment = parent.getSegment();
 					parent = parent.getParent();
 				}
@@ -543,6 +545,11 @@ public class IssueExplorer extends CommonNavigator {
 				}
 			}
 		}
+	}
+	
+	private boolean isEmptyParent(TreeNode node) {
+		return (!node.getChildren().isEmpty() && node.getChildren().size() == 1 &&
+			(node.getChildren().get(0) instanceof ReportNode || node.getChildren().get(0) instanceof RootReportNode));
 	}
 	
 	public void update(Issue issue, IMarker oldMarker) {

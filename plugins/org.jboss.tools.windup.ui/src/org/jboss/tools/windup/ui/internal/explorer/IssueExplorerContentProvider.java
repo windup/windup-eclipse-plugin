@@ -130,7 +130,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			if (configuration == null) {
 				return new TreeNode[0];
 			}
-			TreeNode root = new TreeNode(null);
+			RootTreeNode root = new RootTreeNode();
 			for (IMarker marker : markers) {
 				List<TreePath> paths = Lists.newArrayList(contentProvider.getParents(marker.getResource()));
 				if (!paths.isEmpty()) {
@@ -297,6 +297,12 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		}
 		public String getSeverity() {
 			return severity;
+		}
+	}
+	
+	public static class RootTreeNode extends TreeNode {
+		public RootTreeNode() {
+			super(null);
 		}
 	}
 	
