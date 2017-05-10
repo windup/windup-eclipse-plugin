@@ -9,12 +9,12 @@
 </head>
 <body>
 </body>
-    <h2>Getting Started with the Windup Plugin</h2>
+    <h2>Getting Started with the Red Hat Application Migration Toolkit Plugin</h2>
 
-    <h3>Identify and Resolve Migration Issues with Windup</h3>
+    <h3>Identify and Resolve Migration Issues with RHAMT</h3>
     <div>
       <p>
-        Run Windup against your project to identify and fix migration issues.
+        Run RHAMT against your project to identify and fix migration issues.
       </p>
       <ol>
         <li>
@@ -22,7 +22,7 @@
         </li>
         <li>
           <p>
-            <a href="#create-config">Create a Windup run configuration</a>. From the Issue Explorer, press the Windup button (<img src="../icons/windup.png"/>).
+            <a href="#create-config">Create a RHAMT run configuration</a>. From the Issue Explorer, press the RHAMT button (<img src="../icons/windup.png"/>).
           </p>
           <p>
             <img src="../images/windup_button_create_config.png"/>
@@ -33,60 +33,60 @@
         </li>
         <li>
           <p>
-            Click <b>Run</b> to <a href="#execute-windup">execute Windup</a>.
+            Click <b>Run</b> to <a href="#execute-windup">execute RHAMT</a>.
           </p>
         </li>
         <li>
           <p>
-            <a href="#review-issues">Review Windup issues</a> listed in the Issue Explorer.
+            <a href="#review-issues">Review RHAMT issues</a> listed in the Issue Explorer.
           </p>
         </li>
         <li>
           <p>
-            <a href="#resolve-issues">Resolve Windup issues</a> by manually updating code or by using quick fixes when available.
+            <a href="#resolve-issues">Resolve RHAMT issues</a> by manually updating code or by using quick fixes when available.
           </p>
         </li>
         <li>
           <p>
-            Run Windup again as necessary. Use the drop down next to the Run button (<img src="../icons/run_exc.png"/>) to run an existing configuration.
+            Run RHAMT again as necessary. Use the drop down next to the Run button (<img src="../icons/run_exc.png"/>) to run an existing configuration.
           </p>
         </li>
       </ol>
     </div>
 
-    <a name="create-config"><h3>Create a Windup Run Configuration</h3></a>
+    <a name="create-config"><h3>Create a RHAMT Run Configuration</h3></a>
     <div>
       <p>
-        A Windup run configuration can be created using the Windup button (<img src="../icons/windup.png"/>). You can create multiple run configurations, each with a unique name.
+        A RHAMT run configuration can be created using the RHAMT button (<img src="../icons/windup.png"/>). You can create multiple run configurations, each with a unique name.
       </p>
       <h4>Input</h4>
       <p>
-        Select a <b>migration path</b>. This determines which Windup rulesets are used. The migration path defaults to <b>Anything to EAP 7</b>, but can be changed to <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/2.7/single/windup-user-guide#migration_paths">any supported migration path</a>.
+        Select a <b>migration path</b>. This determines which RHAMT rulesets are used. The migration path defaults to <b>Anything to EAP 7</b>, but can be changed to <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/2.7/single/windup-user-guide#migration_paths">any supported migration path</a>.
       </p>
       <p>
         Select one or more <b>projects</b> to analyze. Hold the <b>Ctrl</b> key to select multiple projects in the list.
       </p>
       <p>
-        Select one or more <b>packages</b> to scan. It is recommended to select only those packages that you need to analyze to reduce the overall Windup execution time. If no packages are selected, all packages in the project will be scanned. Hold the <b>Ctrl</b> key to select multiple packages in the list.
+        Select one or more <b>packages</b> to scan. It is recommended to select only those packages that you need to analyze to reduce the overall RHAMT execution time. If no packages are selected, all packages in the project will be scanned. Hold the <b>Ctrl</b> key to select multiple packages in the list.
       </p>
       <h4>Options</h4>
       <p>
-        Generate a Windup report. Check the <b>Generate Report</b> checkbox if you want to generate the Windup HTML report. The report will be shown in the <b>Windup Report</b> tab and can be found in the Issue Explorer when you group by <b>File</b>.
+        Generate a RHAMT report. Check the <b>Generate Report</b> checkbox if you want to generate the RHAMT HTML report. The report will be shown in the <b>RHAMT Report</b> tab and can be found in the Issue Explorer when you group by <b>File</b>.
       </p>
       <p>
-        Set additional Windup <b>options</b>. Any option that is a boolean flag, such as <b>enableTattletale</b>, should enter <b>true</b> as the value. See the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/3.0/single/windup-user-guide#command-line-arguments">Windup User Guide</a> for a description of each Windup argument.
+        Set additional RHAMT <b>options</b>. Any option that is a boolean flag, such as <b>enableTattletale</b>, should enter <b>true</b> as the value. See the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/3.0/single/windup-user-guide#command-line-arguments">RHAMT User Guide</a> for a description of each RHAMT argument.
       </p>
       <h4>Rules</h4>
       <p>
-        Add a <b>custom rules directory</b> if you have any custom Windup rules.
+        Add a <b>custom rules directory</b> if you have any custom RHAMT rules.
       </p>
     </div>
 
 
-    <a name="execute-windup"><h3>Execute Windup</h3></a>
+    <a name="execute-windup"><h3>Execute RHAMT</h3></a>
     <div>
       <p>
-        Once a run configuration has been created, you can execute Windup using that configuration in one of the following ways:
+        Once a run configuration has been created, you can execute RHAMT using that configuration in one of the following ways:
       </p>
       <ul>
         <li>
@@ -97,14 +97,14 @@
         </li>
       </ul>
       <p>
-        If the Windup server is not currently running, it will start once a run configuration is executed. If you do not plan on running Windup again in the near future, it is recommended to stop the Windup server to conserve memory on your machine.
+        If the RHAMT server is not currently running, it will start once a run configuration is executed. If you do not plan on running RHAMT again in the near future, it is recommended to stop the RHAMT server to conserve memory on your machine.
       </p>
     </div>
 
-    <a name="review-issues"><h3>Review Windup Issues</h3></a>
+    <a name="review-issues"><h3>Review RHAMT Issues</h3></a>
     <div>
       <p>
-        Use the Issue Explorer to review migration issues identified by Windup. Different <a href="#icon-legend">icons</a> indicate the issue's severity and state.
+        Use the Issue Explorer to review migration issues identified by RHAMT. Different <a href="#icon-legend">icons</a> indicate the issue's severity and state.
       </p>
       <p>
          Change how issues are grouped by adjusting the <b>Group By</b> selections: Severity, Migration Rule, File.
@@ -113,25 +113,25 @@
         <img src="../images/windup_group_by.png"/>
       </p>
       <p>
-        Double-click the Windup issue in the Issue Explorer to open the associated line of code in an editor. Right-click and select <b>Issue Details</b> to view information about the Windup issue, including its severity and how to address it.
+        Double-click the RHAMT issue in the Issue Explorer to open the associated line of code in an editor. Right-click and select <b>Issue Details</b> to view information about the RHAMT issue, including its severity and how to address it.
       </p>
     </div>
 
-    <a name="resolve-issues"><h3>Resolve Windup Issues</h3></a>
+    <a name="resolve-issues"><h3>Resolve RHAMT Issues</h3></a>
     <div>
       <p>
-        You can resolve Windup issues by updating the code manually or by applying a quick fix when available.
+        You can resolve RHAMT issues by updating the code manually or by applying a quick fix when available.
       </p>
       <h4>Manual Update</h4>
       <p>
-        Review the Windup issue details and additional resources and update the source code as necessary. When you update a line of code marked as a Windup issue, the Windup issue will be marked with the stale icon (<img src="../icons/stale_issue.gif"/>) until the next time that Windup is run on the project.
+        Review the RHAMT issue details and additional resources and update the source code as necessary. When you update a line of code marked as a RHAMT issue, the RHAMT issue will be marked with the stale icon (<img src="../icons/stale_issue.gif"/>) until the next time that RHAMT is run on the project.
       </p>
       <p>
-        You can also manually mark a Windup issue as fixed, which will mark the issue with the resolved icon (<img src="../icons/fixedIssue.gif"/>) until the next time that Windup is run on the project. To mark an issue as fixed, right-click the Windup issue in the Issue Explorer and select <b>Mark as Fixed</b>.
+        You can also manually mark a RHAMT issue as fixed, which will mark the issue with the resolved icon (<img src="../icons/fixedIssue.gif"/>) until the next time that RHAMT is run on the project. To mark an issue as fixed, right-click the RHAMT issue in the Issue Explorer and select <b>Mark as Fixed</b>.
       </p>
       <h4>Quick Fix</h4>
       <p>
-        Some Windup issues provide a quick fix, which assists in making the necessary edits to address the issue.
+        Some RHAMT issues provide a quick fix, which assists in making the necessary edits to address the issue.
       </p>
       <h5>Preview a Quick Fix</h5>
       <p>
@@ -139,14 +139,14 @@
       </p>
       <h5>Apply a Quick Fix</h5>
       <p>
-        Right-click the issue and select <b>Apply Quick Fix</b>. This will update the source code as required and will mark the Windup issue as resolved.
+        Right-click the issue and select <b>Apply Quick Fix</b>. This will update the source code as required and will mark the RHAMT issue as resolved.
       </p>
     </div>
 
-    <a name="icon-legend"><h3>Windup Issue Legend</h3></a>
+    <a name="icon-legend"><h3>RHAMT Issue Legend</h3></a>
     <div>
       <p>
-        In the Issue Explorer and file editors, Windup issues use an icon to indicate their severity level and status. The following table describes the meaning of the various icons.
+        In the Issue Explorer and file editors, RHAMT issues use an icon to indicate their severity level and status. The following table describes the meaning of the various icons.
       </p>
       <table border="1" cellpadding="2" cellspacing="0">
         <tr>
@@ -171,7 +171,7 @@
         </tr>
         <tr>
           <td><img src="../icons/stale_issue.gif"/></td>
-          <td>The issue is stale because the code marked as an issue has been modified since the last time that Windup was run on the project.</td>
+          <td>The issue is stale because the code marked as an issue has been modified since the last time that RHAMT was run on the project.</td>
         </tr>
         <tr>
           <td><img src="../icons/quickfix_error.png"/></td>
@@ -191,9 +191,9 @@
     <h3>Additional Resources</h3>
     <div>
       <ul>
-        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/3.0/single/windup-eclipse-plugin-guide">Windup Eclipse Plugin Guide</a></li>
-        <li><a href="http://windup.jboss.org/">Windup Website</a></li>
-        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">Red Hat JBoss Migration Toolkit Documentation</a></li>
+        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/3.0/single/windup-eclipse-plugin-guide">RHAMT Eclipse Plugin Guide</a></li>
+        <li><a href="http://windup.jboss.org/">RHAMT Website</a></li>
+        <li><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">Red Hat Application Migration Toolkit Documentation</a></li>
       </ul>
     </div>
 
