@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -284,8 +285,17 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			if (children.isEmpty()) {
 				return false;
 			}
-			Map.Entry<Object, TreeNode> child = children.entrySet().iterator().next();
-			return child.getValue().getChildren().isEmpty();
+			
+			for (Iterator<Map.Entry<Object, TreeNode>> iter = children.entrySet().iterator(); iter.hasNext();) {
+				TreeNode child = iter.next().getValue();
+				if (!(child instanceof RootReportNode) && !(child instanceof ReportNode)) {
+					if (child.getChildren().isEmpty()) {
+						return true;
+					}
+				}
+			}
+			
+			return false;
 		}
 	}
 	
