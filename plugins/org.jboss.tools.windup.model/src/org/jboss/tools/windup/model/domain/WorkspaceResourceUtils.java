@@ -88,7 +88,12 @@ public class WorkspaceResourceUtils {
 			try {
 				tempFile = new File(FileLocator.resolve(resUrl).toURI());
 			} catch (IllegalArgumentException e) {
-				tempFile = new File(resUrl.getPath());
+				tempFile = new File(resUrl.toExternalForm());
+				if (!tempFile.exists())
+				{
+					IProject project = findProject(platformPluginUri.replace("platform:/plugin", ""));
+					tempFile = new File(project.getLocationURI().getPath());
+				}
 			}
 			System.out.println("File resource is: " + tempFile);
 			return tempFile.toPath();
