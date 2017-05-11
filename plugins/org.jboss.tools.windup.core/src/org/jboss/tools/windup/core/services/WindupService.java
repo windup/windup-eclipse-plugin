@@ -118,6 +118,7 @@ public class WindupService
 
         try {
         	for (Input input : configuration.getInputs()) {
+        		WindupCorePlugin.logInfo("Input from configuration -> "+input.getUri());
                 ExecutionBuilder execBuilder = windupClient.getExecutionBuilder();
                 execBuilder.clear();
             	

@@ -83,9 +83,15 @@ public class WorkspaceResourceUtils {
 	public static java.nio.file.Path computePath(String platformPluginUri) {
 		try {
 			URL resUrl = new URL(platformPluginUri.replace("platform:/plugin", "platform:/resource"));
-			URL url = FileLocator.toFileURL(resUrl);
-			File temp = new File(url.toURI());
-			return temp.toPath();
+			System.out.println("URL of resource is: " + resUrl);
+			File tempFile = null;
+			try {
+				tempFile = new File(FileLocator.resolve(resUrl).toURI());
+			} catch (IllegalArgumentException e) {
+				tempFile = new File(resUrl.getPath());
+			}
+			System.out.println("File resource is: " + tempFile);
+			return tempFile.toPath();
 		} catch (Exception e) {
 			Activator.log(e);
 		}
