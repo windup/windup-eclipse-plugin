@@ -404,6 +404,7 @@ public class IssueExplorer extends CommonNavigator {
 		searchText = new Text(container, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(searchText);
 		searchText.addModifyListener(onSearch());
+		searchText.setVisible(false);
 	}
 	
 	public String getFilterText() {
@@ -515,7 +516,6 @@ public class IssueExplorer extends CommonNavigator {
 	
 	public void buildTree()	{
 		refresh();
-		
 		boolean visible = getCommonViewer().getTree().getItemCount() > 0;
 		searchText.setVisible(visible);
 	}
@@ -545,6 +545,8 @@ public class IssueExplorer extends CommonNavigator {
 				}
 			}
 		}
+		boolean visible = getCommonViewer().getTree().getItemCount() > 0;
+		searchText.setVisible(visible);
 	}
 	
 	private boolean isEmptyParent(TreeNode node) {
