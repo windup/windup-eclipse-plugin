@@ -50,8 +50,11 @@ import com.google.common.collect.Lists;
 public class LaunchUtils {
 	
 	public static void launch(ISelection selection, String mode, ModelService modelService) {
-		IProject project = getProjectsFromSelection(selection).get(0);
-		launch(project, mode, modelService);
+		List<IProject> projects = getProjectsFromSelection(selection);
+		if (!projects.isEmpty()) {
+			IProject project = projects.get(0);
+			launch(project, mode, modelService);
+		}
 	}
 	
 	public static void launch(IEditorPart editor, String mode, ModelService modelService) {
