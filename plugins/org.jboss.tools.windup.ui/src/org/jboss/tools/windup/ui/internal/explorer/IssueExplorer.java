@@ -227,6 +227,7 @@ public class IssueExplorer extends CommonNavigator {
 		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 		initGettingStarted();
+		buildTree();
 	}
 	
 	private Label serverImage;
@@ -404,7 +405,6 @@ public class IssueExplorer extends CommonNavigator {
 		searchText = new Text(container, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(searchText);
 		searchText.addModifyListener(onSearch());
-		searchText.setVisible(false);
 	}
 	
 	public String getFilterText() {
