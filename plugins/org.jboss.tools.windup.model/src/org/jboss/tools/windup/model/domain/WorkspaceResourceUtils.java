@@ -84,7 +84,7 @@ public class WorkspaceResourceUtils {
 		try {
 			URL resUrl = new URL(platformPluginUri.replace("platform:/plugin", "platform:/resource"));
 			URL url = FileLocator.toFileURL(resUrl);
-			File temp = new File(url.toURI());
+			File temp = new File(url.getFile());
 			return temp.toPath();
 		} catch (Exception e) {
 			Activator.log(e);
