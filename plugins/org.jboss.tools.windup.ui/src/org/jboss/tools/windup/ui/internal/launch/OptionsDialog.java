@@ -85,7 +85,7 @@ public class OptionsDialog extends Dialog {
 		
 		stackComposite = new Composite(comp, SWT.NONE);
 		stackComposite.setLayout(new StackLayout());
-		GridDataFactory.fillDefaults().grab(true, true).hint(400, 25).applyTo(stackComposite);
+		GridDataFactory.fillDefaults().grab(true, true).hint(400, /*25*/100).applyTo(stackComposite);
 		
 		loadHelp(stackComposite);
 		

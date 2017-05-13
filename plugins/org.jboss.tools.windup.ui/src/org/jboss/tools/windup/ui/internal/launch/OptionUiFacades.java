@@ -18,6 +18,9 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -47,9 +50,9 @@ public class OptionUiFacades {
 		
 		@SuppressWarnings("unused")
 		protected OptionTypeFacade<T> optionTypeFacade;
-		private OptionDescription option;
+		protected OptionDescription option;
 		
-		private Control control;
+		protected Control control;
 		protected Runnable optionChangedCallback;
 		
 		private String value = "";
@@ -124,8 +127,45 @@ public class OptionUiFacades {
 	}
 	
 	public static class BooleanControlFacade extends AbstractOptionUiFacade<Boolean> {
+		private Button button;
+		private boolean enabled = false;
+		
 		public BooleanControlFacade(OptionTypeFacade<Boolean> optionTypeFacade, Runnable optionChangedCallback) {
 			super(optionTypeFacade, optionChangedCallback);
+		}
+		
+		@Override
+		public void createControls(Composite parent) {
+			Composite control = new Composite(parent, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(1).applyTo(control);
+			button = new Button(control, SWT.CHECK);
+			button.setText("Include the --" + option.getName() + " argument."); //$NON-NLS-1$
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					BooleanControlFacade.this.enabled = button.getSelection();
+				}
+			});
+			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+			text.setEditable(false);
+			text.setText(option.getDescription());
+			this.control = control;
+		}
+		
+		@Override
+		public boolean isValid() {
+			return true;
+		}
+		
+		@Override
+		public String getValue() {
+			return String.valueOf(enabled);
+		}
+		
+		@Override
+		public void setFocus() {
+			button.setFocus();
 		}
 	}
 	
