@@ -15,6 +15,7 @@ import java.nio.file.Path;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jboss.tools.windup.model.Facades.IFacade;
@@ -72,11 +74,11 @@ public class OptionUiFacades {
 		@Override
 		public void createControls(Composite parent) {
 			Composite control = new Composite(parent, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(control);
+			GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(control);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(control);
 			Label valueLabel = new Label(control, SWT.NONE);
 			valueLabel.setText(Messages.VALUE+":");
 			valueLabel.setFont(parent.getFont());
-			GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).align(SWT.RIGHT, SWT.CENTER).applyTo(valueLabel);
 			createInputControl(control);
 			this.control = control;
 		}
@@ -91,7 +93,6 @@ public class OptionUiFacades {
 		protected void createInputControl(Composite parent) {
 			textWidget = new Text(parent, SWT.BORDER | SWT.SINGLE);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(textWidget);
-			
 			textWidget.setFont(parent.getFont());
 			textWidget.addModifyListener(new ModifyListener() {
 				@Override
@@ -100,10 +101,13 @@ public class OptionUiFacades {
 					notifyOptionChanged();
 				}
 			});
-			Text text = new Text(parent, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
-			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(text);
-			text.setEditable(false);
-			text.setText(option.getDescription());
+			
+			Composite container = new Composite (parent, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(container);
+			Label text = new Label(container, SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+			text.setText("*" + option.getDescription());
 		}
 		
 		protected void notifyOptionChanged() {
@@ -158,10 +162,12 @@ public class OptionUiFacades {
 					notifyOptionChanged();
 				}
 			});
-			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			Composite container = new Composite (control, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+			Label text = new Label(container, SWT.WRAP);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
-			text.setEditable(false);
-			text.setText(option.getDescription());
+			text.setText("*" + option.getDescription());
 			this.control = control;
 		}
 		
@@ -193,8 +199,9 @@ public class OptionUiFacades {
 		@Override
 		public void createControls(Composite parent) {
 			Composite control = new Composite(parent, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(control);
+			GridLayoutFactory.fillDefaults().numColumns(3).applyTo(control);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
+			new Label(control, SWT.NONE).setText("Location:");
 			text = new Text(control, SWT.BORDER | SWT.SINGLE);
 			text.addModifyListener(new ModifyListener() {
 				@Override
@@ -217,10 +224,12 @@ public class OptionUiFacades {
 			        notifyOptionChanged();
 				}
 			});
-			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
-			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(text);
-			text.setEditable(false);
-			text.setText(option.getDescription());
+			Composite container = new Composite (control, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, true).span(3, 0).applyTo(container);
+			Label text = new Label(container, SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+			text.setText("*" + option.getDescription());
 			this.control = control;
 		}
 		
@@ -252,8 +261,9 @@ public class OptionUiFacades {
 		@Override
 		public void createControls(Composite parent) {
 			Composite control = new Composite(parent, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 0).applyTo(control);
+			GridLayoutFactory.fillDefaults().numColumns(3).margins(0, 0).applyTo(control);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
+			new Label(control, SWT.NONE).setText("Location:");
 			text = new Text(control, SWT.BORDER | SWT.SINGLE);
 			text.addModifyListener(new ModifyListener() {
 				@Override
@@ -277,10 +287,12 @@ public class OptionUiFacades {
 			        notifyOptionChanged();
 				}
 			});
-			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
-			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(text);
-			text.setEditable(false);
-			text.setText(option.getDescription());
+			Composite container = new Composite (control, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, true).span(3, 0).applyTo(container);
+			Label text = new Label(container, SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+			text.setText("*" + option.getDescription());
 			this.control = control;
 		}
 		
@@ -312,8 +324,9 @@ public class OptionUiFacades {
 		@Override
 		public void createControls(Composite parent) {
 			Composite control = new Composite(parent, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(3).applyTo(control);
+			GridLayoutFactory.fillDefaults().numColumns(4).applyTo(control);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
+			new Label(control, SWT.NONE).setText("Location:");
 			text = new Text(control, SWT.BORDER | SWT.SINGLE);
 			text.addModifyListener(new ModifyListener() {
 				@Override
@@ -349,10 +362,12 @@ public class OptionUiFacades {
 			        notifyOptionChanged();
 				}
 			});
-			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
-			GridDataFactory.fillDefaults().grab(true, true).span(3, 0).applyTo(text);
-			text.setEditable(false);
-			text.setText(option.getDescription());
+			Composite container = new Composite (control, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, true).span(4, 0).applyTo(container);
+			Label text = new Label(container, SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+			text.setText("*" + option.getDescription());
 			this.control = control;
 		}
 		
@@ -398,10 +413,12 @@ public class OptionUiFacades {
 				}
 			});
 			
-			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			Composite container = new Composite (control, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+			Label text = new Label(container, SWT.WRAP);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
-			text.setEditable(false);
-			text.setText(option.getDescription());
+			text.setText("*" + option.getDescription());
 			this.control = control;
 		}
 		
