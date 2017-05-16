@@ -21,14 +21,18 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jboss.tools.windup.model.Facades.IFacade;
 import org.jboss.tools.windup.model.OptionFacades.OptionTypeFacade;
 import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.OptionFacades.Type;
+import org.jboss.tools.windup.model.OptionFacades.UiType;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.windup.bootstrap.help.OptionDescription;
 
@@ -57,8 +61,6 @@ public class OptionUiFacades {
 		
 		private String value = "";
 		
-		
-		// For Alpha, just a simple text field.
 		protected Text textWidget;
 		
 		public AbstractOptionUiFacade(OptionTypeFacade<T> optionTypeFacade, Runnable optionChangedCallback) {
@@ -95,9 +97,17 @@ public class OptionUiFacades {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					AbstractOptionUiFacade.this.value = textWidget.getText().trim();
-					optionChangedCallback.run();
+					notifyOptionChanged();
 				}
 			});
+			Text text = new Text(parent, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(text);
+			text.setEditable(false);
+			text.setText(option.getDescription());
+		}
+		
+		protected void notifyOptionChanged() {
+			optionChangedCallback.run();
 		}
 		
 		@Override
@@ -138,12 +148,14 @@ public class OptionUiFacades {
 		public void createControls(Composite parent) {
 			Composite control = new Composite(parent, SWT.NONE);
 			GridLayoutFactory.fillDefaults().numColumns(1).applyTo(control);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
 			button = new Button(control, SWT.CHECK);
 			button.setText("Include the --" + option.getName() + " argument."); //$NON-NLS-1$
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					BooleanControlFacade.this.enabled = button.getSelection();
+					notifyOptionChanged();
 				}
 			});
 			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
@@ -155,7 +167,7 @@ public class OptionUiFacades {
 		
 		@Override
 		public boolean isValid() {
-			return true;
+			return enabled;
 		}
 		
 		@Override
@@ -170,14 +182,242 @@ public class OptionUiFacades {
 	}
 	
 	public static class FileControlFacade extends AbstractOptionUiFacade<File> {
+		
+		private String fileLocation;
+		private Text text;
+		
 		public FileControlFacade(OptionTypeFacade<File> optionTypeFacade, Runnable optionChangedCallback) {
 			super(optionTypeFacade, optionChangedCallback);
 		}
+		
+		@Override
+		public void createControls(Composite parent) {
+			Composite control = new Composite(parent, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(control);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
+			text = new Text(control, SWT.BORDER | SWT.SINGLE);
+			text.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					fileLocation = text.getText().trim();
+					notifyOptionChanged();
+				}
+			});
+			GridDataFactory.fillDefaults().hint(SWT.DEFAULT, SWT.DEFAULT).align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(text);
+			Button button = new Button(control, SWT.NONE);
+			button.setText("Browse...");
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+			        FileDialog dialog = new FileDialog(FileControlFacade.this.control.getShell(), SWT.OPEN);
+			        String location = dialog.open();
+			        location = location == null ? "" : location;
+			        FileControlFacade.this.fileLocation = location;
+			        FileControlFacade.this.text.setText(location);
+			        notifyOptionChanged();
+				}
+			});
+			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(text);
+			text.setEditable(false);
+			text.setText(option.getDescription());
+			this.control = control;
+		}
+		
+		@Override
+		public boolean isValid() {
+			return fileLocation != null && !fileLocation.isEmpty() && new File(fileLocation).exists();
+		}
+		
+		@Override
+		public String getValue() {
+			return fileLocation;
+		}
+		
+		@Override
+		public void setFocus() {
+			text.setFocus();
+		}
 	}
 	
-	public static class PathControlFacade extends AbstractOptionUiFacade<Path> {
-		public PathControlFacade(OptionTypeFacade<Path> optionTypeFacade, Runnable optionChangedCallback) {
+	public static class DirectoryControlFacade extends AbstractOptionUiFacade<File> {
+		
+		private String directoryLocation;
+		private Text text;
+		
+		public DirectoryControlFacade(OptionTypeFacade<File> optionTypeFacade, Runnable optionChangedCallback) {
 			super(optionTypeFacade, optionChangedCallback);
+		}
+		
+		@Override
+		public void createControls(Composite parent) {
+			Composite control = new Composite(parent, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 0).applyTo(control);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
+			text = new Text(control, SWT.BORDER | SWT.SINGLE);
+			text.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					directoryLocation = text.getText().trim();
+					notifyOptionChanged();
+				}
+			});
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
+			Button button = new Button(control, SWT.NONE);
+			GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(text);
+			button.setText("Browse...");
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+			        DirectoryDialog dialog = new DirectoryDialog(DirectoryControlFacade.this.control.getShell(), SWT.OPEN);
+			        String location = dialog.open();
+			        location = location == null ? "" : location;
+			        DirectoryControlFacade.this.directoryLocation = location;
+			        DirectoryControlFacade.this.text.setText(location);
+			        notifyOptionChanged();
+				}
+			});
+			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).span(2, 0).applyTo(text);
+			text.setEditable(false);
+			text.setText(option.getDescription());
+			this.control = control;
+		}
+		
+		@Override
+		public boolean isValid() {
+			return directoryLocation != null && !directoryLocation.isEmpty() && new File(directoryLocation).exists();
+		}
+		
+		@Override
+		public String getValue() {
+			return directoryLocation;
+		}
+		
+		@Override
+		public void setFocus() {
+			text.setFocus();
+		}
+	}
+
+	public static class FileOrDirectoryControlFacade extends AbstractOptionUiFacade<Path> {
+		
+		private String pathLocation;
+		private Text text;
+		
+		public FileOrDirectoryControlFacade(OptionTypeFacade<Path> optionTypeFacade, Runnable optionChangedCallback) {
+			super(optionTypeFacade, optionChangedCallback);
+		}
+		
+		@Override
+		public void createControls(Composite parent) {
+			Composite control = new Composite(parent, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(3).applyTo(control);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
+			text = new Text(control, SWT.BORDER | SWT.SINGLE);
+			text.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					pathLocation = text.getText().trim();
+					notifyOptionChanged();
+				}
+			});
+			GridDataFactory.fillDefaults().hint(SWT.DEFAULT, SWT.DEFAULT).align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(text);
+			Button button = new Button(control, SWT.NONE);
+			button.setText("Folder...");
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+			        DirectoryDialog dialog = new DirectoryDialog(FileOrDirectoryControlFacade.this.control.getShell(), SWT.OPEN);
+			        String location = dialog.open();
+			        location = location == null ? "" : location;
+			        FileOrDirectoryControlFacade.this.pathLocation = location;
+			        FileOrDirectoryControlFacade.this.text.setText(location);
+			        notifyOptionChanged();
+				}
+			});
+			button = new Button(control, SWT.NONE);
+			button.setText("File...");
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+			        FileDialog dialog = new FileDialog(FileOrDirectoryControlFacade.this.control.getShell(), SWT.OPEN);
+			        String location = dialog.open();
+			        location = location == null ? "" : location;
+			        FileOrDirectoryControlFacade.this.pathLocation = location;
+			        FileOrDirectoryControlFacade.this.text.setText(location);
+			        notifyOptionChanged();
+				}
+			});
+			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).span(3, 0).applyTo(text);
+			text.setEditable(false);
+			text.setText(option.getDescription());
+			this.control = control;
+		}
+		
+		@Override
+		public boolean isValid() {
+			return pathLocation != null && !pathLocation.isEmpty() && new File(pathLocation).exists();
+		}
+		
+		@Override
+		public String getValue() {
+			return pathLocation;
+		}
+		
+		@Override
+		public void setFocus() {
+			text.setFocus();
+		}
+	}
+	
+	public static class SelectControlFacade extends AbstractOptionUiFacade<String> {
+		
+		private Combo optionCombo;
+		private String selection;
+		
+		public SelectControlFacade(OptionTypeFacade<String> optionTypeFacade, Runnable optionChangedCallback) {
+			super(optionTypeFacade, optionChangedCallback);
+		}
+		
+		@Override
+		public void createControls(Composite parent) {
+			Composite control = new Composite(parent, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(1).applyTo(control);
+			optionCombo = new Combo(control, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(optionCombo);
+			optionCombo.setFont(parent.getFont());
+			
+			optionCombo.setItems(option.getAvailableOptions().toArray(new String[option.getAvailableOptions().size()]));			
+			optionCombo.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					SelectControlFacade.this.selection = option.getAvailableOptions().get(optionCombo.getSelectionIndex());
+					notifyOptionChanged();
+				}
+			});
+			
+			Text text = new Text(control, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+			text.setEditable(false);
+			text.setText(option.getDescription());
+			this.control = control;
+		}
+		
+		@Override
+		public boolean isValid() {
+			return selection != null && !selection.isEmpty();
+		}
+		
+		@Override
+		public String getValue() {
+			return selection;
+		}
+		
+		@Override
+		public void setFocus() {
+			optionCombo.setFocus();
 		}
 	}
 	
@@ -189,7 +429,12 @@ public class OptionUiFacades {
 		OptionUiFacade uiFacade = null;
 		switch(type) {
 			case STRING: {
-				uiFacade = new StringControlFacade((OptionTypeFacade<String>) typeFacade, optionChangedCallback);
+				if (UiType.valueOf(option.getUiType()) == UiType.SELECT_MANY) {
+					uiFacade = new SelectControlFacade((OptionTypeFacade<String>) typeFacade, optionChangedCallback);	
+				}
+				else {
+					uiFacade = new StringControlFacade((OptionTypeFacade<String>) typeFacade, optionChangedCallback);
+				}
 				break;
 			}
 			case BOOLEAN: {
@@ -197,11 +442,19 @@ public class OptionUiFacades {
 				break;
 			}
 			case FILE: {
-				uiFacade = new FileControlFacade((OptionTypeFacade<File>) typeFacade, optionChangedCallback);
+				if (UiType.valueOf(option.getUiType()) == UiType.DIRECTORY) {
+					uiFacade = new DirectoryControlFacade((OptionTypeFacade<File>) typeFacade, optionChangedCallback);
+				}
+				else if (UiType.valueOf(option.getUiType()) == UiType.FILE_OR_DIRECTORY) {
+					uiFacade = new FileOrDirectoryControlFacade((OptionTypeFacade<Path>) typeFacade, optionChangedCallback);
+				}
+				else {
+					uiFacade = new FileControlFacade((OptionTypeFacade<File>) typeFacade, optionChangedCallback);
+				}
 				break;
 			}
 			case PATH: {
-				uiFacade = new PathControlFacade((OptionTypeFacade<Path>) typeFacade, optionChangedCallback);
+				uiFacade = new FileOrDirectoryControlFacade((OptionTypeFacade<Path>) typeFacade, optionChangedCallback);
 				break;
 			}
 		}

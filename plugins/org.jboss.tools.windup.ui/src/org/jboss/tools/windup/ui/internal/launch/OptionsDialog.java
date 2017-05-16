@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -54,6 +55,16 @@ public class OptionsDialog extends Dialog {
 		this.configuration = configuration;
 	}
 	
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+	
+	@Override
+	protected Point getInitialSize() {
+		return new Point(500, 250);
+	}
+	
 	private void loadHelp(Composite parent) {
 		optionsService.loadOptions(() -> {
 			this.widgetManager = new OptionsWidgetManager(modelService.getOptionFacadeManager(), 
@@ -63,7 +74,20 @@ public class OptionsDialog extends Dialog {
 			for (String option : widgetManager.getOptions()) {
 				optionCombo.add(option);
 			}
+			optionCombo.select(0);
+			select(0);
 		});
+	}
+	
+	private void select(int index) {
+		String selection = widgetManager.getOptions().get(index);
+		OptionUiFacade selectedOption = widgetManager.getOptionUiFacade(selection);
+		selectedOption.setFocus();
+		Control top = selectedOption.getControl();
+		OptionsDialog.this.selectedOption = selectedOption;
+		((StackLayout)stackComposite.getLayout()).topControl = top;
+		stackComposite.layout(true, true);
+		updateButtons();
 	}
 	
 	@Override
@@ -92,14 +116,7 @@ public class OptionsDialog extends Dialog {
 		optionCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String selection = widgetManager.getOptions().get(optionCombo.getSelectionIndex());
-				OptionUiFacade selectedOption = widgetManager.getOptionUiFacade(selection);
-				selectedOption.setFocus();
-				Control top = selectedOption.getControl();
-				OptionsDialog.this.selectedOption = selectedOption;
-				((StackLayout)stackComposite.getLayout()).topControl = top;
-				stackComposite.layout(true, true);
-				updateButtons();
+				select(optionCombo.getSelectionIndex());
 			}
 		});
 		return comp;
