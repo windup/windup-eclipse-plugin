@@ -13,10 +13,16 @@ package org.jboss.tools.windup.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -39,18 +45,28 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	}
 	
 	@Override
+	protected Control createContents(Composite parent) {
+		new Label(parent, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create());
+		return super.createContents(parent);
+	}
+	
+	@Override
 	protected void createFieldEditors() {
-		addField(homeEditor = new FileFieldEditor(
+		homeEditor = new FileFieldEditor(
 				IPreferenceConstants.WINDUP_HOME, 
 				Messages.WindupPreferenceHome, 
 				true, 
 				StringFieldEditor.VALIDATE_ON_KEY_STROKE, 
-				getFieldEditorParent()));
+				getFieldEditorParent());
+		homeEditor.setEmptyStringAllowed(false);
+		addField(homeEditor);
 		
-		addField(portEditor = new IntegerFieldEditor(
+		portEditor = new IntegerFieldEditor(
 				IPreferenceConstants.RMI_PORT, 
 				Messages.WindupPreferenceRmiPort, 
-				getFieldEditorParent()));
+				getFieldEditorParent());
+		portEditor.setEmptyStringAllowed(false);
+		addField(portEditor);
 	}
 	
 	@Override
@@ -66,6 +82,10 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 		return result;
 	}
 	
+	@Override
+	protected Point doComputeSize() {
+		return new Point(500, 400);
+	}
 	
 	@Override
 	public void init(IWorkbench workbench) {

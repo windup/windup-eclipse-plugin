@@ -353,15 +353,11 @@ public class IssueExplorer extends CommonNavigator {
 	
 	private void updateServerGroup() {
 		if (windupClient.isWindupServerRunning()) {
-			//serverImage
-			//statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_RUNNING_STATUS));
 			statusLabel.setText("[Running - " + windupClient.getWindupVersion() + "]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
 			startStopButton.setToolTipText("Stop Windup Server"); //$NON-NLS-1$
 		}
 		else {
-			//serverImage
-			//statusImage.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_SERVER_NOT_RUNNING_STATUS));
 			statusLabel.setText("[Not Running]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_START));	
 			startStopButton.setToolTipText("Start Windup Server"); //$NON-NLS-1$
