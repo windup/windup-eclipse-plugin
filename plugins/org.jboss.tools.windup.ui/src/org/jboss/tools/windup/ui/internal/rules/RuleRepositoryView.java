@@ -50,12 +50,14 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -83,7 +85,6 @@ import com.google.common.io.Files;
 /**
  * View for displaying Windup rule repositories.
  */
-@SuppressWarnings("restriction")
 public class RuleRepositoryView extends ViewPart {
 	
 	public static final String VIEW_ID = "org.jboss.tools.windup.ui.rules.rulesView"; //$NON-NLS-1$
@@ -98,12 +99,23 @@ public class RuleRepositoryView extends ViewPart {
 	
 	private MenuManager menuManager;
 	
+	private Composite stack;
+	private Composite placeholder;
+	private Composite viewerComposite;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+		stack = new Composite(parent, SWT.NONE);
+		stack.setLayout(new StackLayout());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(stack);
 		try {
-			createSystemRulesTreeViewer(parent);
+			createPlaceholder(stack);
+			viewerComposite = new Composite(stack, SWT.NONE);
+			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(viewerComposite);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(viewerComposite);
+			createSystemRulesTreeViewer(viewerComposite);
 		} catch (RemoteException e1) {
 			WindupUIPlugin.log(e1);
 			return;
@@ -160,6 +172,19 @@ public class RuleRepositoryView extends ViewPart {
 	    treeViewer.addDropSupport(DND.DROP_COPY| DND.DROP_MOVE, 
 	    		new Transfer[]{LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()}, 
 	    		new RulesetDropListener(treeViewer));
+	}
+	
+	private void createPlaceholder(Composite parent) {
+		placeholder = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(placeholder);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(placeholder);
+		new Label(placeholder, SWT.NONE).setText("Loading...");
+	}
+	
+	private void loading(boolean loading) {
+		Composite top = loading ? placeholder : viewerComposite;
+		((StackLayout)stack.getLayout()).topControl = top;
+		placeholder.getParent().layout(true);
 	}
 	
 	private class RulesetDropListener extends ViewerDropAdapter {
@@ -304,6 +329,7 @@ public class RuleRepositoryView extends ViewPart {
 	
 	public void refresh() throws RemoteException {
 		if (windupClient.isWindupServerRunning()) {
+			loading(true);
 			Job fetchJob = new Job(Messages.refreshingRules) { //$NON-NLS-1$
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
@@ -335,7 +361,9 @@ public class RuleRepositoryView extends ViewPart {
 	
 	private void refreshRulesTree(RuleProviderRegistry systemRuleProviderRegistry) {
 		Display.getDefault().asyncExec(() -> {
-			treeViewer.setInput(RuleRepositoryInput.computeInput(systemRuleProviderRegistry, modelService));
+			RuleRepositoryInput input = RuleRepositoryInput.computeInput(systemRuleProviderRegistry, modelService);
+			treeViewer.setInput(input);
+			loading(false);
 		});
 	}
 
