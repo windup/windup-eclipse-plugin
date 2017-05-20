@@ -42,6 +42,12 @@
             name="Rules"
             restorable="true">
       </view>
+      <e4view
+            class="org.jboss.tools.windup.ui.internal.views.TaskListView"
+            id="org.jboss.tools.windup.ui.taskListView"
+            name="Task List"
+            restorable="true">
+      </e4view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">

@@ -102,6 +102,8 @@ public class Messages extends NLS
     public static String showInIssueExplorer;
     public static String showIssueDetails;
     
+    public static String createMigrationIssue;
+    
     public static String showWindupGettingStarted;
 
     public static String PreviewQuickFix;

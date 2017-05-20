@@ -19,6 +19,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView;
+import org.jboss.tools.windup.ui.internal.views.TaskListView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
@@ -38,6 +39,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(RuleRepositoryView.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		layout.addShowViewShortcut(WindupReportView.ID);
+		layout.addShowViewShortcut(TaskListView.VIEW_ID);
 		
 		String editorArea = layout.getEditorArea();
 
@@ -52,6 +54,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		bottomRight.addView(IssueDetailsView.ID);
 		bottomRight.addView(WindupReportView.ID);
 		bottomRight.addPlaceholder(ID_CONSOLE_VIEW);
+		bottomRight.addPlaceholder(TaskListView.VIEW_ID);
 		
 		bottomRight.addPlaceholder(IPageLayout.ID_TASK_LIST);
 		bottomRight.addPlaceholder(ID_CONSOLE_VIEW);

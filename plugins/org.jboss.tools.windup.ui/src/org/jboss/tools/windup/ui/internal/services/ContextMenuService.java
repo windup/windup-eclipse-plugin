@@ -111,7 +111,7 @@ public class ContextMenuService implements MouseListener, IMenuListener {
 		markerService.setFixed(issue);
 	}
 	
-	private class WindupAction extends Action {
+	public static class WindupAction extends Action {
 		private Runnable runner;
 		public WindupAction(String label, ImageDescriptor descriptor, Runnable runner) {
 			super(label, descriptor);
