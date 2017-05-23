@@ -782,6 +782,18 @@
           </view>
           <view
                 closeable="true"
+                id="org.eclipse.mylyn.tasks.ui.views.tasks"
+                minimized="false"
+                moveable="true"
+                ratio="0.50f"
+                relationship="stack"
+                relative="org.eclipse.ui.navigator.ProjectExplorer"
+                showTitle="true"
+                standalone="false"
+                visible="true">
+          </view>
+          <view
+                closeable="true"
                 id="org.jboss.tools.windup.ui.server"
                 minimized="false"
                 moveable="true"

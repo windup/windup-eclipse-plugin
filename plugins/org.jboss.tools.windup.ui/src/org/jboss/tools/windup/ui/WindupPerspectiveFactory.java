@@ -12,6 +12,7 @@ package org.jboss.tools.windup.ui;
 
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.mylyn.tasks.ui.ITasksUiConstants;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -19,7 +20,6 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView;
-import org.jboss.tools.windup.ui.internal.views.TaskListView;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
@@ -31,6 +31,8 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 	
 	private static final String ID_CONSOLE_VIEW = "org.eclipse.ui.console.ConsoleView"; //$NON-NLS-1$
 	private static final String ID_SEARCH_VIEW = "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
+	
+	private static final String TASK_LIST_VIEW_ID = "org.eclipse.mylyn.tasks.ui.views.tasks";
 
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
@@ -39,7 +41,8 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(RuleRepositoryView.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		layout.addShowViewShortcut(WindupReportView.ID);
-		//layout.addShowViewShortcut(TaskListView.VIEW_ID);
+		layout.addShowViewShortcut(TASK_LIST_VIEW_ID);
+		layout.addShowViewShortcut(ITasksUiConstants.ID_VIEW_REPOSITORIES);
 		
 		String editorArea = layout.getEditorArea();
 
@@ -54,7 +57,6 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		bottomRight.addView(IssueDetailsView.ID);
 		bottomRight.addView(WindupReportView.ID);
 		bottomRight.addPlaceholder(ID_CONSOLE_VIEW);
-		//bottomRight.addPlaceholder(TaskListView.VIEW_ID);
 		
 		bottomRight.addPlaceholder(IPageLayout.ID_TASK_LIST);
 		bottomRight.addPlaceholder(ID_CONSOLE_VIEW);
@@ -62,6 +64,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		bottomRight.addPlaceholder(IProgressConstants.PROGRESS_VIEW_ID);
 		bottomRight.addPlaceholder(ID_SEARCH_VIEW);
 		bottomRight.addView(RuleRepositoryView.VIEW_ID);
+		bottomRight.addView(ITasksUiConstants.ID_VIEW_REPOSITORIES);
 		
 		// Bottom far-right.
 		//IFolderLayout bottomFarRight = layout.createFolder("bottomFarRight", IPageLayout.RIGHT, 0.5f, "bottomRight");//$NON-NLS-1$
