@@ -221,7 +221,6 @@ public class WindupService
      */
     public IPath getReportLocation(IResource resource)
     {
-
         IPath projectReportPath = getProjectReportPath(resource);
 
         IPath reportPath = null;

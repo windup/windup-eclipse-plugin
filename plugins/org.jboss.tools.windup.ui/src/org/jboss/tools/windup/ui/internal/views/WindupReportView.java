@@ -254,7 +254,6 @@ public class WindupReportView implements IShowInTarget
     public void dispose()
     {
         // remove listeners
-        //ISelectionService srv = (ISelectionService) site.getService(ISelectionService.class);
     	selectionService.removePostSelectionListener(this.selectionChangedListener);
         windupService.removeWindupListener(this.reportListener);
         getPreferenceStore().setValue(PREVIOUS_REPORT_PREF, currentReportPath);

@@ -39,7 +39,7 @@
             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView"
             icon="icons/rules/repositories.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
-            name="Rules"
+            name="Ruleset Repositories"
             restorable="true">
       </view>
       <e4view
@@ -256,7 +256,7 @@
          </separator>
          <command
                commandId="org.jboss.tools.windup.ui.markIssueFixed"
-               icon="icons/fixedIssue.gif"
+               icon="icons/issue-complete.gif"
                label="Mark as Fixed"
                style="push"
                tooltip="Mark issue as fixed.">
@@ -407,13 +407,13 @@
             locationURI="toolbar:org.jboss.tools.windup.ui.rules.rulesView">
          <command
                commandId="org.jboss.tools.windup.ui.newXMLRulesetCommand"
-               icon="icons/rules/create_ruleset.png"
+               icon="icons/rules/repository-new.gif"
                style="push"
                tooltip="Create a new Ruleset and add it to this view">
          </command>
          <command
                commandId="org.jboss.tools.windup.ui.importRuleset"
-               icon="icons/rules/import_ruleset.png"
+               icon="icons/rules/import-repository.png"
                style="push"
                tooltip="Import an existing local Ruleset and add it to this view">
          </command>
@@ -423,7 +423,7 @@
          </separator>
          <command
                commandId="org.jboss.tools.windup.ui.refreshRulesets"
-               icon="icons/refresh.gif"
+               icon="icons/rules/repository-synchronize.gif"
                style="push"
                tooltip="Refresh Rulesets">
          </command>

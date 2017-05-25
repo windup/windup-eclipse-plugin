@@ -82,8 +82,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_XML_RULE = "icons/xml_rule.gif"; //$NON-NLS-1$
     public static final String IMG_GROOVY_RULE = "icons/groovy_rule.gif"; //$NON-NLS-1$
     
-    public static final String IMG_RULE_REPO = "icons/rules/repository.gif"; //$NON-NLS-1$
-    public static final String IMG_RULE_SET = "icons/rules/ruleset.png"; //$NON-NLS-1$
+    public static final String IMG_RULE_REPO = "icons/rules/repository-middle.gif"; //$NON-NLS-1$
+    public static final String IMG_RULE_SET = "icons/rules/repository-middle.gif"; //$NON-NLS-1$
     
     public static final String IMG_XML_WIZ = "icons/generatexml_wiz.png"; //$NON-NLS-1$
     public static final String IMG_JAVA_WIZ = "icons/newclass_wiz.png"; //$NON-NLS-1$
