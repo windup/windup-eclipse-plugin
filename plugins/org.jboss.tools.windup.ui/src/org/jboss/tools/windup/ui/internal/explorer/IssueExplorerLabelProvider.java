@@ -28,12 +28,15 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
@@ -44,6 +47,7 @@ import org.eclipse.ui.internal.misc.StringMatcher.Position;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.themes.IThemeManager;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RootReportNode;
@@ -59,7 +63,9 @@ import com.google.common.collect.Maps;
  * The label provider for the Windup explorer.
  */
 @SuppressWarnings("restriction")
-public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyledLabelProvider {
+public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyledLabelProvider, IFontProvider {
+	
+	private static final Color GREEN = new Color(Display.getDefault(), 107,169,128);
 	
 	private Map<String, Image> imageCache = Maps.newHashMap();
 	
@@ -243,7 +249,18 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 			
 			if (issue instanceof Hint) {
 				Hint hint = (Hint)issue;
-				style.append(hint.getTitle());
+				if (issue.isFixed()) {
+					style.append(hint.getTitle(), new Styler() {
+						@Override
+						public void applyStyles(TextStyle textStyle) {
+							textStyle.foreground = GREEN;
+							textStyle.strikeout = true; 
+						}
+					});
+				}
+				else {
+					style.append(hint.getTitle());
+				}
 				style.append(" [" + markerNode.getFileName() + " " + hint.getLineNumber() + "]", 
 						StyledString.DECORATIONS_STYLER); 
 			}
@@ -286,5 +303,16 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
+	}
+	
+	@Override
+	public Font getFont(Object element) {
+		if (element instanceof MarkerNode) {
+			MarkerNode node = (MarkerNode)element;
+			if (node.isFixed()) {
+				return JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT);
+			}
+		}
+		return null;
 	}
 }
