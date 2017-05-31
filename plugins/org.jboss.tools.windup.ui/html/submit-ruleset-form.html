@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Submit Ruleset Info</title>
+</head>
+<body role="document" class="viewAppList"
+	style="max-width: 1480px; margin: auto;">
+
+	<script type="text/javascript" src="https://issues.jboss.org/s/2be081a2315b468c6651f6ef670f32a9-T/-4mwas8/72005/38e4585ff05eb2dd95a30399b8504050/2.0.22/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=bc34b095"></script>
+
+	<script type="text/javascript">
+	    var FEEDBACK_FORM_TRIGGER = null;
+	
+	    function displayFeedbackForm() {
+	        FEEDBACK_FORM_TRIGGER();
+	    }
+	
+	    window.ATL_JQ_PAGE_PROPS = {
+	        "triggerFunction": function(showCollectorDialog) {
+	            FEEDBACK_FORM_TRIGGER = showCollectorDialog;
+	        }
+	    };
+    </script>
+	<script src="reports/resources/js/jquery-1.10.1.min.js"></script>
+	<script src="reports/resources/js/bootstrap.min.js"></script>
+
+<!-- <div id="atlwdg-container" class="atlwdg-popup atlwdg-hidden" style="height: 899px; display: none;"></div>-->
+	<script>
+	   $(window).load(function () {
+            displayFeedbackForm();
+       });
+       var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutationRecord) {
+        console.log('style changed!');
+    });    
+});
+
+var target = document.getElementById('myId');
+observer.observe(target, { attributes : true, attributeFilter : ['style'] });
+	</script>
+</body>
+</html>

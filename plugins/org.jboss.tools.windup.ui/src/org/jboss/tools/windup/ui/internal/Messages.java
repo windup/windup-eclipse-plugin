@@ -103,6 +103,7 @@ public class Messages extends NLS
     public static String showIssueDetails;
     
     public static String createMigrationIssue;
+    public static String createRuleFromSnippet;
     
     public static String showWindupGettingStarted;
 

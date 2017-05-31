@@ -38,12 +38,19 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 	@Inject private EPartService partService;
 	private ITextEditor editor;
 	
-	private WindupAction CREATE_MIGRATION_ISSUE = new WindupAction(Messages.createMigrationIssue,
-			WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
-			MPart part = partService.showPart(TaskListView.VIEW_ID, PartState.ACTIVATE);
-			TaskListView view = (TaskListView)part.getObject();
-			view.createMigrationIssueFromSelection();
-		});
+	private WindupAction CREATE_MIGRATION_TASK = new WindupAction(Messages.createMigrationIssue,
+		WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
+		MPart part = partService.showPart(TaskListView.VIEW_ID, PartState.ACTIVATE);
+		TaskListView view = (TaskListView)part.getObject();
+		view.createMigrationIssueFromSelection();
+	});
+	
+	private WindupAction CREATE_RULE_FROM_SNIPPET = new WindupAction(Messages.createRuleFromSnippet,
+		WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
+		MPart part = partService.showPart(TaskListView.VIEW_ID, PartState.ACTIVATE);
+		TaskListView view = (TaskListView)part.getObject();
+		view.createMigrationIssueFromSelection();
+	});
 	
 	@Inject
 	private void execute(@Named(IServiceConstants.ACTIVE_PART) MPart part) {
@@ -102,7 +109,8 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
-		manager.add(CREATE_MIGRATION_ISSUE);
+		manager.add(CREATE_MIGRATION_TASK);
+		manager.add(CREATE_RULE_FROM_SNIPPET);
 	}
 
 	@Override

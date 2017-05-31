@@ -43,10 +43,19 @@
             restorable="true">
       </view>
       <e4view
+            allowMultiple="true"
             class="org.jboss.tools.windup.ui.internal.views.TaskListView"
             id="org.jboss.tools.windup.ui.taskListView"
             name="Task List"
             restorable="true">
+      </e4view>
+      <e4view
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.internal.views.SubmitRulesetInfoView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.submitRulesetInfo"
+            name="Submit Ruleset"
+            restorable="false">
       </e4view>
    </extension>
    <extension
