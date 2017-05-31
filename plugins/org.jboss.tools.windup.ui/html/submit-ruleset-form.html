@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Submit Ruleset Info</title>
+<title>Submit Ruleset</title>
 </head>
 <body role="document" class="viewAppList"
 	style="max-width: 1480px; margin: auto;">
@@ -23,22 +23,17 @@
 	        }
 	    };
     </script>
-	<script src="reports/resources/js/jquery-1.10.1.min.js"></script>
-	<script src="reports/resources/js/bootstrap.min.js"></script>
 
-<!-- <div id="atlwdg-container" class="atlwdg-popup atlwdg-hidden" style="height: 899px; display: none;"></div>-->
 	<script>
-	   $(window).load(function () {
+        $(window).load(function () {
             displayFeedbackForm();
-       });
-       var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutationRecord) {
-        console.log('style changed!');
-    });    
-});
-
-var target = document.getElementById('myId');
-observer.observe(target, { attributes : true, attributeFilter : ['style'] });
+            $('body').on('DOMNodeRemoved', '#atlwdg-frame', function() {
+                $('#atlwdg-container').delay(500).queue(function() {
+                    displayFeedbackForm();
+                    $(this).dequeue();
+                });
+            });
+        });
 	</script>
 </body>
 </html>
