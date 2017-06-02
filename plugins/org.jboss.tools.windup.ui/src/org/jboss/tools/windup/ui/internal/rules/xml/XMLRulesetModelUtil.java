@@ -61,19 +61,22 @@ public class XMLRulesetModelUtil {
 
 	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
-		IDOMModel model = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(locationURI), false);
-		if (model != null) {
-			Document document = model.getDocument();
-			NodeList rulesets = document.getElementsByTagName("ruleset");  //$NON-NLS-1$
-			if (rulesets.getLength() > 0) {
-				Node ruleset = rulesets.item(0);
-				NamedNodeMap attributes = ruleset.getAttributes();
-				Node rulesetIdNode = attributes.getNamedItem("id");  //$NON-NLS-1$
-				if (rulesetIdNode != null) {
-					rulesetId = ((Attr) rulesetIdNode).getValue();
+		IFile file = WorkspaceResourceUtils.getFile(locationURI);
+		if (file != null) {
+			IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
+			if (model != null) {
+				Document document = model.getDocument();
+				NodeList rulesets = document.getElementsByTagName("ruleset");  //$NON-NLS-1$
+				if (rulesets.getLength() > 0) {
+					Node ruleset = rulesets.item(0);
+					NamedNodeMap attributes = ruleset.getAttributes();
+					Node rulesetIdNode = attributes.getNamedItem("id");  //$NON-NLS-1$
+					if (rulesetIdNode != null) {
+						rulesetId = ((Attr) rulesetIdNode).getValue();
+					}
 				}
+				model.releaseFromRead();
 			}
-			model.releaseFromRead();
 		}
 		return rulesetId;
 	}

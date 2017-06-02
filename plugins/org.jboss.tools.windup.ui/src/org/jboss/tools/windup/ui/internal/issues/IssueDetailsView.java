@@ -192,9 +192,9 @@ public class IssueDetailsView {
 		
 		private String buildText(Issue issue) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("<h3>Title</h3>");
+			builder.append("<h3>Title</h3>"); //$NON-NLS-1$
 			builder.append(marker.getAttribute(TITLE, noIssueDetails));
-			builder.append("<h3>Hint</h3>");
+			builder.append("<h3>Hint</h3>"); //$NON-NLS-1$
 			Markdown4jProcessor markdownProcessor = new Markdown4jProcessor();
 			try {
 				builder.append(markdownProcessor.process(marker.getAttribute(HINT, noIssueDetails)));

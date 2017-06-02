@@ -302,10 +302,16 @@ public class RuleRepositoryView extends ViewPart {
 	private void rulesetAdded(@UIEventTopic(WindupConstants.CUSTOM_RULESET_CHANGED) RulesetChange change) throws RemoteException {
 		if (treeViewer != null && !treeViewer.getTree().isDisposed()) {
 			CustomRulesNode root = (CustomRulesNode)((RuleRepositoryInput)treeViewer.getInput()).getChildren()[1];
-			treeViewer.refresh(root);
+			if (!treeViewer.isBusy()) {
+				treeViewer.refresh(root);
+			}
 			if (!change.isDelete()) {
 				treeViewer.setSelection(new StructuredSelection(change.getProviders()), true);
-				change.getProviders().forEach(provider -> treeViewer.expandToLevel(provider, AbstractTreeViewer.ALL_LEVELS));
+				treeViewer.expandToLevel(root, 1);
+				change.getProviders().forEach(provider -> {
+					treeViewer.expandToLevel(provider, AbstractTreeViewer.ALL_LEVELS);
+					treeViewer.setSelection(new StructuredSelection(provider), true);
+				});
 			}
 		}
 	}

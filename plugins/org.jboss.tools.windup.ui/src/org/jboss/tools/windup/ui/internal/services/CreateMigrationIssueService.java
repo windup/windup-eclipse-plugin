@@ -13,6 +13,8 @@ package org.jboss.tools.windup.ui.internal.services;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -20,15 +22,18 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.rules.NewRuleFromSelectionWizard;
 import org.jboss.tools.windup.ui.internal.services.ContextMenuService.WindupAction;
 import org.jboss.tools.windup.ui.internal.views.TaskListView;
 
@@ -45,11 +50,11 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		view.createMigrationIssueFromSelection();
 	});
 	
-	private WindupAction CREATE_RULE_FROM_SNIPPET = new WindupAction(Messages.createRuleFromSnippet,
+	private WindupAction CREATE_RULE_FROM_SNIPPET = new WindupAction(Messages.createRuleFromSelection,
 		WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
-		MPart part = partService.showPart(TaskListView.VIEW_ID, PartState.ACTIVATE);
-		TaskListView view = (TaskListView)part.getObject();
-		view.createMigrationIssueFromSelection();
+		IEclipseContext context = WindupUIPlugin.getDefault().getContext();
+		NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
+		new WizardDialog(Display.getDefault().getActiveShell(), wizard).open();		
 	});
 	
 	@Inject

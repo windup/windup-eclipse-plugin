@@ -51,6 +51,7 @@ public class RulesNode {
 		
 		@Override
 		public Object[] getChildren() {
+			modelService.cleanPhantomCustomRuleProviders();
 			return modelService.getModel().getCustomRuleRepositories().stream().toArray(CustomRuleProvider[]::new);
 		}
 	}

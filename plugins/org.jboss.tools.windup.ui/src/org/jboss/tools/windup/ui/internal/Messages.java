@@ -103,7 +103,7 @@ public class Messages extends NLS
     public static String showIssueDetails;
     
     public static String createMigrationIssue;
-    public static String createRuleFromSnippet;
+    public static String createRuleFromSelection;
     
     public static String showWindupGettingStarted;
 
@@ -190,6 +190,9 @@ public class Messages extends NLS
     public static String windupRemove;
     public static String windupProjectsSelect;
     public static String windupPackagesSelect;
+    
+    public static String newRuleFromSelectionWizard_ruleset;
+    public static String newRuleFromSelectionWizard_newRuleset;
     
     public static String generatedReportLocation;
     public static String browseLabel;

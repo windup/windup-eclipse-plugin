@@ -559,4 +559,13 @@ public class ModelService {
 		}
 		return mostRecentConfiguration;
 	}
+	
+	public void cleanPhantomCustomRuleProviders() {
+		for (Iterator<CustomRuleProvider> iter = getModel().getCustomRuleRepositories().iterator(); iter.hasNext();) {
+			CustomRuleProvider provider = iter.next();
+			if (WorkspaceResourceUtils.getFile(provider.getLocationURI()) == null) {
+				write(() -> iter.remove());
+			}
+		}
+	}
 }
