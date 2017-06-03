@@ -301,6 +301,7 @@ public class RuleRepositoryView extends ViewPart {
 	@Optional
 	private void rulesetAdded(@UIEventTopic(WindupConstants.CUSTOM_RULESET_CHANGED) RulesetChange change) throws RemoteException {
 		if (treeViewer != null && !treeViewer.getTree().isDisposed()) {
+			modelService.cleanPhantomCustomRuleProviders();
 			CustomRulesNode root = (CustomRulesNode)((RuleRepositoryInput)treeViewer.getInput()).getChildren()[1];
 			if (!treeViewer.isBusy()) {
 				treeViewer.refresh(root);

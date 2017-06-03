@@ -10,8 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
@@ -29,6 +33,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -55,15 +60,18 @@ import org.eclipse.wst.sse.ui.internal.provisional.style.LineStyleProvider;
 import org.eclipse.wst.xml.core.internal.provisional.contenttype.ContentTypeIdForXML;
 import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRuleTemplate.Template;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLTemplateVariableProcessor;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 
 @SuppressWarnings("restriction")
 public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard {
 
 	@Inject private ModelService modelService;
+	private Combo rulesetCombo;
 	
 	private SelectCustomRulesetWizardPage rulesetPage;
 	
@@ -86,7 +94,6 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 	public boolean performFinish() {
 		return true;
 	}
-
 	
 	private class SelectCustomRulesetWizardPage extends WizardPage {
 		
@@ -97,8 +104,8 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 		
 		public SelectCustomRulesetWizardPage() {
 			super("selectCustomRulesetPage"); //$NON-NLS-1$
-			setTitle(Messages._UI_WIZARD_NEW_XML_RULE_HEADING);
-			setDescription(Messages._UI_WIZARD_NEW_XML_RULE_EXPL);
+			setTitle(Messages.newRuleFromSelectionWizard_heading);
+			setDescription(Messages.newRuleFromSelectionWizard_message);
 		}
 		
 		@Override
@@ -119,8 +126,15 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 			data.verticalIndent = -2;
 			rulesetLabel.setLayoutData(data);
 			
-			Combo rulesetCombo = new Combo(rulesetContainer, SWT.READ_ONLY);
+			rulesetCombo = new Combo(rulesetContainer, SWT.READ_ONLY);
 			GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(rulesetCombo);
+			
+			rulesetCombo.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					validate();
+				}
+			});
 			
 			Button newRulesetButton = new Button(rulesetContainer, SWT.PUSH);
 			newRulesetButton.setText(Messages.newRuleFromSelectionWizard_newRuleset);
@@ -134,7 +148,10 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 					NewXMLRulesetWizard wizard = WindupUIPlugin.getDefault().getInjector().getInstance(NewXMLRulesetWizard.class);
 					IStructuredSelection selection = new StructuredSelection();
 					wizard.init(PlatformUI.getWorkbench(), selection);
-					new WizardDialog(parent.getShell(), wizard).open();
+					WizardDialog dialog = new WizardDialog(parent.getShell(), wizard);
+					if (Window.OK == dialog.open()) {
+						selectRuleset(wizard.getNewRulestLocation());
+					}
 				}
 			});
 			
@@ -176,6 +193,43 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 			// Preview the first template.
 			sashForm.setWeights(new int[] {30, 70});
 			setControl(container);
+			
+			modelService.cleanPhantomCustomRuleProviders();
+			
+			if (!modelService.getModel().getCustomRuleRepositories().isEmpty()) {
+				CustomRuleProvider ruleProvider = modelService.getModel().getCustomRuleRepositories().get(0);
+				selectRuleset(ruleProvider.getLocationURI());
+			}
+		}
+		
+		private void selectRuleset(String rulesetFile) {
+			List<String> locations = modelService.getModel().getCustomRuleRepositories().stream().map(provider -> {
+				IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+				return file.getProject().getName() + "/" + file.getName();
+			}).collect(Collectors.toList());
+			rulesetCombo.setItems(locations.toArray(new String[locations.size()]));
+			IFile rulesetIFile = WorkspaceResourceUtils.getFile(rulesetFile);
+			if (rulesetIFile != null && rulesetIFile.exists()) {
+				rulesetFile = rulesetIFile.getProject().getName() + "/" + rulesetIFile.getName();
+				int index = locations.indexOf(rulesetFile);
+				if (index != -1) {
+					rulesetCombo.select(index);	
+				}
+			}
+			validate();
+		}
+		
+		private void validate() {
+			getContainer().updateButtons();
+		}
+		
+		private boolean isRulesetValid() {
+			return rulesetCombo.getSelectionIndex() != -1;
+		}
+		
+		@Override
+		public boolean isPageComplete() {
+			return isRulesetValid();
 		}
 		
 		private void updateTemplatePreview() {
@@ -187,10 +241,6 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 				Template template = (Template)ss.getFirstElement();
 				templatePreviewer.getDocument().set(template.generate());
 			}
-		}
-		
-		public SourceViewer getTemplatePreviewer() {
-			return templatePreviewer;
 		}
 		
 		private SourceViewer createSourcePreviewer(Composite parent) {

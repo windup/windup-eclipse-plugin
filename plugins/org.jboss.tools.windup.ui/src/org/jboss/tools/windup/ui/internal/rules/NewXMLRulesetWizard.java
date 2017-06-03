@@ -40,6 +40,8 @@ public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutab
 	@Inject private GenerateRulesetOperation generateOperation;
 	private CreateRulesetOperation createRulesetOperation;
 	
+	private String newRulesetLocation;
+	
 	public NewXMLRulesetWizard() {
 		setWindowTitle(Messages.NewXMLRuleset_title);
 		setNeedsProgressMonitor(true);
@@ -71,7 +73,8 @@ public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutab
 		    	boolean generateQuickstart = startPage.generateQuickStartTemplate();
 		    	generateOperation.init(getShell().getDisplay(), (IContainer)container, fileName, rulesetId, generateQuickstart);
 				getContainer().run(false, true, generateOperation);
-				createRulesetOperation.init(((IContainer)container).getFile(new Path(fileName)).getLocation().toString());
+				this.newRulesetLocation = ((IContainer)container).getFile(new Path(fileName)).getLocation().toString();
+				createRulesetOperation.init(newRulesetLocation);
 				getContainer().run(false, true, createRulesetOperation);
 			}
 		} catch (InvocationTargetException e) {
@@ -87,5 +90,9 @@ public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutab
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		this.selection = currentSelection;
+	}
+	
+	public String getNewRulestLocation() {
+		return newRulesetLocation;
 	}
 }

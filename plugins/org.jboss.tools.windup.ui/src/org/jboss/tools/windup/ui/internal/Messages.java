@@ -193,6 +193,8 @@ public class Messages extends NLS
     
     public static String newRuleFromSelectionWizard_ruleset;
     public static String newRuleFromSelectionWizard_newRuleset;
+    public static String newRuleFromSelectionWizard_heading;
+    public static String newRuleFromSelectionWizard_message;
     
     public static String generatedReportLocation;
     public static String browseLabel;
