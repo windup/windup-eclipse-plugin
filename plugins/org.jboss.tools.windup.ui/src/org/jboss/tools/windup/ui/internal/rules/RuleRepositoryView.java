@@ -29,6 +29,9 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -59,11 +62,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.part.ViewPart;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
@@ -71,6 +76,8 @@ import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.WindupEditor;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
@@ -85,6 +92,7 @@ import com.google.common.io.Files;
 /**
  * View for displaying Windup rule repositories.
  */
+@SuppressWarnings("restriction")
 public class RuleRepositoryView extends ViewPart {
 	
 	public static final String VIEW_ID = "org.jboss.tools.windup.ui.rules.rulesView"; //$NON-NLS-1$
@@ -96,6 +104,7 @@ public class RuleRepositoryView extends ViewPart {
 	
 	@Inject private ModelService modelService;
 	@Inject private IEclipseContext context;
+	@Inject private EPartService partService;
 	
 	private MenuManager menuManager;
 	
@@ -134,9 +143,17 @@ public class RuleRepositoryView extends ViewPart {
 						IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(node.getFile().getParent()));
 						fileStore = fileStore.getChild(node.getName());
 						if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
-						    IWorkbenchPage page=  PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+						    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 						    try {
-						        IDE.openEditorOnFileStore(page, fileStore);
+						    	if (node.getRuleProvider() instanceof CustomRuleProvider) {
+						    		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RulesetEditor.ID);
+						    		MPart part = partService.findPart(RulesetEditor.ID);
+						    		RulesetEditor editor = (RulesetEditor)part.getObject();
+						    		editor.loadRuleset((CustomRuleProvider)node.getRuleProvider());
+						    	}
+						    	else {
+						    		IDE.openEditorOnFileStore(page, fileStore);
+						    	}
 						    } catch (PartInitException e) {
 						    	WindupUIPlugin.log(e);
 						    	MessageDialog.openError(

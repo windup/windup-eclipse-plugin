@@ -30,8 +30,11 @@
         <children xsi:type="menu:DirectToolItem" xmi:id="_-SaZ8DwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.directtoolitem.sync" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/synced.png" tooltip="Sync with selection" type="Check" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.SyncSelectionHandler"/>
       </toolbar>
     </elements>
-    <elements xsi:type="basic:Part" xmi:id="_jbGBUEYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.part.windupEditor" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.WindupEditor" label="Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" closeable="true">
+    <elements xsi:type="basic:Part" xmi:id="_jbGBUEYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.part.windupEditor" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.WindupEditor" label="Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/rules/repository-middle.gif" closeable="true">
       <toolbar xmi:id="_qIuW8EYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.toolbar.0"/>
+    </elements>
+    <elements xsi:type="basic:Part" xmi:id="_jbGBUEYqEea0Sf2tdlqnRh" elementId="org.jboss.tools.windup.ui.part.rulesetEditor" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.rules.RulesetEditor" label="Ruleset" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" closeable="true">
+      <toolbar xmi:id="_qIuW8EYqEea0Sf2tdlqnRh" elementId="org.jboss.tools.windup.ui.toolbar.1"/>
     </elements>
     <elements xsi:type="basic:Part" xmi:id="_tn0BYFN6EeaimsGfu-ZPRw" elementId="org.jboss.tools.windup.ui.issue.details" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.issues.IssueDetailsView" label="%view.issueDetails" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="%view.issueDetails"/>
   </fragments>

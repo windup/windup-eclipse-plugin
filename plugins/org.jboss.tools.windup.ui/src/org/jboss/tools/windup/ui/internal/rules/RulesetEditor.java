@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.editor;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
 import static org.jboss.tools.windup.ui.internal.Messages.windupEditorTitle;
@@ -38,16 +38,16 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.editor.WindupConfigurationsTable;
+import org.jboss.tools.windup.ui.internal.editor.WindupTabStack;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
 
 import com.google.common.collect.Maps;
 
-/**
- * The editor for configuring and launching Windup.
- */
-public class WindupEditor {
+public class RulesetEditor {
 	
-	public static final String ID = "org.jboss.tools.windup.ui.part.windupEditor"; //$NON-NLS-1$
+	public static final String ID = "org.jboss.tools.windup.ui.part.rulesetEditor"; //$NON-NLS-1$
 	private static final String TOOLBAR_ID = "toolbar:org.jboss.tools.windup.toolbar"; //$NON-NLS-1$
 	
 	private static final String SASH_LEFT = "weightLeft"; //$NON-NLS-1$
@@ -73,6 +73,12 @@ public class WindupEditor {
 	
 	private DataBindingContext bindingContext = new DataBindingContext();
 	private Map<ConfigurationElement, WindupTabStack> tabStack = Maps.newHashMap();
+	
+	private WindupConfigurationsTable rulesTable;
+	
+	public void loadRuleset(CustomRuleProvider ruleProvider) {
+		rulesTable.init(ruleProvider);
+	}
 	
 	@PostConstruct
 	private void createParent(Composite parent) {
@@ -102,7 +108,7 @@ public class WindupEditor {
 			preferences.put(SASH_RIGHT, String.valueOf(sash.getWeights()[1]));
 		});
 		
-		createLeftSide(sash);
+		rulesTable = createLeftSide(sash);
 		createRightSide(sash);
 		
 		int left = preferences.getInt(SASH_LEFT, SASH_LEFT_DEFAULT);
@@ -162,3 +168,4 @@ public class WindupEditor {
 		stackComposite.layout(true, true);
 	}
 }
+

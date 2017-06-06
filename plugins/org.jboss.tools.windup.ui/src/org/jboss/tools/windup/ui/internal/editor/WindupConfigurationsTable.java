@@ -15,23 +15,23 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_CREATED
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
 import static org.jboss.tools.windup.ui.internal.Messages.launchTabTitle;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.emf.common.notify.AdapterFactory;
-import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -41,8 +41,13 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreeContentProvider;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.CustomRuleProvider;
+import org.w3c.dom.Node;
 
 /**
  * The composite containing Windup's configurations.
@@ -63,6 +68,12 @@ public class WindupConfigurationsTable {
 	private TableViewer tableViewer;
 	
 	private ConfigurationElement selectedConfiguration;
+	
+	public void init(CustomRuleProvider ruleProvider) {
+		IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
+		List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);
+		tableViewer.setInput(ruleNodes.toArray(new Node[ruleNodes.size()]));
+	}
 	
 	@PostConstruct
 	private void create(Composite parent) {
@@ -98,11 +109,13 @@ public class WindupConfigurationsTable {
 		
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableViewer.getTable());
 		
-		AdapterFactoryEditingDomain domain = modelService.getDomain();
-		AdapterFactory factory = domain.getAdapterFactory();
-		tableViewer.setContentProvider(new AdapterFactoryContentProvider(factory));
-		tableViewer.setLabelProvider(new AdapterFactoryLabelProvider(factory));
-		tableViewer.setInput(modelService.getModel());
+		//XMLTableTreeContentProvider provider = new XMLTableTreeContentProvider();
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		tableViewer.setLabelProvider(new XMLTableTreeContentProvider());
+		//AdapterFactoryEditingDomain domain = modelService.getDomain();
+		//AdapterFactory factory = domain.getAdapterFactory();
+		//tableViewer.setContentProvider(new AdapterFactoryContentProvider(factory));
+		//tableViewer.setLabelProvider(new AdapterFactoryLabelProvider(factory));
 	}
 	
 	private void createToolbar(Section section) {

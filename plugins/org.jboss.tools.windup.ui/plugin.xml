@@ -39,7 +39,7 @@
             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView"
             icon="icons/rules/repositories.gif"
             id="org.jboss.tools.windup.ui.rules.rulesView"
-            name="Ruleset Repositories"
+            name="Rulesets"
             restorable="true">
       </view>
       <e4view
@@ -56,6 +56,24 @@
             id="org.jboss.tools.windup.ui.submitRulesetInfo"
             name="Submit Ruleset"
             restorable="false">
+      </e4view>
+      <e4view
+            class="org.jboss.tools.windup.ui.E4view3"
+            id="org.jboss.tools.windup.ui.part.rulesetEditor"
+            name="Ruleset"
+            restorable="true">
+      </e4view>
+      <e4view
+            class="org.jboss.tools.windup.ui.E4view3"
+            id="org.jboss.tools.windup.ui.part.rulesetEditor"
+            name="Ruleset"
+            restorable="true">
+      </e4view>
+      <e4view
+            class="org.jboss.tools.windup.ui.E4view3"
+            id="org.jboss.tools.windup.ui.part.rulesetEditor"
+            name="name"
+            restorable="true">
       </e4view>
    </extension>
    <extension
@@ -536,6 +554,7 @@
             id="org.jboss.tools.windup.ui.openReportCommand"
             name="Open Report">
       </command>
+      <!-- defaultHandler="org.jboss.tools.windup.ui.internal.editor.OpenWindupEditorHandler" -->
       <command
             defaultHandler="org.jboss.tools.windup.ui.internal.handlers.NewXMLRulesetHandler"
             id="org.jboss.tools.windup.ui.newXMLRulesetCommand"

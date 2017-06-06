@@ -97,7 +97,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		else if (parentElement instanceof RuleProvider) {
 			RuleProvider provider = (RuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
-			children.add(new RulesetFileNode(new File(provider.getOrigin()), provider.getRuleProviderType()));
+			children.add(new RulesetFileNode(provider, new File(provider.getOrigin()), provider.getRuleProviderType()));
 			List<Node> ruleNodes = XMLRulesetModelUtil.getExternalRules(provider.getOrigin());
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
@@ -107,7 +107,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		else if (parentElement instanceof CustomRuleProvider) {
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
-			children.add(new RulesetFileNode(new File(provider.getLocationURI()), RuleProviderType.XML));
+			children.add(new RulesetFileNode(provider, new File(provider.getLocationURI()), RuleProviderType.XML));
 			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
 			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));

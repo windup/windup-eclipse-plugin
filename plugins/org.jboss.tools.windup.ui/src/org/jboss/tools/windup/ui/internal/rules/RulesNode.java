@@ -58,12 +58,18 @@ public class RulesNode {
 	
 	public static class RulesetFileNode {
 		
+		private Object ruleProvider;
 		private File file;
 		private RuleProviderType type;
 
-		public RulesetFileNode (File file, RuleProviderType type) {
+		public RulesetFileNode (Object ruleProvider, File file, RuleProviderType type) {
+			this.ruleProvider = ruleProvider;
 			this.file = file;
 			this.type = type;
+		}
+		
+		public Object getRuleProvider() {
+			return ruleProvider;
 		}
 		
 		public String getName() {

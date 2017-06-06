@@ -218,7 +218,7 @@ public class XMLRulesetModelUtil {
 		}
 		for (CustomRuleProvider ruleProvider : modelService.getModel().getCustomRuleRepositories()) {
 			List<Object> children = Lists.newArrayList();
-			children.add(new RulesetFileNode(new File(ruleProvider.getLocationURI()), RuleProviderType.XML));
+			children.add(new RulesetFileNode(ruleProvider, new File(ruleProvider.getLocationURI()), RuleProviderType.XML));
 			IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
 			for (Node ruleNode : XMLRulesetModelUtil.getRules(file)) {
 				String ruleNodeId = XMLRulesetModelUtil.getRuleId(ruleNode);
