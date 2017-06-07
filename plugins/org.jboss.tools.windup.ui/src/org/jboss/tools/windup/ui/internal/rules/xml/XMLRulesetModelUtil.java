@@ -119,16 +119,20 @@ public class XMLRulesetModelUtil {
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		if (model != null) {
 			Document document = model.getDocument();
-			collectNodes("rule", rules, document); //$NON-NLS-1$
-			collectNodes("file-mapping", rules, document); //$NON-NLS-1$
-			collectNodes("package-mapping", rules, document); //$NON-NLS-1$
-			collectNodes("javaclass-ignore", rules, document); //$NON-NLS-1$
+			collectRuleNodes(document, rules);
 			model.releaseFromRead();
 		}
 		return rules;
 	}
 	
-	private static void collectNodes(String tag, List<Node> rules, Document document) {
+	public static void collectRuleNodes(Document document, List<Node> rules) {
+		collectNodes("rule", rules, document); //$NON-NLS-1$
+		collectNodes("file-mapping", rules, document); //$NON-NLS-1$
+		collectNodes("package-mapping", rules, document); //$NON-NLS-1$
+		collectNodes("javaclass-ignore", rules, document); //$NON-NLS-1$
+	}
+	
+	public static void collectNodes(String tag, List<Node> rules, Document document) {
 		NodeList ruleNodes = document.getElementsByTagName(tag);
 		if (ruleNodes.getLength() > 0) {
 			for (int i = 0; i < ruleNodes.getLength(); i++) {

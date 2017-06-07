@@ -32,22 +32,29 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreeContentProvider;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import com.google.common.collect.Lists;
 
 /**
  * The composite containing Windup's configurations.
@@ -68,6 +75,20 @@ public class WindupConfigurationsTable {
 	private TableViewer tableViewer;
 	
 	private ConfigurationElement selectedConfiguration;
+	
+	public ISelectionProvider getSelectionProvider() {
+		return tableViewer;
+	}
+	
+	public TableViewer getTableViewer() {
+		return tableViewer;
+	}
+	
+	public void setDocument(Document document) {
+		List<Node> rules = Lists.newArrayList();
+		XMLRulesetModelUtil.collectRuleNodes(document, rules);
+		tableViewer.setInput(rules);
+	}
 	
 	public void init(CustomRuleProvider ruleProvider) {
 		IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
@@ -109,13 +130,17 @@ public class WindupConfigurationsTable {
 		
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableViewer.getTable());
 		
-		//XMLTableTreeContentProvider provider = new XMLTableTreeContentProvider();
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setLabelProvider(new XMLTableTreeContentProvider());
-		//AdapterFactoryEditingDomain domain = modelService.getDomain();
-		//AdapterFactory factory = domain.getAdapterFactory();
-		//tableViewer.setContentProvider(new AdapterFactoryContentProvider(factory));
-		//tableViewer.setLabelProvider(new AdapterFactoryLabelProvider(factory));
+		tableViewer.setLabelProvider(new LabelProvider() {
+			public Image getImage(Object element) {
+				return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE);
+			}
+			@Override
+			public String getText(Object element) {
+				Element node = (Element)element;
+				return node.getAttribute("id");
+			}			
+		});
 	}
 	
 	private void createToolbar(Section section) {

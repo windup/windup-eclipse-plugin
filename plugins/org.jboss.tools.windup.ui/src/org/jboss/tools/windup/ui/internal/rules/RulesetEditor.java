@@ -28,10 +28,12 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -41,7 +43,7 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.WindupConfigurationsTable;
 import org.jboss.tools.windup.ui.internal.editor.WindupTabStack;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.CustomRuleProvider;
+import org.w3c.dom.Document;
 
 import com.google.common.collect.Maps;
 
@@ -75,9 +77,17 @@ public class RulesetEditor {
 	private Map<ConfigurationElement, WindupTabStack> tabStack = Maps.newHashMap();
 	
 	private WindupConfigurationsTable rulesTable;
+		
+	public void setDocument(Document document) {
+		rulesTable.setDocument(document);
+	}
 	
-	public void loadRuleset(CustomRuleProvider ruleProvider) {
-		rulesTable.init(ruleProvider);
+	public ISelectionProvider getSelectionProvider() {
+		return rulesTable.getSelectionProvider();
+	}
+	
+	public Control getControl() {
+		return form;
 	}
 	
 	@PostConstruct

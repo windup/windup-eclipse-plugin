@@ -72,6 +72,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.part.ViewPart;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -149,7 +150,7 @@ public class RuleRepositoryView extends ViewPart {
 						    		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RulesetEditor.ID);
 						    		MPart part = partService.findPart(RulesetEditor.ID);
 						    		RulesetEditor editor = (RulesetEditor)part.getObject();
-						    		editor.loadRuleset((CustomRuleProvider)node.getRuleProvider());
+						    		//editor.loadRuleset((CustomRuleProvider)node.getRuleProvider());
 						    	}
 						    	else {
 						    		IDE.openEditorOnFileStore(page, fileStore);

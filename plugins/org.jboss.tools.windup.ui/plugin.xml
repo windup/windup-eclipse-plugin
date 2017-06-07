@@ -880,4 +880,29 @@
           <editorInputEnablement></editorInputEnablement>
        </linkHelper>
     </extension>
+    <!--
+    <extension
+          point="org.eclipse.ui.editors">
+       <editor
+             class="org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper"
+             default="true"
+             icon="icons/rules/repository-middle.gif"
+             id="org.jboss.tools.windup.ui.rulesetEditor"
+             name="RHAMT Ruleset">
+          <contentTypeBinding
+                contentTypeId="org.jboss.tools.windup.ui.rulesetType">
+          </contentTypeBinding>
+       </editor>
+    </extension>
+    <extension
+          point="org.eclipse.core.contenttype.contentTypes">
+       <content-type
+             describer="org.jboss.tools.windup.ui.internal.rules.RulesetEditorDescriber"
+             file-extensions="xml"
+             id="org.jboss.tools.windup.ui.rulesetType"
+             name="Ruleset Content Type"
+             priority="high">
+       </content-type>
+    </extension>
+    -->
 </plugin>
