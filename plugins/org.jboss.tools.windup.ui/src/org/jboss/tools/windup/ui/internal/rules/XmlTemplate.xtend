@@ -21,8 +21,8 @@ class XmlTemplate {
                     This is a description of rules. This is a template for new rulesets. Change this.
                 </description>
                 <dependencies>
-                    <addon id="org.jboss.windup.rules,windup-rules-javaee,2.4.0.Final" />
-                    <addon id="org.jboss.windup.rules,windup-rules-java,2.4.0.Final" />
+                    <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+                    <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
                 </dependencies>
                 <!-- version ranges applied to from and to technologies -->
                 <sourceTechnology id="sourceTechnology" versionRange="[1,3)" />

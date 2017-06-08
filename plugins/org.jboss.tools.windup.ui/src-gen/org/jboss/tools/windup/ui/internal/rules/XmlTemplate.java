@@ -41,10 +41,10 @@ public class XmlTemplate {
     _builder.append("<dependencies>");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<addon id=\"org.jboss.windup.rules,windup-rules-javaee,2.4.0.Final\" />");
+    _builder.append("<addon id=\"org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final\" />");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<addon id=\"org.jboss.windup.rules,windup-rules-java,2.4.0.Final\" />");
+    _builder.append("<addon id=\"org.jboss.windup.rules,windup-rules-java,3.0.0.Final\" />");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("</dependencies>");
