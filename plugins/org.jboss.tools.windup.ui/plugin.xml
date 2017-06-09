@@ -57,24 +57,6 @@
             name="Submit Ruleset"
             restorable="false">
       </e4view>
-      <e4view
-            class="org.jboss.tools.windup.ui.E4view3"
-            id="org.jboss.tools.windup.ui.part.rulesetEditor"
-            name="Ruleset"
-            restorable="true">
-      </e4view>
-      <e4view
-            class="org.jboss.tools.windup.ui.E4view3"
-            id="org.jboss.tools.windup.ui.part.rulesetEditor"
-            name="Ruleset"
-            restorable="true">
-      </e4view>
-      <e4view
-            class="org.jboss.tools.windup.ui.E4view3"
-            id="org.jboss.tools.windup.ui.part.rulesetEditor"
-            name="name"
-            restorable="true">
-      </e4view>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -860,7 +842,7 @@
              class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.NewXMLRulesetWizard"
              finalPerspective="org.jboss.tools.windup.ui.perspective"
              hasPages="true"
-             icon="icons/new_xml_ruleset.gif"
+             icon="icons/rules/repository-middle.gif"
              id="org.jboss.tools.windup.ui.xml.ruleset.wizard"
              name="RHAMT XML Ruleset"
              preferredPerspectives="org.jboss.tools.windup.ui.perspective">
@@ -880,29 +862,33 @@
           <editorInputEnablement></editorInputEnablement>
        </linkHelper>
     </extension>
-    <!--
     <extension
           point="org.eclipse.ui.editors">
        <editor
              class="org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper"
-             default="true"
+             extensions="xml"
              icon="icons/rules/repository-middle.gif"
              id="org.jboss.tools.windup.ui.rulesetEditor"
              name="RHAMT Ruleset">
           <contentTypeBinding
-                contentTypeId="org.jboss.tools.windup.ui.rulesetType">
+                contentTypeId="org.jboss.tools.windup.ui.rulesetContentType">
           </contentTypeBinding>
        </editor>
     </extension>
     <extension
           point="org.eclipse.core.contenttype.contentTypes">
        <content-type
-             describer="org.jboss.tools.windup.ui.internal.rules.RulesetEditorDescriber"
+             base-type="org.eclipse.core.runtime.xml"
              file-extensions="xml"
-             id="org.jboss.tools.windup.ui.rulesetType"
-             name="Ruleset Content Type"
+             id="org.jboss.tools.windup.ui.rulesetContentType"
+             name="RHAMT Ruleset"
              priority="high">
+          <describer
+                class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2"
+                plugin="org.jboss.tools.windup.ui">
+             <parameter name="element" value="{http://windup.jboss.org/schema/jboss-ruleset}ruleset">                
+             </parameter>
+          </describer>
        </content-type>
     </extension>
-    -->
 </plugin>
