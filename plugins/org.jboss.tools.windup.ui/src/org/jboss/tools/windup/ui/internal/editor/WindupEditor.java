@@ -11,7 +11,7 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
-import static org.jboss.tools.windup.ui.internal.Messages.windupEditorTitle;
+import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_title;
 
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public class WindupEditor {
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
 		this.form = toolkit.createForm(parent);
-		form.setText(windupEditorTitle);
+		form.setText(rulesEditor_title);
 		form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
 		menuService.populateContributionManager((ContributionManager)form.getToolBarManager(), TOOLBAR_ID);
@@ -114,8 +114,8 @@ public class WindupEditor {
 		toolkit.paintBordersFor(form.getBody());
 	}
 	
-	private WindupConfigurationsTable createLeftSide(Composite parent) {
-		return createChild(WindupConfigurationsTable.class, parent, context.createChild());
+	private RulesetEditorRulesSection createLeftSide(Composite parent) {
+		return createChild(RulesetEditorRulesSection.class, parent, context.createChild());
 	}
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {

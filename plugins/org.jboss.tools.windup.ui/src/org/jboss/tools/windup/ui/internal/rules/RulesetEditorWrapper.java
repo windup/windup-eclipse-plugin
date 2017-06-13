@@ -23,12 +23,29 @@ import org.eclipse.wst.xml.ui.internal.tabletree.IDesignViewer;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDocumentationPage;
+import org.jboss.tools.windup.ui.internal.editor.RulesetEditorOverviewPage;
+import org.jboss.tools.windup.ui.internal.editor.RulesetExamplesPage;
 import org.w3c.dom.Document;
 
 @SuppressWarnings("restriction")
 public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
 	private RulesetDesignPage designPage;
+
+	@Override
+	protected void createPages() {
+		RulesetEditorOverviewPage overviewPage = new RulesetEditorOverviewPage(getContainer());
+		int index = addPage(overviewPage.getControl());
+		setPageText(index, Messages.rulesOverview);
+		super.createPages();
+		RulesetEditorDocumentationPage documentationPage = new RulesetEditorDocumentationPage(getContainer());
+		index = addPage(documentationPage.getControl());
+		setPageText(index, Messages.documentationTitle);
+		RulesetExamplesPage examplesPage = new RulesetExamplesPage(getContainer());
+		index = addPage(examplesPage.getControl());
+		setPageText(index, Messages.examplesTitle);
+	}
 	
 	@Override
 	protected IDesignViewer createDesignPage() {

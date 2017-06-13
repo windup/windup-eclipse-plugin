@@ -84,6 +84,10 @@ public class Messages extends NLS
     
     // Rules Editor
     public static String rulesEditor_title;
+    public static String rulesSectionTitle;
+    public static String rulesOverview;
+    public static String documentationTitle;
+    public static String examplesTitle;
     
     public static String openRuleset;
     public static String errorOpeningRuleset;
@@ -151,7 +155,6 @@ public class Messages extends NLS
     public static String applicationsToMigrate;
     public static String launchMode;
     public static String launchTab;
-    public static String launchTabTitle;
     public static String launchName;
     
     public static String inputProjects;
@@ -243,11 +246,6 @@ public class Messages extends NLS
     public static String ComparePreviewer_quickFixFile;
     public static String ComparePreviewer_quickFixText;
     public static String ComparePreviewer_quickFixNoText;
-    
-    // Editor
-    public static String windupEditorTitle;
-    
-    
     
     static
     {

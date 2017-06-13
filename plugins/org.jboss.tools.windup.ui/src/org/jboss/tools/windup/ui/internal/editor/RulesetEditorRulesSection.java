@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat, Inc.
+ * Copyright (c) 2017 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,10 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
+import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_NODE;
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_CREATED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
-import static org.jboss.tools.windup.ui.internal.Messages.launchTabTitle;
+import static org.jboss.tools.windup.ui.internal.Messages.rulesSectionTitle;
 
 import java.util.List;
 
@@ -31,13 +31,10 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
@@ -46,20 +43,16 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.google.common.collect.Lists;
 
 /**
  * The composite containing Windup's configurations.
  */
-public class WindupConfigurationsTable {
+public class RulesetEditorRulesSection {
 	
 	private static final String TOOLBAR_ID = "toolbar:org.jboss.tools.windup.toolbar.configurations.table"; //$NON-NLS-1$
 	
@@ -72,28 +65,26 @@ public class WindupConfigurationsTable {
 	@Inject private IEclipsePreferences preferences;
 	
 	private ToolBarManager toolBarManager;
-	private TableViewer tableViewer;
+	private TreeViewer treeViewer;
 	
-	private ConfigurationElement selectedConfiguration;
+	private Node selectedNode;
 	
 	public ISelectionProvider getSelectionProvider() {
-		return tableViewer;
+		return treeViewer;
 	}
 	
-	public TableViewer getTableViewer() {
-		return tableViewer;
+	public TreeViewer getTableViewer() {
+		return treeViewer;
 	}
 	
 	public void setDocument(Document document) {
-		List<Node> rules = Lists.newArrayList();
-		XMLRulesetModelUtil.collectRuleNodes(document, rules);
-		tableViewer.setInput(rules);
+		treeViewer.setInput(document);
 	}
 	
 	public void init(CustomRuleProvider ruleProvider) {
 		IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
 		List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);
-		tableViewer.setInput(ruleNodes.toArray(new Node[ruleNodes.size()]));
+		treeViewer.setInput(ruleNodes.toArray(new Node[ruleNodes.size()]));
 	}
 	
 	@PostConstruct
@@ -105,7 +96,7 @@ public class WindupConfigurationsTable {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		
 		Section section = toolkit.createSection(container, Section.TITLE_BAR);
-		section.setText(launchTabTitle);
+		section.setText(rulesSectionTitle);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		
 		Composite client = toolkit.createComposite(section);
@@ -121,26 +112,19 @@ public class WindupConfigurationsTable {
 	
 	private void createControls(Composite parent, Section section) {
 		createToolbar(section);
-		this.tableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		tableViewer.addSelectionChangedListener((e) -> {
-			this.selectedConfiguration = (ConfigurationElement)((StructuredSelection)e.getSelection()).getFirstElement(); 
-			broker.post(ACTIVE_CONFIG, selectedConfiguration);
+		this.treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		treeViewer.addSelectionChangedListener((e) -> {
+			this.selectedNode = (Node)((StructuredSelection)e.getSelection()).getFirstElement(); 
+			broker.post(ACTIVE_NODE, selectedNode);
 			update();
 		});
 		
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableViewer.getTable());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(treeViewer.getTree());
 		
-		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setLabelProvider(new LabelProvider() {
-			public Image getImage(Object element) {
-				return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE);
-			}
-			@Override
-			public String getText(Object element) {
-				Element node = (Element)element;
-				return node.getAttribute("id");
-			}			
-		});
+		RulesSectionContentProvider provider = new RulesSectionContentProvider(treeViewer);
+		
+		treeViewer.setContentProvider(provider);
+		treeViewer.setLabelProvider(provider);
 	}
 	
 	private void createToolbar(Section section) {
@@ -153,7 +137,7 @@ public class WindupConfigurationsTable {
 	@Inject
 	@Optional
 	private void configCreated(@UIEventTopic(CONFIG_CREATED) ConfigurationElement configuration) {
-		tableViewer.setSelection(new StructuredSelection(configuration), true);
+		treeViewer.setSelection(new StructuredSelection(configuration), true);
 	}
 	
 	@Inject
@@ -163,8 +147,8 @@ public class WindupConfigurationsTable {
 	
 	@PreDestroy
 	private void dispose() {
-		if (selectedConfiguration != null) {
-			preferences.put(SELECTED_CONFIGURATION, selectedConfiguration.getName());
+		if (selectedNode != null) {
+			//preferences.put(SELECTED_CONFIGURATION, selectedNode.getNodeName());
 		}
 	}
 	
@@ -177,9 +161,9 @@ public class WindupConfigurationsTable {
 		if (previouslySelected != null) {
 			ConfigurationElement configuration = modelService.findConfiguration(previouslySelected);
 			if (configuration != null) {
-				tableViewer.setSelection(new StructuredSelection(configuration), true);
+				treeViewer.setSelection(new StructuredSelection(configuration), true);
 			}
 		}
-		tableViewer.getTable().setFocus();
+		treeViewer.getTree().setFocus();
 	}
 }

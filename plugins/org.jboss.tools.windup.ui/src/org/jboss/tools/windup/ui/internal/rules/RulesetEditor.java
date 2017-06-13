@@ -10,8 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
-import static org.jboss.tools.windup.ui.internal.Messages.windupEditorTitle;
+import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_NODE;
+import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_title;
 
 import java.util.Map;
 
@@ -40,10 +40,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.editor.WindupConfigurationsTable;
+import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
 import org.jboss.tools.windup.ui.internal.editor.WindupTabStack;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.Maps;
 
@@ -76,7 +77,7 @@ public class RulesetEditor {
 	private DataBindingContext bindingContext = new DataBindingContext();
 	private Map<ConfigurationElement, WindupTabStack> tabStack = Maps.newHashMap();
 	
-	private WindupConfigurationsTable rulesTable;
+	private RulesetEditorRulesSection rulesTable;
 		
 	public void setDocument(Document document) {
 		rulesTable.setDocument(document);
@@ -94,7 +95,7 @@ public class RulesetEditor {
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
 		this.form = toolkit.createForm(parent);
-		form.setText(windupEditorTitle);
+		form.setText(rulesEditor_title);
 		form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
 		menuService.populateContributionManager((ContributionManager)form.getToolBarManager(), TOOLBAR_ID);
@@ -130,8 +131,8 @@ public class RulesetEditor {
 		toolkit.paintBordersFor(form.getBody());
 	}
 	
-	private WindupConfigurationsTable createLeftSide(Composite parent) {
-		return createChild(WindupConfigurationsTable.class, parent, context.createChild());
+	private RulesetEditorRulesSection createLeftSide(Composite parent) {
+		return createChild(RulesetEditorRulesSection.class, parent, context.createChild());
 	}
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {
@@ -159,10 +160,10 @@ public class RulesetEditor {
 	
 	@Inject
 	@Optional
-	private void updateDetails(@UIEventTopic(ACTIVE_CONFIG) ConfigurationElement configuration) {
+	private void updateDetails(@UIEventTopic(ACTIVE_NODE) Node node) {
 		WindupTabStack stack = null; 
-		if (configuration != null) {
-			modelService.synch(configuration);
+		if (node != null) {
+			/*modelService.synch(configuration);
 			stack = tabStack.get(configuration);
 			if (stack == null) {
 				IEclipseContext child = context.createChild();
@@ -170,7 +171,7 @@ public class RulesetEditor {
 				stack = createChild(WindupTabStack.class, stackComposite, child);
 				tabStack.put(configuration, stack);
 				
-			}
+			}*/
 			stack.focus();
 		}
 		Composite top = stack != null ? stack.getControl() : gettingStartedComposite;
