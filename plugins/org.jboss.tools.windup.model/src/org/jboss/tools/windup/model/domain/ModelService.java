@@ -563,7 +563,7 @@ public class ModelService {
 	public void cleanPhantomCustomRuleProviders() {
 		for (Iterator<CustomRuleProvider> iter = getModel().getCustomRuleRepositories().iterator(); iter.hasNext();) {
 			CustomRuleProvider provider = iter.next();
-			if (WorkspaceResourceUtils.getFile(provider.getLocationURI()) == null) {
+			if (!(new File(provider.getLocationURI()).exists()) || WorkspaceResourceUtils.getFile(provider.getLocationURI()) == null) {
 				write(() -> iter.remove());
 			}
 		}

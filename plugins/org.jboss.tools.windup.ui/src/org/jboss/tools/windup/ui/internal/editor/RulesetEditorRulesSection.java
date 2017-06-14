@@ -81,6 +81,10 @@ public class RulesetEditorRulesSection {
 		treeViewer.setInput(document);
 	}
 	
+	public void refreshDocument(Document document) {
+		treeViewer.setInput(document);
+	}
+	
 	public void init(CustomRuleProvider ruleProvider) {
 		IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
 		List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);

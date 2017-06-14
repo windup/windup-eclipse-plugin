@@ -13,8 +13,6 @@ package org.jboss.tools.windup.ui.internal.rules;
 import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_NODE;
 import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_title;
 
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -38,16 +36,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
-import org.jboss.tools.windup.ui.internal.editor.WindupTabStack;
-import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.google.common.collect.Maps;
-
+@SuppressWarnings("restriction")
 public class RulesetEditor {
 	
 	public static final String ID = "org.jboss.tools.windup.ui.part.rulesetEditor"; //$NON-NLS-1$
@@ -64,6 +61,8 @@ public class RulesetEditor {
 	@Inject private IMenuService menuService;
 	@Inject private ModelService modelService;
 	
+	@Inject	private RulesetWidgetRegistry widgetRegistry;
+	
 	private Composite stackComposite;
 	private Composite gettingStartedComposite;
 	
@@ -75,16 +74,19 @@ public class RulesetEditor {
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupUIPlugin.PLUGIN_ID);
 	
 	private DataBindingContext bindingContext = new DataBindingContext();
-	private Map<ConfigurationElement, WindupTabStack> tabStack = Maps.newHashMap();
 	
-	private RulesetEditorRulesSection rulesTable;
-		
+	private RulesetEditorRulesSection elementsSection;
+	
 	public void setDocument(Document document) {
-		rulesTable.setDocument(document);
+		elementsSection.setDocument(document);
+	}
+	
+	public void refreshDocument(Document document) {
+		elementsSection.refreshDocument(document);
 	}
 	
 	public ISelectionProvider getSelectionProvider() {
-		return rulesTable.getSelectionProvider();
+		return elementsSection.getSelectionProvider();
 	}
 	
 	public Control getControl() {
@@ -119,7 +121,7 @@ public class RulesetEditor {
 			preferences.put(SASH_RIGHT, String.valueOf(sash.getWeights()[1]));
 		});
 		
-		rulesTable = createLeftSide(sash);
+		elementsSection = createLeftSide(sash);
 		createRightSide(sash);
 		
 		int left = preferences.getInt(SASH_LEFT, SASH_LEFT_DEFAULT);
@@ -161,20 +163,16 @@ public class RulesetEditor {
 	@Inject
 	@Optional
 	private void updateDetails(@UIEventTopic(ACTIVE_NODE) Node node) {
-		WindupTabStack stack = null; 
-		if (node != null) {
-			/*modelService.synch(configuration);
-			stack = tabStack.get(configuration);
-			if (stack == null) {
-				IEclipseContext child = context.createChild();
-				child.set(ConfigurationElement.class, configuration);
-				stack = createChild(WindupTabStack.class, stackComposite, child);
-				tabStack.put(configuration, stack);
-				
-			}*/
-			stack.focus();
+		if (form.isDisposed()) {
+			return;
 		}
-		Composite top = stack != null ? stack.getControl() : gettingStartedComposite;
+		Control top = gettingStartedComposite;
+		if (node != null) {
+			Control details = widgetRegistry.getOrCreate(node, stackComposite, context);
+			if (details != null) {
+				top = details;
+			}
+		}
 		((StackLayout)stackComposite.getLayout()).topControl = top;
 		stackComposite.layout(true, true);
 	}

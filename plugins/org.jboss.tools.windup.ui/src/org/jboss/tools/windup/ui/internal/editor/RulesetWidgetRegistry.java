@@ -12,30 +12,44 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Maps;
 
+@Creatable
 public class RulesetWidgetRegistry {
 	
-	private RulesetWidgetFactory factory;
 	private Map<Node, INodeWidget> elementWidgets = Maps.newHashMap();
 	
-	public RulesetWidgetRegistry() {
-		factory = new RulesetWidgetFactory();
-	}
+	@Inject private RulesetWidgetFactory factory;
 	
-	public Control getControl(Node element, IEclipseContext context) {
-		INodeWidget widget = elementWidgets.get(element);
+	public Control getOrCreate(Node node, Composite container, IEclipseContext context) {
+		INodeWidget widget = elementWidgets.get(node);
 		if (widget == null) {
-			widget = factory.createWidget(element, context);
+			IEclipseContext child = context.createChild();
+			child.set(Node.class, node);
+			child.set(Composite.class, container);
+			widget = factory.createWidget(context);
 			if (widget != null) {
-				elementWidgets.put(element, widget);
+				elementWidgets.put(node, widget);
+				return widget.getControl();
 			}
 		}
-		return widget.getControl();
+		else {
+			widget.refresh();
+			return widget.getControl();
+		}
+		return null;
+	}
+	
+	public void refresh(Node node) {
+		
 	}
 }

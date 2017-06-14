@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.ui.internal.tabletree.IDesignViewer;
@@ -54,9 +55,18 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		return designPage;
 	}
 	
+	@Override
+	public void dispose() {
+		super.dispose();
+		designPage.dispose();
+	}
+	
 	public static final class RulesetDesignPage implements IDesignViewer {
 		
 		private RulesetEditor editor;
+		
+		private IDOMModel domModel;
+		private IModelStateListener modelListener = new ModelListener();
 		
 		public void createControls(Composite container) {
 			IEclipseContext context = WindupUIPlugin.getDefault().getContext();
@@ -80,6 +90,9 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 
 		@Override
 		public void setDocument(IDocument document) {
+			if (domModel != null) {
+				domModel.removeModelStateListener(modelListener);
+			}
 			/*
 			 * let the text editor to be the one that manages the model's lifetime
 			 */
@@ -88,6 +101,9 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 				model = StructuredModelManager.getModelManager().getExistingModelForRead(document);
 
 				if ((model != null) && (model instanceof IDOMModel)) {
+					this.domModel = (IDOMModel)model;
+					domModel.addModelStateListener(modelListener);
+					
 					Document domDoc = null;
 					domDoc = ((IDOMModel) model).getDocument();
 					editor.setDocument(domDoc);
@@ -99,10 +115,50 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 				}
 			}
 		}
-
+		
+		public void dispose() {
+			if (domModel != null) {
+				domModel.removeModelStateListener(modelListener);
+			}
+		}
+		
 		@Override
 		public ISelectionProvider getSelectionProvider() {
 			return editor.getSelectionProvider();
+		}
+		
+		private void refreshDocument(IDOMModel model) {
+			if (editor.getControl() != null && !editor.getControl().isDisposed()) {
+				editor.refreshDocument(((IDOMModel) model).getDocument());
+			}
+		}
+		
+		private class ModelListener implements IModelStateListener {
+			@Override
+			public void modelResourceMoved(IStructuredModel oldModel, IStructuredModel newModel) {
+				refreshDocument((IDOMModel)newModel);
+			}
+			@Override
+			public void modelResourceDeleted(IStructuredModel theModel) {
+				refreshDocument((IDOMModel)theModel);
+			}
+			@Override
+			public void modelReinitialized(IStructuredModel structuredModel) {
+				refreshDocument((IDOMModel)structuredModel);
+			}
+			@Override
+			public void modelDirtyStateChanged(IStructuredModel model, boolean isDirty) {
+			}
+			@Override
+			public void modelChanged(IStructuredModel theModel) {
+				refreshDocument((IDOMModel)theModel);
+			}
+			@Override
+			public void modelAboutToBeReinitialized(IStructuredModel structuredModel) {
+			}
+			@Override
+			public void modelAboutToBeChanged(IStructuredModel model) {
+			}
 		}
 	}
 }

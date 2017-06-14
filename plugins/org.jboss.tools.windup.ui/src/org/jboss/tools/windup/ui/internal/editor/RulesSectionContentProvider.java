@@ -44,6 +44,7 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 		this.treeViewer = treeViewer;
 	}
 	
+	
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);

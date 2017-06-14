@@ -11,19 +11,21 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.w3c.dom.Node;
 
+@Creatable
 public class RulesetWidgetFactory {
 	
 	public static final String NODE_RULE      = "rule";      //$NON-NLS-1$
@@ -32,55 +34,58 @@ public class RulesetWidgetFactory {
 	public static final String NODE_OTHERWISE = "otherwise"; //$NON-NLS-1$
 	public static final String NODE_WHERE     = "where";     //$NON-NLS-1$
 	
-	public INodeWidget createWidget(Node element, IEclipseContext context) {
+	public INodeWidget createWidget(IEclipseContext context) {
 		INodeWidget widget = null;
-		String nodeName = element.getNodeName();
+		String nodeName = context.get(Node.class).getNodeName();
 		switch (nodeName) {
 			case NODE_RULE: {
-				widget = createControls(RuleWidget.class, context.createChild());
+				widget = createControls(RuleWidget.class, context);
 				break;
 			}
 			case NODE_WHEN: {
-				widget = createControls(WhenWidget.class, context.createChild());
+				widget = createControls(WhenWidget.class, context);
 				break;
 			}
 			case NODE_PERFORM: {
-				widget = createControls(PerformWidget.class, context.createChild());
+				widget = createControls(PerformWidget.class, context);
 				break;
 			}
 			case NODE_OTHERWISE: {
-				widget = createControls(OtherwiseWidget.class, context.createChild());
+				widget = createControls(OtherwiseWidget.class, context);
 				break;
 			}
 			case NODE_WHERE: { 
-				widget = createControls(WhereWidget.class, context.createChild());
+				widget = createControls(WhereWidget.class, context);
 				break;
 			}
 		}
 		return widget;
 	}
 	
-	private <T extends INodeWidget> T createControls(Class<T> clazz, IEclipseContext child) {
-		return ContextInjectionFactory.make(clazz, child);
+	private <T extends INodeWidget> T createControls(Class<T> clazz, IEclipseContext context) {
+		return ContextInjectionFactory.make(clazz, context);
 	}
 	
 	public static interface INodeWidget {
 		Control getControl();
+		void refresh();
 	}
 	
 	private static abstract class NodeWidget implements INodeWidget {
 		
 		@Inject protected FormToolkit toolkit;
 		@Inject protected Composite parent;
+		@Inject protected Node node;
 		
-		@Inject @Named("element") private String element; 
+		protected Composite left;
+		protected Composite right;
 		
 		protected Control control;
 		
 		public Control getControl() {
 			if (control == null) {
 				Composite client = createClient();
-				control = createControls(client);
+				createControls(client);
 			}
 			return control;
 		}
@@ -88,7 +93,7 @@ public class RulesetWidgetFactory {
 		private Composite createClient() {
 			Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 			section.setText("Element Details"); //$NON-NLS-1$
-			section.setDescription("Set the properties of '" + element + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
+			section.setDescription("Set the properties of '" + node.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 			GridLayoutFactory.fillDefaults().applyTo(section);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 			
@@ -98,45 +103,74 @@ public class RulesetWidgetFactory {
 			
 			toolkit.paintBordersFor(client);
 			section.setClient(client);
+			
+			this.control = section;
 			return client;
 		}
 		
-		protected abstract Control createControls(Composite parent);
+		protected void createPropertyLayout(Composite parent) {
+			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(parent);
+			this.left = toolkit.createComposite(parent);
+			this.right = toolkit.createComposite(parent);
+		}
+		
+		protected abstract void createControls(Composite parent);
 	}
 	
 	private static class RuleWidget extends NodeWidget {
+		
+		private Text idText;
+		
 		@Override
-		public Control createControls(Composite parent) {
-			toolkit.createLabel(parent, "id");
-			return null;
+		public void createControls(Composite parent) {
+			super.createPropertyLayout(parent);
+			toolkit.createLabel(left, "id");
+			this.idText = toolkit.createText(right, "");
+			refresh();
+		}
+		
+		@Override
+		public void refresh() {
 		}
 	}
 	
 	private static class WhenWidget extends NodeWidget {
 		@Override
-		public Control createControls(Composite parent) {
-			return null;
+		public void createControls(Composite parent) {
+		}
+		
+		@Override
+		public void refresh() {
 		}
 	}
 	
 	private static class PerformWidget extends NodeWidget {
 		@Override
-		public Control createControls(Composite parent) {
-			return null;
+		public void createControls(Composite parent) {
+		}
+		
+		@Override
+		public void refresh() {
 		}
 	}
 	
 	private static class OtherwiseWidget extends NodeWidget {
 		@Override
-		public Control createControls(Composite parent) {
-			return null;
+		public void createControls(Composite parent) {
+		}
+		
+		@Override
+		public void refresh() {
 		}
 	}
 	
 	private static class WhereWidget extends NodeWidget {
 		@Override
-		public Control createControls(Composite parent) {
-			return null;
+		public void createControls(Composite parent) {
+		}
+		
+		@Override
+		public void refresh() {
 		}
 	}
 }
