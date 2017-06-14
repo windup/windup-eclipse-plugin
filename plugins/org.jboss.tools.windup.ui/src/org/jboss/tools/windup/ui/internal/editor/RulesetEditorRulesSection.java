@@ -49,6 +49,8 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.google.common.collect.Lists;
+
 /**
  * The composite containing Windup's configurations.
  */
@@ -63,6 +65,8 @@ public class RulesetEditorRulesSection {
 	@Inject private ModelService modelService;
 	@Inject private FormToolkit toolkit;
 	@Inject private IEclipsePreferences preferences;
+
+	@Inject private RulesetWidgetRegistry widgetRegistry;
 	
 	private ToolBarManager toolBarManager;
 	private TreeViewer treeViewer;
@@ -82,7 +86,14 @@ public class RulesetEditorRulesSection {
 	}
 	
 	public void refreshDocument(Document document) {
-		treeViewer.setInput(document);
+		if (document == treeViewer.getInput()) {
+			List<Node> rules = Lists.newArrayList();
+			XMLRulesetModelUtil.collectRuleNodes(document, rules);
+			rules.forEach(rule -> widgetRegistry.refresh(rule));
+		}
+		else {
+			treeViewer.setInput(document);
+		}
 	}
 	
 	public void init(CustomRuleProvider ruleProvider) {

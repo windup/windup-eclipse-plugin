@@ -23,9 +23,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 @Creatable
+@SuppressWarnings("unused")
 public class RulesetWidgetFactory {
 	
 	public static final String NODE_RULE      = "rule";      //$NON-NLS-1$
@@ -114,12 +117,25 @@ public class RulesetWidgetFactory {
 			this.right = toolkit.createComposite(parent);
 		}
 		
+		protected String getAttributeValue(String attr) {
+			String value = "";
+			NamedNodeMap attributes = node.getAttributes();
+			Node ruleIdNode = attributes.getNamedItem(attr);  //$NON-NLS-1$
+			if (ruleIdNode != null) {
+				value = ((Attr) ruleIdNode).getValue();
+			}
+			return value;
+		}
+		
 		protected abstract void createControls(Composite parent);
 	}
 	
 	private static class RuleWidget extends NodeWidget {
 		
 		private Text idText;
+		
+		public RuleWidget() {
+		}
 		
 		@Override
 		public void createControls(Composite parent) {
@@ -131,10 +147,15 @@ public class RulesetWidgetFactory {
 		
 		@Override
 		public void refresh() {
+			idText.setText(getAttributeValue("id"));
 		}
 	}
 	
 	private static class WhenWidget extends NodeWidget {
+		
+		public WhenWidget() {
+		}
+		
 		@Override
 		public void createControls(Composite parent) {
 		}
@@ -145,6 +166,10 @@ public class RulesetWidgetFactory {
 	}
 	
 	private static class PerformWidget extends NodeWidget {
+		
+		public PerformWidget() {
+		}
+		
 		@Override
 		public void createControls(Composite parent) {
 		}
@@ -155,6 +180,10 @@ public class RulesetWidgetFactory {
 	}
 	
 	private static class OtherwiseWidget extends NodeWidget {
+		
+		public OtherwiseWidget() {
+		}
+		
 		@Override
 		public void createControls(Composite parent) {
 		}
@@ -165,6 +194,10 @@ public class RulesetWidgetFactory {
 	}
 	
 	private static class WhereWidget extends NodeWidget {
+		
+		public WhereWidget() {
+		}
+		
 		@Override
 		public void createControls(Composite parent) {
 		}

@@ -36,7 +36,7 @@ public class RulesetWidgetRegistry {
 			IEclipseContext child = context.createChild();
 			child.set(Node.class, node);
 			child.set(Composite.class, container);
-			widget = factory.createWidget(context);
+			widget = factory.createWidget(child);
 			if (widget != null) {
 				elementWidgets.put(node, widget);
 				return widget.getControl();
@@ -50,6 +50,9 @@ public class RulesetWidgetRegistry {
 	}
 	
 	public void refresh(Node node) {
-		
+		INodeWidget widget = elementWidgets.get(node);
+		if (widget != null) {
+			widget.refresh();
+		}
 	}
 }

@@ -134,7 +134,9 @@ public class RulesetEditor {
 	}
 	
 	private RulesetEditorRulesSection createLeftSide(Composite parent) {
-		return createChild(RulesetEditorRulesSection.class, parent, context.createChild());
+		IEclipseContext child = context.createChild();
+		child.set(RulesetWidgetRegistry.class, widgetRegistry);
+		return createChild(RulesetEditorRulesSection.class, parent, child);
 	}
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {
