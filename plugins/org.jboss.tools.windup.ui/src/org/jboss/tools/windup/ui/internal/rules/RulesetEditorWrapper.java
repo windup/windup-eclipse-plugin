@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
@@ -24,6 +26,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.IDesignViewer;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDependenciesPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDocumentationPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorOverviewPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetExamplesPage;
@@ -33,12 +36,15 @@ import org.w3c.dom.Document;
 public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
 	private RulesetDesignPage designPage;
-
+	
 	@Override
 	protected void createPages() {
 		RulesetEditorOverviewPage overviewPage = new RulesetEditorOverviewPage(getContainer());
 		int index = addPage(overviewPage.getControl());
 		setPageText(index, Messages.rulesOverview);
+		RulesetEditorDependenciesPage dependenciesPage = new RulesetEditorDependenciesPage(getContainer());
+		index = addPage(dependenciesPage.getControl());
+		setPageText(index, Messages.rulesEditor_dependencies);
 		super.createPages();
 		RulesetEditorDocumentationPage documentationPage = new RulesetEditorDocumentationPage(getContainer());
 		index = addPage(documentationPage.getControl());
@@ -46,12 +52,13 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		RulesetExamplesPage examplesPage = new RulesetExamplesPage(getContainer());
 		index = addPage(examplesPage.getControl());
 		setPageText(index, Messages.examplesTitle);
+		setActivePage(2);
 	}
 	
 	@Override
 	protected IDesignViewer createDesignPage() {
 		designPage = new RulesetDesignPage();
-		designPage.createControls(getContainer());
+		designPage.createControls(getContainer(), ((FileEditorInput)super.getEditorInput()).getFile());
 		return designPage;
 	}
 	
@@ -61,6 +68,11 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		designPage.dispose();
 	}
 	
+	@Override
+	public void setFocus() {
+		super.setFocus();
+	}
+	
 	public static final class RulesetDesignPage implements IDesignViewer {
 		
 		private RulesetEditor editor;
@@ -68,9 +80,10 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		private IDOMModel domModel;
 		private IModelStateListener modelListener = new ModelListener();
 		
-		public void createControls(Composite container) {
+		public void createControls(Composite container, IFile file) {
 			IEclipseContext context = WindupUIPlugin.getDefault().getContext();
 			context.set(Composite.class, container);
+			context.set(IFile.class, file);
 			editor = ContextInjectionFactory.make(RulesetEditor.class, context.createChild());
 		}
 		
@@ -85,7 +98,7 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 
 		@Override
 		public String getTitle() {
-			return Messages.rulesEditor_title;
+			return Messages.rulesEditor_tabTitle;
 		}
 
 		@Override
@@ -129,7 +142,7 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		
 		private void refreshDocument(IDOMModel model) {
 			if (editor.getControl() != null && !editor.getControl().isDisposed()) {
-				editor.refreshDocument(((IDOMModel) model).getDocument());
+				editor.setDocument(((IDOMModel) model).getDocument());
 			}
 		}
 		

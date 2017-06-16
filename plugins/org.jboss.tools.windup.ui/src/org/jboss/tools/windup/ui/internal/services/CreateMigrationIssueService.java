@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.services;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -22,6 +23,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -29,6 +31,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -54,7 +59,17 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
 		IEclipseContext context = WindupUIPlugin.getDefault().getContext();
 		NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
-		new WizardDialog(Display.getDefault().getActiveShell(), wizard).open();		
+		int result = new WizardDialog(Display.getDefault().getActiveShell(), wizard).open();
+		if (result == Window.OK) {
+			IFile ruleset = wizard.getRuleset();
+			if (ruleset != null && ruleset.exists()) {
+				try {
+					IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), ruleset);
+				} catch (PartInitException e) {
+					WindupUIPlugin.log(e);
+				}
+			}
+		}
 	});
 	
 	@Inject

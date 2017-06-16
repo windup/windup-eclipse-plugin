@@ -52,7 +52,7 @@ public interface WindupConstants {
 	/**
 	 * UI Events
 	 */
-	String ACTIVE_NODE = "windup/rules/selected/node";
+	String ACTIVE_ELEMENT = "windup/rules/selected/element";
 	String ACTIVE_CONFIG = "windup/rules/selected";
 	String SYNCH = "windup/config/synch";
 	String MARKERS_CHANGED = "windup/issue/markers";

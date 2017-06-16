@@ -869,7 +869,7 @@
              extensions="xml"
              icon="icons/rules/repository-middle.gif"
              id="org.jboss.tools.windup.ui.rulesetEditor"
-             name="RHAMT Ruleset">
+             name="Ruleset Editor">
           <contentTypeBinding
                 contentTypeId="org.jboss.tools.windup.ui.rulesetContentType">
           </contentTypeBinding>

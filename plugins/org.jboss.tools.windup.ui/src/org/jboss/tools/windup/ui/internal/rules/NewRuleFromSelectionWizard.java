@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
@@ -26,11 +28,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -38,11 +36,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -73,6 +69,8 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 	@Inject private ModelService modelService;
 	private Combo rulesetCombo;
 	
+	private IFile selectedRuleset;
+	
 	private SelectCustomRulesetWizardPage rulesetPage;
 	
 	public NewRuleFromSelectionWizard() {
@@ -92,7 +90,12 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 
 	@Override
 	public boolean performFinish() {
+		this.selectedRuleset = (IFile)ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(rulesetCombo.getText())); 
 		return true;
+	}
+	
+	public IFile getRuleset() {
+		return selectedRuleset;
 	}
 	
 	private class SelectCustomRulesetWizardPage extends WizardPage {
@@ -155,6 +158,7 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 				}
 			});
 			
+			/*
 			Composite top = new Composite(container, SWT.NONE);
 			GridLayoutFactory.fillDefaults().numColumns(1).applyTo(top);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(top);
@@ -192,25 +196,26 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 			});
 			// Preview the first template.
 			sashForm.setWeights(new int[] {30, 70});
+			*/
 			setControl(container);
-			
 			modelService.cleanPhantomCustomRuleProviders();
 			
 			if (!modelService.getModel().getCustomRuleRepositories().isEmpty()) {
 				CustomRuleProvider ruleProvider = modelService.getModel().getCustomRuleRepositories().get(0);
 				selectRuleset(ruleProvider.getLocationURI());
 			}
+			
 		}
 		
 		private void selectRuleset(String rulesetFile) {
 			List<String> locations = modelService.getModel().getCustomRuleRepositories().stream().map(provider -> {
 				IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
-				return file.getProject().getName() + "/" + file.getName();
+				return file.getFullPath().toString(); //file.getProject().getName() + "/" + file.getName();
 			}).collect(Collectors.toList());
 			rulesetCombo.setItems(locations.toArray(new String[locations.size()]));
 			IFile rulesetIFile = WorkspaceResourceUtils.getFile(rulesetFile);
 			if (rulesetIFile != null && rulesetIFile.exists()) {
-				rulesetFile = rulesetIFile.getProject().getName() + "/" + rulesetIFile.getName();
+				rulesetFile = rulesetIFile.getFullPath().toString(); //rulesetIFile.getProject().getName() + "/" + rulesetIFile.getName();
 				int index = locations.indexOf(rulesetFile);
 				if (index != -1) {
 					rulesetCombo.select(index);	

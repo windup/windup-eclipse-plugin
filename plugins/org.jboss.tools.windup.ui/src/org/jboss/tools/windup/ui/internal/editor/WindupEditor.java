@@ -11,7 +11,7 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
-import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_title;
+import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_tabTitle;
 
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public class WindupEditor {
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
 		this.form = toolkit.createForm(parent);
-		form.setText(rulesEditor_title);
+		form.setText(rulesEditor_tabTitle);
 		form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
 		menuService.populateContributionManager((ContributionManager)form.getToolBarManager(), TOOLBAR_ID);

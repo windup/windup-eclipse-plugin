@@ -17,8 +17,8 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Maps;
@@ -30,29 +30,36 @@ public class RulesetWidgetRegistry {
 	
 	@Inject private RulesetWidgetFactory factory;
 	
-	public Control getOrCreate(Node node, Composite container, IEclipseContext context) {
-		INodeWidget widget = elementWidgets.get(node);
+	public INodeWidget getOrCreateWidget(Element element, Composite container, IEclipseContext context) {
+		INodeWidget widget = elementWidgets.get(element);
 		if (widget == null) {
 			IEclipseContext child = context.createChild();
-			child.set(Node.class, node);
+			child.set(Element.class, element);
 			child.set(Composite.class, container);
-			widget = factory.createWidget(child);
+			widget = factory.createWidget(element, child);
 			if (widget != null) {
-				elementWidgets.put(node, widget);
-				return widget.getControl();
+				elementWidgets.put(element, widget);
+				return widget;
 			}
 		}
 		else {
-			widget.refresh();
-			return widget.getControl();
+			widget.update();
+			return widget;
 		}
 		return null;
 	}
 	
-	public void refresh(Node node) {
-		INodeWidget widget = elementWidgets.get(node);
+	public boolean update(Element element) {
+		boolean updated = false;
+		INodeWidget widget = elementWidgets.get(element);
 		if (widget != null) {
-			widget.refresh();
+			widget.update();
+			updated = true;
 		}
+		return updated;
+	}
+	
+	public INodeWidget getWidget(Element element) {
+		return elementWidgets.get(element);
 	}
 }

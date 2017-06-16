@@ -10,8 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_NODE;
-import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_title;
+import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_ELEMENT;
+import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_tabTitle;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -36,15 +36,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetRegistry;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
-@SuppressWarnings("restriction")
 public class RulesetEditor {
 	
 	public static final String ID = "org.jboss.tools.windup.ui.part.rulesetEditor"; //$NON-NLS-1$
@@ -77,12 +76,14 @@ public class RulesetEditor {
 	
 	private RulesetEditorRulesSection elementsSection;
 	
+	private INodeWidget activeElement;
+	
 	public void setDocument(Document document) {
 		elementsSection.setDocument(document);
-	}
-	
-	public void refreshDocument(Document document) {
-		elementsSection.refreshDocument(document);
+		context.set(Document.class, document);
+		if (activeElement != null) {
+			activeElement.update();
+		}
 	}
 	
 	public ISelectionProvider getSelectionProvider() {
@@ -93,11 +94,17 @@ public class RulesetEditor {
 		return form;
 	}
 	
+	public void setFocus() {
+		if (activeElement != null) {
+			activeElement.setFocus();
+		}
+	}
+	
 	@PostConstruct
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
 		this.form = toolkit.createForm(parent);
-		form.setText(rulesEditor_title);
+		form.setText(rulesEditor_tabTitle);
 		form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
 		menuService.populateContributionManager((ContributionManager)form.getToolBarManager(), TOOLBAR_ID);
@@ -159,20 +166,21 @@ public class RulesetEditor {
 	}
 	
 	protected void createGettingStarted(Composite parent) {
-		new Label(parent, SWT.NONE).setText("[TODO] Getting started ...");
+		new Label(parent, SWT.NONE).setText("");
 	}
 	
 	@Inject
 	@Optional
-	private void updateDetails(@UIEventTopic(ACTIVE_NODE) Node node) {
+	private void updateDetails(@UIEventTopic(ACTIVE_ELEMENT) Element element) {
 		if (form.isDisposed()) {
 			return;
 		}
 		Control top = gettingStartedComposite;
-		if (node != null) {
-			Control details = widgetRegistry.getOrCreate(node, stackComposite, context);
-			if (details != null) {
-				top = details;
+		if (element != null) {
+			INodeWidget widget = widgetRegistry.getOrCreateWidget(element, stackComposite, context);
+			if (widget != null && widget.isEditable()) {
+				top = widget.getControl();
+				this.activeElement = widget;
 			}
 		}
 		((StackLayout)stackComposite.getLayout()).topControl = top;

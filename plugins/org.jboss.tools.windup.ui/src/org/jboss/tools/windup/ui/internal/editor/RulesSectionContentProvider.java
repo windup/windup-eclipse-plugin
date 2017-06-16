@@ -11,6 +11,8 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 
 import java.util.List;
 
@@ -20,11 +22,15 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.JavaClassNodeConfig;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.PerformNodeConfig;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RuleNodeConfig;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.WhenNodeConfig;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
@@ -32,18 +38,15 @@ import com.google.common.collect.Lists;
 public class RulesSectionContentProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
 	
 	private static final Image RULE;
+	private static final Image XML_NODE;
+	private static final Image JAVA;
 
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
 		RULE = imageRegistry.get(IMG_RULE);
+		XML_NODE = imageRegistry.get(IMG_XML_RULE);
+		JAVA = imageRegistry.get(IMG_JAVA);
 	}
-	
-	private TreeViewer treeViewer;
-	
-	public RulesSectionContentProvider (TreeViewer treeViewer) {
-		this.treeViewer = treeViewer;
-	}
-	
 	
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -58,16 +61,34 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 			XMLRulesetModelUtil.collectRuleNodes(document, rules);
 			return rules.toArray();
 		}
-		/*if (element instanceof Node) {
-			Node node = (Node) element;
-			List<Node> list = Lists.newArrayList();
-			
-			for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-				if (child instanceof Element && .equals(child.getNodeName()))
-					return (Element) child;
+		if (element instanceof Element) {
+			Element node = (Element) element;
+			if (isRuleNode(node)) {
+				List<Element> children = Lists.newArrayList();
+				for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+					if (child instanceof Element) {
+						if (isWhenNode((Element)child)) {
+							children.add((Element)child);
+						}
+						else if (isPerformNode(((Element)child))) {
+							children.add((Element)child);
+						}
+					}
+				}
+				return children.toArray();
 			}
-			
-		}*/
+			else if (isWhenNode(node)) {
+				List<Element> children = Lists.newArrayList();
+				for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+					if (child instanceof Element) {
+						if (isJavaClassNode((Element)child)) {
+							children.add((Element)child);
+						}
+					}
+				}
+				return children.toArray();
+			}
+		}
 		return new Object[0];
 	}
 	
@@ -84,19 +105,50 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	}
 	
 	@Override
-	public String getText(Object element) {
-		String ruleId = "";
-		if (element instanceof Node) {
-			ruleId = XMLRulesetModelUtil.getRuleId((Node)element);
+	public String getText(Object node) {
+		String text = "";
+		if (node instanceof Element) {
+			Element element = (Element)node; 
+			if (isRuleNode(element)) {
+				text = XMLRulesetModelUtil.getRuleId((Node)element);
+			}
+			else {
+				text = element.getNodeName();
+			}
 		}
-		return ruleId;
+		return text;
+	}
+	
+	private boolean isRuleNode(Element element) {
+		return RuleNodeConfig.NAME.equals(element.getNodeName());
+	}
+	
+	private boolean isWhenNode(Element element) {
+		return WhenNodeConfig.NAME.equals(element.getNodeName());
+	}
+	
+	private boolean isPerformNode(Element element) {
+		return PerformNodeConfig.NAME.equals(element.getNodeName());
+	}
+	
+	private boolean isJavaClassNode(Element element) {
+		return JavaClassNodeConfig.NAME.equals(element.getNodeName());
 	}
 	
 	@Override
-	public Image getImage(Object element) {
+	public Image getImage(Object node) {
 		Image image = null;
-		if (element instanceof Node) {
-			image = RULE;
+		if (node instanceof Element) {
+			Element element = (Element)node;
+			if (isRuleNode(element)) {
+				image = RULE;
+			}
+			else if (isJavaClassNode(element)) {
+				return JAVA;
+			}
+			else {
+				image = XML_NODE;
+			}
 		}
 		return image;
 	}

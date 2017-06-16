@@ -83,11 +83,25 @@ public class Messages extends NLS
     public static String NewRulesetWizard_rulesetIdRequired;
     
     // Rules Editor
-    public static String rulesEditor_title;
+    public static String rulesEditor_dependencies;
+    public static String rulesEditor_tabTitle;
     public static String rulesSectionTitle;
     public static String rulesOverview;
     public static String documentationTitle;
     public static String examplesTitle;
+    
+    public static String ElementAttributeRow_AttrLabelReq;
+    public static String ElementAttributeRow_AttrLabel;
+    
+    public static String RulesetEditor_AddRule;
+    public static String RulesetEditor_remove;
+    
+    public static String RulesetEditor_Rules_up;
+    public static String RulesetEditor_Rules_down;
+    
+    public static String RulesetEditor_RemoveElement;
+    
+    public static String RulesetEditor_ReferenceAttributeRow_browse;
     
     public static String openRuleset;
     public static String errorOpeningRuleset;
