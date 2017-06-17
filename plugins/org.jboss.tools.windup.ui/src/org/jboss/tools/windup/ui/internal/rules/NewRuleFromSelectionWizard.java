@@ -20,23 +20,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -44,26 +34,15 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.wst.sse.core.StructuredModelManager;
-import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
-import org.eclipse.wst.sse.ui.StructuredTextViewerConfiguration;
-import org.eclipse.wst.sse.ui.internal.StructuredTextViewer;
-import org.eclipse.wst.sse.ui.internal.provisional.style.LineStyleProvider;
-import org.eclipse.wst.xml.core.internal.provisional.contenttype.ContentTypeIdForXML;
-import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.rules.xml.XMLRuleTemplate.Template;
-import org.jboss.tools.windup.ui.internal.rules.xml.XMLTemplateVariableProcessor;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 
-@SuppressWarnings("restriction")
 public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard {
 
 	@Inject private ModelService modelService;
@@ -74,8 +53,9 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 	private SelectCustomRulesetWizardPage rulesetPage;
 	
 	public NewRuleFromSelectionWizard() {
-		setNeedsProgressMonitor(true);
+		setNeedsProgressMonitor(false);
 		setWindowTitle(Messages.newXMLRule_title);
+		setHelpAvailable(false);
 	}
 	
 	@Override
@@ -99,11 +79,6 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 	}
 	
 	private class SelectCustomRulesetWizardPage extends WizardPage {
-		
-		private TableViewer templateTable;
-		private SourceViewer templatePreviewer;
-		
-		private XMLTemplateVariableProcessor templateProcessor= new XMLTemplateVariableProcessor();
 		
 		public SelectCustomRulesetWizardPage() {
 			super("selectCustomRulesetPage"); //$NON-NLS-1$
@@ -157,46 +132,6 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 					}
 				}
 			});
-			
-			/*
-			Composite top = new Composite(container, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(1).applyTo(top);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(top);
-			
-			Composite bottom = new Composite (container, SWT.NONE);
-			GridLayoutFactory.fillDefaults().applyTo(bottom);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(bottom);
-			
-			SashForm sashForm = new SashForm(bottom, SWT.VERTICAL|SWT.SMOOTH);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			gd.heightHint = 300;
-			sashForm.setLayoutData(gd);
-			
-			templateTable = new TableViewer(sashForm, SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(templateTable.getControl());
-			templateTable.setContentProvider(ArrayContentProvider.getInstance());
-			templateTable.setLabelProvider(new LabelProvider() {
-				@Override
-				public Image getImage(Object element) {
-					return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULE);
-				}
-				@Override
-				public String getText(Object element) {
-					return ((Template)element).getName();
-				}
-			});
-			
-			templatePreviewer = createSourcePreviewer(sashForm);
-			
-			templateTable.addSelectionChangedListener(new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent e) {
-					updateTemplatePreview();
-				}
-			});
-			// Preview the first template.
-			sashForm.setWeights(new int[] {30, 70});
-			*/
 			setControl(container);
 			modelService.cleanPhantomCustomRuleProviders();
 			
@@ -204,18 +139,17 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 				CustomRuleProvider ruleProvider = modelService.getModel().getCustomRuleRepositories().get(0);
 				selectRuleset(ruleProvider.getLocationURI());
 			}
-			
 		}
 		
 		private void selectRuleset(String rulesetFile) {
 			List<String> locations = modelService.getModel().getCustomRuleRepositories().stream().map(provider -> {
 				IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
-				return file.getFullPath().toString(); //file.getProject().getName() + "/" + file.getName();
+				return file.getFullPath().toString();
 			}).collect(Collectors.toList());
 			rulesetCombo.setItems(locations.toArray(new String[locations.size()]));
 			IFile rulesetIFile = WorkspaceResourceUtils.getFile(rulesetFile);
 			if (rulesetIFile != null && rulesetIFile.exists()) {
-				rulesetFile = rulesetIFile.getFullPath().toString(); //rulesetIFile.getProject().getName() + "/" + rulesetIFile.getName();
+				rulesetFile = rulesetIFile.getFullPath().toString();
 				int index = locations.indexOf(rulesetFile);
 				if (index != -1) {
 					rulesetCombo.select(index);	
@@ -235,63 +169,6 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 		@Override
 		public boolean isPageComplete() {
 			return isRulesetValid();
-		}
-		
-		private void updateTemplatePreview() {
-			IStructuredSelection ss = (IStructuredSelection)templateTable.getSelection();
-			if (ss.isEmpty()) {
-				templatePreviewer.getDocument().set("");
-			}
-			else {
-				Template template = (Template)ss.getFirstElement();
-				templatePreviewer.getDocument().set(template.generate());
-			}
-		}
-		
-		private SourceViewer createSourcePreviewer(Composite parent) {
-			SourceViewerConfiguration sourceViewerConfiguration = new StructuredTextViewerConfiguration() {
-				StructuredTextViewerConfiguration baseConfiguration = new StructuredTextViewerConfigurationXML();
-
-				public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-					return baseConfiguration.getConfiguredContentTypes(sourceViewer);
-				}
-
-				public LineStyleProvider[] getLineStyleProviders(ISourceViewer sourceViewer, String partitionType) {
-					return baseConfiguration.getLineStyleProviders(sourceViewer, partitionType);
-				}
-
-				public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-					ContentAssistant assistant = new ContentAssistant();
-					assistant.enableAutoActivation(true);
-					assistant.enableAutoInsert(true);
-					assistant.setContentAssistProcessor(getTemplateProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
-					return assistant;
-				}
-			};
-			return doCreateViewer(parent, sourceViewerConfiguration);
-		}
-		
-		private SourceViewer doCreateViewer(Composite parent, SourceViewerConfiguration viewerConfiguration) {
-			SourceViewer viewer = new StructuredTextViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-			viewer.getTextWidget().setFont(JFaceResources.getFont("org.eclipse.wst.sse.ui.textfont")); //$NON-NLS-1$
-			IStructuredModel scratchModel = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(ContentTypeIdForXML.ContentTypeID_XML);
-			viewer.configure(viewerConfiguration);
-			viewer.setDocument(scratchModel.getStructuredDocument());
-			return viewer;
-		}
-		
-		private IContentAssistProcessor getTemplateProcessor() {
-			return templateProcessor;
-		}
-		
-		private ModifyListener onSearch() {
-			return e -> {
-				templateTable.refresh();
-				TableItem[] items = templateTable.getTable().getItems();
-				if (items.length > 0) {
-					templateTable.setSelection(new StructuredSelection(items[0].getData()));
-				}
-			};
 		}
 	}
 }

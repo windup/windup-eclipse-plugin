@@ -27,6 +27,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -59,8 +60,12 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
 		IEclipseContext context = WindupUIPlugin.getDefault().getContext();
 		NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
-		int result = new WizardDialog(Display.getDefault().getActiveShell(), wizard).open();
-		if (result == Window.OK) {
+		WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
+			public Point getInitialSize() {
+				return new Point(575, 220);
+			}
+		};
+		if (wizardDialog.open() == Window.OK) {
 			IFile ruleset = wizard.getRuleset();
 			if (ruleset != null && ruleset.exists()) {
 				try {

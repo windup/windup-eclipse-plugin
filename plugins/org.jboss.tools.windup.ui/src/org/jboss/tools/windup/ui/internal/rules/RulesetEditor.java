@@ -80,7 +80,6 @@ public class RulesetEditor {
 	
 	public void setDocument(Document document) {
 		elementsSection.setDocument(document);
-		context.set(Document.class, document);
 		if (activeElement != null) {
 			activeElement.update();
 		}

@@ -85,7 +85,6 @@ import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -335,11 +334,9 @@ public class RulesetWidgetFactory {
 		@Override
 		public void createControls(Composite parent) {
 			IProject project = context.get(IFile.class).getProject();
-			Document document = context.get(Document.class);
 			classRow = new ClassAttributeRow(element, "references", true, project);
 			classRow.createContents(parent, toolkit, 2);
-
-			locationRow = new ChoiceAttributeRow(element, false, "location", document) {
+			locationRow = new ChoiceAttributeRow(element, false, "location") {
 				@Override
 				protected List<Pair<String, String>> getOptions() {
 					List<Pair<String, String>> options = Lists.newArrayList();
@@ -570,15 +567,13 @@ public class RulesetWidgetFactory {
 	public static class ChoiceAttributeRow extends AttributeRow {
 		
 		protected ComboPart combo;
-		private Document document;
 
 		public ChoiceAttributeRow(Element element, String attribute, boolean isRequired) {
 			super(element, attribute, isRequired);
 		}
 		
-		public ChoiceAttributeRow(Element parent, boolean isRequired, String element, Document document) {
+		public ChoiceAttributeRow(Element parent, boolean isRequired, String element) {
 			super(parent, element, isRequired);
-			this.document = document;
 		}
 		
 		protected List<Pair<String, String>> getOptions() {
@@ -603,10 +598,6 @@ public class RulesetWidgetFactory {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!blockNotification) {
-						Combo c = (Combo)e.widget;
-						System.out.println(c.getSelectionIndex());
-						System.out.println(c.getText());
-						System.out.println(combo.getSelection());
 						Element child = findChildElement();
 						if (child != null) {
 							element.removeChild(child);
@@ -614,7 +605,7 @@ public class RulesetWidgetFactory {
 						if (combo.getSelection().isEmpty()) {
 							return;
 						}
-						child = document.createElement(attribute);
+						child = element.getOwnerDocument().createElement(attribute);
 						element.appendChild(child);
 						XMLUtilities.setText(child, combo.getSelection());
 					}

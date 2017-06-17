@@ -68,7 +68,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.sse.ui,
  org.jsoup,
  org.eclipse.mylyn.tasks.ui,
- org.eclipse.pde.ui
+ org.eclipse.pde.ui,
+ org.eclipse.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,
