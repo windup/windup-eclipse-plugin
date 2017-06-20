@@ -94,6 +94,9 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	
 	@Override
 	public Object getParent(Object element) {
+		if (element instanceof Element) {
+			return ((Element) element).getParentNode();
+		}
 		return null;
 	}
 	

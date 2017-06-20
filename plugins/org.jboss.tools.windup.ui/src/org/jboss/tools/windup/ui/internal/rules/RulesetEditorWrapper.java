@@ -31,6 +31,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDocumentationPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorOverviewPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetExamplesPage;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 @SuppressWarnings("restriction")
 public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
@@ -73,9 +74,18 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		super.setFocus();
 	}
 	
+	public Document getDocument() {
+		return designPage.getDocument();
+	}
+	
+	public void selectAndReveal(Element element) {
+		designPage.getEditor().selectAndReveal(element);
+	}
+	
 	public static final class RulesetDesignPage implements IDesignViewer {
 		
 		private RulesetEditor editor;
+		private Document document;
 		
 		private IDOMModel domModel;
 		private IModelStateListener modelListener = new ModelListener();
@@ -100,6 +110,10 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		public String getTitle() {
 			return Messages.rulesEditor_tabTitle;
 		}
+		
+		public Document getDocument() {
+			return document;
+		}
 
 		@Override
 		public void setDocument(IDocument document) {
@@ -119,6 +133,7 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 					
 					Document domDoc = null;
 					domDoc = ((IDOMModel) model).getDocument();
+					this.document = domDoc;
 					editor.setDocument(domDoc);
 				}
 			}

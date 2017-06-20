@@ -85,6 +85,7 @@ import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -94,6 +95,17 @@ import com.google.common.collect.Lists;
 @Creatable
 @SuppressWarnings({"unused", "restriction"})
 public class RulesetWidgetFactory {
+	
+	public static interface RulesetConstants {
+		static final String ID = "id"; //$NON-NLS-1$
+		static final String RULESET_NAME = "ruleset"; //$NON-NLS-1$
+		static final String RULES_NAME = "rules"; //$NON-NLS-1$
+		static final String RULE_NAME = "rule"; //$NON-NLS-1$
+		static final String PERFORM = "perform"; //$NON-NLS-1$
+		// javaclass
+		static final String JAVA_CLASS_REFERENCES = "references";
+		static final String JAVA_CLASS_LOCATION = "location"; //$NON-NLS-1$
+	}
 
 	public static class RuleNodeConfig {
 		public static final String NAME = "rule"; //$NON-NLS-1$
@@ -340,25 +352,25 @@ public class RulesetWidgetFactory {
 				@Override
 				protected List<Pair<String, String>> getOptions() {
 					List<Pair<String, String>> options = Lists.newArrayList();
-					options.add(Tuples.create("ANNOTATION", "A Java class references the annotation."));
-					options.add(Tuples.create("CATCH_EXCEPTION_STATEMENT", "A Java class method catches the specified type."));
-					options.add(Tuples.create("CONSTRUCTOR_CALL", "A Java class constructs the specified type."));
-					options.add(Tuples.create("ENUM_CONSTANT", "A Java class declares the enumeration."));
-					options.add(Tuples.create("FIELD_DECLARATION", "A Java class declares a field of the specified type."));
-					options.add(Tuples.create("IMPLEMENTS_TYPE", "A Java class implements the specified type; works transitively."));
-					options.add(Tuples.create("IMPORT", "A Java class imports the type."));
-					options.add(Tuples.create("INHERITANCE", "A Java class inherits the specified type; works transitively."));
-					options.add(Tuples.create("INSTANCE_OF", "A Java class of the specified type is used in an instanceof statement."));
-					options.add(Tuples.create("METHOD", "A Java class declares the referenced method."));
-					options.add(Tuples.create("METHOD_CALL", "A Java class calls the specified method; works transitively for interfaces."));
-					options.add(Tuples.create("METHOD_PARAMETER", "A Java class declares the referenced method parameter."));
-					options.add(Tuples.create("RETURN_TYPE", "A Java class returns the specified type."));
-					options.add(Tuples.create("TAGLIB_IMPORT", "This is only relevant for JSP sources and represents the import of a taglib into the JSP source file."));
-					options.add(Tuples.create("THROW_STATEMENT", "A method in the Java class throws the an instance of the specified type."));
-					options.add(Tuples.create("THROWS_METHOD_DECLARATION", "A Java class declares that it may throw the specified type."));
-					options.add(Tuples.create("TYPE", "A Java class declares the type."));
-					options.add(Tuples.create("VARIABLE_DECLARATION", "A Java class declares a variable of the specified type."));
-					options.add(Tuples.create("VARIABLE_INITIALIZER", "A variable initalization expression value."));
+					options.add(Tuples.create(TypeReferenceLocation.ANNOTATION.toString(), "A Java class references the annotation."));
+					options.add(Tuples.create(TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT.toString(), "A Java class method catches the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.CONSTRUCTOR_CALL.toString(), "A Java class constructs the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.ENUM_CONSTANT.toString(), "A Java class declares the enumeration."));
+					options.add(Tuples.create(TypeReferenceLocation.FIELD_DECLARATION.toString(), "A Java class declares a field of the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), "A Java class implements the specified type; works transitively."));
+					options.add(Tuples.create(TypeReferenceLocation.IMPORT.toString(), "A Java class imports the type."));
+					options.add(Tuples.create(TypeReferenceLocation.INHERITANCE.toString(), "A Java class inherits the specified type; works transitively."));
+					options.add(Tuples.create(TypeReferenceLocation.INSTANCE_OF.toString(), "A Java class of the specified type is used in an instanceof statement."));
+					options.add(Tuples.create(TypeReferenceLocation.METHOD.toString(), "A Java class declares the referenced method."));
+					options.add(Tuples.create(TypeReferenceLocation.METHOD_CALL.toString(), "A Java class calls the specified method; works transitively for interfaces."));
+					options.add(Tuples.create(TypeReferenceLocation.METHOD_PARAMETER.toString(), "A Java class declares the referenced method parameter."));
+					options.add(Tuples.create(TypeReferenceLocation.RETURN_TYPE.toString(), "A Java class returns the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.TAGLIB_IMPORT.toString(), "This is only relevant for JSP sources and represents the import of a taglib into the JSP source file."));
+					options.add(Tuples.create(TypeReferenceLocation.THROW_STATEMENT.toString(), "A method in the Java class throws the an instance of the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.THROWS_METHOD_DECLARATION.toString(), "A Java class declares that it may throw the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.TYPE.toString(), "A Java class declares the type."));
+					options.add(Tuples.create(TypeReferenceLocation.VARIABLE_DECLARATION.toString(), "A Java class declares a variable of the specified type."));
+					options.add(Tuples.create(TypeReferenceLocation.VARIABLE_INITIALIZER.toString(), "A variable initalization expression value."));
 					return options;
 				}
 			};

@@ -99,6 +99,10 @@ public class RulesetEditor {
 		}
 	}
 	
+	public void selectAndReveal(Element element) {
+		elementsSection.selectAndReveal(element);
+	}
+	
 	@PostConstruct
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());

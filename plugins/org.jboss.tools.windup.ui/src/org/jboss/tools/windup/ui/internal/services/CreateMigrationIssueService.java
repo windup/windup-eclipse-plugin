@@ -40,13 +40,17 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.NewRuleFromSelectionWizard;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.ui.internal.services.ContextMenuService.WindupAction;
 import org.jboss.tools.windup.ui.internal.views.TaskListView;
+import org.w3c.dom.Element;
 
 @SuppressWarnings("restriction")
 public class CreateMigrationIssueService implements MouseListener, IMenuListener {
 
 	@Inject private EPartService partService;
+	@Inject private RulesetSelectionCreationService creationService;
+	
 	private ITextEditor editor;
 	
 	private WindupAction CREATE_MIGRATION_TASK = new WindupAction(Messages.createMigrationIssue,
@@ -54,27 +58,6 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		MPart part = partService.showPart(TaskListView.VIEW_ID, PartState.ACTIVATE);
 		TaskListView view = (TaskListView)part.getObject();
 		view.createMigrationIssueFromSelection();
-	});
-	
-	private WindupAction CREATE_RULE_FROM_SNIPPET = new WindupAction(Messages.createRuleFromSelection,
-		WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
-		IEclipseContext context = WindupUIPlugin.getDefault().getContext();
-		NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
-		WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
-			public Point getInitialSize() {
-				return new Point(575, 220);
-			}
-		};
-		if (wizardDialog.open() == Window.OK) {
-			IFile ruleset = wizard.getRuleset();
-			if (ruleset != null && ruleset.exists()) {
-				try {
-					IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), ruleset);
-				} catch (PartInitException e) {
-					WindupUIPlugin.log(e);
-				}
-			}
-		}
 	});
 	
 	@Inject
@@ -85,7 +68,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 			if (theEditor != null) {
 				MenuManager menuManager = getMenuManager(theEditor);
 				if (menuManager != null) {
-					registerListener(editor, menuManager);
+					registerListener(theEditor, menuManager);
 				}
 			}
 		}
@@ -135,9 +118,9 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		manager.add(CREATE_MIGRATION_TASK);
-		manager.add(CREATE_RULE_FROM_SNIPPET);
+		manager.add(createRuleFromSelectionAction(editor));
 	}
-
+	
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
@@ -146,5 +129,34 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 	}
 	@Override
 	public void mouseUp(MouseEvent e) {
+	}
+	
+	private WindupAction createRuleFromSelectionAction(ITextEditor theEditor) {
+		WindupAction action = new WindupAction(Messages.createRuleFromSelection,
+				WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
+				IEclipseContext context = WindupUIPlugin.getDefault().getContext();
+				NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
+				WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
+					public Point getInitialSize() {
+						return new Point(575, 220);
+					}
+				};
+				if (wizardDialog.open() == Window.OK) {
+					IFile ruleset = wizard.getRuleset();
+					if (ruleset != null && ruleset.exists()) {
+						try {
+							RulesetEditorWrapper wrapper = (RulesetEditorWrapper)IDE.openEditor(PlatformUI.getWorkbench().
+									getActiveWorkbenchWindow().getActivePage(), ruleset);
+							Element element = creationService.createRuleFromEditorSelection(theEditor, wrapper.getDocument());
+							if (element != null) {
+								wrapper.selectAndReveal(element);
+							}
+						} catch (PartInitException e) {
+							WindupUIPlugin.log(e);
+						}
+					}
+				}
+			});
+		return action;
 	}
 }

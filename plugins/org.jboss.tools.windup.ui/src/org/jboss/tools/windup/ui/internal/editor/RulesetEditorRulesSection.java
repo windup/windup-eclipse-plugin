@@ -105,6 +105,11 @@ public class RulesetEditorRulesSection {
 		return treeViewer;
 	}
 	
+	public void selectAndReveal(Element element) {
+		treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
+		treeViewer.setSelection(new StructuredSelection(element), true);
+	}
+	
 	public void setDocument(Document document) {
 		if (document == treeViewer.getInput()) {
 			treeViewer.refresh(document, true);
