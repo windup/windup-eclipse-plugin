@@ -102,11 +102,89 @@ public class RulesetWidgetFactory {
 		static final String RULES_NAME = "rules"; //$NON-NLS-1$
 		static final String RULE_NAME = "rule"; //$NON-NLS-1$
 		static final String PERFORM = "perform"; //$NON-NLS-1$
+		
+		// hint
+		static final String HINT = "hint"; //$NON-NLS-1$
+		static final String TITLE = "title"; //$NON-NLS-1$
+		static final String EFFORT = "effort"; //$NON-NLS-1$
+		static final String CATEGORY_ID = "category-id"; //$NON-NLS-1$
+		static final String MESSAGE = "message"; //$NON-NLS-1$
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references";
 		static final String JAVA_CLASS_LOCATION = "location"; //$NON-NLS-1$
 	}
 
+	enum HINT_EFFORT {
+		
+		INFORMATION(0, "Information", "An informational warning with very low or no priority for migration."),
+		TRIVIAL(1, "Trivial", "The migration is a trivial change or a simple library swap with no or minimal API changes."),
+		COMPLEX(3, "Complex", "The changes required for the migration task are complex, but have a documented solution."),
+		REDESIGN(5, "Redesign", "The migration task requires a redesign or a complete library change, with significant API changes."),
+		REARCHITECTURE(7, "Rearchitecture", "The migration requires a complete rearchitecture of the component or subsystem."),
+		UNKNOWN(13, "Unknown", "The migration solution is not known and may need a complete rewrite.");
+		
+		private int effort;
+		private String label;
+		private String description;
+		
+		HINT_EFFORT(int effort, String label, String description) {
+			this.effort = effort;
+			this.label = label;
+			this.description = description;
+		}
+		
+		public int getEffort() {
+			return effort;
+		}
+		
+		public String getLabel() {
+			return label;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+	}
+	
+	enum JAVA_CLASS_REFERENCE_LOCATION {
+		
+		ANNOTATION(TypeReferenceLocation.ANNOTATION.toString(), "A Java class references the annotation."),
+		CATCH_EXCEPTION_STATEMENT(TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT.toString(), "A Java class method catches the specified type."),
+		CONSTRUCTOR_CALL(TypeReferenceLocation.CONSTRUCTOR_CALL.toString(), "A Java class constructs the specified type."),
+		ENUM_CONSTANT(TypeReferenceLocation.ENUM_CONSTANT.toString(), "A Java class declares the enumeration."),
+		FIELD_DECLARATION(TypeReferenceLocation.FIELD_DECLARATION.toString(), "A Java class declares a field of the specified type."),
+		IMPLEMENTS_TYPE(TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), "A Java class implements the specified type; works transitively."),
+		IMPORT(TypeReferenceLocation.IMPORT.toString(), "A Java class imports the type."), 
+		INHERITANCE(TypeReferenceLocation.INHERITANCE.toString(), "A Java class inherits the specified type; works transitively."),
+		INSTANCE_OF(TypeReferenceLocation.INSTANCE_OF.toString(), "A Java class of the specified type is used in an instanceof statement."),
+		METHOD(TypeReferenceLocation.METHOD.toString(), "A Java class declares the referenced method."),
+		METHOD_CALL(TypeReferenceLocation.METHOD_CALL.toString(), "A Java class calls the specified method; works transitively for interfaces."),
+		METHOD_PARAMETER(TypeReferenceLocation.METHOD_PARAMETER.toString(), "A Java class declares the referenced method parameter."),
+		RETURN_TYPE(TypeReferenceLocation.RETURN_TYPE.toString(), "A Java class returns the specified type."),
+		TAGLIB_IMPORT(TypeReferenceLocation.TAGLIB_IMPORT.toString(), "This is only relevant for JSP sources and represents the import of a taglib into the JSP source file."),
+		THROW_STATEMENT(TypeReferenceLocation.THROW_STATEMENT.toString(), "A method in the Java class throws the an instance of the specified type."),
+		THROWS_METHOD_DECLARATION(TypeReferenceLocation.THROWS_METHOD_DECLARATION.toString(), "A Java class declares that it may throw the specified type."),
+		TYPE(TypeReferenceLocation.TYPE.toString(), "A Java class declares the type."),
+		VARIABLE_DECLARATION(TypeReferenceLocation.VARIABLE_DECLARATION.toString(), "A Java class declares a variable of the specified type."),
+		VARIABLE_INITIALIZER(TypeReferenceLocation.VARIABLE_INITIALIZER.toString(), "A variable initalization expression value.");
+		
+		private String label;
+		private String description;
+		
+		JAVA_CLASS_REFERENCE_LOCATION(String label, String description) {
+			this.label = label;
+			this.description = description;
+		}
+		
+		public String getLabel() {
+			return label;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+	}
+	
 	public static class RuleNodeConfig {
 		public static final String NAME = "rule"; //$NON-NLS-1$
 	}
@@ -259,7 +337,7 @@ public class RulesetWidgetFactory {
 		
 		@Override
 		public void createControls(Composite parent) {
-			this.idRow = new TextAttributeRow(element, "id", true);
+			this.idRow = new TextAttributeRow(element, RulesetConstants.ID, true);
 			idRow.createContents(parent, toolkit, 2);
 		}
 		
@@ -346,31 +424,31 @@ public class RulesetWidgetFactory {
 		@Override
 		public void createControls(Composite parent) {
 			IProject project = context.get(IFile.class).getProject();
-			classRow = new ClassAttributeRow(element, "references", true, project);
+			classRow = new ClassAttributeRow(element, RulesetConstants.JAVA_CLASS_REFERENCES, true, project);
 			classRow.createContents(parent, toolkit, 2);
-			locationRow = new ChoiceAttributeRow(element, false, "location") {
+			locationRow = new ChoiceAttributeRow(element, false, RulesetConstants.JAVA_CLASS_LOCATION) {
 				@Override
 				protected List<Pair<String, String>> getOptions() {
 					List<Pair<String, String>> options = Lists.newArrayList();
-					options.add(Tuples.create(TypeReferenceLocation.ANNOTATION.toString(), "A Java class references the annotation."));
-					options.add(Tuples.create(TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT.toString(), "A Java class method catches the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.CONSTRUCTOR_CALL.toString(), "A Java class constructs the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.ENUM_CONSTANT.toString(), "A Java class declares the enumeration."));
-					options.add(Tuples.create(TypeReferenceLocation.FIELD_DECLARATION.toString(), "A Java class declares a field of the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), "A Java class implements the specified type; works transitively."));
-					options.add(Tuples.create(TypeReferenceLocation.IMPORT.toString(), "A Java class imports the type."));
-					options.add(Tuples.create(TypeReferenceLocation.INHERITANCE.toString(), "A Java class inherits the specified type; works transitively."));
-					options.add(Tuples.create(TypeReferenceLocation.INSTANCE_OF.toString(), "A Java class of the specified type is used in an instanceof statement."));
-					options.add(Tuples.create(TypeReferenceLocation.METHOD.toString(), "A Java class declares the referenced method."));
-					options.add(Tuples.create(TypeReferenceLocation.METHOD_CALL.toString(), "A Java class calls the specified method; works transitively for interfaces."));
-					options.add(Tuples.create(TypeReferenceLocation.METHOD_PARAMETER.toString(), "A Java class declares the referenced method parameter."));
-					options.add(Tuples.create(TypeReferenceLocation.RETURN_TYPE.toString(), "A Java class returns the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.TAGLIB_IMPORT.toString(), "This is only relevant for JSP sources and represents the import of a taglib into the JSP source file."));
-					options.add(Tuples.create(TypeReferenceLocation.THROW_STATEMENT.toString(), "A method in the Java class throws the an instance of the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.THROWS_METHOD_DECLARATION.toString(), "A Java class declares that it may throw the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.TYPE.toString(), "A Java class declares the type."));
-					options.add(Tuples.create(TypeReferenceLocation.VARIABLE_DECLARATION.toString(), "A Java class declares a variable of the specified type."));
-					options.add(Tuples.create(TypeReferenceLocation.VARIABLE_INITIALIZER.toString(), "A variable initalization expression value."));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.CATCH_EXCEPTION_STATEMENT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.CATCH_EXCEPTION_STATEMENT.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.CONSTRUCTOR_CALL.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.CONSTRUCTOR_CALL.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.ENUM_CONSTANT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.ENUM_CONSTANT.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.FIELD_DECLARATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.FIELD_DECLARATION.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.IMPLEMENTS_TYPE.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.IMPLEMENTS_TYPE.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.IMPORT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.IMPORT.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.INHERITANCE.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.INHERITANCE.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.INSTANCE_OF.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.INSTANCE_OF.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.METHOD.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.METHOD.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.METHOD_CALL.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.METHOD_CALL.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.METHOD_PARAMETER.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.METHOD_PARAMETER.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.RETURN_TYPE.getLabel(),JAVA_CLASS_REFERENCE_LOCATION.RETURN_TYPE.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.TAGLIB_IMPORT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.TAGLIB_IMPORT.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.THROW_STATEMENT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.THROW_STATEMENT.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.THROWS_METHOD_DECLARATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.THROWS_METHOD_DECLARATION.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.TYPE.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.TYPE.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_DECLARATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_DECLARATION.getDescription()));
+					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_INITIALIZER.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_INITIALIZER.getDescription()));
 					return options;
 				}
 			};
@@ -386,6 +464,41 @@ public class RulesetWidgetFactory {
 		@Override
 		protected int computeColumns() {
 			return 3;
+		}
+	}
+	
+	private static class HintWidget extends NodeWidget {
+		
+		private TextAttributeRow titleRow;
+		private ChoiceAttributeRow effortRow;
+		private TextAttributeRow categoryIdRow;
+		
+		public HintWidget() {
+		}
+		
+		@Override
+		public void createControls(Composite parent) {
+			titleRow = new TextAttributeRow(element, RulesetConstants.TITLE, true);
+			titleRow.createContents(parent, toolkit, 2);
+			effortRow = new ChoiceAttributeRow(element, false, RulesetConstants.EFFORT) {
+				@Override
+				protected List<Pair<String, String>> getOptions() {
+					List<Pair<String, String>> options = Lists.newArrayList();
+					options.add(Tuples.create(HINT_EFFORT.INFORMATION.getLabel(), HINT_EFFORT.INFORMATION.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.TRIVIAL.getLabel(), HINT_EFFORT.TRIVIAL.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.COMPLEX.getLabel(), HINT_EFFORT.COMPLEX.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.REDESIGN.getLabel(), HINT_EFFORT.REDESIGN.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.REARCHITECTURE.getLabel(), HINT_EFFORT.REARCHITECTURE.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.UNKNOWN.getLabel(), HINT_EFFORT.UNKNOWN.getDescription()));
+					return options;
+				}
+			};
+			categoryIdRow = new TextAttributeRow(element, RulesetConstants.CATEGORY_ID, true);
+		}
+		
+		@Override
+		public void update() {
+			titleRow.bind();
 		}
 	}
 	

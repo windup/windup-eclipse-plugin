@@ -69,6 +69,24 @@ public class RulesetDOMService {
 		return performElement;
 	}
 	
+	public Element createHintElement(Element performElement) {
+		Element hintElement = performElement.getOwnerDocument().createElement(RulesetConstants.HINT);
+		performElement.appendChild(hintElement);
+		return performElement;
+	}
+	
+	public void populateDefaultHintElement(Element hintElement) {
+		hintElement.setAttribute(RulesetConstants.TITLE, "");
+		hintElement.setAttribute(RulesetConstants.EFFORT, "1");
+		hintElement.setAttribute(RulesetConstants.CATEGORY_ID, "");
+		createMessageElement(hintElement);
+	}
+	
+	public void createMessageElement(Element hintElement) {
+		Element messageElement = hintElement.getOwnerDocument().createElement(RulesetConstants.MESSAGE);
+		hintElement.appendChild(messageElement);
+	}
+	
 	public Element createWhenElement(Document document) {
 		Element whenElement = document.createElement(WhenNodeConfig.NAME);
 		return whenElement;

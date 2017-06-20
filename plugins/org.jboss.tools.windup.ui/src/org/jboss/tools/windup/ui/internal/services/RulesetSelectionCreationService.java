@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.QualifiedName;
@@ -94,7 +93,9 @@ public class RulesetSelectionCreationService {
 		whenElement.appendChild(javaClassElement);
 		Element referenceLocation = domService.createJavaClassReferenceLocation(javaClassElement);
 		XMLUtilities.setText(referenceLocation, locationType);
-		domService.createPerformElement(ruleElement);
+		Element performElement = domService.createPerformElement(ruleElement);
+		Element hintElement = domService.createHintElement(performElement);
+		domService.populateDefaultHintElement(hintElement);
 		return javaClassElement;
 	}
 }
