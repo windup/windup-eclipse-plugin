@@ -15,6 +15,8 @@ import javax.inject.Singleton;
 
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -66,6 +68,10 @@ public class RulesetSelectionCreationService {
 					if (nodes[0] instanceof SimpleType && nodes[0].getParent() != null &&
 							nodes[0].getParent() instanceof TypeDeclaration && ((TypeDeclaration)nodes[0].getParent()).superInterfaceTypes().contains(nodes[0])) {
 						String referenceName = ((SimpleType)nodes[0]).getName().getFullyQualifiedName();
+						ITypeBinding binding = ((SimpleType)nodes[0]).resolveBinding();
+						if (binding != null) {
+							referenceName = binding.getQualifiedName();
+						}
 						return createJavaClassReferenceElement(document, TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), referenceName);
 					}
 				}
