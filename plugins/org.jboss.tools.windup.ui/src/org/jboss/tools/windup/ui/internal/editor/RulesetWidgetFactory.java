@@ -484,21 +484,28 @@ public class RulesetWidgetFactory {
 				@Override
 				protected List<Pair<String, String>> getOptions() {
 					List<Pair<String, String>> options = Lists.newArrayList();
-					options.add(Tuples.create(HINT_EFFORT.INFORMATION.getLabel(), HINT_EFFORT.INFORMATION.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.TRIVIAL.getLabel(), HINT_EFFORT.TRIVIAL.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.COMPLEX.getLabel(), HINT_EFFORT.COMPLEX.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.REDESIGN.getLabel(), HINT_EFFORT.REDESIGN.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.REARCHITECTURE.getLabel(), HINT_EFFORT.REARCHITECTURE.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.UNKNOWN.getLabel(), HINT_EFFORT.UNKNOWN.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.INFORMATION.getEffort() + " - " + HINT_EFFORT.INFORMATION.getLabel(), HINT_EFFORT.INFORMATION.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.TRIVIAL.getEffort() + " - " + HINT_EFFORT.TRIVIAL.getLabel(), HINT_EFFORT.TRIVIAL.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.COMPLEX.getEffort() + " - " + HINT_EFFORT.COMPLEX.getLabel(), HINT_EFFORT.COMPLEX.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.REDESIGN.getEffort() + " - " + HINT_EFFORT.REDESIGN.getLabel(), HINT_EFFORT.REDESIGN.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.REARCHITECTURE.getEffort() + " - " + HINT_EFFORT.REARCHITECTURE.getLabel(), HINT_EFFORT.REARCHITECTURE.getDescription()));
+					options.add(Tuples.create(HINT_EFFORT.UNKNOWN.getEffort() + " - " + HINT_EFFORT.UNKNOWN.getLabel(), HINT_EFFORT.UNKNOWN.getDescription()));
 					return options;
 				}
 			};
+			effortRow.createContents(parent, toolkit, 3);
 			categoryIdRow = new TextAttributeRow(element, RulesetConstants.CATEGORY_ID, true);
+			categoryIdRow.createContents(parent, toolkit, 2);
 		}
 		
 		@Override
 		public void update() {
 			titleRow.bind();
+		}
+		
+		@Override
+		protected int computeColumns() {
+			return 3;
 		}
 	}
 	

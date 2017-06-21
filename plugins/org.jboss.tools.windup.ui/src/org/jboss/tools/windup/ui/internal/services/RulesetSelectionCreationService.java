@@ -95,7 +95,7 @@ public class RulesetSelectionCreationService {
 		XMLUtilities.setText(referenceLocation, locationType);
 		Element performElement = domService.createPerformElement(ruleElement);
 		Element hintElement = domService.createHintElement(performElement);
-		domService.populateDefaultHintElement(hintElement);
+		domService.createMessageElement(hintElement);
 		return javaClassElement;
 	}
 }

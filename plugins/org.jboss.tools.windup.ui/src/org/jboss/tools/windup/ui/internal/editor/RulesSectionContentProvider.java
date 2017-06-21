@@ -27,6 +27,7 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.JavaClassNodeConfig;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.PerformNodeConfig;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RuleNodeConfig;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.WhenNodeConfig;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
@@ -88,6 +89,16 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 				}
 				return children.toArray();
 			}
+			else if (isPerformNode(node)) {
+				List<Element> children = Lists.newArrayList();
+				for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+					if (child instanceof Element) {
+						if (isHintNode((Element)child)) {
+							children.add((Element)child);
+						}
+					}
+				}
+			}
 		}
 		return new Object[0];
 	}
@@ -136,6 +147,10 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	
 	private boolean isJavaClassNode(Element element) {
 		return JavaClassNodeConfig.NAME.equals(element.getNodeName());
+	}
+	
+	private boolean isHintNode(Element element) {
+		return RulesetConstants.HINT.equals(element.getNodeName());
 	}
 	
 	@Override
