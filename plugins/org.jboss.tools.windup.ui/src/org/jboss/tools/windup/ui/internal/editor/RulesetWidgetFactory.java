@@ -100,11 +100,17 @@ public class RulesetWidgetFactory {
 		static final String ID = "id"; //$NON-NLS-1$
 		static final String RULESET_NAME = "ruleset"; //$NON-NLS-1$
 		static final String RULES_NAME = "rules"; //$NON-NLS-1$
+		
 		static final String RULE_NAME = "rule"; //$NON-NLS-1$
-		static final String PERFORM = "perform"; //$NON-NLS-1$
+		static final String WHEN_NAME = "when"; //$NON-NLS-1$	
+		static final String PERFORM_NAME = "perform"; //$NON-NLS-1$
+		static final String WHERE_NAME = "where"; //$NON-NLS-1$
+		static final String OTHERWISE_NAME = "otherwise"; //$NON-NLS-1$
+		
+		static final String JAVACLASS_NAME = "javaclass"; //$NON-NLS-1$
 		
 		// hint
-		static final String HINT = "hint"; //$NON-NLS-1$
+		static final String HINT_NAME = "hint"; //$NON-NLS-1$
 		static final String TITLE = "title"; //$NON-NLS-1$
 		static final String EFFORT = "effort"; //$NON-NLS-1$
 		static final String CATEGORY_ID = "category-id"; //$NON-NLS-1$
@@ -185,56 +191,36 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	public static class RuleNodeConfig {
-		public static final String NAME = "rule"; //$NON-NLS-1$
-	}
-	
-	public static class WhenNodeConfig {
-		public static final String NAME = "when"; //$NON-NLS-1$	
-	}
-	
-	public static class PerformNodeConfig {
-		public static final String NAME = "perform"; //$NON-NLS-1$
-	}
-	
-	public static class OtherwiseNodeConfig {
-		public static final String NAME = "otherwise"; //$NON-NLS-1$
-	}
-	
-	public static class WhereNodeConfig {
-		public static final String NAME = "where"; //$NON-NLS-1$
-	}
-	
-	public static class JavaClassNodeConfig {
-		public static final String NAME = "javaclass"; //$NON-NLS-1$
-	}
-	
 	public INodeWidget createWidget(Element element, IEclipseContext context) {
 		INodeWidget widget = null;
 		String nodeName = element.getNodeName();
 		switch (nodeName) {
-			case RuleNodeConfig.NAME: {
+			case RulesetConstants.RULE_NAME: {
 				widget = createControls(RuleWidget.class, context);
 				break;
 			}
-			case WhenNodeConfig.NAME: {
+			case RulesetConstants.WHEN_NAME: {
 				widget = createControls(WhenWidget.class, context);
 				break;
 			}
-			case PerformNodeConfig.NAME: {
+			case RulesetConstants.PERFORM_NAME: {
 				widget = createControls(PerformWidget.class, context);
 				break;
 			}
-			case OtherwiseNodeConfig.NAME: {
+			case RulesetConstants.OTHERWISE_NAME: {
 				widget = createControls(OtherwiseWidget.class, context);
 				break;
 			}
-			case WhereNodeConfig.NAME: { 
+			case RulesetConstants.WHERE_NAME: { 
 				widget = createControls(WhereWidget.class, context);
 				break;
 			}
-			case JavaClassNodeConfig.NAME: { 
+			case RulesetConstants.JAVACLASS_NAME: { 
 				widget = createControls(JavaClassWidget.class, context);
+				break;
+			}
+			case RulesetConstants.HINT_NAME: { 
+				widget = createControls(HintWidget.class, context);
 				break;
 			}
 		}

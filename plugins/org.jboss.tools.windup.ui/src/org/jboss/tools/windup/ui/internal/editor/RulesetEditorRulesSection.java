@@ -62,7 +62,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RuleNodeConfig;
+import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
@@ -163,7 +163,7 @@ public class RulesetEditorRulesSection {
 			boolean enabled = selectedElement != null;
 			removeButton.setEnabled(enabled);
 			if (enabled) {
-				enabled = RuleNodeConfig.NAME.equals(selectedElement.getNodeName()) ? true : false;
+				enabled = RulesetConstants.RULE_NAME.equals(selectedElement.getNodeName()) ? true : false;
 			}
 			upButton.setEnabled(enabled);
 			downButton.setEnabled(enabled);

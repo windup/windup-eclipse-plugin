@@ -17,10 +17,7 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IDocument;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.JavaClassNodeConfig;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RuleNodeConfig;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.WhenNodeConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -51,7 +48,7 @@ public class RulesetDOMService {
 	}
 	
 	public Element createRuleElement(Element rulesElement) {
-		Element ruleElement = rulesElement.getOwnerDocument().createElement(RuleNodeConfig.NAME);
+		Element ruleElement = rulesElement.getOwnerDocument().createElement(RulesetConstants.RULE_NAME);
 		generateNextRuleId(ruleElement);
 		rulesElement.appendChild(ruleElement);
 		return ruleElement;
@@ -64,15 +61,22 @@ public class RulesetDOMService {
 	}
 	
 	public Element createPerformElement(Element container) {
-		Element performElement = container.getOwnerDocument().createElement(RulesetConstants.PERFORM);
+		Element performElement = container.getOwnerDocument().createElement(RulesetConstants.PERFORM_NAME);
 		container.appendChild(performElement);
 		return performElement;
 	}
 	
 	public Element createHintElement(Element performElement) {
-		Element hintElement = performElement.getOwnerDocument().createElement(RulesetConstants.HINT);
+		Element hintElement = performElement.getOwnerDocument().createElement(RulesetConstants.HINT_NAME);
 		performElement.appendChild(hintElement);
 		return hintElement;
+	}
+	
+	public void populateDefaultHintElement(Element hintElement) {
+		hintElement.setAttribute(RulesetConstants.TITLE, "");
+		hintElement.setAttribute(RulesetConstants.EFFORT, "1");
+		hintElement.setAttribute(RulesetConstants.CATEGORY_ID, "");
+		createMessageElement(hintElement);
 	}
 	
 	public void createMessageElement(Element hintElement) {
@@ -81,12 +85,12 @@ public class RulesetDOMService {
 	}
 	
 	public Element createWhenElement(Document document) {
-		Element whenElement = document.createElement(WhenNodeConfig.NAME);
+		Element whenElement = document.createElement(RulesetConstants.WHEN_NAME);
 		return whenElement;
 	}
 	
 	public Element createJavaClassElement(Document document) {
-		Element javaclassElement = document.createElement(JavaClassNodeConfig.NAME);
+		Element javaclassElement = document.createElement(RulesetConstants.JAVACLASS_NAME);
 		return javaclassElement;
 	}
 	

@@ -10,9 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 
 import java.util.List;
 
@@ -24,11 +24,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.JavaClassNodeConfig;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.PerformNodeConfig;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RuleNodeConfig;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.WhenNodeConfig;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -98,6 +94,7 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 						}
 					}
 				}
+				return children.toArray();
 			}
 		}
 		return new Object[0];
@@ -134,23 +131,23 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	}
 	
 	private boolean isRuleNode(Element element) {
-		return RuleNodeConfig.NAME.equals(element.getNodeName());
+		return RulesetConstants.RULE_NAME.equals(element.getNodeName());
 	}
 	
 	private boolean isWhenNode(Element element) {
-		return WhenNodeConfig.NAME.equals(element.getNodeName());
+		return RulesetConstants.WHEN_NAME.equals(element.getNodeName());
 	}
 	
 	private boolean isPerformNode(Element element) {
-		return PerformNodeConfig.NAME.equals(element.getNodeName());
+		return RulesetConstants.PERFORM_NAME.equals(element.getNodeName());
 	}
 	
 	private boolean isJavaClassNode(Element element) {
-		return JavaClassNodeConfig.NAME.equals(element.getNodeName());
+		return RulesetConstants.JAVACLASS_NAME.equals(element.getNodeName());
 	}
 	
 	private boolean isHintNode(Element element) {
-		return RulesetConstants.HINT.equals(element.getNodeName());
+		return RulesetConstants.HINT_NAME.equals(element.getNodeName());
 	}
 	
 	@Override
