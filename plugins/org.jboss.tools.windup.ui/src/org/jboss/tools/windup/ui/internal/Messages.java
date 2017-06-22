@@ -103,6 +103,9 @@ public class Messages extends NLS
     
     public static String RulesetEditor_ReferenceAttributeRow_browse;
     
+    public static String RulesetEditor_hintEffortTooltip;
+    
+    
     public static String openRuleset;
     public static String errorOpeningRuleset;
 

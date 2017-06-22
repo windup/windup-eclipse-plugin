@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.editor;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_HINT;
 
 import java.util.List;
 
@@ -37,12 +38,14 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	private static final Image RULE;
 	private static final Image XML_NODE;
 	private static final Image JAVA;
+	private static final Image HINT;
 
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
 		RULE = imageRegistry.get(IMG_RULE);
 		XML_NODE = imageRegistry.get(IMG_XML_RULE);
 		JAVA = imageRegistry.get(IMG_JAVA);
+		HINT = imageRegistry.get(IMG_HINT);
 	}
 	
 	@Override
@@ -160,6 +163,9 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 			}
 			else if (isJavaClassNode(element)) {
 				return JAVA;
+			}
+			else if (isHintNode(element)) {
+				return HINT;
 			}
 			else {
 				image = XML_NODE;

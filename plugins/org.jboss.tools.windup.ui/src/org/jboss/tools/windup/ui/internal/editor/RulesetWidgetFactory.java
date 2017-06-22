@@ -35,6 +35,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.osgi.util.NLS;
@@ -54,6 +55,7 @@ import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow;
+import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
@@ -534,7 +536,7 @@ public class RulesetWidgetFactory {
 		public void createControls(Composite parent) {
 			titleRow = new TextAttributeRow(element, RulesetConstants.TITLE, true);
 			titleRow.createContents(parent, toolkit, 3);
-			effortRow = new ChoiceAttributeRow(element, false, RulesetConstants.EFFORT) {
+			effortRow = new ChoiceAttributeRow(element, true, RulesetConstants.EFFORT) {
 				@Override
 				protected List<String> getOptions() {
 					return Arrays.stream(HINT_EFFORT.values()).map(e -> computeUiValue(e)).
@@ -584,6 +586,11 @@ public class RulesetWidgetFactory {
 				private String computeUiValue(HINT_EFFORT effort) {
 					return effort.getLabel() + " - " + effort.getDescription();
 				}
+				
+				@Override
+				public String getHoverContent(Control c) {
+					return Messages.RulesetEditor_hintEffortTooltip;
+				}
 			};
 			effortRow.createContents(parent, toolkit, 3);
 			categoryIdRow = new TextAttributeRow(element, RulesetConstants.CATEGORY_ID, true);
@@ -603,13 +610,15 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static abstract class AttributeRow {
+	private static abstract class AttributeRow implements IControlHoverContentProvider {
 		
 		protected Element element;
 		protected String attribute;
 		protected boolean isRequired;
 		
 		protected boolean blockNotification;
+		
+		protected IInformationControl infoControl;
 		
 		public AttributeRow(Element element, String attribute, boolean isRequired) {
 			this.element = element;
@@ -628,8 +637,10 @@ public class RulesetWidgetFactory {
 		}
 		
 		protected void createLabel(Composite parent, FormToolkit toolkit) {
+			createTextHover(parent);
 			Label label = toolkit.createLabel(parent, getAttributeLabel(), SWT.NULL);
 			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+			PDETextHover.addHoverListenerToControl(infoControl, label, this);
 		}
 		
 		protected String getAttributeLabel() {
@@ -642,6 +653,16 @@ public class RulesetWidgetFactory {
 		
 		protected String getValue() {
 			return element.getAttribute(attribute);
+		}
+		
+		protected void createTextHover(Control control) {
+			infoControl = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
+			infoControl.setSizeConstraints(300, 600);
+		}
+
+		@Override
+		public String getHoverContent(Control c) {
+			return null;
 		}
 	}
 	
@@ -697,6 +718,7 @@ public class RulesetWidgetFactory {
 
 		@Override
 		protected void createLabel(Composite parent, FormToolkit toolkit) {
+			createTextHover(parent);
 			Hyperlink link = toolkit.createHyperlink(parent, getAttributeLabel(), SWT.NULL);
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				@Override
@@ -704,6 +726,7 @@ public class RulesetWidgetFactory {
 					openReference();
 				}
 			});
+			PDETextHover.addHoverListenerToControl(infoControl, link, this);
 		}
 
 		protected abstract void openReference();
@@ -810,6 +833,7 @@ public class RulesetWidgetFactory {
 
 		@Override
 		public void createContents(Composite parent, FormToolkit toolkit, int span) {
+			super.createTextHover(parent);
 			createLabel(parent, toolkit);
 			combo = new ComboPart();
 			combo.createControl(parent, toolkit, SWT.READ_ONLY);
