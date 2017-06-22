@@ -10,7 +10,11 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -91,6 +95,7 @@ import org.w3c.dom.Node;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Creatable
 @SuppressWarnings({"unused", "restriction"})
@@ -412,30 +417,93 @@ public class RulesetWidgetFactory {
 			IProject project = context.get(IFile.class).getProject();
 			classRow = new ClassAttributeRow(element, RulesetConstants.JAVA_CLASS_REFERENCES, true, project);
 			classRow.createContents(parent, toolkit, 2);
-			locationRow = new ChoiceAttributeRow(element, false, RulesetConstants.JAVA_CLASS_LOCATION) {
+			locationRow = new ChoiceAttributeRow(element, true, RulesetConstants.JAVA_CLASS_LOCATION) {
+				
 				@Override
-				protected List<Pair<String, String>> getOptions() {
-					List<Pair<String, String>> options = Lists.newArrayList();
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.CATCH_EXCEPTION_STATEMENT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.CATCH_EXCEPTION_STATEMENT.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.CONSTRUCTOR_CALL.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.CONSTRUCTOR_CALL.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.ENUM_CONSTANT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.ENUM_CONSTANT.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.FIELD_DECLARATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.FIELD_DECLARATION.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.IMPLEMENTS_TYPE.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.IMPLEMENTS_TYPE.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.IMPORT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.IMPORT.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.INHERITANCE.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.INHERITANCE.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.INSTANCE_OF.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.INSTANCE_OF.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.METHOD.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.METHOD.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.METHOD_CALL.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.METHOD_CALL.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.METHOD_PARAMETER.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.METHOD_PARAMETER.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.RETURN_TYPE.getLabel(),JAVA_CLASS_REFERENCE_LOCATION.RETURN_TYPE.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.TAGLIB_IMPORT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.TAGLIB_IMPORT.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.THROW_STATEMENT.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.THROW_STATEMENT.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.THROWS_METHOD_DECLARATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.THROWS_METHOD_DECLARATION.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.TYPE.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.TYPE.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_DECLARATION.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_DECLARATION.getDescription()));
-					options.add(Tuples.create(JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_INITIALIZER.getLabel(), JAVA_CLASS_REFERENCE_LOCATION.VARIABLE_INITIALIZER.getDescription()));
-					return options;
+				protected List<String> getOptions() {
+					return Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).map(e -> computeUiValue(e)).
+							collect(Collectors.toList());
+				}
+				
+				private String computeUiValue(JAVA_CLASS_REFERENCE_LOCATION location) {
+					return location.getLabel() + " - " + location.getDescription();
+				}
+
+				@Override
+				protected void comboSelectionChanged() {
+					Element child = findChildElement();
+					if (child != null) {
+						element.removeChild(child);
+					}
+					if (combo.getSelection().isEmpty()) {
+						return;
+					}
+					child = element.getOwnerDocument().createElement(attribute);
+					element.appendChild(child);
+					XMLUtilities.setText(child, displayToModelValue(combo.getSelection()));
+				}
+				
+				private Element findChildElement() {
+					for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
+						if (child instanceof Element && Objects.equal(attribute, child.getNodeName())) {
+							return (Element)child;
+						}
+					}
+					return null;
+				}
+
+				private org.w3c.dom.Text findTextChild(Element element) {
+					for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
+						if (child instanceof org.w3c.dom.Text) {
+							return (org.w3c.dom.Text)child;
+						}
+					}
+					return null;
+				}
+				
+				@Override
+				protected void update() {
+					if (findChildElement() != null) {
+						org.w3c.dom.Text text = findTextChild(findChildElement());
+						if (text != null) {
+							String modelValue = findChildElement().getTextContent();
+							combo.setText(modelToDisplayValue(modelValue));
+						}
+					}
+				}
+				
+				@Override
+				protected String modelToDisplayValue(String modelValue) {
+					if (modelValue == null || modelValue.isEmpty()) {
+						return "";
+					}
+					
+					Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
+						return Objects.equal(e.getLabel(), modelValue);
+					}).findFirst();
+					
+					if (location.isPresent()) {
+						return computeUiValue(location.get());
+					}
+					
+					return "";
+				}
+				
+				@Override
+				protected String displayToModelValue(String uiValue) {
+					if (uiValue.isEmpty()) {
+						return "";
+					}
+					
+					Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
+						return Objects.equal(uiValue, computeUiValue(e));
+					}).findFirst();
+					
+					if (location.isPresent()) {
+						return location.get().getLabel();
+					}
+					
+					return "";
 				}
 			};
 			locationRow.createContents(parent, toolkit, 3);
@@ -465,18 +533,56 @@ public class RulesetWidgetFactory {
 		@Override
 		public void createControls(Composite parent) {
 			titleRow = new TextAttributeRow(element, RulesetConstants.TITLE, true);
-			titleRow.createContents(parent, toolkit, 2);
+			titleRow.createContents(parent, toolkit, 3);
 			effortRow = new ChoiceAttributeRow(element, false, RulesetConstants.EFFORT) {
 				@Override
-				protected List<Pair<String, String>> getOptions() {
-					List<Pair<String, String>> options = Lists.newArrayList();
-					options.add(Tuples.create(HINT_EFFORT.INFORMATION.getEffort() + " - " + HINT_EFFORT.INFORMATION.getLabel(), HINT_EFFORT.INFORMATION.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.TRIVIAL.getEffort() + " - " + HINT_EFFORT.TRIVIAL.getLabel(), HINT_EFFORT.TRIVIAL.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.COMPLEX.getEffort() + " - " + HINT_EFFORT.COMPLEX.getLabel(), HINT_EFFORT.COMPLEX.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.REDESIGN.getEffort() + " - " + HINT_EFFORT.REDESIGN.getLabel(), HINT_EFFORT.REDESIGN.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.REARCHITECTURE.getEffort() + " - " + HINT_EFFORT.REARCHITECTURE.getLabel(), HINT_EFFORT.REARCHITECTURE.getDescription()));
-					options.add(Tuples.create(HINT_EFFORT.UNKNOWN.getEffort() + " - " + HINT_EFFORT.UNKNOWN.getLabel(), HINT_EFFORT.UNKNOWN.getDescription()));
-					return options;
+				protected List<String> getOptions() {
+					return Arrays.stream(HINT_EFFORT.values()).map(e -> computeUiValue(e)).
+							collect(Collectors.toList());
+				}
+				@Override
+				protected String modelToDisplayValue(String modelValue) {
+					if (modelValue == null || modelValue.isEmpty()) {
+						return "";
+					}
+					
+					int effort;
+					
+					try {
+						effort = Integer.valueOf(modelValue);
+					} catch (Exception e) {
+						return "";
+					}
+					
+					Optional<HINT_EFFORT> hintEffort = Arrays.stream(HINT_EFFORT.values()).filter(e -> {
+						return Objects.equal(e.getEffort(), effort);
+					}).findFirst();
+					
+					if(hintEffort.isPresent()) {
+						return computeUiValue(hintEffort.get());
+					}
+
+					return "";
+				}
+				
+				@Override
+				protected String displayToModelValue(String uiValue) {
+					if (uiValue.isEmpty()) {
+						return "";
+					}
+					
+					Optional<HINT_EFFORT> hintEffort = Arrays.stream(HINT_EFFORT.values()).filter(e -> {
+						return Objects.equal(uiValue, computeUiValue(e));
+					}).findFirst(); 
+					
+					if (hintEffort.isPresent()) {
+						return String.valueOf(hintEffort.get().effort);
+					}
+					return "";
+				}
+				
+				private String computeUiValue(HINT_EFFORT effort) {
+					return effort.getLabel() + " - " + effort.getDescription();
 				}
 			};
 			effortRow.createContents(parent, toolkit, 3);
@@ -487,6 +593,8 @@ public class RulesetWidgetFactory {
 		@Override
 		public void update() {
 			titleRow.bind();
+			effortRow.bind();
+			categoryIdRow.bind();
 		}
 		
 		@Override
@@ -570,7 +678,9 @@ public class RulesetWidgetFactory {
 
 		@Override
 		protected void update() {
-			text.setText(super.getValue());
+			if (!Objects.equal(text.getText(), super.getValue())) {
+				text.setText(super.getValue());
+			}
 		}
 
 		@Override
@@ -694,7 +804,7 @@ public class RulesetWidgetFactory {
 			super(parent, element, isRequired);
 		}
 		
-		protected List<Pair<String, String>> getOptions() {
+		protected List<String> getOptions() {
 			return Lists.newArrayList();
 		}
 
@@ -704,8 +814,8 @@ public class RulesetWidgetFactory {
 			combo = new ComboPart();
 			combo.createControl(parent, toolkit, SWT.READ_ONLY);
 			combo.add(""); //$NON-NLS-1$
-			for (Pair<String, String> option : getOptions()) {
-				combo.add(option.getFirst());
+			for (String option : getOptions()) {
+				combo.add(option);
 			}
 			GridData gd = new GridData(span == 2 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL);
 			gd.widthHint = 20;
@@ -716,56 +826,27 @@ public class RulesetWidgetFactory {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!blockNotification) {
-						Element child = findChildElement();
-						if (child != null) {
-							element.removeChild(child);
-						}
-						if (combo.getSelection().isEmpty()) {
-							return;
-						}
-						child = element.getOwnerDocument().createElement(attribute);
-						element.appendChild(child);
-						XMLUtilities.setText(child, combo.getSelection());
+						comboSelectionChanged();
 					}
 				}
 			});
 		}
 		
-		private Element findChildElement() {
-			for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
-				if (child instanceof Element && Objects.equal(attribute, child.getNodeName())) {
-					return (Element)child;
-				}
-			}
-			return null;
-		}
-
-		@Override
-		protected String getValue() {
-			Element child = findChildElement();
-			if (child != null) {
-				return child.getTextContent();
-			}
-			return "";
+		protected String displayToModelValue(String uiValue) {
+			return uiValue;
 		}
 		
-		private org.w3c.dom.Text findTextChild(Element element) {
-			for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
-				if (child instanceof org.w3c.dom.Text) {
-					return (org.w3c.dom.Text)child;
-				}
-			}
-			return null;
+		protected String modelToDisplayValue(String modelValue) {
+			return modelValue;
+		}
+		
+		protected void comboSelectionChanged() {
+			element.setAttribute(attribute, displayToModelValue(combo.getSelection()));
 		}
 		
 		@Override
 		protected void update() {
-			if (findChildElement() != null) {
-				org.w3c.dom.Text text = findTextChild(findChildElement());
-				if (text != null) {
-					combo.setText(findChildElement().getTextContent().trim());
-				}
-			}
+			combo.setText(modelToDisplayValue(super.getValue()));
 		}
 
 		@Override
