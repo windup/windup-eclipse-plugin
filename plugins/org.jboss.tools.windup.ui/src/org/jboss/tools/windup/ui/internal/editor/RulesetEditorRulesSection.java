@@ -47,6 +47,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -64,6 +66,7 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
+import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.w3c.dom.Document;
@@ -85,6 +88,8 @@ public class RulesetEditorRulesSection {
 	@Inject private ModelService modelService;
 	@Inject private FormToolkit toolkit;
 	@Inject private IEclipsePreferences preferences;
+	
+	@Inject private RulesetDOMService domService;
 
 	@Inject private RulesetWidgetRegistry widgetRegistry;
 	
@@ -165,6 +170,7 @@ public class RulesetEditorRulesSection {
 			if (enabled) {
 				enabled = RulesetConstants.RULE_NAME.equals(selectedElement.getNodeName()) ? true : false;
 			}
+			
 			upButton.setEnabled(enabled);
 			downButton.setEnabled(enabled);
 		});
@@ -186,8 +192,28 @@ public class RulesetEditorRulesSection {
 		GridLayoutFactory.fillDefaults().applyTo(container);
 		GridDataFactory.fillDefaults().grab(false, true).applyTo(container);
 		
-		createButton(container, Messages.RulesetEditor_AddRule);
+		Button addButton = createButton(container, Messages.RulesetEditor_AddRule);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Document document = (Document)treeViewer.getInput();
+				Element rulesetElement = domService.findOrCreateRulesetElement(document);
+				Element rulesElement = domService.findOrCreateRulesElement(rulesetElement);
+				Element ruleElement = domService.createRuleElement(rulesElement);
+				selectAndReveal(ruleElement);
+			}
+		});
 		this.removeButton = createButton(container, Messages.RulesetEditor_remove);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!treeViewer.getSelection().isEmpty()) {
+					for (Object element : ((IStructuredSelection)treeViewer.getSelection()).toList()) {
+						((Node)element).getParentNode().removeChild((Node)element);
+					}
+				}
+			}
+		});
 		
 		createPlaceholder(container);
 		createPlaceholder(container);
@@ -195,6 +221,8 @@ public class RulesetEditorRulesSection {
 		
 		this.upButton = createButton(container, Messages.RulesetEditor_Rules_up);
 		this.downButton = createButton(container, Messages.RulesetEditor_Rules_down);
+		
+		upButton
 	}
 	
 	private void createPlaceholder(Composite parent) {
@@ -275,34 +303,37 @@ public class RulesetEditorRulesSection {
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = treeViewer.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;
-		if (ssel.size() == 1) {
-			Object object = ssel.getFirstElement();
-			if (object instanceof Element) {
-				Element element = (Element) object;
-				INodeWidget widget = widgetRegistry.getWidget(element);
-				if (widget != null) {
-					widget.fillContextMenu(manager);
-					manager.add(new Separator());
-					Action deleteAction = new Action() {
-						@Override
-						public ImageDescriptor getImageDescriptor() {
-							return PDEPluginImages.DESC_DELETE;
-						}
-
-						@Override
-						public ImageDescriptor getDisabledImageDescriptor() {
-							return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
-						}
-
-						@Override
-						public void run() {
-							// delete element;
-						}
-					};
-					deleteAction.setText(Messages.RulesetEditor_RemoveElement);
-					manager.add(deleteAction);
+		if (!ssel.isEmpty()) {
+			for (Object object : ssel.toList()) {
+				if (object instanceof Element) {
+					Element element = (Element) object;
+					INodeWidget widget = widgetRegistry.getWidget(element);
+					if (widget != null) {
+						widget.fillContextMenu(manager);
+						manager.add(new Separator());
+					}
 				}
 			}
+			Action deleteAction = new Action() {
+				@Override
+				public ImageDescriptor getImageDescriptor() {
+					return PDEPluginImages.DESC_DELETE;
+				}
+
+				@Override
+				public ImageDescriptor getDisabledImageDescriptor() {
+					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
+				}
+
+				@Override
+				public void run() {
+					for (Object object : ssel.toList()) {
+						((Node)object).getParentNode().removeChild((Node)object);
+					}
+				}
+			};
+			deleteAction.setText(Messages.RulesetEditor_RemoveElement);
+			manager.add(deleteAction);
 		}
 		this.treeViewer.getControl().update();
 	}
