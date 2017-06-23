@@ -16,6 +16,7 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 import static org.jboss.tools.windup.ui.internal.Messages.rulesSectionTitle;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -170,7 +171,6 @@ public class RulesetEditorRulesSection {
 			if (enabled) {
 				enabled = RulesetConstants.RULE_NAME.equals(selectedElement.getNodeName()) ? true : false;
 			}
-			
 			upButton.setEnabled(enabled);
 			downButton.setEnabled(enabled);
 		});
@@ -222,7 +222,26 @@ public class RulesetEditorRulesSection {
 		this.upButton = createButton(container, Messages.RulesetEditor_Rules_up);
 		this.downButton = createButton(container, Messages.RulesetEditor_Rules_down);
 		
-		upButton
+		upButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StructuredSelection ss = (StructuredSelection)treeViewer.getSelection();
+				if (!ss.isEmpty() && ss.size() == 1) {
+					Node node = (Node)ss.getFirstElement();
+					if (!node.getParentNode().getFirstChild().isEqualNode(node)) {
+						if (Objects.equals(node.getNodeName(), RulesetConstants.RULE_NAME)) {
+							ISelection selection = treeViewer.getSelection();
+							Node previousSibling = domService.findPreviousSiblingRule((Element)node);
+							if (previousSibling != null) {
+								node.getParentNode().removeChild(node);
+								previousSibling.getParentNode().insertBefore(node, previousSibling);
+								treeViewer.setSelection(selection);
+							}
+						}
+					}
+				}
+			}
+		});
 	}
 	
 	private void createPlaceholder(Composite parent) {

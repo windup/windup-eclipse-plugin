@@ -20,7 +20,10 @@ import org.eclipse.jface.text.IDocument;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.common.base.Objects;
 
 @SuppressWarnings("restriction")
 @Creatable
@@ -124,5 +127,18 @@ public class RulesetDOMService {
 		NodeList rules = rulesetElement.getElementsByTagName(RulesetConstants.RULE_NAME);
 		id += "-" + rules.getLength();
 		ruleElement.setAttribute(RulesetConstants.ID, id);
+	}
+	
+	public Node findPreviousSiblingRule(Element element) {
+		NodeList nodeList = ((Element)element.getParentNode()).getElementsByTagName(RulesetConstants.RULE_NAME);
+		Node previousSibling = null;
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			if (Objects.equal(node, element)) {
+				break;
+			}
+			previousSibling = node;
+		}
+		return previousSibling;
 	}
 }
