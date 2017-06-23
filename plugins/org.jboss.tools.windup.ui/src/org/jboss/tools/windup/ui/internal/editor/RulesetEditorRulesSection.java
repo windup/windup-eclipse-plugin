@@ -206,11 +206,7 @@ public class RulesetEditorRulesSection {
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!treeViewer.getSelection().isEmpty()) {
-					for (Object element : ((IStructuredSelection)treeViewer.getSelection()).toList()) {
-						((Node)element).getParentNode().removeChild((Node)element);
-					}
-				}
+				removeNodes(((IStructuredSelection)treeViewer.getSelection()).toList());
 			}
 		});
 		
@@ -354,14 +350,41 @@ public class RulesetEditorRulesSection {
 
 				@Override
 				public void run() {
-					for (Object object : ssel.toList()) {
-						((Node)object).getParentNode().removeChild((Node)object);
-					}
+					removeNodes(ssel.toList());
 				}
 			};
 			deleteAction.setText(Messages.RulesetEditor_RemoveElement);
 			manager.add(deleteAction);
 		}
 		this.treeViewer.getControl().update();
+	}
+	
+	private void removeNodes(List<Element> elements) {
+		if (elements.isEmpty()) {
+			return;
+		}
+		
+		Element firstElement = elements.get(0);
+		Element parent = (Element)firstElement.getParentNode();
+		
+		Node nextSelection = domService.findNextSibling(elements.get(elements.size()-1), 1);
+		if (nextSelection == null) {
+			// no next node, use previous node
+			nextSelection = domService.findPreviousSibling(firstElement);
+		}
+
+		if (nextSelection == null) {
+			// next or previous null, use parent
+			nextSelection = parent;
+		}
+		
+		
+		for (Element element : elements) {
+			parent.removeChild(element);
+		}
+		
+		if (nextSelection != null && !elements.contains(nextSelection)) {
+			treeViewer.setSelection(new StructuredSelection(nextSelection));
+		}
 	}
 }

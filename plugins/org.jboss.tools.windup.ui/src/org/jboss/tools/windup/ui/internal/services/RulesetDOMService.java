@@ -153,17 +153,17 @@ public class RulesetDOMService {
 	
 	public void insertAfterNextSibling(Node node) {
 		Node parent = node.getParentNode();
-		Node nextSibling = findNextSibling((Element)node);
+		Node nextSibling = findNextSibling((Element)node, 2);
 		parent.removeChild(node);
 		parent.insertBefore(node, nextSibling);
 	}
 	
-	public Node findNextSibling(Element element) {
+	public Node findNextSibling(Element element, int position) {
 		NodeList nodeList = ((Element)element.getParentNode()).getElementsByTagName(element.getTagName());
-		for (int i = 0; i < nodeList.getLength() - 2; i++) {
+		for (int i = 0; i < nodeList.getLength() - position; i++) {
 			Node node = nodeList.item(i);
 			if (Objects.equal(node, element)) {
-				return nodeList.item(i+2);
+				return nodeList.item(i+position);
 			}
 		}
 		return null;
