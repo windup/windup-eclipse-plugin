@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
 
 public class RulesetEditor {
 	
-	public static final String ID = "org.jboss.tools.windup.ui.part.rulesetEditor"; //$NON-NLS-1$
+	public static final String ID = "org.jboss.tools.windup.ui.rulesetEditor"; //$NON-NLS-1$
 	private static final String TOOLBAR_ID = "toolbar:org.jboss.tools.windup.toolbar"; //$NON-NLS-1$
 	
 	private static final String SASH_LEFT = "weightLeft"; //$NON-NLS-1$

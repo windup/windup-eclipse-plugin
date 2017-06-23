@@ -10,10 +10,18 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -23,6 +31,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.MouseEvent;
@@ -31,25 +40,48 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.NewRuleFromSelectionWizard;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.ui.internal.services.ContextMenuService.WindupAction;
 import org.jboss.tools.windup.ui.internal.views.TaskListView;
 import org.w3c.dom.Element;
+
+import com.ibm.icu.text.Collator;
 
 @SuppressWarnings("restriction")
 public class CreateMigrationIssueService implements MouseListener, IMenuListener {
 
 	@Inject private EPartService partService;
 	@Inject private RulesetSelectionCreationService creationService;
+	
+	/**
+	 * Compares the labels from two IEditorDescriptor objects
+	 */
+	private static final Comparator<IEditorDescriptor> comparer = new Comparator<IEditorDescriptor>() {
+        private Collator collator = Collator.getInstance();
+
+        @Override
+		public int compare(IEditorDescriptor arg0, IEditorDescriptor arg1) {
+            String s1 = arg0.getLabel();
+            String s2 = arg1.getLabel();
+            return collator.compare(s1, s2);
+        }
+    };
 	
 	private ITextEditor editor;
 	
@@ -145,11 +177,14 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 					IFile ruleset = wizard.getRuleset();
 					if (ruleset != null && ruleset.exists()) {
 						try {
-							RulesetEditorWrapper wrapper = (RulesetEditorWrapper)IDE.openEditor(PlatformUI.getWorkbench().
-									getActiveWorkbenchWindow().getActivePage(), ruleset);
-							Element element = creationService.createRuleFromEditorSelection(theEditor, wrapper.getDocument());
-							if (element != null) {
-								wrapper.selectAndReveal(element);
+				            IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(ruleset), 
+				            		RulesetEditor.ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+							if (editorPart instanceof RulesetEditorWrapper) {
+								RulesetEditorWrapper wrapper = (RulesetEditorWrapper)editorPart;
+								Element element = creationService.createRuleFromEditorSelection(theEditor, wrapper.getDocument());
+								if (element != null) {
+									wrapper.selectAndReveal(element);
+								}
 							}
 						} catch (PartInitException e) {
 							WindupUIPlugin.log(e);
