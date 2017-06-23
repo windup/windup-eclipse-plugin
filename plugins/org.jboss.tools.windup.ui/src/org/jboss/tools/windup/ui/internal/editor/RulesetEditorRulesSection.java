@@ -16,7 +16,6 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 import static org.jboss.tools.windup.ui.internal.Messages.rulesSectionTitle;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -228,16 +227,25 @@ public class RulesetEditorRulesSection {
 				StructuredSelection ss = (StructuredSelection)treeViewer.getSelection();
 				if (!ss.isEmpty() && ss.size() == 1) {
 					Node node = (Node)ss.getFirstElement();
-					if (!node.getParentNode().getFirstChild().isEqualNode(node)) {
-						if (Objects.equals(node.getNodeName(), RulesetConstants.RULE_NAME)) {
-							ISelection selection = treeViewer.getSelection();
-							Node previousSibling = domService.findPreviousSiblingRule((Element)node);
-							if (previousSibling != null) {
-								node.getParentNode().removeChild(node);
-								previousSibling.getParentNode().insertBefore(node, previousSibling);
-								treeViewer.setSelection(selection);
-							}
-						}
+					if (node instanceof Element && node.getParentNode() instanceof Element) {
+						ISelection selection = treeViewer.getSelection();
+						domService.insertBeforePreviousSibling(node);
+						treeViewer.setSelection(selection);
+					}
+				}
+			}
+		});
+		
+		downButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StructuredSelection ss = (StructuredSelection)treeViewer.getSelection();
+				if (!ss.isEmpty() && ss.size() == 1) {
+					Node node = (Node)ss.getFirstElement();
+					if (node instanceof Element && node.getParentNode() instanceof Element) {
+						ISelection selection = treeViewer.getSelection();
+						domService.insertAfterNextSibling(node);
+						treeViewer.setSelection(selection);
 					}
 				}
 			}

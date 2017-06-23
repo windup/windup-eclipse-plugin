@@ -129,8 +129,17 @@ public class RulesetDOMService {
 		ruleElement.setAttribute(RulesetConstants.ID, id);
 	}
 	
-	public Node findPreviousSiblingRule(Element element) {
-		NodeList nodeList = ((Element)element.getParentNode()).getElementsByTagName(RulesetConstants.RULE_NAME);
+	public void insertBeforePreviousSibling(Node node) {
+		Node previousSibling = findPreviousSibling((Element)node);
+		if (previousSibling != null) {
+			Node parent = node.getParentNode();
+			parent.removeChild(node);
+			parent.insertBefore(node, previousSibling);
+		}
+	}
+	
+	public Node findPreviousSibling(Element element) {
+		NodeList nodeList = ((Element)element.getParentNode()).getElementsByTagName(element.getTagName());
 		Node previousSibling = null;
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
@@ -140,5 +149,23 @@ public class RulesetDOMService {
 			previousSibling = node;
 		}
 		return previousSibling;
+	}
+	
+	public void insertAfterNextSibling(Node node) {
+		Node parent = node.getParentNode();
+		Node nextSibling = findNextSibling((Element)node);
+		parent.removeChild(node);
+		parent.insertBefore(node, nextSibling);
+	}
+	
+	public Node findNextSibling(Element element) {
+		NodeList nodeList = ((Element)element.getParentNode()).getElementsByTagName(element.getTagName());
+		for (int i = 0; i < nodeList.getLength() - 2; i++) {
+			Node node = nodeList.item(i);
+			if (Objects.equal(node, element)) {
+				return nodeList.item(i+2);
+			}
+		}
+		return null;
 	}
 }
