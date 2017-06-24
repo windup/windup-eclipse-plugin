@@ -34,7 +34,6 @@ import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.ProcessingInstruction;
 
 import com.google.common.collect.Lists;
 
@@ -109,20 +108,8 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 		if (object instanceof Node) {
 			Node node = (Node) object;
 			switch (node.getNodeType()) {
-				case Node.ATTRIBUTE_NODE : {
-					result = node.getNodeName();
-					break;
-				}
-				case Node.DOCUMENT_TYPE_NODE : {
-					result = "DOCTYPE"; //$NON-NLS-1$
-					break;
-				}
 				case Node.ELEMENT_NODE : {
 					result = node.getNodeName();
-					break;
-				}
-				case Node.PROCESSING_INSTRUCTION_NODE : {
-					result = ((ProcessingInstruction) node).getTarget();
 					break;
 				}
 			}
