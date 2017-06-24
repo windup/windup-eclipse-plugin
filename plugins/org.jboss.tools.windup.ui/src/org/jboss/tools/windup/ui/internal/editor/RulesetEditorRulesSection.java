@@ -121,7 +121,7 @@ public class RulesetEditorRulesSection {
 	private ToolBarManager toolBarManager;
 	private TreeViewer treeViewer;
 	
-	private Element selectedElement;
+	private Node selectedElement;
 	
 	private Button removeButton;
 	private Button upButton;
@@ -187,7 +187,8 @@ public class RulesetEditorRulesSection {
 		createToolbar(section);
 		this.treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		treeViewer.addSelectionChangedListener((e) -> {
-			this.selectedElement = (Element)((StructuredSelection)e.getSelection()).getFirstElement(); 
+			Object object = ((StructuredSelection)e.getSelection()).getFirstElement();
+			this.selectedElement = (Element)object;
 			broker.post(ACTIVE_ELEMENT, selectedElement);
 			update();
 			boolean enabled = selectedElement != null;

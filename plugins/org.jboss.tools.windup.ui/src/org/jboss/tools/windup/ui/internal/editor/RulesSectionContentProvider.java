@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_HINT;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_HINT;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
@@ -23,16 +25,20 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
 
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("restriction")
 public class RulesSectionContentProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
 	
 	private static final Image RULE;
@@ -48,6 +54,8 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 		HINT = imageRegistry.get(IMG_HINT);
 	}
 	
+	private TreeContentHelper treeContentHelper = new TreeContentHelper();
+	
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
@@ -61,46 +69,9 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 			XMLRulesetModelUtil.collectRuleNodes(document, rules);
 			return rules.toArray();
 		}
-		if (element instanceof Element) {
-			Element node = (Element) element;
-			if (isRuleNode(node)) {
-				List<Element> children = Lists.newArrayList();
-				for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-					if (child instanceof Element) {
-						if (isWhenNode((Element)child)) {
-							children.add((Element)child);
-						}
-						else if (isPerformNode(((Element)child))) {
-							children.add((Element)child);
-						}
-					}
-				}
-				return children.toArray();
-			}
-			else if (isWhenNode(node)) {
-				List<Element> children = Lists.newArrayList();
-				for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-					if (child instanceof Element) {
-						if (isJavaClassNode((Element)child)) {
-							children.add((Element)child);
-						}
-					}
-				}
-				return children.toArray();
-			}
-			else if (isPerformNode(node)) {
-				List<Element> children = Lists.newArrayList();
-				for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-					if (child instanceof Element) {
-						if (isHintNode((Element)child)) {
-							children.add((Element)child);
-						}
-					}
-				}
-				return children.toArray();
-			}
-		}
-		return new Object[0];
+		
+		Object[] children = treeContentHelper.getChildren(element);
+		return Arrays.stream(children).filter(o -> o instanceof Element).collect(Collectors.toList()).toArray();
 	}
 	
 	@Override
@@ -127,22 +98,41 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 				text = XMLRulesetModelUtil.getRuleId((Node)element);
 			}
 			else {
-				text = element.getNodeName();
+				text = doGetText(node);
 			}
 		}
 		return text;
 	}
 	
+	private String doGetText(Object object) {
+		String result = null;
+		if (object instanceof Node) {
+			Node node = (Node) object;
+			switch (node.getNodeType()) {
+				case Node.ATTRIBUTE_NODE : {
+					result = node.getNodeName();
+					break;
+				}
+				case Node.DOCUMENT_TYPE_NODE : {
+					result = "DOCTYPE"; //$NON-NLS-1$
+					break;
+				}
+				case Node.ELEMENT_NODE : {
+					result = node.getNodeName();
+					break;
+				}
+				case Node.PROCESSING_INSTRUCTION_NODE : {
+					result = ((ProcessingInstruction) node).getTarget();
+					break;
+				}
+			}
+		}
+		result = TextProcessor.process(result);
+		return result != null ? result : ""; //$NON-NLS-1$
+	}
+	
 	private boolean isRuleNode(Element element) {
 		return RulesetConstants.RULE_NAME.equals(element.getNodeName());
-	}
-	
-	private boolean isWhenNode(Element element) {
-		return RulesetConstants.WHEN_NAME.equals(element.getNodeName());
-	}
-	
-	private boolean isPerformNode(Element element) {
-		return RulesetConstants.PERFORM_NAME.equals(element.getNodeName());
 	}
 	
 	private boolean isJavaClassNode(Element element) {
@@ -182,6 +172,7 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {}
+	
 	@Override
 	public void removeListener(ILabelProviderListener listener) {}
 	
