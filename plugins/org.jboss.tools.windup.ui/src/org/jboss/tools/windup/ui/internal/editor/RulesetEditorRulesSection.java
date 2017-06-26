@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.wst.sse.core.internal.format.IStructuredFormatProcessor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
@@ -73,7 +72,6 @@ import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilderImpl
 import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
-import org.eclipse.wst.xml.core.internal.provisional.format.FormatProcessorXML;
 import org.eclipse.wst.xml.ui.internal.XMLUIMessages;
 import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
 import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
@@ -438,47 +436,65 @@ public class RulesetEditorRulesSection {
 		if (elements.isEmpty()) {
 			return;
 		}
-		
 		IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
-		
 		try {
 			model.aboutToChangeModel();
 
+			filterChildElements(elements);
 		
-			Element firstElement = elements.get(0);
-			Element parent = (Element)firstElement.getParentNode();
+			Node nextSelection = findElementForSelection(elements);
 			
-			Node nextSelection = domService.findNextSibling(elements.get(elements.size()-1), 1);
-			if (nextSelection == null) {
-				// no next node, use previous node
-				nextSelection = domService.findPreviousSibling(firstElement);
-			}
-	
-			if (nextSelection == null) {
-				// next or previous null, use parent
-				nextSelection = parent;
-			}
+			elements.stream().forEach(element -> element.getParentNode().removeChild(element));
 			
-			filterChildren(elements);
-			
-			
-			for (Element element : elements) {
-				parent.removeChild(element);
-			}
-			
-			if (nextSelection != null && !elements.contains(nextSelection)) {
+			if (nextSelection != null) {
 				treeViewer.setSelection(new StructuredSelection(nextSelection));
 			}
-			
 		}
-		
 		finally {
 			model.changedModel();
 		}
 	}
 	
-	private void filterChildren(List<Element> elements) {
+	private Node findElementForSelection(List<Element> toBeDeleted) {
+		if (toBeDeleted.size() > 1) {
+			return null;
+		}
+		Element firstElement = toBeDeleted.get(0);
+		Element parent = (Element)firstElement.getParentNode();
 		
+		Node nextSelection = domService.findNextSibling(toBeDeleted.get(toBeDeleted.size()-1), 1);
+		if (nextSelection == null || toBeDeleted.contains(nextSelection)) {
+			// no next node, use previous node
+			nextSelection = domService.findPreviousSibling(firstElement);
+		}
+
+		if (nextSelection == null || toBeDeleted.contains(nextSelection)) {
+			// next or previous null, use parent
+			nextSelection = parent;
+		}
+		return nextSelection;
+	}
+	
+	private void filterChildElements(List<Element> elements) {
+		for (Iterator<Element> iter = elements.iterator(); iter.hasNext();) {
+			Element element = iter.next();
+			// climb parent hierarchy, and remove element if one of parents is in list.
+			while (true) {
+				Node parent = element.getParentNode();
+				if (parent == null) {
+					break;
+				}
+				if (elements.contains(parent)) {
+					iter.remove();
+					break;
+				}
+				parent = element.getParentNode();
+				if (!(parent instanceof Element)) {
+					break;
+				}
+				element = (Element)parent; 
+			}
+		}
 	}
 	
 	public class AddNodeAction extends NodeAction {
