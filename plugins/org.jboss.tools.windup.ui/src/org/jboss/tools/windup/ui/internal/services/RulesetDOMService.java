@@ -17,6 +17,9 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.wst.sse.core.internal.format.IStructuredFormatProcessor;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.provisional.format.FormatProcessorXML;
 import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -167,5 +170,16 @@ public class RulesetDOMService {
 			}
 		}
 		return null;
+	}
+	
+	public static void format(IStructuredModel model, Node element, boolean deep) {
+		try {
+			model.aboutToChangeModel();
+			IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
+			formatProcessor.formatNode(element);
+		}
+		finally {
+			model.changedModel();
+		}
 	}
 }

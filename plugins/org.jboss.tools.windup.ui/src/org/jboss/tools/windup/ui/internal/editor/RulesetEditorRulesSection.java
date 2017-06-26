@@ -225,6 +225,8 @@ public class RulesetEditorRulesSection {
 				Element rulesetElement = domService.findOrCreateRulesetElement(document);
 				Element rulesElement = domService.findOrCreateRulesElement(rulesetElement);
 				Element ruleElement = domService.createRuleElement(rulesElement);
+				IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
+				domService.format(model, rulesElement, true);
 				selectAndReveal(ruleElement);
 			}
 		});
@@ -417,7 +419,17 @@ public class RulesetEditorRulesSection {
 	protected Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index) {
 		Action action = null;
 		if (ed != null) {
-			action = new AddNodeAction(model, ed, parent, index);
+			action = new AddNodeAction(model, ed, parent, index) {
+				@Override
+				public void run() {
+					super.run();
+					if (!result.isEmpty()) {
+						Object element = result.get(0);
+						treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
+						treeViewer.setSelection(new StructuredSelection(element), true);
+					}
+				}
+			};
 		}
 		return action;
 	}
@@ -447,6 +459,8 @@ public class RulesetEditorRulesSection {
 				nextSelection = parent;
 			}
 			
+			filterChildren(elements);
+			
 			
 			for (Element element : elements) {
 				parent.removeChild(element);
@@ -461,6 +475,10 @@ public class RulesetEditorRulesSection {
 		finally {
 			model.changedModel();
 		}
+	}
+	
+	private void filterChildren(List<Element> elements) {
+		
 	}
 	
 	public class AddNodeAction extends NodeAction {
@@ -580,14 +598,14 @@ public class RulesetEditorRulesSection {
 			}
 
 			boolean formatDeep = false;
-			for (Iterator i = list.iterator(); i.hasNext();) {
+			for (Iterator<?> i = list.iterator(); i.hasNext();) {
 				Node newNode = (Node) i.next();
 				if (newNode.getNodeType() == Node.ELEMENT_NODE) {
 					formatDeep = true;
 				}
 
 				if (format) {
-					reformat(newNode, formatDeep);
+					RulesetDOMService.format(model, /* newNode */ newNode.getParentNode(), formatDeep);
 				}
 			}
 			result.addAll(list);
@@ -597,20 +615,7 @@ public class RulesetEditorRulesSection {
 			return result;
 		}
 		
-		public void reformat(Node newElement, boolean deep) {
-			try {
-				// tell the model that we are about to make a big model change
-				model.aboutToChangeModel();
-
-				// format selected node
-				IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
-				formatProcessor.formatNode(newElement);
-			}
-			finally {
-				// tell the model that we are done with the big model change
-				model.changedModel();
-			}
-		}
+	
 		
 		public DOMContentBuilder createDOMContentBuilder(Document document) {
 			DOMContentBuilderImpl builder = new DOMContentBuilderImpl(document);
