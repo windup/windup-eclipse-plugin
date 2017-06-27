@@ -277,7 +277,13 @@ public class RulesetEditorRulesSection {
 		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(rulesElement);
 		if (ed != null) {
 			CMElementDeclaration cmNode = (CMElementDeclaration)modelQuery.getAvailableContent(rulesElement, ed, ModelQuery.VALIDITY_STRICT).get(1);
-			createAddElementAction(model, rulesElement, cmNode, rulesElement.getChildNodes().getLength()).run();
+			AddNodeAction action = (AddNodeAction)createAddElementAction(model, rulesElement, cmNode, rulesElement.getChildNodes().getLength());
+			action.run();
+			List<Node> result = action.getResult();
+			if (!result.isEmpty()) {
+				Element ruleElement = (Element)result.get(0);
+				domService.generateNextRuleId(ruleElement);
+			}
 		}
 	}
 	
