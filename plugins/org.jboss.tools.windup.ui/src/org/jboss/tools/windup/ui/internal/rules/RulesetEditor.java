@@ -39,8 +39,8 @@ import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetRegistry;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -60,7 +60,7 @@ public class RulesetEditor {
 	@Inject private IMenuService menuService;
 	@Inject private ModelService modelService;
 	
-	@Inject	private RulesetWidgetRegistry widgetRegistry;
+	@Inject	private RulesetElementUiDelegateRegistry widgetRegistry;
 	
 	private Composite stackComposite;
 	private Composite gettingStartedComposite;
@@ -76,7 +76,7 @@ public class RulesetEditor {
 	
 	private RulesetEditorRulesSection elementsSection;
 	
-	private INodeWidget activeElement;
+	private IElementUiDelegate activeElement;
 	
 	public void setDocument(Document document) {
 		elementsSection.setDocument(document);
@@ -145,7 +145,7 @@ public class RulesetEditor {
 	
 	private RulesetEditorRulesSection createLeftSide(Composite parent) {
 		IEclipseContext child = context.createChild();
-		child.set(RulesetWidgetRegistry.class, widgetRegistry);
+		child.set(RulesetElementUiDelegateRegistry.class, widgetRegistry);
 		return createChild(RulesetEditorRulesSection.class, parent, child);
 	}
 	
@@ -180,10 +180,10 @@ public class RulesetEditor {
 		}
 		Control top = gettingStartedComposite;
 		if (element != null) {
-			INodeWidget widget = widgetRegistry.getOrCreateWidget(element, stackComposite, context);
-			if (widget != null && widget.isEditable()) {
-				top = widget.getControl();
-				this.activeElement = widget;
+			IElementUiDelegate uiDelegate = widgetRegistry.getOrCreateUiDelegate(element, stackComposite, context);
+			if (uiDelegate != null && uiDelegate.isEditable()) {
+				top = uiDelegate.getControl();
+				this.activeElement = uiDelegate;
 			}
 		}
 		((StackLayout)stackComposite.getLayout()).topControl = top;

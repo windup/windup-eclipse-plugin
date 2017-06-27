@@ -29,7 +29,7 @@ import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

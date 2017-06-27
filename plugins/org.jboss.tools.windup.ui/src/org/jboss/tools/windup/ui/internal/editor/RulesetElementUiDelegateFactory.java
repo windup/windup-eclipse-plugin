@@ -38,6 +38,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
@@ -86,6 +87,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
@@ -102,7 +104,7 @@ import com.google.common.collect.Maps;
 
 @Creatable
 @SuppressWarnings({"unused", "restriction"})
-public class RulesetWidgetFactory {
+public class RulesetElementUiDelegateFactory {
 		
 	public static interface RulesetConstants {
 		static final String ID = "id"; //$NON-NLS-1$
@@ -199,129 +201,55 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	public INodeWidget createWidget(Element element, IEclipseContext context) {
-		INodeWidget widget = null;
+	public IElementUiDelegate createElementUiDelegate(Element element, IEclipseContext context) {
+		IElementUiDelegate uiDelegate = null;
 		String nodeName = element.getNodeName();
 		switch (nodeName) {
 			case RulesetConstants.RULE_NAME: {
-				widget = createControls(RuleWidget.class, context);
+				uiDelegate = createControls(RuleWidget.class, context);
 				break;
 			}
 			case RulesetConstants.WHEN_NAME: {
-				widget = createControls(WhenWidget.class, context);
+				uiDelegate = createControls(WhenWidget.class, context);
 				break;
 			}
 			case RulesetConstants.PERFORM_NAME: {
-				widget = createControls(PerformWidget.class, context);
+				uiDelegate = createControls(PerformWidget.class, context);
 				break;
 			}
 			case RulesetConstants.OTHERWISE_NAME: {
-				widget = createControls(OtherwiseWidget.class, context);
+				uiDelegate = createControls(OtherwiseWidget.class, context);
 				break;
 			}
 			case RulesetConstants.WHERE_NAME: { 
-				widget = createControls(WhereWidget.class, context);
+				uiDelegate = createControls(WhereWidget.class, context);
 				break;
 			}
 			case RulesetConstants.JAVACLASS_NAME: { 
-				widget = createControls(JavaClassWidget.class, context);
+				uiDelegate = createControls(JavaClassWidget.class, context);
 				break;
 			}
 			case RulesetConstants.HINT_NAME: { 
-				widget = createControls(HintWidget.class, context);
+				uiDelegate = createControls(HintWidget.class, context);
 				break;
 			}
 		}
-		return widget;
+		return uiDelegate;
 	}
 	
-	private <T extends INodeWidget> T createControls(Class<T> clazz, IEclipseContext context) {
+	private <T extends IElementUiDelegate> T createControls(Class<T> clazz, IEclipseContext context) {
 		return ContextInjectionFactory.make(clazz, context);
 	}
 	
-	public static interface INodeWidget {
+	public static interface IElementUiDelegate {
 		Control getControl();
 		void update();
 		void setFocus();
 		boolean isEditable();
-		void fillContextMenu(IMenuManager manager);
+		void fillContextMenu(IMenuManager manager, IStructuredModel model, TreeViewer treeViewer);	
 	}
 	
-	private static abstract class NodeWidget implements INodeWidget {
-		
-		@Inject protected FormToolkit toolkit;
-		@Inject protected Composite parent;
-		@Inject protected Element element;
-		@Inject protected IEclipseContext context;
-		
-		protected Section section;
-		protected Control control;
-		
-		public Control getControl() {
-			if (control == null) {
-				createControls(createClient());
-			}
-			update();
-			return control;
-		}
-		
-		private Composite createClient() {
-			Composite container = toolkit.createComposite(parent);
-			GridLayoutFactory.fillDefaults().margins(0, 10).applyTo(container);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-			
-			parent = container;
-			
-			this.section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
-			section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-			section.setText("Details"); //$NON-NLS-1$
-			section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
-			
-			section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-			section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
-			
-			Composite client = toolkit.createComposite(section);
-			int span = computeColumns();
-			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, span);
-			client.setLayout(glayout);
-			client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			
-			toolkit.paintBordersFor(client);
-			section.setClient(client);
-			
-			this.control = container;
-			return client;
-		}
-		
-		protected int computeColumns() {
-			return 2;
-		}
-		
-		@Override
-		public void setFocus() {
-			section.getClient().setFocus();
-			section.getClient().forceFocus();
-		}
-		
-		protected void createLabel(Composite parent, String text) {
-			Label label = toolkit.createLabel(parent, text, SWT.NULL);
-			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		}
-		
-		protected abstract void createControls(Composite parent);
-		public abstract void update();
-		
-		@Override
-		public boolean isEditable() {
-			return true;
-		}
-		
-		@Override
-		public void fillContextMenu(IMenuManager manager) {
-		}
-	}
-	
-	private static class RuleWidget extends NodeWidget {
+	private static class RuleWidget extends ElementAttributesComposite {
 		
 		private TextAttributeRow idRow;
 		
@@ -340,7 +268,7 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static class WhenWidget extends NodeWidget {
+	private static class WhenWidget extends ElementAttributesComposite {
 		
 		public WhenWidget() {
 		}
@@ -359,7 +287,7 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static class PerformWidget extends NodeWidget {
+	private static class PerformWidget extends ElementAttributesComposite {
 		
 		public PerformWidget() {
 		}
@@ -378,7 +306,7 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static class OtherwiseWidget extends NodeWidget {
+	private static class OtherwiseWidget extends ElementAttributesComposite {
 		
 		public OtherwiseWidget() {
 		}
@@ -392,7 +320,7 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static class WhereWidget extends NodeWidget {
+	private static class WhereWidget extends ElementAttributesComposite {
 		
 		public WhereWidget() {
 		}
@@ -406,7 +334,7 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static class JavaClassWidget extends NodeWidget {
+	private static class JavaClassWidget extends ElementAttributesComposite {
 		
 		private ClassAttributeRow classRow;
 		private ChoiceAttributeRow locationRow;
@@ -523,7 +451,7 @@ public class RulesetWidgetFactory {
 		}
 	}
 	
-	private static class HintWidget extends NodeWidget {
+	private static class HintWidget extends ElementAttributesComposite {
 		
 		private TextAttributeRow titleRow;
 		private ChoiceAttributeRow effortRow;

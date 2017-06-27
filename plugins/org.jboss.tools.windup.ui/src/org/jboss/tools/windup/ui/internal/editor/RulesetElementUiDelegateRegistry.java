@@ -17,41 +17,41 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.swt.widgets.Composite;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.INodeWidget;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Maps;
 
 @Creatable
-public class RulesetWidgetRegistry {
+public class RulesetElementUiDelegateRegistry {
 	
-	private Map<Node, INodeWidget> elementWidgets = Maps.newHashMap();
+	private Map<Node, IElementUiDelegate> elementUiDelegates = Maps.newHashMap();
 	
-	@Inject private RulesetWidgetFactory factory;
+	@Inject private RulesetElementUiDelegateFactory factory;
 	
-	public INodeWidget getOrCreateWidget(Element element, Composite container, IEclipseContext context) {
-		INodeWidget widget = elementWidgets.get(element);
-		if (widget == null) {
+	public IElementUiDelegate getOrCreateUiDelegate(Element element, Composite container, IEclipseContext context) {
+		IElementUiDelegate delegate = elementUiDelegates.get(element);
+		if (delegate == null) {
 			IEclipseContext child = context.createChild();
 			child.set(Element.class, element);
 			child.set(Composite.class, container);
-			widget = factory.createWidget(element, child);
-			if (widget != null) {
-				elementWidgets.put(element, widget);
-				return widget;
+			delegate = factory.createElementUiDelegate(element, child);
+			if (delegate != null) {
+				elementUiDelegates.put(element, delegate);
+				return delegate;
 			}
 		}
 		else {
-			widget.update();
-			return widget;
+			delegate.update();
+			return delegate;
 		}
 		return null;
 	}
 	
 	public boolean update(Element element) {
 		boolean updated = false;
-		INodeWidget widget = elementWidgets.get(element);
+		IElementUiDelegate widget = elementUiDelegates.get(element);
 		if (widget != null) {
 			widget.update();
 			updated = true;
@@ -59,7 +59,7 @@ public class RulesetWidgetRegistry {
 		return updated;
 	}
 	
-	public INodeWidget getWidget(Element element) {
-		return elementWidgets.get(element);
+	public IElementUiDelegate getUiDelegate(Element element) {
+		return elementUiDelegates.get(element);
 	}
 }

@@ -62,34 +62,21 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.CMDescriptionBuilder;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilder;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilderImpl;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
-import org.eclipse.wst.xml.ui.internal.XMLUIMessages;
-import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
-import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
-import org.eclipse.wst.xml.ui.internal.actions.NodeAction;
-import org.eclipse.wst.xml.ui.internal.editor.CMImageUtil;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.editor.RulesetWidgetFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
 
@@ -111,9 +98,7 @@ public class RulesetEditorRulesSection {
 	
 	@Inject private RulesetDOMService domService;
 
-	@Inject private RulesetWidgetRegistry widgetRegistry;
-	
-	protected MenuBuilder menuBuilder = new MenuBuilder();
+	@Inject private RulesetElementUiDelegateRegistry elementUiDelegateRegistry;
 	
 	private ToolBarManager toolBarManager;
 	private TreeViewer treeViewer;
@@ -277,7 +262,8 @@ public class RulesetEditorRulesSection {
 		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(rulesElement);
 		if (ed != null) {
 			CMElementDeclaration cmNode = (CMElementDeclaration)modelQuery.getAvailableContent(rulesElement, ed, ModelQuery.VALIDITY_STRICT).get(1);
-			AddNodeAction action = (AddNodeAction)createAddElementAction(model, rulesElement, cmNode, rulesElement.getChildNodes().getLength());
+			AddNodeAction action = (AddNodeAction)ElementAttributesComposite.createAddElementAction(
+					model, rulesElement, cmNode, rulesElement.getChildNodes().getLength(), treeViewer);
 			action.run();
 			List<Node> result = action.getResult();
 			if (!result.isEmpty()) {
@@ -362,7 +348,6 @@ public class RulesetEditorRulesSection {
 		control.setMenu(menu);
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = treeViewer.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -370,14 +355,9 @@ public class RulesetEditorRulesSection {
 			if (ssel.toList().size() == 1) {
 				Element element = (Element)ssel.getFirstElement();
 				IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
-				IMenuManager addChildMenu = new MyMenuManager(Messages.rulesMenuNew);
-				manager.add(addChildMenu);
-				ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
-				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-				if (ed != null) {
-					List insertActionList = Lists.newArrayList();
-					modelQuery.getInsertActions(element, ed, -1, ModelQuery.INCLUDE_CHILD_NODES,  ModelQuery.VALIDITY_STRICT, insertActionList);
-					addActionHelper(model, addChildMenu, insertActionList);	
+				IElementUiDelegate delegate = elementUiDelegateRegistry.getUiDelegate(element);
+				if (delegate != null) {
+					delegate.fillContextMenu(manager, model, treeViewer);
 				}
 			}
 			Action deleteAction = new Action() {
@@ -400,53 +380,6 @@ public class RulesetEditorRulesSection {
 			manager.add(deleteAction);
 		}
 		this.treeViewer.getControl().update();
-	}
-	
-	protected void addActionHelper(IStructuredModel model, IMenuManager menu, List<ModelQueryAction> modelQueryActionList) {
-		List<Action> actionList = Lists.newArrayList();
-		for (ModelQueryAction action : modelQueryActionList) {
-			if (action.getCMNode() != null) {
-				int cmNodeType = action.getCMNode().getNodeType();
-				if (action.getKind() == ModelQueryAction.INSERT) {
-					switch (cmNodeType) {
-						case CMNode.ELEMENT_DECLARATION : {
-							if (!shouldFilterElementInsertAction(action)) {
-								actionList.add(createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex()));
-							}
-							break;
-						}
-					}
-				}
-			}
-		}
-		menuBuilder.populateMenu(menu, actionList, false);
-	}
-	
-	private boolean shouldFilterElementInsertAction(ModelQueryAction action) {
-		boolean filter = false;
-		Element element = (Element)action.getParent();
-		if (element.getTagName().equals(RulesetConstants.JAVACLASS_NAME)) {
-			filter = true;
-		}
-		return filter;
-	}
-	
-	protected Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index) {
-		Action action = null;
-		if (ed != null) {
-			action = new AddNodeAction(model, ed, parent, index) {
-				@Override
-				public void run() {
-					super.run();
-					if (!result.isEmpty()) {
-						Object element = result.get(0);
-						treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
-						treeViewer.setSelection(new StructuredSelection(element), true);
-					}
-				}
-			};
-		}
-		return action;
 	}
 	
 	private void removeNodes(List<Element> elements) {
@@ -511,221 +444,6 @@ public class RulesetEditorRulesSection {
 				}
 				element = (Element)parent; 
 			}
-		}
-	}
-	
-	public class AddNodeAction extends NodeAction {
-		protected CMNode cmnode;
-		protected String description;
-		protected int index;
-		protected int nodeType;
-		protected Node parent;
-		protected String undoDescription;
-		
-		protected IStructuredModel model;
-		protected RulesSectionContentProvider provider = new RulesSectionContentProvider();
-
-		protected List<Node> result = Lists.newArrayList();
-		
-		public AddNodeAction(IStructuredModel model, CMNode cmnode, Node parent, int index) {
-			this.model = model;
-			this.cmnode = cmnode;
-			this.parent = parent;
-			this.index = index;
-
-			String text = getLabel(parent, cmnode);
-			setText(text);
-			description = text;
-			undoDescription = XMLUIMessages._UI_MENU_ADD + " " + text; //$NON-NLS-1$ 
-			ImageDescriptor descriptor = CMImageUtil.getImageDescriptor(cmnode);
-			if (descriptor == null) {
-				//descriptor = imageDescriptorCache.getImageDescriptor(cmnode);
-				descriptor = WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_XML_RULE);
-			}
-			setImageDescriptor(descriptor);
-		}
-
-		public AddNodeAction(IStructuredModel model, int nodeType, Node parent, int index) {
-			this.model = model;
-			this.nodeType = nodeType;
-			this.index = index;
-			this.parent = parent;
-			switch (nodeType) {
-				case Node.COMMENT_NODE : {
-					description = XMLUIMessages._UI_MENU_COMMENT;
-					undoDescription = XMLUIMessages._UI_MENU_ADD_COMMENT;
-					break;
-				}
-				case Node.PROCESSING_INSTRUCTION_NODE : {
-					description = XMLUIMessages._UI_MENU_PROCESSING_INSTRUCTION;
-					undoDescription = XMLUIMessages._UI_MENU_ADD_PROCESSING_INSTRUCTION;
-					break;
-				}
-				case Node.CDATA_SECTION_NODE : {
-					description = XMLUIMessages._UI_MENU_CDATA_SECTION;
-					undoDescription = XMLUIMessages._UI_MENU_ADD_CDATA_SECTION;
-					break;
-				}
-				case Node.TEXT_NODE : {
-					description = XMLUIMessages._UI_MENU_PCDATA;
-					undoDescription = XMLUIMessages._UI_MENU_ADD_PCDATA;
-					break;
-				}
-			}
-			setText(description);
-			//setImageDescriptor(imageDescriptorCache.getImageDescriptor(new Integer(nodeType)));
-			setImageDescriptor(WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_XML_RULE));
-		}
-		
-		public void beginNodeAction(NodeAction action) {
-			model.beginRecording(action, action.getUndoDescription());
-		}
-		
-		public void endNodeAction(NodeAction action) {
-			model.endRecording(action);
-		}
-		
-		public void insert(Node parent, CMNode cmnode, int index) {
-			Document document = parent.getNodeType() == Node.DOCUMENT_NODE ? (Document) parent : parent.getOwnerDocument();
-			DOMContentBuilder builder = createDOMContentBuilder(document);
-			builder.setBuildPolicy(DOMContentBuilder.BUILD_ONLY_REQUIRED_CONTENT);
-			builder.build(parent, cmnode);
-			insertNodesAtIndex(parent, builder.getResult(), index);
-		}
-		
-		public void insertNodesAtIndex(Node parent, List list, int index) {
-			insertNodesAtIndex(parent, list, index, true);
-		}
-		
-		protected boolean isWhitespaceTextNode(Node node) {
-			return (node != null) && (node.getNodeType() == Node.TEXT_NODE) && (node.getNodeValue().trim().length() == 0);
-		}
-		
-		public void insertNodesAtIndex(Node parent, List list, int index, boolean format) {
-			NodeList nodeList = parent.getChildNodes();
-			if (index == -1) {
-				index = nodeList.getLength();
-			}
-			Node refChild = (index < nodeList.getLength()) ? nodeList.item(index) : null;
-
-			// here we consider the case where the previous node is a 'white
-			// space' Text node
-			// we should really do the insert before this node
-			//
-			int prevIndex = index - 1;
-			Node prevChild = (prevIndex < nodeList.getLength()) ? nodeList.item(prevIndex) : null;
-			if (isWhitespaceTextNode(prevChild)) {
-				refChild = prevChild;
-			}
-
-			for (Iterator i = list.iterator(); i.hasNext();) {
-				Node newNode = (Node) i.next();
-
-				if (newNode.getNodeType() == Node.ATTRIBUTE_NODE) {
-					Element parentElement = (Element) parent;
-					parentElement.setAttributeNode((Attr) newNode);
-				}
-				else {
-					parent.insertBefore(newNode, refChild);
-				}
-			}
-
-			boolean formatDeep = false;
-			for (Iterator<?> i = list.iterator(); i.hasNext();) {
-				Node newNode = (Node) i.next();
-				if (newNode.getNodeType() == Node.ELEMENT_NODE) {
-					formatDeep = true;
-				}
-
-				if (format) {
-					RulesetDOMService.format(model, /* newNode */ newNode.getParentNode(), formatDeep);
-				}
-			}
-			result.addAll(list);
-		}
-		
-		public List<Node> getResult() {
-			return result;
-		}
-		
-		public DOMContentBuilder createDOMContentBuilder(Document document) {
-			DOMContentBuilderImpl builder = new DOMContentBuilderImpl(document);
-			return builder;
-		}
-
-		protected void addNodeForCMNode() {
-			if (parent != null) {
-				insert(parent, cmnode, index);
-			}
-		}
-
-		protected void addNodeForNodeType() {
-			Document document = parent.getNodeType() == Node.DOCUMENT_NODE ? (Document) parent : parent.getOwnerDocument();
-			Node newChildNode = null;
-			boolean format = true;
-			switch (nodeType) {
-				case Node.COMMENT_NODE : {
-					newChildNode = document.createComment(XMLUIMessages._UI_COMMENT_VALUE);
-					break;
-				}
-				case Node.PROCESSING_INSTRUCTION_NODE : {
-					newChildNode = document.createProcessingInstruction(XMLUIMessages._UI_PI_TARGET_VALUE, XMLUIMessages._UI_PI_DATA_VALUE);
-					break;
-				}
-				case Node.CDATA_SECTION_NODE : {
-					newChildNode = document.createCDATASection(""); //$NON-NLS-1$
-					break;
-				}
-				case Node.TEXT_NODE : {
-					format = false;
-					newChildNode = document.createTextNode(parent.getNodeName());
-					break;
-				}
-			}
-
-			if (newChildNode != null) {
-				insertNodesAtIndex(parent, Lists.newArrayList(newChildNode), index, format);
-			}
-		}
-
-		public String getUndoDescription() {
-			return undoDescription;
-		}
-
-		public void run() {
-			if (validateEdit(model, Display.getDefault().getActiveShell())) {
-				beginNodeAction(this);
-				if (cmnode != null) {
-					addNodeForCMNode();
-				}
-				else {
-					addNodeForNodeType();
-				}
-				endNodeAction(this);
-			}
-		}
-		
-		public String getLabel(Node parent, CMNode cmnode) {
-			String result = "?" + cmnode + "?"; //$NON-NLS-1$ //$NON-NLS-2$
-			if (cmnode != null) {
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=155800
-				if (cmnode.getNodeType() == CMNode.ELEMENT_DECLARATION){
-					result = DOMNamespaceHelper.computeName(cmnode, parent, null);
-				}
-				else{
-					result = cmnode.getNodeName();
-				}				
-				if(result == null) {
-					result = (String) cmnode.getProperty("description"); //$NON-NLS-1$
-				}
-				if (result == null || result.length() == 0) {
-					if (cmnode.getNodeType() == CMNode.GROUP) {
-						CMDescriptionBuilder descriptionBuilder = new CMDescriptionBuilder();
-						result = descriptionBuilder.buildDescription(cmnode);
-					}
-				}
-			}
-			return result;
 		}
 	}
 }
