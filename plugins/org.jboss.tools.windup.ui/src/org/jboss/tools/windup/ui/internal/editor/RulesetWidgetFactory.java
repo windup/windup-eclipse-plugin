@@ -86,6 +86,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.common.xml.XMLUtilities;
@@ -102,7 +103,7 @@ import com.google.common.collect.Maps;
 @Creatable
 @SuppressWarnings({"unused", "restriction"})
 public class RulesetWidgetFactory {
-	
+		
 	public static interface RulesetConstants {
 		static final String ID = "id"; //$NON-NLS-1$
 		static final String RULESET_NAME = "ruleset"; //$NON-NLS-1$
@@ -317,7 +318,6 @@ public class RulesetWidgetFactory {
 		
 		@Override
 		public void fillContextMenu(IMenuManager manager) {
-			
 		}
 	}
 	

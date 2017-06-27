@@ -15,7 +15,6 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_CREATED
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
 import static org.jboss.tools.windup.ui.internal.Messages.rulesSectionTitle;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -222,14 +221,12 @@ public class RulesetEditorRulesSection {
 				Document document = (Document)treeViewer.getInput();
 				Element rulesetElement = domService.findOrCreateRulesetElement(document);
 				Element rulesElement = domService.findOrCreateRulesElement(rulesetElement);
-				Element ruleElement = domService.createRuleElement(rulesElement);
-				IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
-				domService.format(model, rulesElement, true);
-				selectAndReveal(ruleElement);
+				createRule(rulesElement);
 			}
 		});
 		this.removeButton = createButton(container, Messages.RulesetEditor_remove);
 		removeButton.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeNodes(((IStructuredSelection)treeViewer.getSelection()).toList());
@@ -272,6 +269,16 @@ public class RulesetEditorRulesSection {
 				}
 			}
 		});
+	}
+	
+	private void createRule(Element rulesElement) {
+		IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
+		ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
+		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(rulesElement);
+		if (ed != null) {
+			CMElementDeclaration cmNode = (CMElementDeclaration)modelQuery.getAvailableContent(rulesElement, ed, ModelQuery.VALIDITY_STRICT).get(1);
+			createAddElementAction(model, rulesElement, cmNode, rulesElement.getChildNodes().getLength()).run();
+		}
 	}
 	
 	private void createPlaceholder(Composite parent) {
@@ -349,6 +356,7 @@ public class RulesetEditorRulesSection {
 		control.setMenu(menu);
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = treeViewer.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -356,23 +364,15 @@ public class RulesetEditorRulesSection {
 			if (ssel.toList().size() == 1) {
 				Element element = (Element)ssel.getFirstElement();
 				IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
-				ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
 				IMenuManager addChildMenu = new MyMenuManager(Messages.rulesMenuNew);
 				manager.add(addChildMenu);
+				ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
 				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 				if (ed != null) {
-					List modelQueryActionList = new ArrayList();
-					modelQuery.getInsertActions(element, ed, -1, ModelQuery.INCLUDE_CHILD_NODES,  ModelQuery.VALIDITY_STRICT, modelQueryActionList);
-					addActionHelper(model, addChildMenu, modelQueryActionList);
+					List insertActionList = Lists.newArrayList();
+					modelQuery.getInsertActions(element, ed, -1, ModelQuery.INCLUDE_CHILD_NODES,  ModelQuery.VALIDITY_STRICT, insertActionList);
+					addActionHelper(model, addChildMenu, insertActionList);	
 				}
-				/*if (object instanceof Element) {
-					Element element = (Element) object;
-					INodeWidget widget = widgetRegistry.getWidget(element);
-					if (widget != null) {
-						widget.fillContextMenu(manager);
-						manager.add(new Separator());
-					}
-				}*/
 			}
 			Action deleteAction = new Action() {
 				@Override
@@ -404,7 +404,9 @@ public class RulesetEditorRulesSection {
 				if (action.getKind() == ModelQueryAction.INSERT) {
 					switch (cmNodeType) {
 						case CMNode.ELEMENT_DECLARATION : {
-							actionList.add(createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex()));
+							if (!shouldFilterElementInsertAction(action)) {
+								actionList.add(createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex()));
+							}
 							break;
 						}
 					}
@@ -412,6 +414,15 @@ public class RulesetEditorRulesSection {
 			}
 		}
 		menuBuilder.populateMenu(menu, actionList, false);
+	}
+	
+	private boolean shouldFilterElementInsertAction(ModelQueryAction action) {
+		boolean filter = false;
+		Element element = (Element)action.getParent();
+		if (element.getTagName().equals(RulesetConstants.JAVACLASS_NAME)) {
+			filter = true;
+		}
+		return filter;
 	}
 	
 	protected Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index) {
@@ -476,7 +487,7 @@ public class RulesetEditorRulesSection {
 	}
 	
 	private void filterChildElements(List<Element> elements) {
-		for (Iterator<Element> iter = elements.iterator(); iter.hasNext();) {
+		for (Iterator<Element> iter = Lists.newArrayList(elements).iterator(); iter.hasNext();) {
 			Element element = iter.next();
 			// climb parent hierarchy, and remove element if one of parents is in list.
 			while (true) {
@@ -630,8 +641,6 @@ public class RulesetEditorRulesSection {
 		public List<Node> getResult() {
 			return result;
 		}
-		
-	
 		
 		public DOMContentBuilder createDOMContentBuilder(Document document) {
 			DOMContentBuilderImpl builder = new DOMContentBuilderImpl(document);

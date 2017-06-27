@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "restriction" })
 public class RulesSectionContentProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
 	
 	private static final Image RULE;
