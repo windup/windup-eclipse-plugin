@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_ELEMENT;
 import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_tabTitle;
 
 import javax.annotation.PostConstruct;
@@ -21,12 +20,11 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
@@ -146,7 +144,12 @@ public class RulesetEditor {
 	private RulesetEditorRulesSection createLeftSide(Composite parent) {
 		IEclipseContext child = context.createChild();
 		child.set(RulesetElementUiDelegateRegistry.class, widgetRegistry);
-		return createChild(RulesetEditorRulesSection.class, parent, child);
+		RulesetEditorRulesSection section = createChild(RulesetEditorRulesSection.class, parent, child);
+		section.getSelectionProvider().addSelectionChangedListener((e) -> {
+			Object object = ((StructuredSelection)e.getSelection()).getFirstElement();
+			updateDetails((Element)object);
+		});
+		return section;
 	}
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {
@@ -172,17 +175,19 @@ public class RulesetEditor {
 		new Label(parent, SWT.NONE).setText("");
 	}
 	
-	@Inject
-	@Optional
-	private void updateDetails(@UIEventTopic(ACTIVE_ELEMENT) Element element) {
+	public void updateDetails(Element element) {
 		if (form.isDisposed()) {
 			return;
 		}
 		Control top = gettingStartedComposite;
 		if (element != null) {
-			IElementUiDelegate uiDelegate = widgetRegistry.getOrCreateUiDelegate(element, stackComposite, context);
-			if (uiDelegate != null && uiDelegate.isEditable()) {
+			IEclipseContext child = context.createChild();
+			child.set(Element.class, element);
+			child.set(Composite.class, stackComposite);
+			IElementUiDelegate uiDelegate = widgetRegistry.getOrCreateUiDelegate(element, child);
+			if (uiDelegate != null) { 
 				top = uiDelegate.getControl();
+				uiDelegate.update();
 				this.activeElement = uiDelegate;
 			}
 		}

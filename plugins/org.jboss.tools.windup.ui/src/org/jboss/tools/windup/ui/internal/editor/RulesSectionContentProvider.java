@@ -19,6 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -27,8 +31,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
@@ -37,7 +41,7 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 
-@SuppressWarnings({ "restriction" })
+@Creatable
 public class RulesSectionContentProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
 	
 	private static final Image RULE;
@@ -53,7 +57,7 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 		HINT = imageRegistry.get(IMG_HINT);
 	}
 	
-	private TreeContentHelper treeContentHelper = new TreeContentHelper();
+	private RulesetElementUiDelegateRegistry elementUiRegistry = new RulesetElementUiDelegateRegistry(new RulesetElementUiDelegateFactory()); 
 	
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -69,7 +73,7 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 			return rules.toArray();
 		}
 		
-		Object[] children = treeContentHelper.getChildren(element);
+		Object[] children = getDelegate((Element)element).getChildren();
 		return Arrays.stream(children).filter(o -> o instanceof Element).collect(Collectors.toList()).toArray();
 	}
 	
@@ -170,5 +174,12 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	
 	@Override
 	public void dispose() {
+	}
+	
+	private IElementUiDelegate getDelegate(Element element) {
+		IEclipseContext context = WindupUIPlugin.getDefault().getContext();
+		context = context.createChild();
+		context.set(Element.class, element);
+		return elementUiRegistry.getOrCreateUiDelegate(element, context);
 	}
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -38,11 +39,11 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
-import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
+import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
+import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -51,15 +52,17 @@ import com.google.common.collect.Lists;
 @SuppressWarnings({"restriction"})
 public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	
-	@Inject protected FormToolkit toolkit;
-	@Inject protected Composite parent;
+	@Inject @Optional protected FormToolkit toolkit;
+	@Inject @Optional protected Composite parent;
+	@Inject @Optional protected IEclipseContext context;
 	@Inject protected Element element;
-	@Inject protected IEclipseContext context;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
 	
 	protected Section section;
 	protected Control control;
+	
+	protected TreeContentHelper contentHelper = new TreeContentHelper();
 	
 	public Control getControl() {
 		if (control == null) {
@@ -117,11 +120,6 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	public abstract void update();
 	
 	@Override
-	public boolean isEditable() {
-		return true;
-	}
-	
-	@Override
 	public void fillContextMenu(IMenuManager manager, IStructuredModel model, TreeViewer treeViewer) {
 		IMenuManager addChildMenu = new MyMenuManager(Messages.rulesMenuNew);
 		manager.add(addChildMenu);
@@ -155,12 +153,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	}
 	
 	protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
-		boolean filter = false;
-		Element element = (Element)action.getParent();
-		if (element.getTagName().equals(RulesetConstants.JAVACLASS_NAME)) {
-			filter = true;
-		}
-		return filter;
+		return false;
 	}
 	
 	public static Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index, TreeViewer treeViewer) {
@@ -179,5 +172,10 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 			};
 		}
 		return action;
+	}
+	
+	@Override
+	public Object[] getChildren() {
+		return contentHelper.getChildren(element);
 	}
 }

@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,22 +27,23 @@ public class RulesetElementUiDelegateRegistry {
 	
 	private Map<Node, IElementUiDelegate> elementUiDelegates = Maps.newHashMap();
 	
-	@Inject private RulesetElementUiDelegateFactory factory;
+	private RulesetElementUiDelegateFactory factory;
 	
-	public IElementUiDelegate getOrCreateUiDelegate(Element element, Composite container, IEclipseContext context) {
+	@Inject
+	public RulesetElementUiDelegateRegistry(RulesetElementUiDelegateFactory factory) {
+		this.factory = factory;
+	}
+	
+	public IElementUiDelegate getOrCreateUiDelegate(Element element, IEclipseContext context) {
 		IElementUiDelegate delegate = elementUiDelegates.get(element);
 		if (delegate == null) {
-			IEclipseContext child = context.createChild();
-			child.set(Element.class, element);
-			child.set(Composite.class, container);
-			delegate = factory.createElementUiDelegate(element, child);
+			delegate = factory.createElementUiDelegate(element, context);
 			if (delegate != null) {
 				elementUiDelegates.put(element, delegate);
 				return delegate;
 			}
 		}
 		else {
-			delegate.update();
 			return delegate;
 		}
 		return null;

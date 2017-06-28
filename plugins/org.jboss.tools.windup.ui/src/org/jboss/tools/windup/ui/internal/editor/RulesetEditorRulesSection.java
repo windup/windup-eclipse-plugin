@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
-import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_ELEMENT;
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_CREATED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
 import static org.jboss.tools.windup.ui.internal.Messages.rulesSectionTitle;
@@ -100,10 +99,10 @@ public class RulesetEditorRulesSection {
 
 	@Inject private RulesetElementUiDelegateRegistry elementUiDelegateRegistry;
 	
+	@Inject RulesSectionContentProvider provider;
+	
 	private ToolBarManager toolBarManager;
 	private TreeViewer treeViewer;
-	
-	private Node selectedElement;
 	
 	private Button removeButton;
 	private Button upButton;
@@ -137,11 +136,6 @@ public class RulesetEditorRulesSection {
 		treeViewer.setInput(ruleNodes.toArray(new Node[ruleNodes.size()]));
 	}
 	
-	@Inject
-	@Optional
-	private void updateDetails(@UIEventTopic(ACTIVE_ELEMENT) Element element) {
-	}
-	
 	@PostConstruct
 	private void create(Composite parent) {
 		parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -169,9 +163,7 @@ public class RulesetEditorRulesSection {
 		createToolbar(section);
 		this.treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		treeViewer.addSelectionChangedListener((e) -> {
-			Object object = ((StructuredSelection)e.getSelection()).getFirstElement();
-			this.selectedElement = (Element)object;
-			broker.post(ACTIVE_ELEMENT, selectedElement);
+			Element selectedElement = (Element)((StructuredSelection)e.getSelection()).getFirstElement();
 			update();
 			boolean enabled = selectedElement != null;
 			removeButton.setEnabled(enabled);
@@ -183,8 +175,6 @@ public class RulesetEditorRulesSection {
 		});
 		
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(treeViewer.getTree());
-		
-		RulesSectionContentProvider provider = new RulesSectionContentProvider();
 		
 		treeViewer.setContentProvider(provider);
 		treeViewer.setLabelProvider(provider);
@@ -309,13 +299,6 @@ public class RulesetEditorRulesSection {
 	@Inject
 	@Optional
 	private void configDeleted(@UIEventTopic(CONFIG_DELETED) ConfigurationElement configuration) {
-	}
-	
-	@PreDestroy
-	private void dispose() {
-		if (selectedElement != null) {
-			//preferences.put(SELECTED_CONFIGURATION, selectedNode.getNodeName());
-		}
 	}
 	
 	private void update() {

@@ -205,7 +205,7 @@ public class RulesetElementUiDelegateFactory {
 		IElementUiDelegate uiDelegate = null;
 		String nodeName = element.getNodeName();
 		switch (nodeName) {
-			case RulesetConstants.RULE_NAME: {
+			/*case RulesetConstants.RULE_NAME: {
 				uiDelegate = createControls(RuleWidget.class, context);
 				break;
 			}
@@ -226,12 +226,15 @@ public class RulesetElementUiDelegateFactory {
 				break;
 			}
 			case RulesetConstants.JAVACLASS_NAME: { 
-				uiDelegate = createControls(JavaClassWidget.class, context);
+				uiDelegate = createControls(JavaClassDelegate.class, context);
 				break;
 			}
 			case RulesetConstants.HINT_NAME: { 
-				uiDelegate = createControls(HintWidget.class, context);
+				uiDelegate = createControls(HintDelegate.class, context);
 				break;
+			}*/
+			default: {
+				uiDelegate = createControls(DefaultElementAttributesComposite.class, context);
 			}
 		}
 		return uiDelegate;
@@ -245,11 +248,11 @@ public class RulesetElementUiDelegateFactory {
 		Control getControl();
 		void update();
 		void setFocus();
-		boolean isEditable();
-		void fillContextMenu(IMenuManager manager, IStructuredModel model, TreeViewer treeViewer);	
+		void fillContextMenu(IMenuManager manager, IStructuredModel model, TreeViewer treeViewer);
+		Object[] getChildren();
 	}
 	
-	private static class RuleWidget extends ElementAttributesComposite {
+	/*private static class RuleWidget extends ElementAttributesComposite {
 		
 		private TextAttributeRow idRow;
 		
@@ -266,7 +269,7 @@ public class RulesetElementUiDelegateFactory {
 		public void update() {
 			idRow.bind();
 		}
-	}
+	}*/
 	
 	private static class WhenWidget extends ElementAttributesComposite {
 		
@@ -279,11 +282,6 @@ public class RulesetElementUiDelegateFactory {
 		
 		@Override
 		public void update() {
-		}
-		
-		@Override
-		public boolean isEditable() {
-			return false;
 		}
 	}
 	
@@ -298,11 +296,6 @@ public class RulesetElementUiDelegateFactory {
 		
 		@Override
 		public void update() {
-		}
-		
-		@Override
-		public boolean isEditable() {
-			return false;
 		}
 	}
 	
@@ -334,12 +327,12 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	private static class JavaClassWidget extends ElementAttributesComposite {
+	private static class JavaClassDelegate extends ElementAttributesComposite {
 		
 		private ClassAttributeRow classRow;
 		private ChoiceAttributeRow locationRow;
 		
-		public JavaClassWidget() {
+		public JavaClassDelegate() {
 		}
 		
 		@Override
@@ -449,15 +442,25 @@ public class RulesetElementUiDelegateFactory {
 		protected int computeColumns() {
 			return 3;
 		}
+		
+		@Override
+		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
+			return true;
+		}
+		
+		@Override
+		public Object[] getChildren() {
+			return new Object[]{};
+		}
 	}
 	
-	private static class HintWidget extends ElementAttributesComposite {
+	private static class HintDelegate extends ElementAttributesComposite {
 		
 		private TextAttributeRow titleRow;
 		private ChoiceAttributeRow effortRow;
 		private TextAttributeRow categoryIdRow;
 		
-		public HintWidget() {
+		public HintDelegate() {
 		}
 		
 		@Override
@@ -538,7 +541,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	private static abstract class AttributeRow implements IControlHoverContentProvider {
+	public static abstract class AttributeRow implements IControlHoverContentProvider {
 		
 		protected Element element;
 		protected String attribute;
@@ -594,7 +597,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	private static class TextAttributeRow extends AttributeRow {
+	public static class TextAttributeRow extends AttributeRow {
 		
 		protected Text text;
 
