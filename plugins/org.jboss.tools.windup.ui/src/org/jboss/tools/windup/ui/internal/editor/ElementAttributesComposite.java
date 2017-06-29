@@ -189,4 +189,8 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	public Object[] getChildren() {
 		return contentHelper.getChildren(element);
 	}
+	
+	protected int getSpan() {
+		return 2;
+	}
 }

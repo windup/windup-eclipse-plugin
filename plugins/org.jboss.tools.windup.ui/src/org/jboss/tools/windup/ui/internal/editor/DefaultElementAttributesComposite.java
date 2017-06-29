@@ -13,20 +13,15 @@ package org.jboss.tools.windup.ui.internal.editor;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.contentmodel.modelqueryimpl.ModelQueryImpl;
 import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
-import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
-import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
 
@@ -43,41 +38,29 @@ public class DefaultElementAttributesComposite extends ElementAttributesComposit
 			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 		    for (CMAttributeDeclaration declaration : availableAttributeList) {
 		    	Node node = findNode(element, ed, declaration);
-		    	rows.add(createTextAttributeRow(element, node, declaration, parent));
+		    	rows.add(createTextAttributeRow(element, node, declaration, parent, getSpan()));
 		    }
 		    if (availableAttributeList.isEmpty() && !Boolean.TRUE.equals(ed.getProperty("isInferred"))) { //$NON-NLS-1$
-		    	rows.add(createTextAttributeRow(element.getParentNode(), element, ed, parent));
+		    	rows.add(createTextAttributeRow(element.getParentNode(), element, ed, parent, getSpan()));
 		    }
 		}
 	}
     
-    protected Node findNode(Element parent, CMElementDeclaration ed, CMNode cmNode) {
-    	Node node = null;
-        switch (cmNode.getNodeType()) {
-		  case CMNode.ATTRIBUTE_DECLARATION: {
-		    String attributeName = DOMNamespaceHelper.computeName(cmNode, parent, null);
-		    node = parent.getAttributeNode(attributeName);
-		    break;
-		  }
-		  /*case CMNode.ELEMENT_DECLARATION:
-		  case CMNode.GROUP: {
-		      NodeList childElements = parent.getElementsByTagName(cmNode.getNodeName());
-		    break;
-		  }
-		  case CMNode.DATA_TYPE: {
-		    int contentType = ed.getContentType();
-		    result = (contentType == CMElementDeclaration.MIXED ||
-		              contentType == CMElementDeclaration.PCDATA ||
-		              contentType == CMElementDeclaration.ANY);
-		    break;
-		  }*/
-        }
-        return node;
-    }
+	protected Node findNode(Element parent, CMElementDeclaration ed, CMNode cmNode) {
+		Node node = null;
+		switch (cmNode.getNodeType()) {
+			case CMNode.ATTRIBUTE_DECLARATION: {
+				String attributeName = DOMNamespaceHelper.computeName(cmNode, parent, null);
+				node = parent.getAttributeNode(attributeName);
+				break;
+			}
+		}
+		return node;
+	}
     
-    protected TextNodeRow createTextAttributeRow(Node parentNode, Node node, CMNode cmNode, Composite parent) {
+    protected TextNodeRow createTextAttributeRow(Node parentNode, Node node, CMNode cmNode, Composite parent, int columns) {
     	TextNodeRow row = new TextNodeRow(parentNode, node, cmNode);
-		row.createContents(parent, toolkit, 2);
+		row.createContents(parent, toolkit, columns);
 		return row;
     }
     

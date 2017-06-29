@@ -93,6 +93,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
@@ -224,34 +225,18 @@ public class RulesetElementUiDelegateFactory {
 		IElementUiDelegate uiDelegate = null;
 		String nodeName = element.getNodeName();
 		switch (nodeName) {
-			/*case RulesetConstants.RULE_NAME: {
-				uiDelegate = createControls(RuleWidget.class, context);
-				break;
-			}
-			case RulesetConstants.WHEN_NAME: {
-				uiDelegate = createControls(WhenWidget.class, context);
-				break;
-			}
-			case RulesetConstants.PERFORM_NAME: {
-				uiDelegate = createControls(PerformWidget.class, context);
-				break;
-			}
-			case RulesetConstants.OTHERWISE_NAME: {
-				uiDelegate = createControls(OtherwiseWidget.class, context);
-				break;
-			}
-			case RulesetConstants.WHERE_NAME: { 
-				uiDelegate = createControls(WhereWidget.class, context);
-				break;
-			}
 			case RulesetConstants.JAVACLASS_NAME: { 
 				uiDelegate = createControls(JavaClassDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.JAVA_CLASS_LOCATION: {
+				uiDelegate = createControls(LocationDelegate.class, context);
 				break;
 			}
 			case RulesetConstants.HINT_NAME: { 
 				uiDelegate = createControls(HintDelegate.class, context);
 				break;
-			}*/
+			}
 			default: {
 				uiDelegate = createControls(DefaultElementAttributesComposite.class, context);
 			}
@@ -270,96 +255,54 @@ public class RulesetElementUiDelegateFactory {
 		void fillContextMenu(IMenuManager manager, TreeViewer treeViewer);
 		Object[] getChildren();
 	}
-	
-	/*private static class RuleWidget extends ElementAttributesComposite {
-		
-		private TextAttributeRow idRow;
-		
-		public RuleWidget() {
-		}
-		
-		@Override
-		public void createControls(Composite parent) {
-			this.idRow = new TextAttributeRow(element, RulesetConstants.ID, true);
-			idRow.createContents(parent, toolkit, 2);
-		}
-		
-		@Override
-		public void update() {
-			idRow.bind();
-		}
-	}*/
-	
-	private static class WhenWidget extends ElementAttributesComposite {
-		
-		public WhenWidget() {
-		}
-		
-		@Override
-		public void createControls(Composite parent) {
-		}
-		
-		@Override
-		public void update() {
-		}
-	}
-	
-	private static class PerformWidget extends ElementAttributesComposite {
-		
-		public PerformWidget() {
-		}
-		
-		@Override
-		public void createControls(Composite parent) {
-		}
-		
-		@Override
-		public void update() {
-		}
-	}
-	
-	private static class OtherwiseWidget extends ElementAttributesComposite {
-		
-		public OtherwiseWidget() {
-		}
-		
-		@Override
-		public void createControls(Composite parent) {
-		}
-		
-		@Override
-		public void update() {
-		}
-	}
-	
-	private static class WhereWidget extends ElementAttributesComposite {
-		
-		public WhereWidget() {
-		}
-		
-		@Override
-		public void createControls(Composite parent) {
-		}
-		
-		@Override
-		public void update() {
-		}
-	}
-	
-	/*private static class JavaClassDelegate extends ElementAttributesComposite {
+
+	private static class JavaClassDelegate extends DefaultElementAttributesComposite {
 		
 		private ClassAttributeRow classRow;
-		private ChoiceAttributeRow locationRow;
 		
 		public JavaClassDelegate() {
 		}
 		
 		@Override
+		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent) {
-			IProject project = context.get(IFile.class).getProject();
-			classRow = new ClassAttributeRow(element, RulesetConstants.JAVA_CLASS_REFERENCES, true, project);
+			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+			if (ed != null) {
+				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+			    for (CMAttributeDeclaration declaration : availableAttributeList) {
+		    		Node node = findNode(element, ed, declaration);
+			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.JAVA_CLASS_REFERENCES)) {
+			    		IProject project = context.get(IFile.class).getProject();
+						rows.add(classRow = new ClassAttributeRow(element, node, declaration, project));	
+			    	}
+			    	else {
+			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 3));
+			    	}
+			    }
+			}
 			classRow.createContents(parent, toolkit, 2);
-			locationRow = new ChoiceAttributeRow(element, true, RulesetConstants.JAVA_CLASS_LOCATION) {
+		}
+		
+		@Override
+		protected int computeColumns() {
+			return 3;
+		}
+		
+		@Override
+		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
+			return true;
+		}
+	}
+	
+	private static class LocationDelegate extends DefaultElementAttributesComposite {
+		
+		private ChoiceAttributeRow locationRow;
+		
+		public LocationDelegate() {
+		}
+		
+		private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
+			return new ChoiceAttributeRow(element.getParentNode(), element, cmNode) {
 				
 				@Override
 				protected List<String> getOptions() {
@@ -371,29 +314,6 @@ public class RulesetElementUiDelegateFactory {
 					return location.getLabel() + " - " + location.getDescription();
 				}
 
-				@Override
-				protected void comboSelectionChanged() {
-					Element child = findChildElement();
-					if (child != null) {
-						element.removeChild(child);
-					}
-					if (combo.getSelection().isEmpty()) {
-						return;
-					}
-					child = element.getOwnerDocument().createElement(attribute);
-					element.appendChild(child);
-					XMLUtilities.setText(child, displayToModelValue(combo.getSelection()));
-				}
-				
-				private Element findChildElement() {
-					for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
-						if (child instanceof Element && Objects.equal(attribute, child.getNodeName())) {
-							return (Element)child;
-						}
-					}
-					return null;
-				}
-
 				private org.w3c.dom.Text findTextChild(Element element) {
 					for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
 						if (child instanceof org.w3c.dom.Text) {
@@ -401,17 +321,6 @@ public class RulesetElementUiDelegateFactory {
 						}
 					}
 					return null;
-				}
-				
-				@Override
-				protected void update() {
-					if (findChildElement() != null) {
-						org.w3c.dom.Text text = findTextChild(findChildElement());
-						if (text != null) {
-							String modelValue = findChildElement().getTextContent();
-							combo.setText(modelToDisplayValue(modelValue));
-						}
-					}
 				}
 				
 				@Override
@@ -448,45 +357,36 @@ public class RulesetElementUiDelegateFactory {
 					return "";
 				}
 			};
-			locationRow.createContents(parent, toolkit, 3);
 		}
 		
 		@Override
-		public void update() {
-			classRow.bind();
-			locationRow.bind();
+		public void createControls(Composite parent) {
+			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+			rows.add(locationRow = createLocationRow(ed));
+			locationRow.createContents(parent, toolkit, 2);
 		}
 		
 		@Override
 		protected int computeColumns() {
-			return 3;
+			return 2;
 		}
 		
 		@Override
 		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
 			return true;
 		}
-		
-		@Override
-		public Object[] getChildren() {
-			return new Object[]{};
-		}
 	}
-	*/
-	/*private static class HintDelegate extends ElementAttributesComposite {
+	
+	
+	private static class HintDelegate extends DefaultElementAttributesComposite {
 		
-		private TextAttributeRow titleRow;
 		private ChoiceAttributeRow effortRow;
-		private TextAttributeRow categoryIdRow;
 		
 		public HintDelegate() {
 		}
 		
-		@Override
-		public void createControls(Composite parent) {
-			titleRow = new TextNodeRow(element, RulesetConstants.TITLE, true);
-			titleRow.createContents(parent, toolkit, 3);
-			effortRow = new ChoiceAttributeRow(element, true, RulesetConstants.EFFORT) {
+		private ChoiceAttributeRow createEfforRow(Node node, CMNode cmNode) {
+			return new ChoiceAttributeRow(element, node, cmNode) {
 				@Override
 				protected List<String> getOptions() {
 					return Arrays.stream(HINT_EFFORT.values()).map(e -> computeUiValue(e)).
@@ -542,23 +442,32 @@ public class RulesetElementUiDelegateFactory {
 					return Messages.RulesetEditor_hintEffortTooltip;
 				}
 			};
-			effortRow.createContents(parent, toolkit, 3);
-			categoryIdRow = new TextNodeRow(element, RulesetConstants.CATEGORY_ID, true);
-			categoryIdRow.createContents(parent, toolkit, 2);
 		}
 		
 		@Override
-		public void update() {
-			titleRow.bind();
-			effortRow.bind();
-			categoryIdRow.bind();
+		@SuppressWarnings("unchecked")
+		public void createControls(Composite parent) {
+			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+			if (ed != null) {
+				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+			    for (CMAttributeDeclaration declaration : availableAttributeList) {
+		    		Node node = findNode(element, ed, declaration);
+			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
+			    		rows.add(effortRow = createEfforRow(node, declaration));	
+			    	}
+			    	else {
+			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 2));
+			    	}
+			    }
+			}
+			effortRow.createContents(parent, toolkit, 2);
 		}
 		
 		@Override
 		protected int computeColumns() {
-			return 3;
+			return 2;
 		}
-	}*/
+	}
 	
 	public static abstract class NodeRow implements IControlHoverContentProvider {
 		
@@ -841,7 +750,7 @@ public class RulesetElementUiDelegateFactory {
 		
 		protected ComboPart combo;
 
-		public ChoiceAttributeRow(Node parentNode, Node node, CMNode cmNode, Composite parent) {
+		public ChoiceAttributeRow(Node parentNode, Node node, CMNode cmNode) {
 			super(parentNode, node, cmNode);
 		}
 		
