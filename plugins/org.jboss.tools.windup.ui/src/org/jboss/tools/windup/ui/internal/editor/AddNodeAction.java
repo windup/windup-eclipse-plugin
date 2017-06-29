@@ -227,6 +227,17 @@ public class AddNodeAction extends NodeAction {
 		}
 	}
 	
+	public void runWithoutTransaction() {
+		if (validateEdit(model, Display.getDefault().getActiveShell())) {
+			if (cmnode != null) {
+				addNodeForCMNode();
+			}
+			else {
+				addNodeForNodeType();
+			}
+		}
+	}
+	
 	public String getLabel(Node parent, CMNode cmnode) {
 		String result = "?" + cmnode + "?"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (cmnode != null) {

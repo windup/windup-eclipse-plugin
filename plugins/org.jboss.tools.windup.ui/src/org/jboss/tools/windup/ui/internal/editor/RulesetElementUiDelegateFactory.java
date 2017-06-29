@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +39,8 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
@@ -87,16 +90,32 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
+import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
+import org.eclipse.wst.xml.core.internal.contentmodel.util.CMDescriptionBuilder;
+import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilder;
+import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilderImpl;
+import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
+import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
+import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
+import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
+import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreeViewer;
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -248,7 +267,7 @@ public class RulesetElementUiDelegateFactory {
 		Control getControl();
 		void update();
 		void setFocus();
-		void fillContextMenu(IMenuManager manager, IStructuredModel model, TreeViewer treeViewer);
+		void fillContextMenu(IMenuManager manager, TreeViewer treeViewer);
 		Object[] getChildren();
 	}
 	
@@ -327,7 +346,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	private static class JavaClassDelegate extends ElementAttributesComposite {
+	/*private static class JavaClassDelegate extends ElementAttributesComposite {
 		
 		private ClassAttributeRow classRow;
 		private ChoiceAttributeRow locationRow;
@@ -453,8 +472,8 @@ public class RulesetElementUiDelegateFactory {
 			return new Object[]{};
 		}
 	}
-	
-	private static class HintDelegate extends ElementAttributesComposite {
+	*/
+	/*private static class HintDelegate extends ElementAttributesComposite {
 		
 		private TextAttributeRow titleRow;
 		private ChoiceAttributeRow effortRow;
@@ -465,7 +484,7 @@ public class RulesetElementUiDelegateFactory {
 		
 		@Override
 		public void createControls(Composite parent) {
-			titleRow = new TextAttributeRow(element, RulesetConstants.TITLE, true);
+			titleRow = new TextNodeRow(element, RulesetConstants.TITLE, true);
 			titleRow.createContents(parent, toolkit, 3);
 			effortRow = new ChoiceAttributeRow(element, true, RulesetConstants.EFFORT) {
 				@Override
@@ -524,7 +543,7 @@ public class RulesetElementUiDelegateFactory {
 				}
 			};
 			effortRow.createContents(parent, toolkit, 3);
-			categoryIdRow = new TextAttributeRow(element, RulesetConstants.CATEGORY_ID, true);
+			categoryIdRow = new TextNodeRow(element, RulesetConstants.CATEGORY_ID, true);
 			categoryIdRow.createContents(parent, toolkit, 2);
 		}
 		
@@ -539,22 +558,29 @@ public class RulesetElementUiDelegateFactory {
 		protected int computeColumns() {
 			return 3;
 		}
-	}
+	}*/
 	
-	public static abstract class AttributeRow implements IControlHoverContentProvider {
+	public static abstract class NodeRow implements IControlHoverContentProvider {
 		
-		protected Element element;
-		protected String attribute;
-		protected boolean isRequired;
+		protected Node parent;
+		protected Node node;
+		protected CMNode cmNode;
+		
+		protected IStructuredModel model;
+		protected ModelQuery modelQuery;
 		
 		protected boolean blockNotification;
-		
 		protected IInformationControl infoControl;
 		
-		public AttributeRow(Element element, String attribute, boolean isRequired) {
-			this.element = element;
-			this.attribute = attribute;
-			this.isRequired = isRequired;
+		protected XMLTableTreePropertyDescriptorFactory propertyDescriptorFactory = new XMLTableTreePropertyDescriptorFactory();
+		protected TreeContentHelper contentHelper = new TreeContentHelper();
+		
+		public NodeRow(Node parent, Node node, CMNode cmNode) {
+			this.parent = parent;
+			this.node = node;
+			this.cmNode = cmNode;
+			this.model = ((IDOMNode) parent).getModel();
+			this.modelQuery = ModelQueryUtil.getModelQuery(model);
 		}
 		
 		public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
@@ -569,21 +595,88 @@ public class RulesetElementUiDelegateFactory {
 		
 		protected void createLabel(Composite parent, FormToolkit toolkit) {
 			createTextHover(parent);
-			Label label = toolkit.createLabel(parent, getAttributeLabel(), SWT.NULL);
+			Label label = toolkit.createLabel(parent, getLabel(), SWT.NULL);
 			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			PDETextHover.addHoverListenerToControl(infoControl, label, this);
 		}
 		
-		protected String getAttributeLabel() {
-			String label = attribute;
-			if (isRequired) {
+		protected String getLabel() {
+			if (node == null) {
+				return getCmNodeLabel();
+			}
+			else {
+				return getNodeLabel();
+			}
+		}
+		
+		protected String getCmNodeLabel() {
+			String result = "?" + cmNode + "?"; //$NON-NLS-1$ //$NON-NLS-2$
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=155800
+			if (cmNode.getNodeType() == CMNode.ELEMENT_DECLARATION){
+				result = DOMNamespaceHelper.computeName(cmNode, parent, null);
+			}
+			else{
+				result = cmNode.getNodeName();
+			}				
+			if(result == null) {
+				result = (String) cmNode.getProperty("description"); //$NON-NLS-1$
+			}
+			if (result == null || result.length() == 0) {
+				if (cmNode.getNodeType() == CMNode.GROUP) {
+					CMDescriptionBuilder descriptionBuilder = new CMDescriptionBuilder();
+					result = descriptionBuilder.buildDescription(cmNode);
+				}
+			}
+			return result;
+		}
+		
+		protected String getNodeLabel() {
+			boolean required = false;
+			String label = "";
+			switch (node.getNodeType()) {
+				case Node.ATTRIBUTE_NODE: {
+					//CMAttributeDeclaration ad = modelQuery.getCMAttributeDeclaration((Attr) node);
+					CMAttributeDeclaration ad = (CMAttributeDeclaration)cmNode;
+					required = (ad.getUsage() == CMAttributeDeclaration.REQUIRED);
+					label = ad.getAttrName();
+					break;
+				}
+				case Node.ELEMENT_NODE: {
+					label = node.getNodeName();
+					break;
+				}
+			}
+			if (required) {
 				return NLS.bind(Messages.ElementAttributeRow_AttrLabelReq, label);
 			}
 			return NLS.bind(Messages.ElementAttributeRow_AttrLabel, label);
 		}
 		
 		protected String getValue() {
-			return element.getAttribute(attribute);
+			String result = ""; //$NON-NLS-1$
+			if (node != null) {
+				result = contentHelper.getNodeValue(node);	
+			}
+			return result != null ? result : ""; //$NON-NLS-1$
+		}
+		
+		protected void setValue(String value) {
+			try {
+				model.aboutToChangeModel();
+				if (node != null) {
+					contentHelper.setNodeValue(node, value);
+				}
+				else {
+					AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, parent, parent.getChildNodes().getLength());
+					newNodeAction.runWithoutTransaction();
+					if (!newNodeAction.getResult().isEmpty()) {
+						this.node = (Node)newNodeAction.getResult().get(0);
+					}
+				}
+			}
+			finally {
+				model.changedModel();
+			}
 		}
 		
 		protected void createTextHover(Control control) {
@@ -597,12 +690,12 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	public static class TextAttributeRow extends AttributeRow {
+	public static class TextNodeRow extends NodeRow {
 		
 		protected Text text;
 
-		public TextAttributeRow(Element element, String attribute, boolean isRequired) {
-			super(element, attribute, isRequired);
+		public TextNodeRow(Node parentNode, Node node, CMNode cmNode) {
+			super(parentNode, node, cmNode);
 		}
 
 		@Override
@@ -614,7 +707,7 @@ public class RulesetElementUiDelegateFactory {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					if (!blockNotification) {
-						element.setAttribute(attribute, text.getText());
+						TextNodeRow.this.setValue(text.getText());
 					}
 				}
 			});
@@ -641,16 +734,16 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	public static abstract class ReferenceAttributeRow extends TextAttributeRow {
+	public static abstract class ReferenceNodeRow extends TextNodeRow {
 
-		public ReferenceAttributeRow(Element element, String attribute, boolean isRequired) {
-			super(element, attribute, isRequired);
+		public ReferenceNodeRow(Node parentNode, Node node, CMNode cmNode) {
+			super(parentNode, node, cmNode);
 		}
 
 		@Override
 		protected void createLabel(Composite parent, FormToolkit toolkit) {
 			createTextHover(parent);
-			Hyperlink link = toolkit.createHyperlink(parent, getAttributeLabel(), SWT.NULL);
+			Hyperlink link = toolkit.createHyperlink(parent, getLabel(), SWT.NULL);
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
@@ -661,13 +754,12 @@ public class RulesetElementUiDelegateFactory {
 		}
 
 		protected abstract void openReference();
-
 	}
 	
-	public static abstract class ButtonAttributeRow extends ReferenceAttributeRow {
+	public static abstract class ButtonAttributeRow extends ReferenceNodeRow {
 
-		public ButtonAttributeRow(Element element, String attribute, boolean isRequired) {
-			super(element, attribute, isRequired);
+		public ButtonAttributeRow(Node parentNode, Node node, CMNode cmNode) {
+			super(parentNode, node, cmNode);
 		}
 
 		@Override
@@ -691,15 +783,14 @@ public class RulesetElementUiDelegateFactory {
 		}
 
 		protected abstract void browse();
-
 	}
 	
 	public static class ClassAttributeRow extends ButtonAttributeRow {
 
 		private IProject project;
 
-		public ClassAttributeRow(Element element, String attribute, boolean isRequired, IProject project) {
-			super(element, attribute, isRequired);
+		public ClassAttributeRow(Node parentNode, Node node, CMNode cmNode, IProject project) {
+			super(parentNode, node, cmNode);
 			this.project = project;
 		}
 
@@ -746,16 +837,12 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	public static class ChoiceAttributeRow extends AttributeRow {
+	public static class ChoiceAttributeRow extends NodeRow {
 		
 		protected ComboPart combo;
 
-		public ChoiceAttributeRow(Element element, String attribute, boolean isRequired) {
-			super(element, attribute, isRequired);
-		}
-		
-		public ChoiceAttributeRow(Element parent, boolean isRequired, String element) {
-			super(parent, element, isRequired);
+		public ChoiceAttributeRow(Node parentNode, Node node, CMNode cmNode, Composite parent) {
+			super(parentNode, node, cmNode);
 		}
 		
 		protected List<String> getOptions() {
@@ -796,7 +883,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		protected void comboSelectionChanged() {
-			element.setAttribute(attribute, displayToModelValue(combo.getSelection()));
+			super.setValue(displayToModelValue(combo.getSelection()));
 		}
 		
 		@Override

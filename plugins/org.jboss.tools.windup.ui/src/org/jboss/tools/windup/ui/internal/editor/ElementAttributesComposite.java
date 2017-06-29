@@ -39,6 +39,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
 import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
@@ -55,12 +56,22 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	@Inject @Optional protected FormToolkit toolkit;
 	@Inject @Optional protected Composite parent;
 	@Inject @Optional protected IEclipseContext context;
-	@Inject protected Element element;
+	protected Element element;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
 	
 	protected Section section;
 	protected Control control;
+	
+	protected IStructuredModel model;
+	protected ModelQuery modelQuery;
+	
+	@Inject
+	private void setElement(Element element) {
+		this.element = element;
+		this.model = ((IDOMNode) element).getModel();
+		this.modelQuery = ModelQueryUtil.getModelQuery(model);
+	}
 	
 	protected TreeContentHelper contentHelper = new TreeContentHelper();
 	
@@ -120,7 +131,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	public abstract void update();
 	
 	@Override
-	public void fillContextMenu(IMenuManager manager, IStructuredModel model, TreeViewer treeViewer) {
+	public void fillContextMenu(IMenuManager manager, TreeViewer treeViewer) {
 		IMenuManager addChildMenu = new MyMenuManager(Messages.rulesMenuNew);
 		manager.add(addChildMenu);
 		ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);

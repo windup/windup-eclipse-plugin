@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
@@ -337,10 +336,9 @@ public class RulesetEditorRulesSection {
 		if (!ssel.isEmpty()) {
 			if (ssel.toList().size() == 1) {
 				Element element = (Element)ssel.getFirstElement();
-				IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
 				IElementUiDelegate delegate = elementUiDelegateRegistry.getUiDelegate(element);
 				if (delegate != null) {
-					delegate.fillContextMenu(manager, model, treeViewer);
+					delegate.fillContextMenu(manager, treeViewer);
 				}
 			}
 			Action deleteAction = new Action() {
