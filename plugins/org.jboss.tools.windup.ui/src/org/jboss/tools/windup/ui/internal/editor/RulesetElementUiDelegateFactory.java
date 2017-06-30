@@ -45,6 +45,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
@@ -77,6 +78,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -85,6 +88,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -158,6 +162,8 @@ public class RulesetElementUiDelegateFactory {
 		
 		static final String LINK = "link";
 		static final String LINK_HREF = "href";
+		
+		static final String TAGS = "tags"; //$NON-NLS-1$
 	}
 
 	enum HINT_EFFORT {
@@ -533,6 +539,26 @@ public class RulesetElementUiDelegateFactory {
 		@Override
 		protected int computeColumns() {
 			return 2;
+		}
+		
+		@Override
+		protected Composite createClient() {
+			Composite client = super.createClient();
+			
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, RulesetConstants.TAGS);
+			
+			FormData data = new FormData();
+			data.top = new FormAttachment(super.section, 10);
+			data.bottom = new FormAttachment(100);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
+			
+			TableViewer tableViewer = new TableViewer((Composite)section.getClient(), SWT.FULL_SELECTION|SWT.V_SCROLL|SWT.H_SCROLL);
+			Table table = tableViewer.getTable();
+			table.setHeaderVisible(false);
+			
+			return client;
 		}
 	}
 	

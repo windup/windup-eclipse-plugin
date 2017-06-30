@@ -24,6 +24,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -83,9 +86,14 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		return control;
 	}
 	
-	private Composite createClient() {
+	protected Composite createClient() {
 		Composite container = toolkit.createComposite(parent);
-		GridLayoutFactory.fillDefaults().margins(0, 10).applyTo(container);
+
+		FormLayout formLayout = new FormLayout();
+		formLayout.marginTop = 5;
+		container.setLayout(formLayout);
+		
+		//GridLayoutFactory.fillDefaults().margins(0, 10).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		
 		parent = container;
@@ -95,20 +103,45 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		section.setText("Details"); //$NON-NLS-1$
 		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
+		//section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		formLayout = new FormLayout();
+		section.setLayout(formLayout);
+		FormData data = new FormData();
+		data.right = new FormAttachment(100);
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		section.setLayoutData(data);
+		//section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Composite client = toolkit.createComposite(section);
 		int span = computeColumns();
 		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, span);
 		client.setLayout(glayout);
-		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		//client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		
 		this.control = container;
 		return client;
+	}
+	
+	public static Section createSection(Composite parent, FormToolkit toolkit, String title) {
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		section.setText(title);
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		FormData data = new FormData();
+		section.setLayoutData(data);
+		
+		Composite client = toolkit.createComposite(section);
+		GridLayoutFactory.fillDefaults().applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+		
+		toolkit.paintBordersFor(client);
+		section.setClient(client);
+		return section;
 	}
 	
 	protected int computeColumns() {
