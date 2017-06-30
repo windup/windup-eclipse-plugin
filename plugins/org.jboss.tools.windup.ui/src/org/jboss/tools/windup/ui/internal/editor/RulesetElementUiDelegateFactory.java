@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -83,6 +87,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -90,6 +95,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
@@ -111,6 +117,7 @@ import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -148,6 +155,9 @@ public class RulesetElementUiDelegateFactory {
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references";
 		static final String JAVA_CLASS_LOCATION = "location"; //$NON-NLS-1$
+		
+		static final String LINK = "link";
+		static final String LINK_HREF = "href";
 	}
 
 	enum HINT_EFFORT {
@@ -237,6 +247,10 @@ public class RulesetElementUiDelegateFactory {
 				uiDelegate = createControls(HintDelegate.class, context);
 				break;
 			}
+			case RulesetConstants.LINK: {
+				uiDelegate = createControls(LinkDelegate.class, context);
+				break;
+			}
 			default: {
 				uiDelegate = createControls(DefaultElementAttributesComposite.class, context);
 			}
@@ -254,6 +268,59 @@ public class RulesetElementUiDelegateFactory {
 		void setFocus();
 		void fillContextMenu(IMenuManager manager, TreeViewer treeViewer);
 		Object[] getChildren();
+	}
+	
+	private static class LinkDelegate extends DefaultElementAttributesComposite {
+		
+		private ReferenceNodeRow hrefRow;
+		
+		@Inject private EPartService partService;
+		
+		public LinkDelegate() {
+		}
+		
+		@Override
+		@SuppressWarnings("unchecked")
+		public void createControls(Composite parent) {
+			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+			if (ed != null) {
+				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+			    for (CMAttributeDeclaration declaration : availableAttributeList) {
+		    		Node node = findNode(element, ed, declaration);
+			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
+			    		IProject project = context.get(IFile.class).getProject();
+						rows.add(hrefRow = new ReferenceNodeRow(element, node, declaration) {
+							@Override
+							protected void openReference() {
+								if (node != null && !node.getNodeValue().isEmpty()) {
+									try {
+										PlatformUI.getWorkbench().getBrowserSupport().
+											createBrowser(WindupUIPlugin.PLUGIN_ID).openURL(new URL(node.getNodeValue()));
+									}
+									catch (Exception e) {
+										WindupUIPlugin.log(e);
+									}
+								}
+							}
+						});
+						hrefRow.createContents(parent, toolkit, 2);
+			    	}
+			    	else {
+			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 2));
+			    	}
+			    }
+			}
+		}
+		
+		@Override
+		protected int computeColumns() {
+			return 2;
+		}
+		
+		@Override
+		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
+			return true;
+		}
 	}
 
 	private static class JavaClassDelegate extends DefaultElementAttributesComposite {
@@ -273,14 +340,14 @@ public class RulesetElementUiDelegateFactory {
 		    		Node node = findNode(element, ed, declaration);
 			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.JAVA_CLASS_REFERENCES)) {
 			    		IProject project = context.get(IFile.class).getProject();
-						rows.add(classRow = new ClassAttributeRow(element, node, declaration, project));	
+						rows.add(classRow = new ClassAttributeRow(element, node, declaration, project));
+						classRow.createContents(parent, toolkit, 2);
 			    	}
 			    	else {
 			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 3));
 			    	}
 			    }
 			}
-			classRow.createContents(parent, toolkit, 2);
 		}
 		
 		@Override
@@ -453,14 +520,14 @@ public class RulesetElementUiDelegateFactory {
 			    for (CMAttributeDeclaration declaration : availableAttributeList) {
 		    		Node node = findNode(element, ed, declaration);
 			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
-			    		rows.add(effortRow = createEfforRow(node, declaration));	
+			    		rows.add(effortRow = createEfforRow(node, declaration));
+			    		effortRow.createContents(parent, toolkit, 2);
 			    	}
 			    	else {
 			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 2));
 			    	}
 			    }
 			}
-			effortRow.createContents(parent, toolkit, 2);
 		}
 		
 		@Override
