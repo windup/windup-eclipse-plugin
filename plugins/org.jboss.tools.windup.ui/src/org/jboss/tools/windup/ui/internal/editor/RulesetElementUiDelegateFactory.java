@@ -43,7 +43,11 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -66,6 +70,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
+import org.eclipse.pde.internal.ui.elements.TreeContentProvider;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.TextUtil;
@@ -78,6 +83,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
@@ -90,6 +96,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
@@ -100,6 +107,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
@@ -160,10 +168,9 @@ public class RulesetElementUiDelegateFactory {
 		static final String JAVA_CLASS_REFERENCES = "references";
 		static final String JAVA_CLASS_LOCATION = "location"; //$NON-NLS-1$
 		
-		static final String LINK = "link";
+		static final String LINK_NAME = "link";
 		static final String LINK_HREF = "href";
-		
-		static final String TAGS = "tags"; //$NON-NLS-1$
+		static final String TAG_NAME = "tag";
 	}
 
 	enum HINT_EFFORT {
@@ -253,7 +260,7 @@ public class RulesetElementUiDelegateFactory {
 				uiDelegate = createControls(HintDelegate.class, context);
 				break;
 			}
-			case RulesetConstants.LINK: {
+			case RulesetConstants.LINK_NAME: {
 				uiDelegate = createControls(LinkDelegate.class, context);
 				break;
 			}
@@ -455,6 +462,8 @@ public class RulesetElementUiDelegateFactory {
 		
 		private ChoiceAttributeRow effortRow;
 		
+		private CheckboxTreeViewer tagsTreeViewer;
+		
 		public HintDelegate() {
 		}
 		
@@ -545,20 +554,67 @@ public class RulesetElementUiDelegateFactory {
 		protected Composite createClient() {
 			Composite client = super.createClient();
 			
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, RulesetConstants.TAGS);
+			Section section = createTagsSection(super.section);
+			createLinksSection(section);
+			
+			return client;
+		}
+		
+		@Override
+		public Object[] getChildren() {
+			Object[] result = super.getChildren();
+			if (result != null) {
+				result = Arrays.stream(result).filter(n -> {
+					if (n instanceof Node) {
+						return !Objects.equal(((Node)n).getNodeName(), RulesetConstants.TAG_NAME) &&
+									!Objects.equal(((Node)n).getNodeName(), RulesetConstants.LINK_NAME);
+					}
+					return true;
+				}).collect(Collectors.toList()).toArray();
+			}
+			return result;
+		}
+		
+		private Section createTagsSection(Control top) {
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
 			
 			FormData data = new FormData();
-			data.top = new FormAttachment(super.section, 10);
-			data.bottom = new FormAttachment(100);
+			data.top = new FormAttachment(top, 10);
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
 			section.setLayoutData(data);
 			
-			TableViewer tableViewer = new TableViewer((Composite)section.getClient(), SWT.FULL_SELECTION|SWT.V_SCROLL|SWT.H_SCROLL);
-			Table table = tableViewer.getTable();
-			table.setHeaderVisible(false);
+			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
+			tagsTreeViewer.setContentProvider(new TreeContentProvider());
+			tagsTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+			tagsTreeViewer.setAutoExpandLevel(0);
 			
-			return client;
+			Tree tree = tagsTreeViewer.getTree();
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
+
+			return section;
+		}
+		
+		private Section createLinksSection(Control top) {
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
+
+			FormData data = new FormData();
+			data.top = new FormAttachment(top, 5);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
+			
+			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
+			tagsTreeViewer.setContentProvider(new TreeContentProvider());
+			tagsTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+			tagsTreeViewer.setAutoExpandLevel(0);
+			
+			Tree tree = tagsTreeViewer.getTree();
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
+
+			return section;
 		}
 	}
 	

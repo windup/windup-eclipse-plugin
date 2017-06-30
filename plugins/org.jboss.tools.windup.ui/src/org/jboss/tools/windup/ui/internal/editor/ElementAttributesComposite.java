@@ -27,7 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -126,8 +125,8 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		return client;
 	}
 	
-	public static Section createSection(Composite parent, FormToolkit toolkit, String title) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+	public static Section createSection(Composite parent, FormToolkit toolkit, String title, int style) {
+		Section section = toolkit.createSection(parent, style);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(title);
 		
