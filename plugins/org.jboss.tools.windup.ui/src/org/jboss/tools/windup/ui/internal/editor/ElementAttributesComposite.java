@@ -24,9 +24,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -87,12 +85,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	
 	protected Composite createClient() {
 		Composite container = toolkit.createComposite(parent);
-
-		FormLayout formLayout = new FormLayout();
-		formLayout.marginTop = 5;
-		container.setLayout(formLayout);
-		
-		//GridLayoutFactory.fillDefaults().margins(0, 10).applyTo(container);
+		GridLayoutFactory.fillDefaults().margins(0, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		
 		parent = container;
@@ -102,21 +95,14 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		section.setText("Details"); //$NON-NLS-1$
 		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		
-		//section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		formLayout = new FormLayout();
-		section.setLayout(formLayout);
-		FormData data = new FormData();
-		data.right = new FormAttachment(100);
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(0);
-		section.setLayoutData(data);
-		//section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Composite client = toolkit.createComposite(section);
 		int span = computeColumns();
 		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, span);
 		client.setLayout(glayout);
-		//client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
@@ -131,8 +117,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		section.setText(title);
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		FormData data = new FormData();
-		section.setLayoutData(data);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);;
 		
 		Composite client = toolkit.createComposite(section);
 		GridLayoutFactory.fillDefaults().applyTo(client);

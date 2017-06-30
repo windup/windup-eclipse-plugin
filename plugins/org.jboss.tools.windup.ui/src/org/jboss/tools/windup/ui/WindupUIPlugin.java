@@ -93,6 +93,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_JAVA = "icons/rules/java_lib_obj.png"; //$NON-NLS-1$
     
     public static final String IMG_HINT = "icons/rules/hint.png"; //$NON-NLS-1$
+    public static final String IMG_TAG = "icons/rules/tag.gif"; //$NON-NLS-1$
     
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -229,6 +230,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_NEW_XML_RULE, createImageDescriptor(IMG_NEW_XML_RULE));
 		reg.put(IMG_JAVA, createImageDescriptor(IMG_JAVA));
 		reg.put(IMG_HINT, createImageDescriptor(IMG_HINT));
+		reg.put(IMG_TAG, createImageDescriptor(IMG_TAG));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

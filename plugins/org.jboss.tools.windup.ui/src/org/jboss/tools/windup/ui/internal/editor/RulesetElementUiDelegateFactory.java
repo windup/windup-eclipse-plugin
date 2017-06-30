@@ -12,9 +12,7 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,82 +20,42 @@ import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.IContextPart;
-import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
-import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
-import org.eclipse.pde.internal.ui.elements.TreeContentProvider;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -106,9 +64,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -116,30 +72,20 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.eclipse.wst.xml.core.internal.contentmodel.util.CMDescriptionBuilder;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilder;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMContentBuilderImpl;
 import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
-import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreeViewer;
-import org.eclipse.xtext.util.Pair;
-import org.eclipse.xtext.util.Tuples;
-import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Creatable
 @SuppressWarnings({"unused", "restriction"})
@@ -463,6 +409,7 @@ public class RulesetElementUiDelegateFactory {
 		private ChoiceAttributeRow effortRow;
 		
 		private CheckboxTreeViewer tagsTreeViewer;
+		private CheckboxTreeViewer linksTreeViewer;
 		
 		public HintDelegate() {
 		}
@@ -554,8 +501,9 @@ public class RulesetElementUiDelegateFactory {
 		protected Composite createClient() {
 			Composite client = super.createClient();
 			
-			Section section = createTagsSection(super.section);
-			createLinksSection(section);
+			createTagsSection();
+			createLinksSection();
+			createMessageSection();
 			
 			return client;
 		}
@@ -575,45 +523,65 @@ public class RulesetElementUiDelegateFactory {
 			return result;
 		}
 		
-		private Section createTagsSection(Control top) {
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+		private Section createTagsSection() {
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
-			
-			FormData data = new FormData();
-			data.top = new FormAttachment(top, 10);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
 			
 			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
-			tagsTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+			tagsTreeViewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((Node)element).getTextContent();
+				}
+				@Override
+				public Image getImage(Object element) {
+					return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_TAG);
+				}
+			});
 			tagsTreeViewer.setAutoExpandLevel(0);
 			
 			Tree tree = tagsTreeViewer.getTree();
+			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(tree);
+			
+			loadTags();
+			return section;
+		}
+		
+		@Override
+		public void update() {
+			super.update();
+			loadTags();
+		}
+		
+		private void loadTags() {
+			List<Node> tags = Lists.newArrayList();
+			NodeList list = element.getOwnerDocument().getElementsByTagName(RulesetConstants.TAG_NAME);
+			for (int i = 0; i < list.getLength(); i++) {
+				tags.add(list.item(i));
+			}
+			tagsTreeViewer.setInput(tags.toArray());
+		}
+		
+		private Section createLinksSection() {
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
+			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
+
+			linksTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
+			linksTreeViewer.setContentProvider(new TreeContentProvider());
+			linksTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+			linksTreeViewer.setAutoExpandLevel(0);
+			
+			Tree tree = linksTreeViewer.getTree();
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
 
 			return section;
 		}
 		
-		private Section createLinksSection(Control top) {
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
-			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
-
-			FormData data = new FormData();
-			data.top = new FormAttachment(top, 5);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
+		private Section createMessageSection() {
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+			section.setDescription(Messages.RulesetEditor_messageSectionDescription);
 			
-			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
-			tagsTreeViewer.setContentProvider(new TreeContentProvider());
-			tagsTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
-			tagsTreeViewer.setAutoExpandLevel(0);
-			
-			Tree tree = tagsTreeViewer.getTree();
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
-
 			return section;
 		}
 	}
