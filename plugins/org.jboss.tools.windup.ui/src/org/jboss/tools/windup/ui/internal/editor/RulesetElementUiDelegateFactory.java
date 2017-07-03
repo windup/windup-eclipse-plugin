@@ -58,8 +58,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -526,6 +529,12 @@ public class RulesetElementUiDelegateFactory {
 		private Section createTagsSection() {
 			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
+			section.addExpansionListener(new ExpansionAdapter() {
+				@Override
+				public void expansionStateChanged(ExpansionEvent e) {
+					form.reflow(true);
+				}
+			});
 			
 			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
@@ -542,7 +551,7 @@ public class RulesetElementUiDelegateFactory {
 			tagsTreeViewer.setAutoExpandLevel(0);
 			
 			Tree tree = tagsTreeViewer.getTree();
-			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(tree);
+			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 300).applyTo(tree);
 			
 			loadTags();
 			return section;
@@ -566,6 +575,12 @@ public class RulesetElementUiDelegateFactory {
 		private Section createLinksSection() {
 			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
+			section.addExpansionListener(new ExpansionAdapter() {
+				@Override
+				public void expansionStateChanged(ExpansionEvent e) {
+					form.reflow(true);
+				}
+			});
 
 			linksTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
 			linksTreeViewer.setContentProvider(new TreeContentProvider());
@@ -573,15 +588,20 @@ public class RulesetElementUiDelegateFactory {
 			linksTreeViewer.setAutoExpandLevel(0);
 			
 			Tree tree = linksTreeViewer.getTree();
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
+			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).applyTo(tree);
 
 			return section;
 		}
 		
 		private Section createMessageSection() {
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(Messages.RulesetEditor_messageSectionDescription);
-			
+			section.addExpansionListener(new ExpansionAdapter() {
+				@Override
+				public void expansionStateChanged(ExpansionEvent e) {
+					form.reflow(true);
+				}
+			});
 			return section;
 		}
 	}

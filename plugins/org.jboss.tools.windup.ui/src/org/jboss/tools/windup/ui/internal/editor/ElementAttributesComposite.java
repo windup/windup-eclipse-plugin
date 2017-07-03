@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -56,6 +57,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	@Inject @Optional protected FormToolkit toolkit;
 	@Inject @Optional protected Composite parent;
 	@Inject @Optional protected IEclipseContext context;
+	@Inject @Optional protected ScrolledForm form;
 	protected Element element;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
@@ -117,7 +119,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		section.setText(title);
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);;
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(section);;
 		
 		Composite client = toolkit.createComposite(section);
 		GridLayoutFactory.fillDefaults().applyTo(client);

@@ -31,8 +31,8 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -63,7 +63,7 @@ public class RulesetEditor {
 	private Composite stackComposite;
 	private Composite gettingStartedComposite;
 	
-	private Form form;
+	private ScrolledForm form;
 	private FormToolkit toolkit;
 	
 	private SashForm sash;
@@ -104,7 +104,7 @@ public class RulesetEditor {
 	@PostConstruct
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
-		this.form = toolkit.createForm(parent);
+		this.form = toolkit.createScrolledForm(parent);
 		form.setText(rulesEditor_tabTitle);
 		form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
@@ -113,7 +113,7 @@ public class RulesetEditor {
 		Composite comp = form.getBody();
 		GridLayoutFactory.fillDefaults().applyTo(comp);
 
-		context.set(Form.class, form);
+		context.set(ScrolledForm.class, form);
 		context.set(FormToolkit.class, toolkit);
 		context.set(DataBindingContext.class, bindingContext);
 		context.set(IEclipsePreferences.class, preferences);
@@ -137,7 +137,7 @@ public class RulesetEditor {
 		
 		sash.setWeights(new int[]{left, right});
 				
-		toolkit.decorateFormHeading(form);
+		toolkit.decorateFormHeading(form.getForm());
 		toolkit.paintBordersFor(form.getBody());
 	}
 	
