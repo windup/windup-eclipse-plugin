@@ -38,23 +38,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_jfaZUECHEeaIZs9YJVekXg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_mXO7AECHEeaIZs9YJVekXg" elementId="org.jboss.tools.windup.ui.addon.viewService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.ViewService"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_m5YxIEX-EeaZwMMgWaV59g" featurename="toolBarContributions" parentElementId="org.eclipse.e4.legacy.ide.application">
-    <!--
-    <elements xsi:type="menu:ToolBarContribution" xmi:id="_o4nd8EX-EeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.toolbarcontribution.0" parentId="org.jboss.tools.windup.toolbar">
-      <children xsi:type="menu:HandledToolItem" xmi:id="_2x7FMEYAEeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.configuration.handledtoolitem.help" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/help.png" tooltip="Help" command="_f-MZQEYBEeaZwMMgWaV59g"/>
-      <children xsi:type="menu:ToolBarSeparator" xmi:id="_kH5A8F_IEea1h6Yw3BfxxA" elementId="org.jboss.tools.windup.ui.toolbarseparator.1"/>
-      <children xsi:type="menu:DirectToolItem" xmi:id="_Y7ahcF_IEea1h6Yw3BfxxA" elementId="org.jboss.tools.windup.ui.directtoolitem.run" label="Run" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/run_exc.png" tooltip="Run Windup using this configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.launch.RunWindupHandler"/>
-    </elements>
-    -->
-    <!--
-    <elements xsi:type="menu:ToolBarContribution" xmi:id="_uVIFsEbJEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.toolbarcontribution.1" parentId="org.jboss.tools.windup.toolbar.configurations.table">
-      <children xsi:type="menu:DirectToolItem" xmi:id="_2YT5AEbJEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.directtoolitem.add" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/new_con.png" tooltip="New windup launch configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.launch.NewWindupConfigurationHandler"/>
-      <children xsi:type="menu:DirectToolItem" xmi:id="_iQ1wQEbQEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.directtoolitem.0" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/delete_config.png" tooltip="Delete windup launch configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.DeleteWindupConfigurationHandler"/>
-      <children xsi:type="menu:ToolBarSeparator" xmi:id="_ViNdUEbXEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.toolbarseparator.0"/>
-      <children xsi:type="menu:DirectToolItem" xmi:id="_QsRgYEkMEeab9oKjuw75kg" elementId="org.jboss.tools.windup.ui.configuration.handledtoolitem.run" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/run_exc.png" tooltip="Run windup launch configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.launch.RunWindupHandler"/>
-    </elements>
-    -->
-  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_m5YxIEX-EeaZwMMgWaV59g" featurename="toolBarContributions" parentElementId="org.eclipse.e4.legacy.ide.application"/>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_3VCkoEkGEeab9oKjuw75kg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_OATG0E71Eea2x-7ba-JCLw" elementId="org.jboss.tools.windup.ui.addon.launchConfigurationService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.LaunchConfigurationService"/>
     <elements xsi:type="application:Addon" xmi:id="_pg_D0H9JEeaDaMGaik4Rpg" elementId="org.jboss.tools.windup.ui.addon.markerSyncService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerSyncService"/>

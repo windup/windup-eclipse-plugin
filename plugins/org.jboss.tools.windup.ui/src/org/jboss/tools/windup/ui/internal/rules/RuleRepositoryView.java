@@ -149,11 +149,11 @@ public class RuleRepositoryView extends ViewPart {
 						    		IDE.openEditorOnFileStore(page, fileStore);
 						    	}
 						    } catch (PartInitException e) {
-						    	WindupUIPlugin.log(e);
-						    	MessageDialog.openError(
-										Display.getDefault().getActiveShell(), 
-										Messages.openRuleset, 
-										Messages.errorOpeningRuleset);
+							    	WindupUIPlugin.log(e);
+							    	MessageDialog.openError(
+											Display.getDefault().getActiveShell(), 
+											Messages.openRuleset, 
+											Messages.errorOpeningRuleset);
 						    }
 						}
 					}

@@ -301,9 +301,13 @@ public class RulesetElementUiDelegateFactory {
 			    for (CMAttributeDeclaration declaration : availableAttributeList) {
 		    		Node node = findNode(element, ed, declaration);
 			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.JAVA_CLASS_REFERENCES)) {
-			    		IProject project = context.get(IFile.class).getProject();
-						rows.add(classRow = new ClassAttributeRow(element, node, declaration, project));
-						classRow.createContents(parent, toolkit, 2);
+			    		IFile file = context.get(IFile.class);
+			    		IProject project = null;
+			    		if (file != null) {
+			    			project = file.getProject();
+			    		}
+					rows.add(classRow = new ClassAttributeRow(element, node, declaration, project));
+					classRow.createContents(parent, toolkit, 2);
 			    	}
 			    	else {
 			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 3));
@@ -848,16 +852,18 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		private void openClass(String name) {
-			try {
-				if (project.hasNature(JavaCore.NATURE_ID)) {
-					IJavaProject javaProject = JavaCore.create(project);
-					IJavaElement result = javaProject.findType(name);
-					if (result != null) {
-						JavaUI.openInEditor(result);
+			if (project != null) {
+				try {
+					if (project.hasNature(JavaCore.NATURE_ID)) {
+						IJavaProject javaProject = JavaCore.create(project);
+						IJavaElement result = javaProject.findType(name);
+						if (result != null) {
+							JavaUI.openInEditor(result);
+						}
 					}
+				} catch (Exception e) {
+					WindupUIPlugin.log(e);
 				}
-			} catch (Exception e) {
-				WindupUIPlugin.log(e);
 			}
 		}
 

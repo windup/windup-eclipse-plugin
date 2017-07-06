@@ -59,7 +59,11 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	@Override
 	protected IDesignViewer createDesignPage() {
 		designPage = new RulesetDesignPage();
-		designPage.createControls(getContainer(), ((FileEditorInput)super.getEditorInput()).getFile());
+		IFile file = null;
+		if (super.getEditorInput() instanceof FileEditorInput) {
+			file = ((FileEditorInput)super.getEditorInput()).getFile();
+		}
+		designPage.createControls(getContainer(), file);
 		return designPage;
 	}
 	

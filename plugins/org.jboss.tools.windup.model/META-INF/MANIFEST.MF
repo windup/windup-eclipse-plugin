@@ -16,11 +16,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore.xmi,
  org.jboss.tools.windup.runtime,
  org.eclipse.jdt.core,
- org.jboss.tools.common,
  org.apache.commons.io,
  org.eclipse.jface.text,
- org.eclipse.m2e.core,
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.jboss.tools.common,
+ org.jboss.tools.common.core,
+ org.eclipse.m2e.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.model,
