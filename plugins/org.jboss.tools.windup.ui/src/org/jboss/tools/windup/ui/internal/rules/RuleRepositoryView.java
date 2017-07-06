@@ -29,7 +29,6 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -139,15 +138,7 @@ public class RuleRepositoryView extends ViewPart {
 						if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 						    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 						    try {
-						    	if (node.getRuleProvider() instanceof CustomRuleProvider) {
-						    		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RulesetEditor.ID);
-						    		MPart part = partService.findPart(RulesetEditor.ID);
-						    		RulesetEditor editor = (RulesetEditor)part.getObject();
-						    		//editor.loadRuleset((CustomRuleProvider)node.getRuleProvider());
-						    	}
-						    	else {
 						    		IDE.openEditorOnFileStore(page, fileStore);
-						    	}
 						    } catch (PartInitException e) {
 							    	WindupUIPlugin.log(e);
 							    	MessageDialog.openError(
