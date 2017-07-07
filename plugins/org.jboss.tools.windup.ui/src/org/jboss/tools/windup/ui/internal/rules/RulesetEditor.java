@@ -139,6 +139,8 @@ public class RulesetEditor {
 				
 		toolkit.decorateFormHeading(form.getForm());
 		toolkit.paintBordersFor(form.getBody());
+		
+		updateDetails(null);
 	}
 	
 	private RulesetEditorRulesSection createLeftSide(Composite parent) {
@@ -172,7 +174,8 @@ public class RulesetEditor {
 	}
 	
 	protected void createGettingStarted(Composite parent) {
-		new Label(parent, SWT.NONE).setText("");
+		parent.setBackground(toolkit.getColors().getBackground());
+		new Label(parent, SWT.NONE);
 	}
 	
 	public void updateDetails(Element element) {

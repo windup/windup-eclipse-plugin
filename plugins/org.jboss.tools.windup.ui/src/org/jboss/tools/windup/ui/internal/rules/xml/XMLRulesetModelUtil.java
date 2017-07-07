@@ -41,6 +41,7 @@ import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.TempProject;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
@@ -49,6 +50,7 @@ import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -85,7 +87,7 @@ public class XMLRulesetModelUtil {
 		String name = new File(ruleProvider.getOrigin()).getName();
 		return new TempProject().createTmpProject().getFile(name);
 	}
-	
+
 	public static List<Node> getExternalRules(String locationURI) {
 		Shell shell = Display.getDefault().getActiveShell();
 		
@@ -179,25 +181,29 @@ public class XMLRulesetModelUtil {
 		else if (provider instanceof RuleProvider) {
 			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)provider);
 		}
-		
 		if (file != null && file.exists()) {
 			try {
 				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				IEditorPart editor = IDE.openEditor(page, file);
 				if (editor != null) {
-					editor.getSite().getSelectionProvider().setSelection(new StructuredSelection(ruleNode));
-					ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
-					if (ruleNode instanceof IndexedRegion && textEditor != null) {
-						int start = ((IndexedRegion) ruleNode).getStartOffset();
-						int length = ((IndexedRegion) ruleNode).getEndOffset() - start;
-						if ((start > -1) && (length > -1)) {
-							textEditor.selectAndReveal(start, length);
+					if (editor instanceof RulesetEditorWrapper) {
+						((RulesetEditorWrapper)editor).selectAndReveal((Element)ruleNode);
+					}
+					else {
+						editor.getSite().getSelectionProvider().setSelection(new StructuredSelection(ruleNode));
+						ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
+						if (ruleNode instanceof IndexedRegion && textEditor != null) {
+							int start = ((IndexedRegion) ruleNode).getStartOffset();
+							int length = ((IndexedRegion) ruleNode).getEndOffset() - start;
+							if ((start > -1) && (length > -1)) {
+								textEditor.selectAndReveal(start, length);
+							}
 						}
 					}
 				}
 			} catch (PartInitException e) {
 				WindupUIPlugin.log(e);
-		    	MessageDialog.openError(
+		    		MessageDialog.openError(
 						Display.getDefault().getActiveShell(), 
 						Messages.openRuleset, 
 						Messages.errorOpeningRuleset);

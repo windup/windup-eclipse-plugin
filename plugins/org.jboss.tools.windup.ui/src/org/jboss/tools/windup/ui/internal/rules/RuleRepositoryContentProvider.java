@@ -113,7 +113,6 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
 			listen(provider);
-			
 			return children.stream().toArray(Object[]::new);
 		}
 		return new Object[0];
