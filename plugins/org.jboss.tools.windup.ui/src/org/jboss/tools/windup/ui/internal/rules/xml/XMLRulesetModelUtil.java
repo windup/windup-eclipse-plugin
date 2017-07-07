@@ -185,7 +185,7 @@ public class XMLRulesetModelUtil {
 			try {
 				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				IEditorPart editor = IDE.openEditor(page, file);
-				if (editor != null) {
+				if (editor != null && ruleNode != null) {
 					if (editor instanceof RulesetEditorWrapper) {
 						((RulesetEditorWrapper)editor).selectAndReveal((Element)ruleNode);
 					}

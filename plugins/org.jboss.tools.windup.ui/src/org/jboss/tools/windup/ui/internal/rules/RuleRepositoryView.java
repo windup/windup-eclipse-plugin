@@ -133,7 +133,10 @@ public class RuleRepositoryView extends ViewPart {
 					Object element = ((ITreeSelection)selection).getFirstElement();
 					if (element instanceof RulesetFileNode) {
 						RulesetFileNode node = (RulesetFileNode)element;
-						IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(node.getFile().getParent()));
+						if (node.getRuleProvider() != null) {
+							XMLRulesetModelUtil.openRuleInEditor(node.getRuleProvider(), null);
+						}
+						/*IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(node.getFile().getParent()));
 						fileStore = fileStore.getChild(node.getName());
 						if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 						    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -146,7 +149,7 @@ public class RuleRepositoryView extends ViewPart {
 											Messages.openRuleset, 
 											Messages.errorOpeningRuleset);
 						    }
-						}
+						}*/
 					}
 					else if (element instanceof Node) {
 						Node node = (Node)element;
