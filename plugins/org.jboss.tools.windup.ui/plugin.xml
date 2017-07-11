@@ -867,7 +867,7 @@
        <editor
              class="org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper"
              extensions="xml"
-             icon="icons/rules/repository-middle.gif"
+             icon="icons/rules/ruleset_editor.png"
              id="org.jboss.tools.windup.ui.rulesetEditor"
              name="Ruleset Editor">
           <contentTypeBinding

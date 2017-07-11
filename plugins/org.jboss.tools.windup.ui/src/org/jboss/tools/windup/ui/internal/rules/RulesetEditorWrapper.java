@@ -15,8 +15,10 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
@@ -40,6 +42,7 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
 	@Override
 	protected void createPages() {
+		CTabFolder folder = (CTabFolder)super.getContainer();
 		RulesetEditorOverviewPage overviewPage = new RulesetEditorOverviewPage(getContainer());
 		int index = addPage(overviewPage.getControl());
 		setPageText(index, Messages.rulesOverview);
@@ -47,9 +50,12 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		index = addPage(dependenciesPage.getControl());
 		setPageText(index, Messages.rulesEditor_dependencies);
 		super.createPages();
+		folder.getItem(index+1).setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULES_FORM));
+		folder.getItem(index+2).setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_XML));
 		RulesetEditorDocumentationPage documentationPage = new RulesetEditorDocumentationPage(getContainer());
 		index = addPage(documentationPage.getControl());
 		setPageText(index, Messages.documentationTitle);
+		folder.getItem(index).setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_REPORT));
 		RulesetExamplesPage examplesPage = new RulesetExamplesPage(getContainer());
 		index = addPage(examplesPage.getControl());
 		setPageText(index, Messages.examplesTitle);
