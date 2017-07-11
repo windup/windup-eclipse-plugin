@@ -61,9 +61,6 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	protected IStructuredModel model;
 	protected ModelQuery modelQuery;
 	
-	public ElementUiDelegate() {
-	}
-	
 	@Inject
 	private void setElement(Element element) {
 		this.element = element;

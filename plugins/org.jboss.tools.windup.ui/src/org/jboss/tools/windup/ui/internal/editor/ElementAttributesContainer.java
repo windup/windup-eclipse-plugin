@@ -31,9 +31,6 @@ public class ElementAttributesContainer extends ElementDetailsSection {
 	
 	protected List<NodeRow> rows = Lists.newArrayList();
 	
-	public ElementAttributesContainer() {
-	}
-	
     @SuppressWarnings("unchecked")
 	protected void createControls(Composite parent, int span) {
 		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);

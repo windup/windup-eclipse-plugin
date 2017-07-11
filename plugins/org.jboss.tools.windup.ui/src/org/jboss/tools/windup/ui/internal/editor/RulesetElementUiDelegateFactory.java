@@ -237,10 +237,7 @@ public class RulesetElementUiDelegateFactory {
 		Object[] getChildren();
 	}
 	
-	private static class DefaultDelegate extends ElementUiDelegate {
-		
-		public DefaultDelegate() {
-		}
+	public static class DefaultDelegate extends ElementUiDelegate {
 		
 		@Override
 		protected void createTabs() {
@@ -261,10 +258,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	private static class LinkDelegate extends ElementUiDelegate {
-		
-		public LinkDelegate() {
-		}
+	public static class LinkDelegate extends ElementUiDelegate {
 		
 		@Override
 		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
@@ -315,10 +309,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 
-	private static class JavaClassDelegate extends ElementUiDelegate {
-		
-		public JavaClassDelegate() {
-		}
+	public static class JavaClassDelegate extends ElementUiDelegate {
 		
 		@Override
 		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
@@ -330,11 +321,12 @@ public class RulesetElementUiDelegateFactory {
 			addTab(DetailsTab.class);
 		}
 		
-		private class DetailsTab extends ElementAttributesContainer {
+		public static class DetailsTab extends ElementAttributesContainer {
 			
 			@PostConstruct
 			@SuppressWarnings("unchecked")
-			public void createControls(Composite parent) {
+			public void createControls(Composite parent, CTabItem item) {
+				Composite client = super.createSection(parent, 3);
 				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 				if (ed != null) {
 					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
@@ -348,10 +340,10 @@ public class RulesetElementUiDelegateFactory {
 					    		}
 					    		ClassAttributeRow row = new ClassAttributeRow(element, node, declaration, project);
 							rows.add(row);
-							row.createContents(parent, toolkit, 2);
+							row.createContents(client, toolkit, 2);
 					    	}
 					    	else {
-					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, 3));
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 3));
 					    	}
 				    }
 				}
@@ -359,17 +351,14 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	private static class LocationDelegate extends ElementUiDelegate {
-		
-		public LocationDelegate() {
-		}
+	public static class LocationDelegate extends ElementUiDelegate {
 		
 		@Override
 		protected void createTabs() {
 			addTab(DetailsTab.class);
 		}
 		
-		private class DetailsTab extends ElementAttributesContainer {
+		public static class DetailsTab extends ElementAttributesContainer {
 			
 			private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
 				return new ChoiceAttributeRow(element.getParentNode(), element, cmNode) {
@@ -431,10 +420,11 @@ public class RulesetElementUiDelegateFactory {
 			
 			@PostConstruct
 			public void createControls(Composite parent) {
+				Composite client = super.createSection(parent, 2);
 				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 				ChoiceAttributeRow row = createLocationRow(ed);
 				rows.add(row);
-				row.createContents(parent, toolkit, 2);
+				row.createContents(client, toolkit, 2);
 			}
 		}
 		
@@ -445,20 +435,17 @@ public class RulesetElementUiDelegateFactory {
 	}
 	
 	
-	private static class HintDelegate extends ElementUiDelegate {
+	public static class HintDelegate extends ElementUiDelegate {
 		
 		private CheckboxTreeViewer tagsTreeViewer;
 		private CheckboxTreeViewer linksTreeViewer;
-		
-		public HintDelegate() {
-		}
 		
 		@Override
 		protected void createTabs() {
 			addTab(DetailsTab.class);
 		}
 		
-		private class DetailsTab extends ElementAttributesContainer {
+		public static class DetailsTab extends ElementAttributesContainer {
 			private ChoiceAttributeRow createEffortRow(Node node, CMNode cmNode) {
 				return new ChoiceAttributeRow(element, node, cmNode) {
 					@Override
@@ -520,7 +507,8 @@ public class RulesetElementUiDelegateFactory {
 			
 			@PostConstruct
 			@SuppressWarnings("unchecked")
-			public void createControls(Composite parent) {
+			public void createControls(Composite parent, CTabItem item) {
+				Composite client = super.createSection(parent, 2);
 				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 				if (ed != null) {
 					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
@@ -529,10 +517,10 @@ public class RulesetElementUiDelegateFactory {
 					    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
 					    		ChoiceAttributeRow row = createEffortRow(node, declaration);
 					    		rows.add(row);
-					    		row.createContents(parent, toolkit, 2);
+					    		row.createContents(client, toolkit, 2);
 					    	}
 					    	else {
-					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, 2));
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 2));
 					    	}
 				    }
 				}

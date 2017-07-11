@@ -24,7 +24,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.google.common.collect.Maps;
@@ -40,9 +39,6 @@ public class BaseTabStack {
 	@Inject @Optional protected FormToolkit toolkit;
 	
 	protected CTabFolder folder;
-	
-	public BaseTabStack() {
-	}
 	
 	protected void createFolder(Composite parent) {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
