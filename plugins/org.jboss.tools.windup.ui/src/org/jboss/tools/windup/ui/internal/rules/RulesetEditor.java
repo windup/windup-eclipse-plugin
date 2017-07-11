@@ -103,8 +103,8 @@ public class RulesetEditor {
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
 		this.form = toolkit.createScrolledForm(parent);
-		form.setText(rulesEditor_tabTitle);
-		form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
+		//form.setText(rulesEditor_tabTitle);
+		//form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
 		menuService.populateContributionManager((ContributionManager)form.getToolBarManager(), TOOLBAR_ID);
 		
@@ -135,7 +135,7 @@ public class RulesetEditor {
 		
 		sash.setWeights(new int[]{left, right});
 				
-		toolkit.decorateFormHeading(form.getForm());
+		//toolkit.decorateFormHeading(form.getForm());
 		toolkit.paintBordersFor(form.getBody());
 		
 		updateDetails(null);

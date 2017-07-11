@@ -42,13 +42,16 @@ public class BaseTabStack {
 	
 	protected void createFolder(Composite parent) {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
-		this.folder = new CTabFolder(parent, SWT.BOTTOM | SWT.FLAT);
+		this.folder = new CTabFolder(parent, SWT.BOTTOM|SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(folder);
+		folder.setBackground(toolkit.getColors().getBackground());
+		parent.setBackground(toolkit.getColors().getBackground());
+		parent.getParent().setBackground(toolkit.getColors().getBackground());
 	}
 	
 	protected <T> TabWrapper addTab(Class<T> clazz) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
-		Composite parent = new Composite(folder, SWT.NONE);
+		Composite parent = toolkit.createComposite(folder);
 		GridLayoutFactory.fillDefaults().applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		item.setControl(parent);

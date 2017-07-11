@@ -117,6 +117,12 @@ public class Messages extends NLS
     public static String openRuleset;
     public static String errorOpeningRuleset;
     public static String rulesMenuNew;
+    
+    public static String ruleElementDetails;
+
+    public static String tagsTab;
+    public static String linksTab;
+    public static String messageTab;
 
     public static String report_has_no_information_on_resource;
 

@@ -10,12 +10,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate.IElementDetailsContainer;
 import org.w3c.dom.Element;
 
@@ -32,12 +34,12 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	
 	protected Composite createSection(Composite parent, int columns) {
 		Composite container = toolkit.createComposite(parent);
-		GridLayoutFactory.fillDefaults().margins(0, 5).applyTo(container);
+		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		
 		Section section = toolkit.createSection(container, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText("Details"); //$NON-NLS-1$
+		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
 		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));

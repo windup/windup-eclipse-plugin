@@ -141,7 +141,7 @@ public class RulesetEditorRulesSection {
 		parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		
 		Composite container = toolkit.createComposite(parent);
-		GridLayoutFactory.fillDefaults().margins(0, 5).applyTo(container);
+		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		
 		Section section = toolkit.createSection(container, Section.TITLE_BAR);

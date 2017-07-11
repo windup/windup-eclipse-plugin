@@ -18,8 +18,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -78,8 +82,8 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Override
 	public void setFocus() {
-		folder.getSelection().getControl().setFocus();
-		folder.getSelection().getControl().forceFocus();
+		//folder.getSelection().getControl().setFocus();
+		//folder.getSelection().getControl().forceFocus();
 		/*for (TabWrapper wrapper : tabs.values()) {
 			ContextInjectionFactory.invoke(wrapper.getObject(), 
 					Focus.class, wrapper.getContext(), null);
@@ -129,6 +133,8 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		return false;
 	}
 	
+	protected Control control;
+	
 	@Override
 	public Control getControl() {
 		if (folder == null) {
@@ -138,6 +144,20 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		}
 		update();
 		return folder;
+	}
+	
+	protected <T> TabWrapper addTab(Class<T> clazz) {
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		Composite parent = toolkit.createComposite(folder);
+		GridLayoutFactory.fillDefaults().applyTo(parent);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+		item.setControl(parent);
+		IEclipseContext child = createTabContext(parent);
+		child.set(CTabItem.class, item);
+		T object = create(clazz, child);
+		TabWrapper wrapper = new TabWrapper(object, child, item);
+		tabs.put(item, wrapper);
+		return wrapper;
 	}
 	
 	protected abstract void createTabs();
