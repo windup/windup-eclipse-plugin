@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.issues.WindupIssuesTab;
 import org.jboss.tools.windup.ui.internal.editor.launch.WindupConfigurationTab;
 import org.jboss.tools.windup.ui.internal.editor.report.WindupReportTab;
+import org.jboss.tools.windup.ui.internal.rules.BaseTabStack;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
 import com.google.common.base.Objects;
@@ -30,7 +31,7 @@ import com.google.common.base.Objects;
 /**
  * Represents a stack of tabs within the Windup editor.
  */
-public class WindupTabStack extends TabStack {
+public class WindupTabStack extends BaseTabStack {
 	
 	@Inject private ConfigurationElement configuration;
 	
@@ -38,9 +39,8 @@ public class WindupTabStack extends TabStack {
 	private TabWrapper reportTab;
 	
 	@PostConstruct
-	@Override
 	protected void create(Composite parent) {
-		super.create(parent);
+		//super.create(parent);
 		addTab(WindupConfigurationTab.class);
 		updateTabs();
 		folder.setSelection(0);

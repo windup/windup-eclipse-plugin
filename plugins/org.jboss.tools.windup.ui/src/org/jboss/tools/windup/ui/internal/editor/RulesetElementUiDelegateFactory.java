@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
@@ -44,6 +45,7 @@ import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -82,6 +84,9 @@ import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.rules.ElementDetailsSection;
+import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -214,7 +219,7 @@ public class RulesetElementUiDelegateFactory {
 				break;
 			}
 			default: {
-				uiDelegate = createControls(DefaultElementAttributesComposite.class, context);
+				uiDelegate = createControls(DefaultDelegate.class, context);
 			}
 		}
 		return uiDelegate;
@@ -232,176 +237,205 @@ public class RulesetElementUiDelegateFactory {
 		Object[] getChildren();
 	}
 	
-	private static class LinkDelegate extends DefaultElementAttributesComposite {
+	private static class DefaultDelegate extends ElementUiDelegate {
 		
-		private ReferenceNodeRow hrefRow;
+		public DefaultDelegate() {
+		}
 		
-		@Inject private EPartService partService;
+		@Override
+		protected void createTabs() {
+			addTab(DetailsTab.class);
+		}
+		
+		public static class DetailsTab extends ElementAttributesContainer {
+			
+			public DetailsTab() {
+			}
+			
+			@PostConstruct
+			private void createControls(Composite parent, CTabItem item) {
+				item.setText("Details");
+				Composite client = super.createSection(parent, 2);
+				super.createControls(client, 2);
+			}
+		}
+	}
+	
+	private static class LinkDelegate extends ElementUiDelegate {
 		
 		public LinkDelegate() {
 		}
 		
 		@Override
-		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent) {
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-		    		Node node = findNode(element, ed, declaration);
-			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
-			    		IProject project = context.get(IFile.class).getProject();
-						rows.add(hrefRow = new ReferenceNodeRow(element, node, declaration) {
-							@Override
-							protected void openReference() {
-								if (node != null && !node.getNodeValue().isEmpty()) {
-									try {
-										PlatformUI.getWorkbench().getBrowserSupport().
-											createBrowser(WindupUIPlugin.PLUGIN_ID).openURL(new URL(node.getNodeValue()));
-									}
-									catch (Exception e) {
-										WindupUIPlugin.log(e);
-									}
-								}
-							}
-						});
-						hrefRow.createContents(parent, toolkit, 2);
-			    	}
-			    	else {
-			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 2));
-			    	}
-			    }
-			}
-		}
-		
-		@Override
-		protected int computeColumns() {
-			return 2;
-		}
-		
-		@Override
 		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
 			return true;
 		}
+		
+		@Override
+		protected void createTabs() {
+			addTab(DetailsTab.class);
+		}
+		
+		private class DetailsTab extends ElementAttributesContainer {
+			
+			@PostConstruct
+			@SuppressWarnings("unchecked")
+			private void createControls(Composite parent, CTabItem item) {
+				item.setText("Details");
+				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+				if (ed != null) {
+					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+				    for (CMAttributeDeclaration declaration : availableAttributeList) {
+				    		Node node = findNode(element, ed, declaration);
+					    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
+					    		IProject project = context.get(IFile.class).getProject();
+					    		ReferenceNodeRow row = new ReferenceNodeRow(element, node, declaration) {
+								@Override
+								protected void openReference() {
+									if (node != null && !node.getNodeValue().isEmpty()) {
+									 	try {
+											PlatformUI.getWorkbench().getBrowserSupport().
+												createBrowser(WindupUIPlugin.PLUGIN_ID).openURL(new URL(node.getNodeValue()));
+										}
+										catch (Exception e) {
+											WindupUIPlugin.log(e);
+										}
+									}
+								}
+					    		}; 
+							rows.add(row);
+							row.createContents(parent, toolkit, 2);
+					    	}
+					    	else {
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, 2));
+					    	}
+				    }
+				}
+			}
+		}
 	}
 
-	private static class JavaClassDelegate extends DefaultElementAttributesComposite {
-		
-		private ClassAttributeRow classRow;
+	private static class JavaClassDelegate extends ElementUiDelegate {
 		
 		public JavaClassDelegate() {
 		}
 		
 		@Override
-		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent) {
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-		    		Node node = findNode(element, ed, declaration);
-			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.JAVA_CLASS_REFERENCES)) {
-			    		IFile file = context.get(IFile.class);
-			    		IProject project = null;
-			    		if (file != null) {
-			    			project = file.getProject();
-			    		}
-					rows.add(classRow = new ClassAttributeRow(element, node, declaration, project));
-					classRow.createContents(parent, toolkit, 2);
-			    	}
-			    	else {
-			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 3));
-			    	}
-			    }
-			}
-		}
-		
-		@Override
-		protected int computeColumns() {
-			return 3;
-		}
-		
-		@Override
 		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
 			return true;
 		}
+		
+		@Override
+		protected void createTabs() {
+			addTab(DetailsTab.class);
+		}
+		
+		private class DetailsTab extends ElementAttributesContainer {
+			
+			@PostConstruct
+			@SuppressWarnings("unchecked")
+			public void createControls(Composite parent) {
+				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+				if (ed != null) {
+					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+				    for (CMAttributeDeclaration declaration : availableAttributeList) {
+				    		Node node = findNode(element, ed, declaration);
+					    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.JAVA_CLASS_REFERENCES)) {
+					    		IFile file = context.get(IFile.class);
+					    		IProject project = null;
+					    		if (file != null) {
+					    			project = file.getProject();
+					    		}
+					    		ClassAttributeRow row = new ClassAttributeRow(element, node, declaration, project);
+							rows.add(row);
+							row.createContents(parent, toolkit, 2);
+					    	}
+					    	else {
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, 3));
+					    	}
+				    }
+				}
+			}
+		}
 	}
 	
-	private static class LocationDelegate extends DefaultElementAttributesComposite {
-		
-		private ChoiceAttributeRow locationRow;
+	private static class LocationDelegate extends ElementUiDelegate {
 		
 		public LocationDelegate() {
 		}
 		
-		private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
-			return new ChoiceAttributeRow(element.getParentNode(), element, cmNode) {
-				
-				@Override
-				protected List<String> getOptions() {
-					return Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).map(e -> computeUiValue(e)).
-							collect(Collectors.toList());
-				}
-				
-				private String computeUiValue(JAVA_CLASS_REFERENCE_LOCATION location) {
-					return location.getLabel() + " - " + location.getDescription();
-				}
+		@Override
+		protected void createTabs() {
+			addTab(DetailsTab.class);
+		}
+		
+		private class DetailsTab extends ElementAttributesContainer {
+			
+			private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
+				return new ChoiceAttributeRow(element.getParentNode(), element, cmNode) {
+					
+					@Override
+					protected List<String> getOptions() {
+						return Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).map(e -> computeUiValue(e)).
+								collect(Collectors.toList());
+					}
+					
+					private String computeUiValue(JAVA_CLASS_REFERENCE_LOCATION location) {
+						return location.getLabel() + " - " + location.getDescription();
+					}
 
-				private org.w3c.dom.Text findTextChild(Element element) {
-					for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
-						if (child instanceof org.w3c.dom.Text) {
-							return (org.w3c.dom.Text)child;
+					private org.w3c.dom.Text findTextChild(Element element) {
+						for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
+							if (child instanceof org.w3c.dom.Text) {
+								return (org.w3c.dom.Text)child;
+							}
 						}
+						return null;
 					}
-					return null;
-				}
-				
-				@Override
-				protected String modelToDisplayValue(String modelValue) {
-					if (modelValue == null || modelValue.isEmpty()) {
+					
+					@Override
+					protected String modelToDisplayValue(String modelValue) {
+						if (modelValue == null || modelValue.isEmpty()) {
+							return "";
+						}
+						
+						Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
+							return Objects.equal(e.getLabel(), modelValue);
+						}).findFirst();
+						
+						if (location.isPresent()) {
+							return computeUiValue(location.get());
+						}
+						
 						return "";
 					}
 					
-					Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-						return Objects.equal(e.getLabel(), modelValue);
-					}).findFirst();
-					
-					if (location.isPresent()) {
-						return computeUiValue(location.get());
-					}
-					
-					return "";
-				}
-				
-				@Override
-				protected String displayToModelValue(String uiValue) {
-					if (uiValue.isEmpty()) {
+					@Override
+					protected String displayToModelValue(String uiValue) {
+						if (uiValue.isEmpty()) {
+							return "";
+						}
+						
+						Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
+							return Objects.equal(uiValue, computeUiValue(e));
+						}).findFirst();
+						
+						if (location.isPresent()) {
+							return location.get().getLabel();
+						}
+						
 						return "";
 					}
-					
-					Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-						return Objects.equal(uiValue, computeUiValue(e));
-					}).findFirst();
-					
-					if (location.isPresent()) {
-						return location.get().getLabel();
-					}
-					
-					return "";
-				}
-			};
-		}
-		
-		@Override
-		public void createControls(Composite parent) {
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			rows.add(locationRow = createLocationRow(ed));
-			locationRow.createContents(parent, toolkit, 2);
-		}
-		
-		@Override
-		protected int computeColumns() {
-			return 2;
+				};
+			}
+			
+			@PostConstruct
+			public void createControls(Composite parent) {
+				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+				ChoiceAttributeRow row = createLocationRow(ed);
+				rows.add(row);
+				row.createContents(parent, toolkit, 2);
+			}
 		}
 		
 		@Override
@@ -411,9 +445,7 @@ public class RulesetElementUiDelegateFactory {
 	}
 	
 	
-	private static class HintDelegate extends DefaultElementAttributesComposite {
-		
-		private ChoiceAttributeRow effortRow;
+	private static class HintDelegate extends ElementUiDelegate {
 		
 		private CheckboxTreeViewer tagsTreeViewer;
 		private CheckboxTreeViewer linksTreeViewer;
@@ -421,89 +453,93 @@ public class RulesetElementUiDelegateFactory {
 		public HintDelegate() {
 		}
 		
-		private ChoiceAttributeRow createEfforRow(Node node, CMNode cmNode) {
-			return new ChoiceAttributeRow(element, node, cmNode) {
-				@Override
-				protected List<String> getOptions() {
-					return Arrays.stream(HINT_EFFORT.values()).map(e -> computeUiValue(e)).
-							collect(Collectors.toList());
-				}
-				@Override
-				protected String modelToDisplayValue(String modelValue) {
-					if (modelValue == null || modelValue.isEmpty()) {
-						return "";
-					}
-					
-					int effort;
-					
-					try {
-						effort = Integer.valueOf(modelValue);
-					} catch (Exception e) {
-						return "";
-					}
-					
-					Optional<HINT_EFFORT> hintEffort = Arrays.stream(HINT_EFFORT.values()).filter(e -> {
-						return Objects.equal(e.getEffort(), effort);
-					}).findFirst();
-					
-					if(hintEffort.isPresent()) {
-						return computeUiValue(hintEffort.get());
-					}
-
-					return "";
-				}
-				
-				@Override
-				protected String displayToModelValue(String uiValue) {
-					if (uiValue.isEmpty()) {
-						return "";
-					}
-					
-					Optional<HINT_EFFORT> hintEffort = Arrays.stream(HINT_EFFORT.values()).filter(e -> {
-						return Objects.equal(uiValue, computeUiValue(e));
-					}).findFirst(); 
-					
-					if (hintEffort.isPresent()) {
-						return String.valueOf(hintEffort.get().effort);
-					}
-					return "";
-				}
-				
-				private String computeUiValue(HINT_EFFORT effort) {
-					return effort.getLabel() + " - " + effort.getDescription();
-				}
-				
-				@Override
-				public String getHoverContent(Control c) {
-					return Messages.RulesetEditor_hintEffortTooltip;
-				}
-			};
+		@Override
+		protected void createTabs() {
+			addTab(DetailsTab.class);
 		}
 		
-		@Override
-		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent) {
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-		    		Node node = findNode(element, ed, declaration);
-			    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
-			    		rows.add(effortRow = createEfforRow(node, declaration));
-			    		effortRow.createContents(parent, toolkit, 2);
-			    	}
-			    	else {
-			    		rows.add(createTextAttributeRow(element, node, declaration, parent, 2));
-			    	}
-			    }
+		private class DetailsTab extends ElementAttributesContainer {
+			private ChoiceAttributeRow createEffortRow(Node node, CMNode cmNode) {
+				return new ChoiceAttributeRow(element, node, cmNode) {
+					@Override
+					protected List<String> getOptions() {
+						return Arrays.stream(HINT_EFFORT.values()).map(e -> computeUiValue(e)).
+								collect(Collectors.toList());
+					}
+					@Override
+					protected String modelToDisplayValue(String modelValue) {
+						if (modelValue == null || modelValue.isEmpty()) {
+							return "";
+						}
+						
+						int effort;
+						
+						try {
+							effort = Integer.valueOf(modelValue);
+						} catch (Exception e) {
+							return "";
+						}
+						
+						Optional<HINT_EFFORT> hintEffort = Arrays.stream(HINT_EFFORT.values()).filter(e -> {
+							return Objects.equal(e.getEffort(), effort);
+						}).findFirst();
+						
+						if(hintEffort.isPresent()) {
+							return computeUiValue(hintEffort.get());
+						}
+
+						return "";
+					}
+					
+					@Override
+					protected String displayToModelValue(String uiValue) {
+						if (uiValue.isEmpty()) {
+							return "";
+						}
+						
+						Optional<HINT_EFFORT> hintEffort = Arrays.stream(HINT_EFFORT.values()).filter(e -> {
+							return Objects.equal(uiValue, computeUiValue(e));
+						}).findFirst(); 
+						
+						if (hintEffort.isPresent()) {
+							return String.valueOf(hintEffort.get().effort);
+						}
+						return "";
+					}
+					
+					private String computeUiValue(HINT_EFFORT effort) {
+						return effort.getLabel() + " - " + effort.getDescription();
+					}
+					
+					@Override
+					public String getHoverContent(Control c) {
+						return Messages.RulesetEditor_hintEffortTooltip;
+					}
+				};
+			}
+			
+			@PostConstruct
+			@SuppressWarnings("unchecked")
+			public void createControls(Composite parent) {
+				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+				if (ed != null) {
+					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+				    for (CMAttributeDeclaration declaration : availableAttributeList) {
+				    		Node node = findNode(element, ed, declaration);
+					    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
+					    		ChoiceAttributeRow row = createEffortRow(node, declaration);
+					    		rows.add(row);
+					    		row.createContents(parent, toolkit, 2);
+					    	}
+					    	else {
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, 2));
+					    	}
+				    }
+				}
 			}
 		}
 		
-		@Override
-		protected int computeColumns() {
-			return 2;
-		}
-		
+		/*
 		@Override
 		protected Composite createClient() {
 			Composite client = super.createClient();
@@ -513,7 +549,7 @@ public class RulesetElementUiDelegateFactory {
 			createMessageSection();
 			
 			return client;
-		}
+		}*/
 		
 		@Override
 		public Object[] getChildren() {
@@ -529,9 +565,9 @@ public class RulesetElementUiDelegateFactory {
 			}
 			return result;
 		}
-		
+		/*
 		private Section createTagsSection() {
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
+			Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
 			section.addExpansionListener(new ExpansionAdapter() {
 				@Override
@@ -577,7 +613,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		private Section createLinksSection() {
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
+			Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
 			section.addExpansionListener(new ExpansionAdapter() {
 				@Override
@@ -598,7 +634,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		private Section createMessageSection() {
-			Section section = ElementAttributesComposite.createSection(parent, toolkit, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
+			Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(Messages.RulesetEditor_messageSectionDescription);
 			section.addExpansionListener(new ExpansionAdapter() {
 				@Override
@@ -608,6 +644,7 @@ public class RulesetElementUiDelegateFactory {
 			});
 			return section;
 		}
+		*/
 	}
 	
 	public static abstract class NodeRow implements IControlHoverContentProvider {

@@ -13,58 +13,49 @@ package org.jboss.tools.windup.ui.internal.editor;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
-import org.w3c.dom.Element;
+import org.jboss.tools.windup.ui.internal.rules.ElementDetailsSection;
+import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("restriction")
-public class DefaultElementAttributesComposite extends ElementAttributesComposite {
+public class ElementAttributesContainer extends ElementDetailsSection {
 	
 	protected List<NodeRow> rows = Lists.newArrayList();
-
+	
+	public ElementAttributesContainer() {
+	}
+	
     @SuppressWarnings("unchecked")
-	@Override
-	protected void createControls(Composite parent) {
+	protected void createControls(Composite parent, int span) {
 		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 		if (ed != null) {
 			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 		    for (CMAttributeDeclaration declaration : availableAttributeList) {
-		    	Node node = findNode(element, ed, declaration);
-		    	rows.add(createTextAttributeRow(element, node, declaration, parent, getSpan()));
+		    		Node node = ElementUiDelegate.findNode(element, ed, declaration);
+		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, /*getSpan()*/ span));
 		    }
 		    if (availableAttributeList.isEmpty() && !Boolean.TRUE.equals(ed.getProperty("isInferred"))) { //$NON-NLS-1$
-		    	rows.add(createTextAttributeRow(element.getParentNode(), element, ed, parent, getSpan()));
+		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element.getParentNode(), toolkit, element, ed, parent, /*getSpan()*/ span));
 		    }
 		}
 	}
     
-	protected Node findNode(Element parent, CMElementDeclaration ed, CMNode cmNode) {
-		Node node = null;
-		switch (cmNode.getNodeType()) {
-			case CMNode.ATTRIBUTE_DECLARATION: {
-				String attributeName = DOMNamespaceHelper.computeName(cmNode, parent, null);
-				node = parent.getAttributeNode(attributeName);
-				break;
-			}
-		}
-		return node;
-	}
-    
-    protected TextNodeRow createTextAttributeRow(Node parentNode, Node node, CMNode cmNode, Composite parent, int columns) {
-    	TextNodeRow row = new TextNodeRow(parentNode, node, cmNode);
+    protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, Node node, CMNode cmNode, Composite parent, int columns) {
+    		TextNodeRow row = new TextNodeRow(parentNode, node, cmNode);
 		row.createContents(parent, toolkit, columns);
 		return row;
     }
     
-	@Override
+    @Override
 	public void update() {
 		rows.forEach(row -> row.bind());
 	}

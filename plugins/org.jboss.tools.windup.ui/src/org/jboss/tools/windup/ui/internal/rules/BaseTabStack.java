@@ -8,21 +8,23 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.editor;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.google.common.collect.Maps;
@@ -30,17 +32,20 @@ import com.google.common.collect.Maps;
 /**
  * Represents a stack of stabs.
  */
-public class TabStack {
+public class BaseTabStack {
 
 	protected Map<CTabItem, TabWrapper> tabs = Maps.newHashMap();
 	
-	@Inject private IEclipseContext context;
-	@Inject private FormToolkit toolkit;
+	@Inject protected IEclipseContext context;
+	@Inject @Optional protected FormToolkit toolkit;
 	
 	protected CTabFolder folder;
 	
-	@PostConstruct
-	protected void create(Composite parent) {
+	public BaseTabStack() {
+	}
+	
+	protected void createFolder(Composite parent) {
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		this.folder = new CTabFolder(parent, SWT.BOTTOM | SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(folder);
 	}
@@ -48,7 +53,8 @@ public class TabStack {
 	protected <T> TabWrapper addTab(Class<T> clazz) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		Composite parent = new Composite(folder, SWT.NONE);
-		parent.setLayout(new FillLayout());
+		GridLayoutFactory.fillDefaults().applyTo(parent);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		item.setControl(parent);
 		IEclipseContext child = createTabContext(parent);
 		child.set(CTabItem.class, item);
@@ -69,7 +75,7 @@ public class TabStack {
 		return ContextInjectionFactory.make(clazz, context);
 	}
 	
-	public Composite getControl() {
+	public Control getControl() {
 		return folder;
 	}
 	

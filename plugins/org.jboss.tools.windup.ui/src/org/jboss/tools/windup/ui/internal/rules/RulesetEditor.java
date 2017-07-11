@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
-import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
@@ -56,7 +55,6 @@ public class RulesetEditor {
 	@Inject private Composite container;
 	@Inject private IEclipseContext context;
 	@Inject private IMenuService menuService;
-	@Inject private ModelService modelService;
 	
 	@Inject	private RulesetElementUiDelegateRegistry widgetRegistry;
 	

@@ -68,6 +68,7 @@ import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -251,7 +252,7 @@ public class RulesetEditorRulesSection {
 		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(rulesElement);
 		if (ed != null) {
 			CMElementDeclaration cmNode = (CMElementDeclaration)modelQuery.getAvailableContent(rulesElement, ed, ModelQuery.VALIDITY_STRICT).get(1);
-			AddNodeAction action = (AddNodeAction)ElementAttributesComposite.createAddElementAction(
+			AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
 					model, rulesElement, cmNode, rulesElement.getChildNodes().getLength(), treeViewer);
 			action.run();
 			List<Node> result = action.getResult();
@@ -330,6 +331,7 @@ public class RulesetEditorRulesSection {
 		control.setMenu(menu);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = treeViewer.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;

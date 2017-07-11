@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.editor;
+package org.jboss.tools.windup.ui.internal.rules;
 
 import java.util.List;
 
@@ -18,55 +18,51 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
+import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
 import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Represents a stack of tabs.
+ */
 @SuppressWarnings({"restriction"})
-public abstract class ElementAttributesComposite implements IElementUiDelegate {
+public abstract class ElementUiDelegate extends BaseTabStack implements IElementUiDelegate {
 	
 	@Inject @Optional protected FormToolkit toolkit;
-	@Inject @Optional protected Composite parent;
 	@Inject @Optional protected IEclipseContext context;
 	@Inject @Optional protected ScrolledForm form;
-	protected Element element;
+	@Inject @Optional protected Composite parent;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
+	protected TreeContentHelper contentHelper = new TreeContentHelper();
 	
-	protected Section section;
-	protected Control control;
-	
+	protected Element element;
 	protected IStructuredModel model;
 	protected ModelQuery modelQuery;
+	
+	public ElementUiDelegate() {
+	}
 	
 	@Inject
 	private void setElement(Element element) {
@@ -75,79 +71,29 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		this.modelQuery = ModelQueryUtil.getModelQuery(model);
 	}
 	
-	protected TreeContentHelper contentHelper = new TreeContentHelper();
-	
-	public Control getControl() {
-		if (control == null) {
-			createControls(createClient());
+	@Override
+	public void update() {
+		for (TabWrapper wrapper : tabs.values()) {
+			IElementDetailsContainer container = (IElementDetailsContainer)wrapper.getObject();
+			container.update();
 		}
-		update();
-		return control;
-	}
-	
-	protected Composite createClient() {
-		Composite container = toolkit.createComposite(parent);
-		GridLayoutFactory.fillDefaults().margins(0, 5).applyTo(container);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		
-		parent = container;
-		
-		this.section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText("Details"); //$NON-NLS-1$
-		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
-		
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		
-		Composite client = toolkit.createComposite(section);
-		int span = computeColumns();
-		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, span);
-		client.setLayout(glayout);
-		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		toolkit.paintBordersFor(client);
-		section.setClient(client);
-		
-		this.control = container;
-		return client;
-	}
-	
-	public static Section createSection(Composite parent, FormToolkit toolkit, String title, int style) {
-		Section section = toolkit.createSection(parent, style);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(title);
-		
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(section);;
-		
-		Composite client = toolkit.createComposite(section);
-		GridLayoutFactory.fillDefaults().applyTo(client);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
-		
-		toolkit.paintBordersFor(client);
-		section.setClient(client);
-		return section;
-	}
-	
-	protected int computeColumns() {
-		return 2;
 	}
 	
 	@Override
 	public void setFocus() {
+		folder.getSelection().getControl().setFocus();
+		folder.getSelection().getControl().forceFocus();
+		/*for (TabWrapper wrapper : tabs.values()) {
+			ContextInjectionFactory.invoke(wrapper.getObject(), 
+					Focus.class, wrapper.getContext(), null);
+		}*/
+	}
+	
+	/*@Override
+	public void setFocus() {
 		section.getClient().setFocus();
 		section.getClient().forceFocus();
-	}
-	
-	protected void createLabel(Composite parent, String text) {
-		Label label = toolkit.createLabel(parent, text, SWT.NULL);
-		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-	}
-	
-	protected abstract void createControls(Composite parent);
-	
-	public abstract void update();
+	}*/
 	
 	@Override
 	public void fillContextMenu(IMenuManager manager, TreeViewer treeViewer) {
@@ -171,7 +117,7 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 					switch (cmNodeType) {
 						case CMNode.ELEMENT_DECLARATION : {
 							if (!shouldFilterElementInsertAction(action)) {
-								actionList.add(ElementAttributesComposite.createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex(), treeViewer));
+								actionList.add(createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex(), treeViewer));
 							}
 							break;
 						}
@@ -184,6 +130,28 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 	
 	protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
 		return false;
+	}
+	
+	@Override
+	public Control getControl() {
+		if (folder == null) {
+			super.createFolder(parent);
+			createTabs();
+			folder.setSelection(0);
+		}
+		update();
+		return folder;
+	}
+	
+	protected abstract void createTabs();
+	
+	@Override
+	protected IEclipseContext createTabContext(Composite parent) {
+		IEclipseContext context = super.createTabContext(parent);
+		context.set(Element.class, element);
+		context.set(IStructuredModel.class, model);
+		context.set(ModelQuery.class, modelQuery);
+		return context;
 	}
 	
 	public static Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index, TreeViewer treeViewer) {
@@ -209,7 +177,19 @@ public abstract class ElementAttributesComposite implements IElementUiDelegate {
 		return contentHelper.getChildren(element);
 	}
 	
-	protected int getSpan() {
-		return 2;
+	public static Node findNode(Element parent, CMElementDeclaration ed, CMNode cmNode) {
+		Node node = null;
+		switch (cmNode.getNodeType()) {
+			case CMNode.ATTRIBUTE_DECLARATION: {
+				String attributeName = DOMNamespaceHelper.computeName(cmNode, parent, null);
+				node = parent.getAttributeNode(attributeName);
+				break;
+			}
+		}
+		return node;
+	}
+	
+	public static interface IElementDetailsContainer {
+		void update();
 	}
 }
