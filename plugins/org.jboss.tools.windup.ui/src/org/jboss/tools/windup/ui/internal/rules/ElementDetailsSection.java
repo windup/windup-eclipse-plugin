@@ -13,8 +13,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -28,16 +32,13 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	@Inject protected ModelQuery modelQuery;
 	@Inject protected FormToolkit toolkit;
 	@Inject protected IEclipseContext context;
+	@Inject protected ScrolledForm form;
 	
 	@Override
 	public abstract void update();
 	
 	protected Composite createSection(Composite parent, int columns) {
-		Composite container = toolkit.createComposite(parent);
-		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(container);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		
-		Section section = toolkit.createSection(container, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
 		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
@@ -54,11 +55,18 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		
+		section.setExpanded(true);
 		return client;
 	}
 	
 	protected Section createSection(Composite parent, String title, int style) {
 		Section section = toolkit.createSection(parent, style);
+		section.addExpansionListener(new ExpansionAdapter() {
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				form.reflow(true);
+			}
+		});
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(title);
 		

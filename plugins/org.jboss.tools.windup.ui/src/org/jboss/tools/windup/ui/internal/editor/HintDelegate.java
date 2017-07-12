@@ -12,26 +12,44 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.HINT_EFFORT;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @SuppressWarnings("restriction")
 public class HintDelegate extends ElementUiDelegate {
@@ -45,6 +63,9 @@ public class HintDelegate extends ElementUiDelegate {
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
+		
+		private CheckboxTreeViewer tagsTreeViewer;
+		
 		private ChoiceAttributeRow createEffortRow(Node node, CMNode cmNode) {
 			return new ChoiceAttributeRow(element, node, cmNode) {
 				@Override
@@ -124,7 +145,67 @@ public class HintDelegate extends ElementUiDelegate {
 				    	}
 			    }
 			}
+			createTagsSection(parent);
 		}
+		
+		private Section createTagsSection(Composite parent) {
+			Section section = createSection(parent, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.NO_TITLE_FOCUS_BOX);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
+			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
+			tagsTreeViewer.setContentProvider(new TreeContentProvider());
+			tagsTreeViewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((Node)element).getTextContent();
+				}
+				@Override
+				public Image getImage(Object element) {
+					return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_TAG);
+				}
+			});
+			tagsTreeViewer.setAutoExpandLevel(0);
+			
+			Tree tree = tagsTreeViewer.getTree();
+			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 50).applyTo(tree);
+			
+			tagsTreeViewer.addCheckStateListener(new ICheckStateListener() {
+				@Override
+				public void checkStateChanged(CheckStateChangedEvent event) {
+					Node tagNode = (Node)event.getElement();
+					
+				}
+			});
+			loadTags();
+			section.setExpanded(true);
+			return section;
+		}
+		
+		@Override
+		public void update() {
+			super.update();
+			loadTags();
+		}
+		
+		private void loadTags() {
+			Map<String, Node> tags = Maps.newLinkedHashMap();
+			NodeList list = element.getOwnerDocument().getElementsByTagName(RulesetConstants.TAG_NAME);
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				if (!tags.containsKey(node.getTextContent())) {
+					tags.put(node.getTextContent(), node);
+				}
+			}
+			tagsTreeViewer.setAllChecked(false);
+			tagsTreeViewer.setInput(tags.values().toArray());
+			NodeList tagList = element.getElementsByTagName(RulesetConstants.TAG_NAME);
+			for (int i = 0; i < tagList.getLength(); i++) {
+				Node tagNode = tagList.item(i);
+				tagNode = tags.get(tagNode.getTextContent());
+				tagsTreeViewer.setChecked(tagNode, true);
+			}
+		}
+		
 	}
 	
 	public static class TagsTab extends ElementAttributesContainer {
@@ -221,7 +302,8 @@ public class HintDelegate extends ElementUiDelegate {
 			result = Arrays.stream(result).filter(n -> {
 				if (n instanceof Node) {
 					return !Objects.equal(((Node)n).getNodeName(), RulesetConstants.TAG_NAME) &&
-								!Objects.equal(((Node)n).getNodeName(), RulesetConstants.LINK_NAME);
+								!Objects.equal(((Node)n).getNodeName(), RulesetConstants.LINK_NAME) &&
+								 	!Objects.equal(((Node)n).getNodeName(), RulesetConstants.MESSAGE);
 				}
 				return true;
 			}).collect(Collectors.toList()).toArray();
