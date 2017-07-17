@@ -64,12 +64,15 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	protected Element element;
 	protected IStructuredModel model;
 	protected ModelQuery modelQuery;
+	protected CMElementDeclaration elementDeclaration;
+
 	
 	@Inject
 	private void setElement(Element element) {
 		this.element = element;
 		this.model = ((IDOMNode) element).getModel();
 		this.modelQuery = ModelQueryUtil.getModelQuery(model);
+		this.elementDeclaration = modelQuery.getCMElementDeclaration(element);
 	}
 	
 	@Override
@@ -100,13 +103,9 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	public void fillContextMenu(IMenuManager manager, TreeViewer treeViewer) {
 		IMenuManager addChildMenu = new MyMenuManager(Messages.rulesMenuNew);
 		manager.add(addChildMenu);
-		ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
-		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-		if (ed != null) {
-			List<ModelQueryAction> insertActionList = Lists.newArrayList();
-			modelQuery.getInsertActions(element, ed, -1, ModelQuery.INCLUDE_CHILD_NODES,  ModelQuery.VALIDITY_STRICT, insertActionList);
-			addActionHelper(model, addChildMenu, insertActionList, treeViewer);	
-		}
+		List<ModelQueryAction> insertActionList = Lists.newArrayList();
+		modelQuery.getInsertActions(element, elementDeclaration, -1, ModelQuery.INCLUDE_CHILD_NODES,  ModelQuery.VALIDITY_STRICT, insertActionList);
+		addActionHelper(model, addChildMenu, insertActionList, treeViewer);	
 	}
 	
 	protected void addActionHelper(IStructuredModel model, IMenuManager menu, List<ModelQueryAction> modelQueryActionList, TreeViewer treeViewer) {
@@ -168,6 +167,8 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		context.set(Element.class, element);
 		context.set(IStructuredModel.class, model);
 		context.set(ModelQuery.class, modelQuery);
+		context.set(CMElementDeclaration.class, elementDeclaration);
+		context.set(TreeContentHelper.class, contentHelper);
 		return context;
 	}
 	

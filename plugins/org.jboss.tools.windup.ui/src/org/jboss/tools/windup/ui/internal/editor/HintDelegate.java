@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
@@ -44,6 +45,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.HINT_EFFORT;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -173,12 +175,42 @@ public class HintDelegate extends ElementUiDelegate {
 				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
 					Node tagNode = (Node)event.getElement();
-					
+					if (event.getChecked()) {
+						CMElementDeclaration tagCmNode = getTagCmNode();
+						AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
+								model, element, tagCmNode, element.getChildNodes().getLength(), tagsTreeViewer);
+						action.run();
+						List<Node> result = action.getResult();
+						if (!result.isEmpty()) {
+							Element ruleElement = (Element)result.get(0);
+							contentHelper.setNodeValue(ruleElement, contentHelper.getNodeValue(tagNode));
+						}
+					}
+					else {
+						new DeleteNodeAction(model, tagNode).run();
+						tagsTreeViewer.setSelection(new StructuredSelection(tagNode), true);
+					}
 				}
 			});
 			loadTags();
 			section.setExpanded(true);
 			return section;
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private CMElementDeclaration getTagCmNode() {
+			List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
+					ModelQuery.VALIDITY_STRICT);
+			Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
+				if (candidate instanceof CMElementDeclaration) {
+					return RulesetConstants.TAG_NAME.equals(((CMElementDeclaration)candidate).getElementName());
+				}
+				return false;
+			}).findFirst();
+			if (found.isPresent()) {
+				return found.get();
+			}
+			return null;
 		}
 		
 		@Override
@@ -192,13 +224,16 @@ public class HintDelegate extends ElementUiDelegate {
 			NodeList list = element.getOwnerDocument().getElementsByTagName(RulesetConstants.TAG_NAME);
 			for (int i = 0; i < list.getLength(); i++) {
 				Node node = list.item(i);
-				if (!tags.containsKey(node.getTextContent())) {
-					tags.put(node.getTextContent(), node);
-				}
+				tags.put(contentHelper.getNodeValue(node), node);
+			}
+			NodeList tagList = element.getElementsByTagName(RulesetConstants.TAG_NAME);
+			for (int i = 0; i < tagList.getLength(); i++) {
+				Node node = tagList.item(i);
+				tags.put(node.getTextContent(), node);
 			}
 			tagsTreeViewer.setAllChecked(false);
 			tagsTreeViewer.setInput(tags.values().toArray());
-			NodeList tagList = element.getElementsByTagName(RulesetConstants.TAG_NAME);
+
 			for (int i = 0; i < tagList.getLength(); i++) {
 				Node tagNode = tagList.item(i);
 				tagNode = tags.get(tagNode.getTextContent());
