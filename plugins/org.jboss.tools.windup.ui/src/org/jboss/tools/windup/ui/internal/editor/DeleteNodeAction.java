@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
 import java.util.Iterator;
@@ -11,11 +21,12 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
-@SuppressWarnings({"restriction"})
+@SuppressWarnings({"restriction", "rawtypes"})
 public class DeleteNodeAction extends NodeAction {
 	protected List list;
 	protected IStructuredModel model;
 
+	@SuppressWarnings("unchecked")
 	public DeleteNodeAction(IStructuredModel model, Node node) {
 		setText(XMLUIMessages._UI_MENU_REMOVE);
 		this.model = model;
