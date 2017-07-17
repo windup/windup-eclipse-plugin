@@ -31,8 +31,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
@@ -50,7 +48,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("restriction")
@@ -59,7 +56,6 @@ public class HintDelegate extends ElementUiDelegate {
 	@Override
 	protected void createTabs() {
 		addTab(DetailsTab.class);
-		addTab(TagsTab.class);
 		addTab(LinksTab.class);
 		addTab(MessageTab.class);
 	}
@@ -241,31 +237,6 @@ public class HintDelegate extends ElementUiDelegate {
 			}
 		}
 		
-	}
-	
-	public static class TagsTab extends ElementAttributesContainer {
-		
-		@PostConstruct
-		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent, CTabItem item) {
-			item.setText(Messages.tagsTab);
-			/*Composite client = super.createSection(parent, 2);
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-			    		Node node = findNode(element, ed, declaration);
-				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
-				    		ChoiceAttributeRow row = createEffortRow(node, declaration);
-				    		rows.add(row);
-				    		row.createContents(client, toolkit, 2);
-				    	}
-				    	else {
-				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 2));
-				    	}
-			    }
-			}*/
-		}
 	}
 	
 	public static class LinksTab extends ElementAttributesContainer {

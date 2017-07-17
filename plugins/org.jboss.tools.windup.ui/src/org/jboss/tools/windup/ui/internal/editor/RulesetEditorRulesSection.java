@@ -377,7 +377,7 @@ public class RulesetEditorRulesSection {
 		
 			Node nextSelection = findElementForSelection(elements);
 			
-			elements.stream().forEach(element -> element.getParentNode().removeChild(element));
+			new DeleteNodeAction(model, elements).run();
 			
 			if (nextSelection != null) {
 				treeViewer.setSelection(new StructuredSelection(nextSelection));

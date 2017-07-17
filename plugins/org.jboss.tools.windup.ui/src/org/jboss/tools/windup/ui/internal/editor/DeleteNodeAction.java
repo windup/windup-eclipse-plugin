@@ -19,6 +19,7 @@ import org.eclipse.wst.xml.ui.internal.XMLUIMessages;
 import org.eclipse.wst.xml.ui.internal.actions.NodeAction;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 @SuppressWarnings({"restriction", "rawtypes"})
@@ -34,6 +35,12 @@ public class DeleteNodeAction extends NodeAction {
 		list.add(node);
 	}
 
+	public DeleteNodeAction(IStructuredModel model, List<Element> nodes) {
+		setText(XMLUIMessages._UI_MENU_REMOVE);
+		this.model = model;
+		list = nodes;
+	}
+	
 	public String getUndoDescription() {
 		return XMLUIMessages.DELETE;
 	}
