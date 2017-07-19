@@ -43,7 +43,6 @@ import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
-import org.jboss.tools.windup.ui.internal.editor.RulesSectionContentProvider;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
