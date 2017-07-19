@@ -63,6 +63,28 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		return client;
 	}
 	
+	protected Section createSection(Composite parent, int columns, int style) {
+		Section section = toolkit.createSection(parent, style);
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
+		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		
+		Composite client = toolkit.createComposite(section);
+		//int span = computeColumns();
+		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, /*span*/ columns);
+		client.setLayout(glayout);
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		toolkit.paintBordersFor(client);
+		section.setClient(client);
+		
+		section.setExpanded(true);
+		return section;
+	}
+	
 	protected Section createSection(Composite parent, String title, int style) {
 		Section section = toolkit.createSection(parent, style);
 		section.addExpansionListener(new ExpansionAdapter() {

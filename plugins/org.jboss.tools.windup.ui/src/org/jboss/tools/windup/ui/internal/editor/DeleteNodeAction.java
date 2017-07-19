@@ -48,11 +48,11 @@ public class DeleteNodeAction extends NodeAction {
 	public void beginNodeAction(NodeAction action) {
 		model.beginRecording(action, action.getUndoDescription());
 	}
-	
+
 	public void endNodeAction(NodeAction action) {
 		model.endRecording(action);
 	}
-	
+
 	protected boolean isWhitespaceTextNode(Node node) {
 		return (node != null) && (node.getNodeType() == Node.TEXT_NODE) && (node.getNodeValue().trim().length() == 0);
 	}

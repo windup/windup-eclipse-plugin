@@ -106,7 +106,6 @@ public class Messages extends NLS
     public static String RulesetEditor_tagsSection;
     public static String RulesetEditor_tagsSectionDescription;
     
-    public static String RulesetEditor_linksSection;
     public static String RulesetEditor_linksSectionDescription;
     
     public static String RulesetEditor_messageSection;

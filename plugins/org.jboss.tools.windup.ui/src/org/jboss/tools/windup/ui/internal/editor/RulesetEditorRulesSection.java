@@ -259,6 +259,8 @@ public class RulesetEditorRulesSection {
 			if (!result.isEmpty()) {
 				Element ruleElement = (Element)result.get(0);
 				domService.generateNextRuleId(ruleElement);
+				treeViewer.expandToLevel(ruleElement, TreeViewer.ALL_LEVELS);
+				treeViewer.setSelection(new StructuredSelection(ruleElement), true);
 			}
 		}
 	}

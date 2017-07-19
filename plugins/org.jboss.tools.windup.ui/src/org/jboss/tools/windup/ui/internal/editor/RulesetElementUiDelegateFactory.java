@@ -217,7 +217,7 @@ public class RulesetElementUiDelegateFactory {
 		Control getControl();
 		void update();
 		void setFocus();
-		void fillContextMenu(IMenuManager manager, TreeViewer treeViewer);
+		void fillContextMenu(IMenuManager manager, TreeViewer viewer);
 		Object[] getChildren();
 	}
 	

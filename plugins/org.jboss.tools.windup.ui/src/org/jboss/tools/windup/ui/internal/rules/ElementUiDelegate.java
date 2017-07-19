@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,6 +21,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -41,10 +43,12 @@ import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
+import org.jboss.tools.windup.ui.internal.editor.RulesSectionContentProvider;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -65,7 +69,6 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	protected IStructuredModel model;
 	protected ModelQuery modelQuery;
 	protected CMElementDeclaration elementDeclaration;
-
 	
 	@Inject
 	private void setElement(Element element) {
@@ -179,10 +182,15 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 				@Override
 				public void run() {
 					super.run();
-					if (!result.isEmpty()) {
+					if (treeViewer != null && !result.isEmpty()) {
 						Object element = result.get(0);
-						treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
-						treeViewer.setSelection(new StructuredSelection(element), true);
+						ITreeContentProvider provider = (ITreeContentProvider)treeViewer.getContentProvider();
+						Object[] children = provider.getChildren(parent);
+						java.util.Optional<Object> optional = Arrays.stream(children).filter(e -> Objects.equal(element, e)).findFirst();
+						if (optional.isPresent()) {
+							treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
+							treeViewer.setSelection(new StructuredSelection(element), true);
+						}
 					}
 				}
 			};

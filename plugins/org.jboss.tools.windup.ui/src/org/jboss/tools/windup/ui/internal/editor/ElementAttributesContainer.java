@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 public class ElementAttributesContainer extends ElementDetailsSection {
 	
 	protected List<NodeRow> rows = Lists.newArrayList();
+	protected boolean blockNotification;
 	
     @SuppressWarnings("unchecked")
 	protected void createControls(Composite parent, int span) {
@@ -54,6 +55,8 @@ public class ElementAttributesContainer extends ElementDetailsSection {
     
     @Override
 	public void update() {
+		blockNotification = true;
 		rows.forEach(row -> row.bind());
+		blockNotification = false;
 	}
 }

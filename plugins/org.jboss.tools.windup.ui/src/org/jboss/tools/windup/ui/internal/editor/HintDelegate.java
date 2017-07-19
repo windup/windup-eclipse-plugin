@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -27,9 +29,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
@@ -48,6 +58,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("restriction")
@@ -174,7 +185,7 @@ public class HintDelegate extends ElementUiDelegate {
 					if (event.getChecked()) {
 						CMElementDeclaration tagCmNode = getTagCmNode();
 						AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-								model, element, tagCmNode, element.getChildNodes().getLength(), tagsTreeViewer);
+								model, element, tagCmNode, element.getChildNodes().getLength(), null);
 						action.run();
 						List<Node> result = action.getResult();
 						if (!result.isEmpty()) {
@@ -241,26 +252,162 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	public static class LinksTab extends ElementAttributesContainer {
 		
+		private LinkContainerManager linkManager = new LinkContainerManager();
+		private Composite parentControl;
+		protected boolean blockNotification;
+ 		
 		@PostConstruct
-		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.linksTab);
-			/*Composite client = super.createSection(parent, 2);
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-			    		Node node = findNode(element, ed, declaration);
-				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
-				    		ChoiceAttributeRow row = createEffortRow(node, declaration);
-				    		rows.add(row);
-				    		row.createContents(client, toolkit, 2);
-				    	}
-				    	else {
-				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 2));
-				    	}
-			    }
-			}*/
+			Section section = super.createSection(parent, 2, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
+			section.setText(Messages.linksTab);
+			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
+			Composite client = (Composite)section.getClient();
+			this.parentControl = client;
+			client.setLayout(new FormLayout());
+			linkManager.createControls(client, collectLinks());
+		}
+		
+		@Override
+		public void update() {
+			super.update();
+			blockNotification = true;
+			loadLinks();
+			parentControl.getParent().getParent().getParent().layout(true, true);
+			blockNotification = false;
+		}
+		
+		private void loadLinks() {
+			linkManager.createControls(parentControl, collectLinks());
+		}
+		
+		private List<Element> collectLinks() {
+			List<Element> links = Lists.newArrayList();
+			NodeList list = element.getElementsByTagName(RulesetConstants.LINK_NAME);
+			for (int i = 0; i < list.getLength(); i++) {
+				links.add((Element)list.item(i));
+			}
+			return links;
+		}
+		
+		private class LinkContainerManager {
+			private List<LinkContainer> containers = Lists.newArrayList();
+			
+			public void createControls(Composite parent, List<Element> links) {
+				for (Iterator<LinkContainer> iter = containers.iterator(); iter.hasNext();) {
+					LinkContainer container = iter.next();
+					if (!links.contains(container.getLinkElement())) {
+						container.dispose();
+						iter.remove();
+					}
+				}
+				LinkContainer previousContainer = null;
+				for (Element linkElement : links) {
+					LinkContainer linkContainer = findContainer(linkElement);
+					
+					if (linkContainer == null) {
+						linkContainer = new LinkContainer(parent, linkElement);
+						containers.add(linkContainer);
+					}
+					
+					if (previousContainer != null) {
+						FormData data = (FormData)linkContainer.getLayoutData();
+						data.top = new FormAttachment(previousContainer);
+					}
+					
+					linkContainer.bind();
+					previousContainer = linkContainer;
+				}
+			}
+			
+			private LinkContainer findContainer(Element element) {
+				Optional<LinkContainer> option = containers.stream().filter(container -> container.isContainerFor(element)).findFirst();
+				if (option.isPresent()) {
+					return option.get();
+				}
+				return null;
+			}
+		}
+		
+		private class LinkContainer extends Composite {
+			
+			private Text title;
+			private Text href;
+			private Text value;
+			
+			private Element linkElement;
+			
+			public LinkContainer(Composite parent, Element linkElement) {
+				super(parent, SWT.NONE);
+				GridLayoutFactory.fillDefaults().numColumns(1).applyTo(this);
+				FormData data = new FormData();
+				data.left = new FormAttachment(0);
+				data.right = new FormAttachment(100);
+				setLayoutData(data);
+				this.linkElement = linkElement;
+				createControls();
+			}
+			
+			public void bind() {
+				String text = linkElement.getAttribute("title");
+				title.setText(text != null ? text : "");
+				text = linkElement.getAttribute("href");
+				href.setText(text != null ? text : "");
+				text = contentHelper.getElementTextValue(linkElement);
+				value.setText(text != null ? text : "");
+			}
+			
+			private void createControls() {
+				Group group = new Group(this, SWT.SHADOW_IN);
+				group.setBackground(toolkit.getColors().getBackground());
+				group.setForeground(toolkit.getColors().getBackground());
+				GridLayoutFactory.fillDefaults().numColumns(2).applyTo(group);
+				GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+				
+				new Label(group, SWT.NONE).setText("Title:");
+				this.title = new Text(group, SWT.BORDER);
+				GridDataFactory.fillDefaults().grab(true, false).applyTo(title);
+				title.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent e) {
+						if (!blockNotification) {
+							linkElement.setAttribute("title", title.getText().trim());
+						}
+					}
+				});
+				
+				new Label(group, SWT.NONE).setText("URL:");
+				this.href = new Text(group, SWT.BORDER);
+				GridDataFactory.fillDefaults().grab(true, false).applyTo(href);
+				href.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent e) {
+						if (!blockNotification) {
+							linkElement.setAttribute("href", href.getText().trim());
+						}
+					}
+				});
+				
+				new Label(group, SWT.NONE).setText("Label:");
+				this.value = new Text(group, SWT.BORDER);
+				GridDataFactory.fillDefaults().grab(true, false).applyTo(value);
+				value.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent e) {
+						if (!blockNotification) {
+							contentHelper.setElementTextValue(linkElement, value.getText().trim());
+						}
+					}
+				});
+			}
+			
+			public boolean isContainerFor(Element element) {
+				return Objects.equal(this.linkElement, element);
+			}
+			
+			public Element getLinkElement() {
+				return linkElement;
+			}
 		}
 	}
 	
@@ -316,6 +463,7 @@ public class HintDelegate extends ElementUiDelegate {
 		}
 		return result;
 	}
+	
 	/*
 	private Section createTagsSection() {
 		Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
