@@ -56,7 +56,12 @@ public class ElementAttributesContainer extends ElementDetailsSection {
     @Override
 	public void update() {
 		blockNotification = true;
-		rows.forEach(row -> row.bind());
+		bind();
 		blockNotification = false;
 	}
+    
+    @Override
+    protected void bind() {
+		rows.forEach(row -> row.bind());
+    }
 }

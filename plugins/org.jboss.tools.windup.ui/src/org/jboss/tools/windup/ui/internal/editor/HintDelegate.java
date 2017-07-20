@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -29,19 +30,28 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -51,7 +61,10 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.HINT_EFFORT;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ReferenceNodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -254,7 +267,6 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private LinkContainerManager linkManager = new LinkContainerManager();
 		private Composite parentControl;
-		protected boolean blockNotification;
  		
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
@@ -269,16 +281,15 @@ public class HintDelegate extends ElementUiDelegate {
 		}
 		
 		@Override
-		public void update() {
-			super.update();
-			blockNotification = true;
+		protected void bind() {
+			super.bind();
 			loadLinks();
 			parentControl.getParent().getParent().getParent().layout(true, true);
-			blockNotification = false;
 		}
 		
 		private void loadLinks() {
 			linkManager.createControls(parentControl, collectLinks());
+			linkManager.bind();
 		}
 		
 		private List<Element> collectLinks() {
@@ -303,6 +314,7 @@ public class HintDelegate extends ElementUiDelegate {
 				}
 				LinkContainer previousContainer = null;
 				for (Element linkElement : links) {
+					
 					LinkContainer linkContainer = findContainer(linkElement);
 					
 					if (linkContainer == null) {
@@ -315,9 +327,12 @@ public class HintDelegate extends ElementUiDelegate {
 						data.top = new FormAttachment(previousContainer);
 					}
 					
-					linkContainer.bind();
 					previousContainer = linkContainer;
 				}
+			}
+			
+			public void bind() {
+				containers.forEach(container -> container.bind());
 			}
 			
 			private LinkContainer findContainer(Element element) {
@@ -331,11 +346,12 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private class LinkContainer extends Composite {
 			
-			private Text title;
-			private Text href;
-			private Text value;
+			private static final int HIGHLIGHT_FOCUS = SWT.COLOR_WIDGET_DARK_SHADOW;
+			private static final int HIGHLIGHT_MOUSE = SWT.COLOR_WIDGET_NORMAL_SHADOW;
+			private static final int HIGHLIGHT_NONE = SWT.NONE;
 			
 			private Element linkElement;
+			protected List<NodeRow> rows = Lists.newArrayList();
 			
 			public LinkContainer(Composite parent, Element linkElement) {
 				super(parent, SWT.NONE);
@@ -349,56 +365,47 @@ public class HintDelegate extends ElementUiDelegate {
 			}
 			
 			public void bind() {
-				String text = linkElement.getAttribute("title");
-				title.setText(text != null ? text : "");
-				text = linkElement.getAttribute("href");
-				href.setText(text != null ? text : "");
-				text = contentHelper.getElementTextValue(linkElement);
-				value.setText(text != null ? text : "");
+				rows.forEach(row -> row.bind());
 			}
 			
 			private void createControls() {
-				Group group = new Group(this, SWT.SHADOW_IN);
-				group.setBackground(toolkit.getColors().getBackground());
-				group.setForeground(toolkit.getColors().getBackground());
-				GridLayoutFactory.fillDefaults().numColumns(2).applyTo(group);
-				GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
 				
-				new Label(group, SWT.NONE).setText("Title:");
-				this.title = new Text(group, SWT.BORDER);
-				GridDataFactory.fillDefaults().grab(true, false).applyTo(title);
-				title.addModifyListener(new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						if (!blockNotification) {
-							linkElement.setAttribute("title", title.getText().trim());
-						}
-					}
-				});
-				
-				new Label(group, SWT.NONE).setText("URL:");
-				this.href = new Text(group, SWT.BORDER);
-				GridDataFactory.fillDefaults().grab(true, false).applyTo(href);
-				href.addModifyListener(new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						if (!blockNotification) {
-							linkElement.setAttribute("href", href.getText().trim());
-						}
-					}
-				});
-				
-				new Label(group, SWT.NONE).setText("Label:");
-				this.value = new Text(group, SWT.BORDER);
-				GridDataFactory.fillDefaults().grab(true, false).applyTo(value);
-				value.addModifyListener(new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						if (!blockNotification) {
-							contentHelper.setElementTextValue(linkElement, value.getText().trim());
-						}
-					}
-				});
+				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(linkElement);
+				if (ed != null) {
+					
+					Group group = new Group(this, SWT.SHADOW_IN);
+					group.setBackground(toolkit.getColors().getBackground());
+					group.setForeground(toolkit.getColors().getBackground());
+					GridLayoutFactory.fillDefaults().numColumns(2).applyTo(group);
+					GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+					
+					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(linkElement, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+					
+				    for (CMAttributeDeclaration declaration : availableAttributeList) {
+				    		Node node = ElementUiDelegate.findNode(linkElement, ed, declaration);
+				    	  	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
+							ReferenceNodeRow row = new ReferenceNodeRow(element, node, declaration) {
+								@Override
+								protected void openReference() {
+									if (node != null && !node.getNodeValue().isEmpty()) {
+										try {
+											PlatformUI.getWorkbench().getBrowserSupport()
+													.createBrowser(WindupUIPlugin.PLUGIN_ID)
+													.openURL(new URL(node.getNodeValue()));
+										} catch (Exception e) {
+											WindupUIPlugin.log(e);
+										}
+									}
+								}
+							};
+				    	  		rows.add(row);
+							row.createContents(group, toolkit, 2);
+				    	  	}
+				    	  	else {
+				    	  		rows.add(ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, node, declaration, group, 2));
+				    	  	}
+				    }
+				}
 			}
 			
 			public boolean isContainerFor(Element element) {
@@ -409,6 +416,12 @@ public class HintDelegate extends ElementUiDelegate {
 				return linkElement;
 			}
 		}
+	}
+	
+	protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, Node node, CMNode cmNode, Composite parent, int columns) {
+		TextNodeRow row = new TextNodeRow(parentNode, node, cmNode);
+		row.createContents(parent, toolkit, columns);
+		return row;
 	}
 	
 	public static class MessageTab extends ElementAttributesContainer {

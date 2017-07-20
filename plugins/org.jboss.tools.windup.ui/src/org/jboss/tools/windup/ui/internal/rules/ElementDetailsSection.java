@@ -41,6 +41,8 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	@Override
 	public abstract void update();
 	
+	protected abstract void bind();
+	
 	protected Composite createSection(Composite parent, int columns) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
