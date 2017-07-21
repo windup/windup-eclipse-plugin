@@ -231,7 +231,7 @@ public class ConfigurationBlock {
 					return;
 				}
 				else if (currentToolbarContainer != null) {
-					currentToolbarContainer.update(false, false);
+					currentToolbarContainer.update(false, true);
 				}
 				ToolbarContainer container = (ToolbarContainer)toolbarContainer;
 				container.update(true, true);
@@ -263,6 +263,10 @@ public class ConfigurationBlock {
 			this.toolbar = toolbar;
 		}
 		
+		public Control getToolbarControl() {
+			return toolbar;
+		}
+		
 		public void update(boolean visible, boolean layout) {
 			if (container.isDisposed()) {
 				return;
@@ -277,13 +281,13 @@ public class ConfigurationBlock {
 			FormData data = (FormData)container.getLayoutData();
 			if (visible) {
 				data.right = new FormAttachment(toolbar);
-				FormData toolbarData = (FormData)toolbar.getLayoutData();
+				/*FormData toolbarData = (FormData)toolbar.getLayoutData();
 				if (data.top != null) {
 					toolbarData.top = new FormAttachment(data.top.control);
 				}
 				if (data.bottom != null) {
 					toolbarData.bottom = new FormAttachment(data.bottom.control);
-				}
+				}*/
 			}
 			else {
 				data.right = new FormAttachment(100);

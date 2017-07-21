@@ -38,7 +38,9 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
@@ -265,10 +267,12 @@ public class HintDelegate extends ElementUiDelegate {
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.linksTab);
+			//parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
 			Section section = super.createSection(parent, 2, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
 			section.setText(Messages.linksTab);
 			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
 			Composite client = (Composite)section.getClient();
+			//client.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 			this.parentControl = client;
 			client.setLayout(new FormLayout());
 			linkManager.createControls(client, collectLinks());
@@ -313,6 +317,7 @@ public class HintDelegate extends ElementUiDelegate {
 			super.bind();
 			loadLinks();
 			parentControl.getParent().getParent().getParent().layout(true, true);
+			form.reflow(true);
 		}
 		
 		private void loadLinks() {
@@ -351,8 +356,7 @@ public class HintDelegate extends ElementUiDelegate {
 					}
 					
 					if (previousContainer != null) {
-						FormData data = (FormData)linkContainer.getLayoutData();
-						data.top = new FormAttachment(previousContainer);
+						linkContainer.setPreviousContainer(previousContainer);
 					}
 					
 					previousContainer = linkContainer;
@@ -396,9 +400,13 @@ public class HintDelegate extends ElementUiDelegate {
 				setLayoutData(data);
 				this.linkElement = linkElement;
 				this.containerManager = containerManager;
-				this.toolbarContainer = new ToolbarContainer(parent, this, createToolbar(parent));
 				this.setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
 				createControls();
+			}
+			
+			public void setPreviousContainer(LinkContainer previousContainer) {
+				FormData data = (FormData)getLayoutData();
+				data.top = new FormAttachment(previousContainer);
 			}
 			
 			public void bind() {
@@ -413,8 +421,25 @@ public class HintDelegate extends ElementUiDelegate {
 					Group group = new Group(this, SWT.SHADOW_IN);
 					group.setBackground(toolkit.getColors().getBackground());
 					group.setForeground(toolkit.getColors().getBackground());
-					GridLayoutFactory.fillDefaults().numColumns(2).applyTo(group);
 					GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+					group.setLayout(new FormLayout());
+					
+					Composite left = new Composite(group, SWT.NONE);
+					GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
+					FormData data = new FormData();
+					data.left = new FormAttachment(0);
+					data.right = new FormAttachment(100);
+					left.setLayoutData(data);
+					
+					Composite right = new Composite(group, SWT.NONE);
+					GridLayoutFactory.fillDefaults().numColumns(1).applyTo(right);
+					data = new FormData();
+					data.right = new FormAttachment(100);
+					right.setLayoutData(data);
+					
+					createToolbar(right);
+					
+					this.toolbarContainer = new ToolbarContainer(group, left, right);
 					
 					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(linkElement, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 					
@@ -436,46 +461,45 @@ public class HintDelegate extends ElementUiDelegate {
 								}
 							};
 				    	  		rows.add(row);
-							row.createContents(group, toolkit, 2);
-							addToolbar(group, row);
+							row.createContents(left, toolkit, 2);
+							addToolbar(group, left, right, row);
 				    	  	}
 				    	  	else {
-				    	  		TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, node, declaration, group, 2);
+				    	  		TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, node, declaration, left, 2);
 				    	  		rows.add(row);
-				    	  		addToolbar(group, row);
+				    	  		addToolbar(group, left, right, row);
 				    	  	}
 				    }
 				}
 			}
 			
-			private void addToolbar(Group group, TextNodeRow row) {
+			private void addToolbar(Group group, Composite left, Composite right, TextNodeRow row) {
 				group.setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
+				left.setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
+				right.setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
 				row.getLabelControl().setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
 				row.getTextControl().setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
 			}
 			
 			private Control createToolbar(Composite parent) {
-				ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
+				ToolBar toolbar = new ToolBar(parent, SWT.FLAT|SWT.VERTICAL);
 				ToolItem deleteLinkItem = new ToolItem(toolbar, SWT.PUSH);
-				deleteLinkItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_DELETE_CONFIG));
+				deleteLinkItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_GARBAGE));
 				deleteLinkItem.addSelectionListener(new SelectionAdapter() {
 			    		@Override
 			    		public void widgetSelected(SelectionEvent e) {
 			    			toolbar.dispose();
-			    			toolbarContainer.update(false, false);
+			    			toolbarContainer.update(false, true);
 			    			LinkContainer nextLinkContainer = containerManager.findNextContainer(LinkContainer.this);
 			    			DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(linkElement));
 			    			deleteAction.run();
 			    			if (nextLinkContainer != null) {
 			    				nextLinkContainer.toolbarContainer.update(true, true);
-			    				parent.setData(ConfigurationBlock.TOOLBAR_CONTROL, nextLinkContainer.toolbarContainer);
+			    				parentControl.setData(ConfigurationBlock.TOOLBAR_CONTROL, nextLinkContainer.toolbarContainer);
 			    			}
 			    		}
 				});
 			    GridLayoutFactory.fillDefaults().applyTo(toolbar);
-			    FormData data = new FormData();
-			    data.right = new FormAttachment(100);
-			    toolbar.setLayoutData(data);
 			    return toolbar;
 			}
 			
