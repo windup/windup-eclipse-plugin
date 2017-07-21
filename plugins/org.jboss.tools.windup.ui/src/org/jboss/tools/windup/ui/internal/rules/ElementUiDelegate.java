@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
@@ -80,13 +79,13 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Override
 	protected void tabItemSelected(CTabItem item) {
-		form.layout(true);
+	/*	form.layout(true);
 		form.getParent().layout(true, true);
 		form.getParent().notifyListeners(SWT.Resize, null);
 		form.getParent().getParent().layout(true, true);
 		form.getParent().getParent().notifyListeners(SWT.Resize, null);
 		form.getParent().getParent().getParent().layout(true, true);
-		form.getParent().getParent().getParent().notifyListeners(SWT.Resize, null);
+		form.getParent().getParent().getParent().notifyListeners(SWT.Resize, null);*/
 	}
 	
 	@Override

@@ -348,7 +348,7 @@ public class RulesetElementUiDelegateFactory {
 		public static class DetailsTab extends ElementAttributesContainer {
 			
 			private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
-				return new ChoiceAttributeRow(element.getParentNode(), element, cmNode) {
+				return new ChoiceAttributeRow(element.getParentNode(), element, cmNode, true) {
 					
 					@Override
 					protected List<String> getOptions() {
@@ -441,7 +441,8 @@ public class RulesetElementUiDelegateFactory {
 			this.parent = parent;
 			this.node = node;
 			this.cmNode = cmNode;
-			this.model = ((IDOMNode) parent).getModel();
+			Node target = node != null ? node : parent;
+			this.model = ((IDOMNode) target).getModel();
 			this.modelQuery = ModelQueryUtil.getModelQuery(model);
 		}
 		
@@ -714,21 +715,32 @@ public class RulesetElementUiDelegateFactory {
 	public static class ChoiceAttributeRow extends NodeRow {
 		
 		protected ComboPart combo;
+		private Control label;
+		private boolean readOnly; 
 
-		public ChoiceAttributeRow(Node parentNode, Node node, CMNode cmNode) {
+		public ChoiceAttributeRow(Node parentNode, Node node, CMNode cmNode, boolean readOnly) {
 			super(parentNode, node, cmNode);
+			this.readOnly = readOnly;
 		}
 		
 		protected List<String> getOptions() {
 			return Lists.newArrayList();
 		}
+		
+		public Control getLabelControl() {
+			return label;
+		}
+		
+		public ComboPart getCombo() {
+			return combo;
+		}
 
 		@Override
 		public void createContents(Composite parent, FormToolkit toolkit, int span) {
 			super.createTextHover(parent);
-			createLabel(parent, toolkit);
+			this.label = createLabel(parent, toolkit);
 			combo = new ComboPart();
-			combo.createControl(parent, toolkit, SWT.READ_ONLY);
+			combo.createControl(parent, toolkit, readOnly ? SWT.READ_ONLY : SWT.NONE);
 			combo.add(""); //$NON-NLS-1$
 			for (String option : getOptions()) {
 				combo.add(option);
@@ -746,6 +758,16 @@ public class RulesetElementUiDelegateFactory {
 					}
 				}
 			});
+			if (!readOnly) {
+				combo.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent e) {
+						if (!blockNotification) {
+							comboSelectionChanged();
+						}
+					}
+				});
+			}
 		}
 		
 		protected String displayToModelValue(String uiValue) {
