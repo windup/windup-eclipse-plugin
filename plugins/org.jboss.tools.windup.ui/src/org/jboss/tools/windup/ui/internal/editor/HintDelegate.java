@@ -30,24 +30,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -59,6 +52,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.ConfigurationBlock.ToolbarContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.HINT_EFFORT;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
@@ -278,6 +272,40 @@ public class HintDelegate extends ElementUiDelegate {
 			this.parentControl = client;
 			client.setLayout(new FormLayout());
 			linkManager.createControls(client, collectLinks());
+			ConfigurationBlock.addToolbarListener(client);
+			createSectionToolbar(section);
+		}
+		
+		private void createSectionToolbar(Section section) {
+			ToolBar toolbar = new ToolBar(section, SWT.FLAT|SWT.HORIZONTAL);
+			ToolItem addItem = new ToolItem(toolbar, SWT.PUSH);
+			addItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_ADD));
+			addItem.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					CMElementDeclaration linkCmNode = getLinkCmNode();
+					AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
+							model, element, linkCmNode, element.getChildNodes().getLength(), null);
+					action.run();
+				}
+			});
+			section.setTextClient(toolbar);
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private CMElementDeclaration getLinkCmNode() {
+			List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
+					ModelQuery.VALIDITY_STRICT);
+			Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
+				if (candidate instanceof CMElementDeclaration) {
+					return RulesetConstants.LINK_NAME.equals(((CMElementDeclaration)candidate).getElementName());
+				}
+				return false;
+			}).findFirst();
+			if (found.isPresent()) {
+				return found.get();
+			}
+			return null;
 		}
 		
 		@Override
@@ -318,7 +346,7 @@ public class HintDelegate extends ElementUiDelegate {
 					LinkContainer linkContainer = findContainer(linkElement);
 					
 					if (linkContainer == null) {
-						linkContainer = new LinkContainer(parent, linkElement);
+						linkContainer = new LinkContainer(parent, linkElement, this);
 						containers.add(linkContainer);
 					}
 					
@@ -342,18 +370,24 @@ public class HintDelegate extends ElementUiDelegate {
 				}
 				return null;
 			}
+			
+			private LinkContainer findNextContainer(LinkContainer container) {
+				int index = containers.indexOf(container);
+				if (index != -1 && index != containers.size()-1) {
+					return containers.get(index+1);
+				}
+				return null;
+			}
 		}
 		
 		private class LinkContainer extends Composite {
 			
-			private static final int HIGHLIGHT_FOCUS = SWT.COLOR_WIDGET_DARK_SHADOW;
-			private static final int HIGHLIGHT_MOUSE = SWT.COLOR_WIDGET_NORMAL_SHADOW;
-			private static final int HIGHLIGHT_NONE = SWT.NONE;
-			
 			private Element linkElement;
 			protected List<NodeRow> rows = Lists.newArrayList();
+			private ToolbarContainer toolbarContainer;
+			private LinkContainerManager containerManager;
 			
-			public LinkContainer(Composite parent, Element linkElement) {
+			public LinkContainer(Composite parent, Element linkElement, LinkContainerManager containerManager) {
 				super(parent, SWT.NONE);
 				GridLayoutFactory.fillDefaults().numColumns(1).applyTo(this);
 				FormData data = new FormData();
@@ -361,6 +395,9 @@ public class HintDelegate extends ElementUiDelegate {
 				data.right = new FormAttachment(100);
 				setLayoutData(data);
 				this.linkElement = linkElement;
+				this.containerManager = containerManager;
+				this.toolbarContainer = new ToolbarContainer(parent, this, createToolbar(parent));
+				this.setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
 				createControls();
 			}
 			
@@ -400,12 +437,46 @@ public class HintDelegate extends ElementUiDelegate {
 							};
 				    	  		rows.add(row);
 							row.createContents(group, toolkit, 2);
+							addToolbar(group, row);
 				    	  	}
 				    	  	else {
-				    	  		rows.add(ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, node, declaration, group, 2));
+				    	  		TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, node, declaration, group, 2);
+				    	  		rows.add(row);
+				    	  		addToolbar(group, row);
 				    	  	}
 				    }
 				}
+			}
+			
+			private void addToolbar(Group group, TextNodeRow row) {
+				group.setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
+				row.getLabelControl().setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
+				row.getTextControl().setData(ConfigurationBlock.TOOLBAR_CONTROL, toolbarContainer);
+			}
+			
+			private Control createToolbar(Composite parent) {
+				ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
+				ToolItem deleteLinkItem = new ToolItem(toolbar, SWT.PUSH);
+				deleteLinkItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_DELETE_CONFIG));
+				deleteLinkItem.addSelectionListener(new SelectionAdapter() {
+			    		@Override
+			    		public void widgetSelected(SelectionEvent e) {
+			    			toolbar.dispose();
+			    			toolbarContainer.update(false, false);
+			    			LinkContainer nextLinkContainer = containerManager.findNextContainer(LinkContainer.this);
+			    			DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(linkElement));
+			    			deleteAction.run();
+			    			if (nextLinkContainer != null) {
+			    				nextLinkContainer.toolbarContainer.update(true, true);
+			    				parent.setData(ConfigurationBlock.TOOLBAR_CONTROL, nextLinkContainer.toolbarContainer);
+			    			}
+			    		}
+				});
+			    GridLayoutFactory.fillDefaults().applyTo(toolbar);
+			    FormData data = new FormData();
+			    data.right = new FormAttachment(100);
+			    toolbar.setLayoutData(data);
+			    return toolbar;
 			}
 			
 			public boolean isContainerFor(Element element) {

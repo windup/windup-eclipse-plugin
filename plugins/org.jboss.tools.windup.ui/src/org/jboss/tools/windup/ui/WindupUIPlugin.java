@@ -46,6 +46,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String PLUGIN_ID = "org.jboss.tools.windup.ui"; //$NON-NLS-1$
     
     public static final String IMG_RUN_EXC = "icons/run_exc.png"; //$NON-NLS-1$
+    public static final String IMG_ADD = "icons/add.gif"; //$NON-NLS-1$
     public static final String IMG_HELP = "icons/help.png"; //$NON-NLS-1$
     public static final String IMG_NEW_CONFIG = "icons/new_con.png"; //$NON-NLS-1$
     public static final String IMG_DELETE_CONFIG = "icons/delete_config.png"; //$NON-NLS-1$
@@ -238,6 +239,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_XML, createImageDescriptor(IMG_XML));
 		reg.put(IMG_RULES_FORM, createImageDescriptor(IMG_RULES_FORM));
 		reg.put(IMG_RULESET_EDITOR, createImageDescriptor(IMG_RULESET_EDITOR));
+		reg.put(IMG_ADD, createImageDescriptor(IMG_ADD));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

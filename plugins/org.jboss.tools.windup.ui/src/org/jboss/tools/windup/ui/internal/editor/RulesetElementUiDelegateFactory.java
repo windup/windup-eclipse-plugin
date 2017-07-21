@@ -455,22 +455,6 @@ public class RulesetElementUiDelegateFactory {
 			blockNotification = false;
 		}
 		
-		protected void createLabel(Composite parent, FormToolkit toolkit) {
-			createTextHover(parent);
-			Label label = toolkit.createLabel(parent, getLabel(), SWT.NULL);
-			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-			PDETextHover.addHoverListenerToControl(infoControl, label, this);
-		}
-		
-		protected String getLabel() {
-			if (node == null) {
-				return getCmNodeLabel();
-			}
-			else {
-				return getNodeLabel();
-			}
-		}
-		
 		protected String getCmNodeLabel() {
 			String result = "?" + cmNode + "?"; //$NON-NLS-1$ //$NON-NLS-2$
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=155800
@@ -514,6 +498,23 @@ public class RulesetElementUiDelegateFactory {
 			return NLS.bind(Messages.ElementAttributeRow_AttrLabel, label);
 		}
 		
+		protected Control createLabel(Composite parent, FormToolkit toolkit) {
+			createTextHover(parent);
+			Label label = toolkit.createLabel(parent, getLabel(), SWT.NULL);
+			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+			PDETextHover.addHoverListenerToControl(infoControl, label, this);
+			return label;
+		}
+		
+		protected String getLabel() {
+			if (node == null) {
+				return getCmNodeLabel();
+			}
+			else {
+				return getNodeLabel();
+			}
+		}
+		
 		protected String getValue() {
 			String result = ""; //$NON-NLS-1$
 			if (node != null) {
@@ -555,14 +556,15 @@ public class RulesetElementUiDelegateFactory {
 	public static class TextNodeRow extends NodeRow {
 		
 		protected Text text;
+		protected Control label;
 
 		public TextNodeRow(Node parentNode, Node node, CMNode cmNode) {
 			super(parentNode, node, cmNode);
 		}
-
+		
 		@Override
 		public void createContents(Composite parent, FormToolkit toolkit, int span) {
-			createLabel(parent, toolkit);
+			this.label = createLabel(parent, toolkit);
 			text = toolkit.createText(parent, "", SWT.SINGLE); //$NON-NLS-1$
 			text.setLayoutData(createGridData(span));
 			text.addModifyListener(new ModifyListener() {
@@ -582,7 +584,14 @@ public class RulesetElementUiDelegateFactory {
 			gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 			return gd;
 		}
-
+		
+		public Control getLabelControl() {
+			return label;
+		}
+		
+		public Control getTextControl() {
+			return text;
+		}
 		@Override
 		protected void update() {
 			if (!Objects.equal(text.getText(), super.getValue())) {
@@ -603,7 +612,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 
 		@Override
-		protected void createLabel(Composite parent, FormToolkit toolkit) {
+		protected Control createLabel(Composite parent, FormToolkit toolkit) {
 			createTextHover(parent);
 			Hyperlink link = toolkit.createHyperlink(parent, getLabel(), SWT.NULL);
 			link.addHyperlinkListener(new HyperlinkAdapter() {
@@ -613,6 +622,7 @@ public class RulesetElementUiDelegateFactory {
 				}
 			});
 			PDETextHover.addHoverListenerToControl(infoControl, link, this);
+			return link;
 		}
 
 		protected abstract void openReference();
