@@ -7,6 +7,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -15,8 +16,8 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -36,7 +37,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	@Inject protected TreeContentHelper contentHelper;
 	@Inject protected FormToolkit toolkit;
 	@Inject protected IEclipseContext context;
-	@Inject protected ScrolledForm form;
+	@Inject protected Form form;
 	
 	@Override
 	public abstract void update();
@@ -65,23 +66,19 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		return client;
 	}
 	
-	protected Section createSection(Composite parent, int columns, int style) {
-		Section section = toolkit.createSection(parent, style);
+	protected Section createScrolledSection(Composite parent, int columns) {
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
 		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		
-		Composite client = toolkit.createComposite(section);
-		//int span = computeColumns();
-		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, /*span*/ columns);
-		client.setLayout(glayout);
-		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		toolkit.paintBordersFor(client);
-		section.setClient(client);
+		ScrolledComposite scroll = new ScrolledComposite(section, SWT.H_SCROLL|SWT.V_SCROLL);
+		scroll.setExpandHorizontal(true);
+		scroll.setExpandVertical(true);
+		section.setClient(scroll);
 		
 		section.setExpanded(true);
 		return section;
@@ -92,7 +89,6 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		section.addExpansionListener(new ExpansionAdapter() {
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
 			}
 		});
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;

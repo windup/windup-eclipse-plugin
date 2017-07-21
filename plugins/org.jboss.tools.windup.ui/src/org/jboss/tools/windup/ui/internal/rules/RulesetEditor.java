@@ -31,6 +31,7 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
@@ -61,7 +62,7 @@ public class RulesetEditor {
 	private Composite stackComposite;
 	private Composite gettingStartedComposite;
 	
-	private ScrolledForm form;
+	private Form form;
 	private FormToolkit toolkit;
 	
 	private SashForm sash;
@@ -102,7 +103,7 @@ public class RulesetEditor {
 	@PostConstruct
 	private void createParent(Composite parent) {
 		this.toolkit = new FormToolkit(container.getDisplay());
-		this.form = toolkit.createScrolledForm(parent);
+		this.form = toolkit.createForm(parent);
 		//form.setText(rulesEditor_tabTitle);
 		//form.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_WINDUP));
 		
@@ -111,7 +112,7 @@ public class RulesetEditor {
 		Composite comp = form.getBody();
 		GridLayoutFactory.fillDefaults().applyTo(comp);
 
-		context.set(ScrolledForm.class, form);
+		context.set(Form.class, form);
 		context.set(FormToolkit.class, toolkit);
 		context.set(DataBindingContext.class, bindingContext);
 		context.set(IEclipsePreferences.class, preferences);

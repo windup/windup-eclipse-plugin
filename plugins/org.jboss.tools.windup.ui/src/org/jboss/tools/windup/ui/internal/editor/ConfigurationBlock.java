@@ -279,6 +279,9 @@ public class ConfigurationBlock {
 			}
 			toolbarVisible = visible;
 			FormData data = (FormData)container.getLayoutData();
+			
+			toolbar.setVisible(visible);
+			
 			if (visible) {
 				data.right = new FormAttachment(toolbar);
 				/*FormData toolbarData = (FormData)toolbar.getLayoutData();

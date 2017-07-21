@@ -28,19 +28,21 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
@@ -261,18 +263,25 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	public static class LinksTab extends ElementAttributesContainer {
 		
+		private static final int MIN_WIDTH = 350;
+		
 		private LinkContainerManager linkManager = new LinkContainerManager();
 		private Composite parentControl;
+		ScrolledComposite scroll;
  		
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.linksTab);
-			//parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
-			Section section = super.createSection(parent, 2, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
+			Section section = super.createScrolledSection(parent, 2);
 			section.setText(Messages.linksTab);
 			section.setDescription(Messages.RulesetEditor_linksSectionDescription);
-			Composite client = (Composite)section.getClient();
-			//client.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+			this.scroll = (ScrolledComposite)section.getClient();
+			Composite client = toolkit.createComposite(scroll);
+			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, /*span*/ 2);
+			client.setLayout(glayout);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+			scroll.setContent(client);
+			toolkit.paintBordersFor(client);
 			this.parentControl = client;
 			client.setLayout(new FormLayout());
 			linkManager.createControls(client, collectLinks());
@@ -316,8 +325,10 @@ public class HintDelegate extends ElementUiDelegate {
 		protected void bind() {
 			super.bind();
 			loadLinks();
+			scroll.setMinHeight(linkManager.computeHeight());
+			int width = linkManager.getLinkContainerCount() > 0 ? MIN_WIDTH : 0;
+			scroll.setMinWidth(width);
 			parentControl.getParent().getParent().getParent().layout(true, true);
-			form.reflow(true);
 		}
 		
 		private void loadLinks() {
@@ -363,8 +374,20 @@ public class HintDelegate extends ElementUiDelegate {
 				}
 			}
 			
+			public int computeHeight() {
+				int height = 0;
+				for (LinkContainer container : containers) {
+					height += container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+				}
+				return height;
+			}
+			
 			public void bind() {
 				containers.forEach(container -> container.bind());
+			}
+			
+			public int getLinkContainerCount() {
+				return containers.size();
 			}
 			
 			private LinkContainer findContainer(Element element) {
@@ -435,7 +458,9 @@ public class HintDelegate extends ElementUiDelegate {
 					GridLayoutFactory.fillDefaults().numColumns(1).applyTo(right);
 					data = new FormData();
 					data.right = new FormAttachment(100);
+					data.bottom = new FormAttachment(73);
 					right.setLayoutData(data);
+					right.setVisible(false);
 					
 					createToolbar(right);
 					
@@ -484,19 +509,29 @@ public class HintDelegate extends ElementUiDelegate {
 			private Control createToolbar(Composite parent) {
 				ToolBar toolbar = new ToolBar(parent, SWT.FLAT|SWT.VERTICAL);
 				ToolItem deleteLinkItem = new ToolItem(toolbar, SWT.PUSH);
+				deleteLinkItem.setToolTipText(Messages.RulesetEditor_remove);
 				deleteLinkItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_GARBAGE));
 				deleteLinkItem.addSelectionListener(new SelectionAdapter() {
 			    		@Override
 			    		public void widgetSelected(SelectionEvent e) {
-			    			toolbar.dispose();
-			    			toolbarContainer.update(false, true);
 			    			LinkContainer nextLinkContainer = containerManager.findNextContainer(LinkContainer.this);
-			    			DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(linkElement));
-			    			deleteAction.run();
 			    			if (nextLinkContainer != null) {
+			    				FormData nextData = (FormData)nextLinkContainer.getLayoutData();
+			    				FormData thisData = (FormData)(LinkContainer.this.getLayoutData());
+			    				if (thisData.top != null && thisData.top.control != null && !thisData.top.control.isDisposed()) {
+			    					nextData.top = new FormAttachment(thisData.top.control);
+			    				}
+			    				else {
+			    					nextData.top = new FormAttachment(null);
+			    				}
+			    				parentControl.layout(true);
 			    				nextLinkContainer.toolbarContainer.update(true, true);
 			    				parentControl.setData(ConfigurationBlock.TOOLBAR_CONTROL, nextLinkContainer.toolbarContainer);
 			    			}
+			    			Display.getDefault().asyncExec(() -> {
+			    				DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(linkElement));
+				    			deleteAction.run();
+			    			});
 			    		}
 				});
 			    GridLayoutFactory.fillDefaults().applyTo(toolbar);

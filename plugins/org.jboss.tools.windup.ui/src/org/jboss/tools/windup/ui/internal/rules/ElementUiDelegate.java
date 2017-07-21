@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
@@ -58,7 +59,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Inject @Optional protected FormToolkit toolkit;
 	@Inject @Optional protected IEclipseContext context;
-	@Inject @Optional protected ScrolledForm form;
+	@Inject @Optional protected Form form;
 	@Inject @Optional protected Composite parent;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
@@ -75,6 +76,17 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		this.model = ((IDOMNode) element).getModel();
 		this.modelQuery = ModelQueryUtil.getModelQuery(model);
 		this.elementDeclaration = modelQuery.getCMElementDeclaration(element);
+	}
+	
+	@Override
+	protected void tabItemSelected(CTabItem item) {
+		form.layout(true);
+		form.getParent().layout(true, true);
+		form.getParent().notifyListeners(SWT.Resize, null);
+		form.getParent().getParent().layout(true, true);
+		form.getParent().getParent().notifyListeners(SWT.Resize, null);
+		form.getParent().getParent().getParent().layout(true, true);
+		form.getParent().getParent().getParent().notifyListeners(SWT.Resize, null);
 	}
 	
 	@Override

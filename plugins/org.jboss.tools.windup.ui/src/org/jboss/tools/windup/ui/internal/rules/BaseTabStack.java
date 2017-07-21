@@ -22,6 +22,8 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -47,6 +49,16 @@ public class BaseTabStack {
 		folder.setBackground(toolkit.getColors().getBackground());
 		parent.setBackground(toolkit.getColors().getBackground());
 		parent.getParent().setBackground(toolkit.getColors().getBackground());
+		folder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				CTabItem item = folder.getSelection();
+				tabItemSelected(item);
+			}
+		});
+	}
+	
+	protected void tabItemSelected(CTabItem item) {
 	}
 	
 	protected <T> TabWrapper addTab(Class<T> clazz) {
