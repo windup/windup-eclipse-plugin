@@ -338,7 +338,7 @@ public class HintDelegate extends ElementUiDelegate {
 						public Image getImage(Object element) {
 							return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_TAG);
 						}
-					});
+					}, true);
 					dialog.setMultipleSelection(true);
 					dialog.setMessage(Messages.RulesetEditor_tagsSectionAddDialog);
 					List<String> tags = collectTagNames();
@@ -350,22 +350,28 @@ public class HintDelegate extends ElementUiDelegate {
 						Object[] selected = (Object[])dialog.getResult();
 						if (selected.length > 0) {
 							for (Object value : selected) {
-								String tagName = (String)value;
-								CMElementDeclaration tagCmNode = getTagCmNode();
-								AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-										model, element, tagCmNode, element.getChildNodes().getLength(), null);
-								action.run();
-								List<Node> result = action.getResult();
-								if (!result.isEmpty()) {
-									Element newElement = (Element)result.get(0);
-									contentHelper.setElementTextValue(newElement, tagName);
-								}
+								createTagElement((String)value);
 							}
+						}
+						else {
+							createTagElement(dialog.getText());
 						}
 					}				
 				}
 			});
 			section.setTextClient(toolbar);
+		}
+		
+		private void createTagElement(String tagName) {
+			CMElementDeclaration tagCmNode = getTagCmNode();
+			AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
+					model, element, tagCmNode, element.getChildNodes().getLength(), null);
+			action.run();
+			List<Node> result = action.getResult();
+			if (!result.isEmpty()) {
+				Element newElement = (Element)result.get(0);
+				contentHelper.setElementTextValue(newElement, tagName);
+			}
 		}
 		
 		@Override

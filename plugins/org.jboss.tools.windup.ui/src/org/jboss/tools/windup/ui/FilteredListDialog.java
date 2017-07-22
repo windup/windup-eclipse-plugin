@@ -10,8 +10,13 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.dialogs.FilteredList.FilterMatcher;
@@ -22,10 +27,51 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  */
 @SuppressWarnings("restriction")
 public class FilteredListDialog extends ElementListSelectionDialog {
+
+	private String filterText;
+	private boolean editable;
 	
 	public FilteredListDialog(Shell parent, ILabelProvider renderer) {
 		super(parent, renderer);
 	}
+	
+	public FilteredListDialog(Shell parent, ILabelProvider renderer, boolean editable) {
+		this(parent, renderer);
+		this.editable = editable;
+	}
+	
+	protected void handleEmptyList() {
+		if (!editable) {
+			super.handleEmptyList();
+		}
+	}
+	
+	@Override
+	protected void updateOkState() {
+		if (!editable) {
+			super.updateOkState();
+		}
+		else {
+			Button okButton = getOkButton();
+			if (okButton != null) {
+				okButton.setEnabled(true);
+			}
+		}
+	}
+	
+	 protected Text createFilterText(Composite parent) {
+		 Text text = super.createFilterText(parent);
+	     text.addListener(SWT.Modify, e -> filterText = text.getText().trim());
+		 return text;
+	 }
+	 
+	 public String getText() {
+		 return filterText;
+	 }
+	 
+	 @Override
+	protected void updateButtonsEnableState(IStatus status) {
+	} 
 
 	@Override
 	protected FilteredList createFilteredList(org.eclipse.swt.widgets.Composite parent) {
