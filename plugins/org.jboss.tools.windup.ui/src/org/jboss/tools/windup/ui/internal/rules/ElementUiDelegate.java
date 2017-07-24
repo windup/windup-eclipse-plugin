@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
@@ -60,6 +61,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	@Inject @Optional protected IEclipseContext context;
 	@Inject @Optional protected Form form;
 	@Inject @Optional protected Composite parent;
+	@Inject @Optional protected IFile file;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
 	protected TreeContentHelper contentHelper = new TreeContentHelper();

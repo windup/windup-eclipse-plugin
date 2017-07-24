@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -21,8 +24,24 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.hyperlink.URLHyperlink;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.source.OverviewRuler;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -31,13 +50,32 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.mylyn.internal.wikitext.ui.WikiTextUiPlugin;
+import org.eclipse.mylyn.internal.wikitext.ui.editor.MarkupEditor;
+import org.eclipse.mylyn.internal.wikitext.ui.editor.MarkupProjectionViewer;
+import org.eclipse.mylyn.internal.wikitext.ui.editor.syntax.FastMarkupPartitioner;
+import org.eclipse.mylyn.internal.wikitext.ui.editor.syntax.MarkupDocumentProvider;
+import org.eclipse.mylyn.wikitext.parser.Attributes;
+import org.eclipse.mylyn.wikitext.parser.MarkupParser;
+import org.eclipse.mylyn.wikitext.parser.DocumentBuilder.BlockType;
+import org.eclipse.mylyn.wikitext.parser.builder.HtmlDocumentBuilder;
+import org.eclipse.mylyn.wikitext.parser.markup.AbstractMarkupLanguage;
+import org.eclipse.mylyn.wikitext.parser.markup.MarkupLanguage;
+import org.eclipse.mylyn.wikitext.parser.outline.OutlineItem;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.ProgressAdapter;
+import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -52,9 +90,14 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
@@ -182,7 +225,7 @@ public class HintDelegate extends ElementUiDelegate {
 			Section section = createSection(parent, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.NO_TITLE_FOCUS_BOX);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
-			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
+			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK|SWT.SINGLE));
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
 			tagsTreeViewer.setLabelProvider(new LabelProvider() {
 				@Override
@@ -632,9 +675,23 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	public static class MessageTab extends ElementAttributesContainer {
 		
+		protected static final int VERTICAL_RULER_WIDTH= 12;
+		
+		private static final String CSS_CLASS_EDITOR_PREVIEW = "editorPreview"; //$NON-NLS-1$
+		
+		private FileEditorInput editorInput;
+		private MarkupDocumentProvider documentProvider = new MarkupDocumentProvider();
+		private Browser browser;
+		private IDocument document;
+		private SashForm sash;
+		
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.messageTab);
+			createSash(parent);
+			createSourceViewer(sash);
+			createBrowser(sash);
+			updatePreview();
 			/*Composite client = super.createSection(parent, 2);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
@@ -652,8 +709,225 @@ public class HintDelegate extends ElementUiDelegate {
 			    }
 			}*/
 		}
-	}
+		
+		private void createSash(Composite parent) {
+			this.sash = new SashForm(parent, SWT.SMOOTH|SWT.HORIZONTAL);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
+			sash.setOrientation(SWT.VERTICAL);
+			sash.setFont(parent.getFont());
+			sash.setVisible(true);
+		}
+		
+		private void createBrowser(Composite parent) {
+			browser = new Browser(parent, SWT.NONE);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
+			// bug 260479: open hyperlinks in a browser
+			browser.addLocationListener(new LocationListener() {
+				public void changed(LocationEvent event) {
+					event.doit = false;
+				}
+
+				public void changing(LocationEvent event) {
+					// if it looks like an absolute URL
+					if (event.location.matches("([a-zA-Z]{3,8})://?.*")) { //$NON-NLS-1$
+
+						// workaround for browser problem (bug 262043)
+						int idxOfSlashHash = event.location.indexOf("/#"); //$NON-NLS-1$
+						if (idxOfSlashHash != -1) {
+							// allow javascript-based scrolling to work
+							if (!event.location.startsWith("file:///#")) { //$NON-NLS-1$
+								event.doit = false;
+							}
+							return;
+						}
+						// workaround end
+
+						event.doit = false;
+						try {
+							PlatformUI.getWorkbench()
+									.getBrowserSupport()
+									.createBrowser("org.eclipse.ui.browser") //$NON-NLS-1$
+									.openURL(new URL(event.location));
+						} catch (Exception e) {
+							new URLHyperlink(new Region(0, 1), event.location).open();
+						}
+					}
+				}
+			});
+		}
+		
+		protected void createSourceViewer(Composite parent) {
+			/*SourceViewer viewer = new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getTextWidget());
+
+			SourceViewerConfiguration configuration = new TextSourceViewerConfiguration();
+			IDocument document = new Document();
+			viewer.configure(configuration);
+			viewer.setDocument(document);
+			Font font = JFaceResources.getFont(JFaceResources.TEXT_FONT);
+			viewer.getTextWidget().setFont(font);*/
+			this.editorInput = new FileEditorInput(file);
+			CompositeRuler ruler = new CompositeRuler();
+			int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
+			MarkupProjectionViewer viewer = new MarkupProjectionViewer(parent, ruler, createOverviewRuler(), true,
+					styles | SWT.WRAP);
+			GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 500).applyTo(viewer.getControl());
+			try {
+				documentProvider.connect(editorInput);
+				this.document = documentProvider.getDocument(editorInput);
+				viewer.setDocument(document);
+			} catch (CoreException e) {
+				WindupUIPlugin.log(e);
+			}
+		}
+		
+		protected IOverviewRuler createOverviewRuler() {
+			IOverviewRuler ruler= new OverviewRuler(createAnnotationAccess(), VERTICAL_RULER_WIDTH, getSharedColors());
+
+			/*Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+			while (e.hasNext()) {
+				AnnotationPreference preference= e.next();
+				if (preference.contributesToHeader())
+					ruler.addHeaderAnnotationType(preference.getAnnotationType());
+			}*/
+			return ruler;
+		}
+
+		protected IAnnotationAccess createAnnotationAccess() {
+			return new DefaultMarkerAnnotationAccess();
+		}
+		
+		protected ISharedTextColors getSharedColors() {
+			return EditorsPlugin.getDefault().getSharedTextColors();
+		}
+		
+		/**
+		 * JavaScript that returns the current top scroll position of the browser widget
+		 */
+		private static final String JAVASCRIPT_GETSCROLLTOP = "function getScrollTop() { " //$NON-NLS-1$
+				+ "  if(typeof pageYOffset!='undefined') return pageYOffset;" //$NON-NLS-1$
+				+ "  else{" + //$NON-NLS-1$
+				"var B=document.body;" + //$NON-NLS-1$
+				"var D=document.documentElement;" + //$NON-NLS-1$
+				"D=(D.clientHeight)?D:B;return D.scrollTop;}" //$NON-NLS-1$
+				+ "}; return getScrollTop();"; //$NON-NLS-1$
+		
+		private void updatePreview() {
+			Object result = browser.evaluate(JAVASCRIPT_GETSCROLLTOP);
+			final int verticalScrollbarPos = result != null ? ((Number) result).intValue() : 0;
+			String xhtml = null;
+			try {
+				String title = file == null ? "" : file.getName(); //$NON-NLS-1$
+				if (title.lastIndexOf('.') != -1) {
+					title = title.substring(0, title.lastIndexOf('.'));
+				}
+				StringWriter writer = new StringWriter();
+				HtmlDocumentBuilder builder = new HtmlDocumentBuilder(writer) {
+					@Override
+					protected void emitAnchorHref(String href) {
+						if (href != null && href.startsWith("#")) { //$NON-NLS-1$
+							writer.writeAttribute("onclick", //$NON-NLS-1$
+									String.format("javascript: window.location.hash = '%s'; return false;", href)); //$NON-NLS-1$
+							writer.writeAttribute("href", "#"); //$NON-NLS-1$//$NON-NLS-2$
+						} else {
+							super.emitAnchorHref(href);
+						}
+					}
+
+					@Override
+					public void beginHeading(int level, Attributes attributes) {
+						attributes.appendCssClass(CSS_CLASS_EDITOR_PREVIEW);
+						super.beginHeading(level, attributes);
+					}
+
+					@Override
+					public void beginBlock(BlockType type, Attributes attributes) {
+						attributes.appendCssClass(CSS_CLASS_EDITOR_PREVIEW);
+						super.beginBlock(type, attributes);
+					}
+				};
+				builder.setTitle(title);
+
+				IPath location = file == null ? null : file.getLocation();
+				if (location != null) {
+					builder.setBaseInHead(true);
+					builder.setBase(location.removeLastSegments(1).toFile().toURI());
+				}
+
+				String css = WikiTextUiPlugin.getDefault().getPreferences().getMarkupViewerCss();
+				if (css != null && css.length() > 0) {
+					builder.addCssStylesheet(new HtmlDocumentBuilder.Stylesheet(new StringReader(css)));
+				}
+
+				MarkupLanguage markupLanguage = getMarkupLanguage();
+				if (markupLanguage != null) {
+					markupLanguage = markupLanguage.clone();
+					if (markupLanguage instanceof AbstractMarkupLanguage) {
+						((AbstractMarkupLanguage) markupLanguage).setEnableMacros(true);
+					}
+
+					if (markupLanguage instanceof AbstractMarkupLanguage) {
+						AbstractMarkupLanguage language = (AbstractMarkupLanguage) markupLanguage;
+						language.setFilterGenerativeContents(false);
+						language.setBlocksOnly(false);
+					}
+
+					MarkupParser markupParser = new MarkupParser();
+					markupParser.setBuilder(builder);
+					markupParser.setMarkupLanguage(markupLanguage);
+
+					markupParser.parse(document.get());
+				} else {
+					builder.beginDocument();
+					builder.beginBlock(BlockType.PREFORMATTED, new Attributes());
+					builder.characters(document.get());
+					builder.endBlock();
+					builder.endDocument();
+				}
+				xhtml = writer.toString();
+			} catch (Exception e) {
+				StringWriter stackTrace = new StringWriter();
+				PrintWriter writer = new PrintWriter(stackTrace);
+				e.printStackTrace(writer);
+				writer.close();
+
+				StringWriter documentWriter = new StringWriter();
+				HtmlDocumentBuilder builder = new HtmlDocumentBuilder(documentWriter);
+				builder.beginDocument();
+				builder.beginBlock(BlockType.PREFORMATTED, new Attributes());
+				builder.characters(stackTrace.toString());
+				builder.endBlock();
+				builder.endDocument();
+
+				xhtml = documentWriter.toString();
+			}
+			/*browser.addProgressListener(new ProgressAdapter() {
+
+				@Override
+				public void completed(ProgressEvent event) {
+					browser.removeProgressListener(this);
+					if (outlineItem != null) {
+					//	revealInBrowser(outlineItem);
+					} else {
+						browser.execute(String.format("window.scrollTo(0,%d);", verticalScrollbarPos)); //$NON-NLS-1$
+					}
+				}
+
+			});*/
+			browser.setText(xhtml);
+			//previewDirty = false;
+		}
 	
+		public MarkupLanguage getMarkupLanguage() {
+			IDocument document = documentProvider.getDocument(editorInput);
+			IDocumentPartitioner partitioner = document.getDocumentPartitioner();
+			MarkupLanguage markupLanguage = null;
+			if (partitioner instanceof FastMarkupPartitioner) {
+				markupLanguage = ((FastMarkupPartitioner) partitioner).getMarkupLanguage();
+			}
+			return markupLanguage;
+		}
+	}
 	/*
 	@Override
 	protected Composite createClient() {

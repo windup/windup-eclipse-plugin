@@ -2,6 +2,7 @@ package org.jboss.tools.windup.ui.internal.rules;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -38,6 +39,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	@Inject protected FormToolkit toolkit;
 	@Inject protected IEclipseContext context;
 	@Inject protected Form form;
+	@Inject protected IFile file;
 	
 	@Override
 	public abstract void update();
