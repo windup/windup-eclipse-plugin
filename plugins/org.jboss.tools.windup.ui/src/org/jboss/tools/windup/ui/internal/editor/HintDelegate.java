@@ -23,11 +23,14 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -44,6 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
@@ -55,6 +59,8 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
+import org.eclipse.wst.xml.ui.internal.tabletree.TreeExtension;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.ConfigurationBlock.ToolbarContainer;
@@ -85,6 +91,8 @@ public class HintDelegate extends ElementUiDelegate {
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
+		
+		private static final String TAG_VALUE_COLUMN = "tagValueColumn";
 		
 		private CheckboxTreeViewer tagsTreeViewer;
 		
@@ -191,6 +199,11 @@ public class HintDelegate extends ElementUiDelegate {
 			Tree tree = tagsTreeViewer.getTree();
 			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 50).applyTo(tree);
 			
+			tagsTreeViewer.setCellEditors(new CellEditor[] {new TextCellEditor(tagsTreeViewer.getTree())});
+
+			tagsTreeViewer.setCellModifier(new TagCellModifier());
+			tagsTreeViewer.setColumnProperties(new String[] {"image", TAG_VALUE_COLUMN}); //$NON-NLS-1$
+			
 			tagsTreeViewer.addCheckStateListener(new ICheckStateListener() {
 				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
@@ -216,6 +229,41 @@ public class HintDelegate extends ElementUiDelegate {
 			section.setExpanded(true);
 			createSectionToolbar(section);
 			return section;
+		}
+		
+		private class TagCellModifier implements ICellModifier, TreeExtension.ICellEditorProvider {
+			
+			protected TreeContentHelper treeContentHelper = new TreeContentHelper();
+			
+			public boolean canModify(Object object, String property) {
+				Node node = (Node)object;
+				if (!Objects.equal(node.getParentNode(), element)) {
+					return false;
+				}
+				return true;
+			}
+
+			public Object getValue(Object object, String property) {
+				String result = null;
+				if (object instanceof Node) {
+					result = treeContentHelper.getNodeValue((Node) object);
+				}
+				return (result != null) ? result : ""; //$NON-NLS-1$
+			}
+
+			public void modify(Object element, String property, Object value) {
+				Item item = (Item) element;
+				String oldValue = treeContentHelper.getNodeValue((Node) item.getData());
+				String newValue = value.toString();
+				if ((newValue != null) && !newValue.equals(oldValue)) {
+					treeContentHelper.setNodeValue((Node) item.getData(), value.toString(), tagsTreeViewer.getControl().getShell());
+				}
+			}
+
+			@Override
+			public CellEditor getCellEditor(Object o, int col) {
+				return new TextCellEditor(tagsTreeViewer.getTree());
+			}
 		}
 		
 		private void createSectionToolbar(Section section) {
@@ -264,7 +312,7 @@ public class HintDelegate extends ElementUiDelegate {
 				otherTagsMap.put(contentHelper.getNodeValue(node), node);
 			}
 			
-			List<Node> localTags = Lists.newLinkedList();
+			Set<Node> localTags = Sets.newLinkedHashSet();
 			NodeList tagList = element.getElementsByTagName(RulesetConstants.TAG_NAME);
 			for (int i = 0; i < tagList.getLength(); i++) {
 				Node node = tagList.item(i);
