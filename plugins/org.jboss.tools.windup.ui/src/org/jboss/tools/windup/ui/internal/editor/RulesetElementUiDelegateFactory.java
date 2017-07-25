@@ -102,6 +102,7 @@ public class RulesetElementUiDelegateFactory {
 		static final String EFFORT = "effort"; //$NON-NLS-1$
 		static final String CATEGORY_ID = "category-id"; //$NON-NLS-1$
 		static final String MESSAGE = "message"; //$NON-NLS-1$
+		static final String CDATA = "cdata-section"; //$NON-NLS-1$
 		
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references"; //$NON-NLS-1$

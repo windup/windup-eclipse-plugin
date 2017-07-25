@@ -24,13 +24,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.Region;
@@ -39,9 +38,8 @@ import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.OverviewRuler;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -51,31 +49,33 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.mylyn.internal.wikitext.ui.WikiTextUiPlugin;
-import org.eclipse.mylyn.internal.wikitext.ui.editor.MarkupEditor;
 import org.eclipse.mylyn.internal.wikitext.ui.editor.MarkupProjectionViewer;
 import org.eclipse.mylyn.internal.wikitext.ui.editor.syntax.FastMarkupPartitioner;
 import org.eclipse.mylyn.internal.wikitext.ui.editor.syntax.MarkupDocumentProvider;
+import org.eclipse.mylyn.wikitext.asciidoc.AsciiDocLanguage;
+import org.eclipse.mylyn.wikitext.markdown.MarkdownLanguage;
 import org.eclipse.mylyn.wikitext.parser.Attributes;
-import org.eclipse.mylyn.wikitext.parser.MarkupParser;
 import org.eclipse.mylyn.wikitext.parser.DocumentBuilder.BlockType;
+import org.eclipse.mylyn.wikitext.parser.MarkupParser;
 import org.eclipse.mylyn.wikitext.parser.builder.HtmlDocumentBuilder;
 import org.eclipse.mylyn.wikitext.parser.markup.AbstractMarkupLanguage;
 import org.eclipse.mylyn.wikitext.parser.markup.MarkupLanguage;
-import org.eclipse.mylyn.wikitext.parser.outline.OutlineItem;
+import org.eclipse.mylyn.wikitext.ui.WikiText;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
-import org.eclipse.swt.browser.ProgressAdapter;
-import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -89,15 +89,19 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
@@ -679,11 +683,19 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private static final String CSS_CLASS_EDITOR_PREVIEW = "editorPreview"; //$NON-NLS-1$
 		
-		private FileEditorInput editorInput;
+		private final static String CURRENT_LINE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+		private final static String CURRENT_LINE_COLOR= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+		private final static String PRINT_MARGIN= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
+		private final static String PRINT_MARGIN_COLOR= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
+		private final static String PRINT_MARGIN_COLUMN= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+		
+		private IEditorInput editorInput;
 		private MarkupDocumentProvider documentProvider = new MarkupDocumentProvider();
 		private Browser browser;
 		private IDocument document;
 		private SashForm sash;
+		
+		private MarkupProjectionViewer sourceViewer;
 		
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
@@ -692,22 +704,15 @@ public class HintDelegate extends ElementUiDelegate {
 			createSourceViewer(sash);
 			createBrowser(sash);
 			updatePreview();
-			/*Composite client = super.createSection(parent, 2);
-			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-			    		Node node = findNode(element, ed, declaration);
-				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
-				    		ChoiceAttributeRow row = createEffortRow(node, declaration);
-				    		rows.add(row);
-				    		row.createContents(client, toolkit, 2);
-				    	}
-				    	else {
-				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 2));
-				    	}
-			    }
-			}*/
+		}
+		
+		@Override
+		protected void bind() {
+			String message = getElementMessage();
+			if (!Objects.equal(document.get(), message)) {
+				document.set(getElementMessage());
+			}
+			updatePreview();
 		}
 		
 		private void createSash(Composite parent) {
@@ -721,16 +726,13 @@ public class HintDelegate extends ElementUiDelegate {
 		private void createBrowser(Composite parent) {
 			browser = new Browser(parent, SWT.NONE);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
-			// bug 260479: open hyperlinks in a browser
 			browser.addLocationListener(new LocationListener() {
 				public void changed(LocationEvent event) {
 					event.doit = false;
 				}
-
 				public void changing(LocationEvent event) {
 					// if it looks like an absolute URL
 					if (event.location.matches("([a-zA-Z]{3,8})://?.*")) { //$NON-NLS-1$
-
 						// workaround for browser problem (bug 262043)
 						int idxOfSlashHash = event.location.indexOf("/#"); //$NON-NLS-1$
 						if (idxOfSlashHash != -1) {
@@ -741,13 +743,12 @@ public class HintDelegate extends ElementUiDelegate {
 							return;
 						}
 						// workaround end
-
 						event.doit = false;
 						try {
-							PlatformUI.getWorkbench()
+							IWebBrowser webBrowser = PlatformUI.getWorkbench()
 									.getBrowserSupport()
-									.createBrowser("org.eclipse.ui.browser") //$NON-NLS-1$
-									.openURL(new URL(event.location));
+									.createBrowser("org.eclipse.ui.browser"); //$NON-NLS-1$
+							webBrowser.openURL(new URL(event.location));
 						} catch (Exception e) {
 							new URLHyperlink(new Region(0, 1), event.location).open();
 						}
@@ -756,40 +757,131 @@ public class HintDelegate extends ElementUiDelegate {
 			});
 		}
 		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private CMElementDeclaration getMessageCmNode() {
+			List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
+					ModelQuery.VALIDITY_STRICT);
+			Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
+				if (candidate instanceof CMElementDeclaration) {
+					return RulesetConstants.MESSAGE.equals(((CMElementDeclaration)candidate).getElementName());
+				}
+				return false;
+			}).findFirst();
+			if (found.isPresent()) {
+				return found.get();
+			}
+			return null;
+		} 
+		
+		private Node getMessageNode() {
+			NodeList list = element.getElementsByTagName(RulesetConstants.MESSAGE);
+			if (list.getLength() > 0) {
+				return list.item(0);
+			}
+			return null;
+		}
+		
+		private String getElementMessage() {
+			StringBuilder builder = new StringBuilder();
+			Node node = getMessageNode();
+			if (node != null) {
+				NodeList childList = node.getChildNodes();
+				for (int i = 0; i < childList.getLength(); i++) {
+					Node child = childList.item(i);
+					builder.append(contentHelper.getNodeValue(child));
+					/*System.out.println(child.getNodeName());
+					System.out.println(child.getNodeType());
+					System.out.println(child.getNodeValue());
+					System.out.println(contentHelper.getNodeValue(child));*/
+				}
+			}
+			System.out.println(builder.toString());
+			return builder.toString();
+		}
+		
+		protected void setValue(String value) {
+			Node node = getMessageNode();
+			CMNode cmNode = getMessageCmNode();
+			try {
+				model.aboutToChangeModel();
+				if (node != null) {
+					contentHelper.setNodeValue(node, value);
+				}
+				else {
+					AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, element, element.getChildNodes().getLength());
+					newNodeAction.runWithoutTransaction();
+					/*if (!newNodeAction.getResult().isEmpty()) {
+						this.node = (Node)newNodeAction.getResult().get(0);
+					}*/
+				}
+			}
+			finally {
+				model.changedModel();
+			}
+		}
+		
 		protected void createSourceViewer(Composite parent) {
-			/*SourceViewer viewer = new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getTextWidget());
-
-			SourceViewerConfiguration configuration = new TextSourceViewerConfiguration();
-			IDocument document = new Document();
-			viewer.configure(configuration);
-			viewer.setDocument(document);
-			Font font = JFaceResources.getFont(JFaceResources.TEXT_FONT);
-			viewer.getTextWidget().setFont(font);*/
-			this.editorInput = new FileEditorInput(file);
+			 // = new FileEditorInput(file);
+			String string = getElementMessage();
+			IStorage storage = new StringInput.StringStorage(string);
+			this.editorInput = new StringInput(storage);
 			CompositeRuler ruler = new CompositeRuler();
 			int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-			MarkupProjectionViewer viewer = new MarkupProjectionViewer(parent, ruler, createOverviewRuler(), true,
+			IOverviewRuler overviewRuler = createOverviewRuler();
+			sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true,
 					styles | SWT.WRAP);
-			GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 500).applyTo(viewer.getControl());
+			GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 500).applyTo(sourceViewer.getControl());
 			try {
+				documentProvider.setMarkupLanguage(new AsciiDocLanguage());
 				documentProvider.connect(editorInput);
 				this.document = documentProvider.getDocument(editorInput);
-				viewer.setDocument(document);
+				sourceViewer.setDocument(document);
 			} catch (CoreException e) {
 				WindupUIPlugin.log(e);
 			}
+			
+			IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
+			SourceViewerDecorationSupport fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, overviewRuler, annotationAccess, getSharedColors());
+			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
+			
+			sourceViewer.getTextWidget().setData(MarkupLanguage.class.getName(), getMarkupLanguage());
+			sourceViewer.getTextWidget().setData(ISourceViewer.class.getName(), sourceViewer);
+			sourceViewer.getTextWidget().addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					if (!blockNotification) {
+						setValue(document.get());
+						updatePreview();
+					}
+				}
+			});
+		}
+		
+		private void initializeMarkupLanguage(IEditorInput input) {
+			/*MarkupLanguage markupLanguage = loadMarkupLanguagePreference();
+			if (markupLanguage == null) {
+				String name = input.getName();
+				if (input instanceof IFileEditorInput) {
+					name = ((IFileEditorInput) input).getFile().getName();
+				} else if (input instanceof IPathEditorInput) {
+					name = ((IPathEditorInput) input).getPath().lastSegment();
+				}
+				markupLanguage = WikiText.getMarkupLanguageForFilename(name);
+				if (markupLanguage == null) {
+					markupLanguage = WikiText.getMarkupLanguage("Textile"); //$NON-NLS-1$
+				}
+			}
+			setMarkupLanguage(markupLanguage, false);*/
+		}
+		
+		protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+			support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
+			support.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
+			support.setSymbolicFontName(JFaceResources.TEXT_FONT);
 		}
 		
 		protected IOverviewRuler createOverviewRuler() {
 			IOverviewRuler ruler= new OverviewRuler(createAnnotationAccess(), VERTICAL_RULER_WIDTH, getSharedColors());
-
-			/*Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
-			while (e.hasNext()) {
-				AnnotationPreference preference= e.next();
-				if (preference.contributesToHeader())
-					ruler.addHeaderAnnotationType(preference.getAnnotationType());
-			}*/
 			return ruler;
 		}
 
@@ -799,6 +891,16 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		protected ISharedTextColors getSharedColors() {
 			return EditorsPlugin.getDefault().getSharedTextColors();
+		}
+		
+		public MarkupLanguage getMarkupLanguage() {
+			IDocument document = documentProvider.getDocument(editorInput);
+			IDocumentPartitioner partitioner = document.getDocumentPartitioner();
+			MarkupLanguage markupLanguage = null;
+			if (partitioner instanceof FastMarkupPartitioner) {
+				markupLanguage = ((FastMarkupPartitioner) partitioner).getMarkupLanguage();
+			}
+			return markupLanguage;
 		}
 		
 		/**
@@ -816,7 +918,6 @@ public class HintDelegate extends ElementUiDelegate {
 			Object result = browser.evaluate(JAVASCRIPT_GETSCROLLTOP);
 			final int verticalScrollbarPos = result != null ? ((Number) result).intValue() : 0;
 			String xhtml = null;
-			try {
 				String title = file == null ? "" : file.getName(); //$NON-NLS-1$
 				if (title.lastIndexOf('.') != -1) {
 					title = title.substring(0, title.lastIndexOf('.'));
@@ -848,12 +949,6 @@ public class HintDelegate extends ElementUiDelegate {
 				};
 				builder.setTitle(title);
 
-				IPath location = file == null ? null : file.getLocation();
-				if (location != null) {
-					builder.setBaseInHead(true);
-					builder.setBase(location.removeLastSegments(1).toFile().toURI());
-				}
-
 				String css = WikiTextUiPlugin.getDefault().getPreferences().getMarkupViewerCss();
 				if (css != null && css.length() > 0) {
 					builder.addCssStylesheet(new HtmlDocumentBuilder.Stylesheet(new StringReader(css)));
@@ -876,31 +971,9 @@ public class HintDelegate extends ElementUiDelegate {
 					markupParser.setBuilder(builder);
 					markupParser.setMarkupLanguage(markupLanguage);
 
-					markupParser.parse(document.get());
-				} else {
-					builder.beginDocument();
-					builder.beginBlock(BlockType.PREFORMATTED, new Attributes());
-					builder.characters(document.get());
-					builder.endBlock();
-					builder.endDocument();
+					markupParser.parse(sourceViewer.getDocument().get()/*document.get()*/);
 				}
 				xhtml = writer.toString();
-			} catch (Exception e) {
-				StringWriter stackTrace = new StringWriter();
-				PrintWriter writer = new PrintWriter(stackTrace);
-				e.printStackTrace(writer);
-				writer.close();
-
-				StringWriter documentWriter = new StringWriter();
-				HtmlDocumentBuilder builder = new HtmlDocumentBuilder(documentWriter);
-				builder.beginDocument();
-				builder.beginBlock(BlockType.PREFORMATTED, new Attributes());
-				builder.characters(stackTrace.toString());
-				builder.endBlock();
-				builder.endDocument();
-
-				xhtml = documentWriter.toString();
-			}
 			/*browser.addProgressListener(new ProgressAdapter() {
 
 				@Override
@@ -916,16 +989,6 @@ public class HintDelegate extends ElementUiDelegate {
 			});*/
 			browser.setText(xhtml);
 			//previewDirty = false;
-		}
-	
-		public MarkupLanguage getMarkupLanguage() {
-			IDocument document = documentProvider.getDocument(editorInput);
-			IDocumentPartitioner partitioner = document.getDocumentPartitioner();
-			MarkupLanguage markupLanguage = null;
-			if (partitioner instanceof FastMarkupPartitioner) {
-				markupLanguage = ((FastMarkupPartitioner) partitioner).getMarkupLanguage();
-			}
-			return markupLanguage;
 		}
 	}
 	/*
