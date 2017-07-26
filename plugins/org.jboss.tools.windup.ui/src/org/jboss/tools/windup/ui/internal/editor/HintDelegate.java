@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -31,6 +32,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -38,7 +40,9 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
+import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -76,6 +80,8 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -92,16 +98,22 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
@@ -691,9 +703,13 @@ public class HintDelegate extends ElementUiDelegate {
 		private SourceViewer sourceViewer;
 		private MarkdownLanguage language = new MarkdownLanguage();
 		
+		private IHandlerService handlerService;
+		private IHandlerActivation contentAssistHandlerActivation;
+		
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.messageTab);
+			handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 			parent = createMessageSection(parent);
 			createSash(parent);
 			createSourceViewer(sash);
@@ -888,7 +904,7 @@ public class HintDelegate extends ElementUiDelegate {
 				MarkupDocumentProvider documentProvider = new MarkupDocumentProvider();
 				documentProvider.connect(editorInput);
 				this.document = documentProvider.getDocument(editorInput);
-				sourceViewer.setDocument(document);
+				//sourceViewer.setDocument(document);
 				
 				((AbstractMarkupLanguage) language).setEnableMacros(false);
 				documentProvider.setMarkupLanguage(language);
@@ -905,6 +921,17 @@ public class HintDelegate extends ElementUiDelegate {
 				WindupUIPlugin.log(e);
 			}
 			
+			sourceViewer.getTextWidget().addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					deactivateEditorHandlers();
+				}
+				@Override
+				public void focusGained(FocusEvent e) {
+					activatEditorHandlers();
+				}
+			});
+			
 			IDocumentListener documentListener = new IDocumentListener() {
 				public void documentAboutToBeChanged(DocumentEvent event) {}
 				public void documentChanged(DocumentEvent event) {
@@ -919,15 +946,43 @@ public class HintDelegate extends ElementUiDelegate {
 				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					document.removeDocumentListener(documentListener);
+					deactivateEditorHandlers();
 				}
 			});
 			
 			document.addDocumentListener(documentListener);
 			
-			AssistAction action = new AssistAction(sourceViewer);
-			action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-			IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
-			handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action));
+			configureAsEditor(sourceViewer, (Document)document);
+		}
+		
+		private void configureAsEditor(ISourceViewer viewer, Document document) {
+			IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
+			final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(viewer, null, annotationAccess,
+					EditorsUI.getSharedTextColors());
+			Iterator<?> e = new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
+			while (e.hasNext()) {
+				support.setAnnotationPreference((AnnotationPreference) e.next());
+			}
+			support.install(EditorsUI.getPreferenceStore());
+			viewer.getTextWidget().addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					support.uninstall();
+				}
+			});
+			AnnotationModel annotationModel = new AnnotationModel();
+			viewer.setDocument(document, annotationModel);
+		}
+		
+		private void activatEditorHandlers() {
+			contentAssistHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, 
+					new ActionHandler(new AssistAction(sourceViewer)));
+		}
+		
+		private void deactivateEditorHandlers() {
+			if (contentAssistHandlerActivation != null) {
+				handlerService.deactivateHandler(contentAssistHandlerActivation);
+				contentAssistHandlerActivation = null;
+			}
 		}
 		
 		private static class AssistAction extends Action {
