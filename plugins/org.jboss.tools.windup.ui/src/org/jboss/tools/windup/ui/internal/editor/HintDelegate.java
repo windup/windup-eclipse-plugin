@@ -26,6 +26,8 @@ import javax.annotation.PostConstruct;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -97,6 +99,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
@@ -631,6 +634,7 @@ public class HintDelegate extends ElementUiDelegate {
 				ToolItem deleteLinkItem = new ToolItem(toolbar, SWT.PUSH);
 				deleteLinkItem.setToolTipText(Messages.RulesetEditor_remove);
 				deleteLinkItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_GARBAGE));
+				//deleteLinkItem.getControl().setCursor(parent.getShell().getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 				deleteLinkItem.addSelectionListener(new SelectionAdapter() {
 			    		@Override
 			    		public void widgetSelected(SelectionEvent e) {
@@ -690,10 +694,35 @@ public class HintDelegate extends ElementUiDelegate {
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.messageTab);
+			parent = createMessageSection(parent);
 			createSash(parent);
 			createSourceViewer(sash);
-			createBrowser(sash);
+			parent = createPreviewSection(sash);
+			createBrowser(parent);
 			updatePreview();
+		}
+		
+		private Composite createMessageSection(Composite parent) {
+			Section section = createSection(parent, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.NO_TITLE_FOCUS_BOX);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+			section.setDescription(NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
+			return (Composite)section.getClient();
+		}
+		
+		private String getBinding() {
+		    final IBindingService bindingSvc= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			TriggerSequence binding= bindingSvc.getBestActiveBindingFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+			if (binding instanceof KeySequence) {
+				return binding.format();
+			}
+			return "";
+	    }
+		
+		private Composite createPreviewSection(Composite parent) {
+			Section section = createSection(parent, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.NO_TITLE_FOCUS_BOX);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+			section.setDescription(NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME));
+			return (Composite)section.getClient();
 		}
 		
 		@Override
@@ -715,7 +744,7 @@ public class HintDelegate extends ElementUiDelegate {
 		}
 		
 		private void createBrowser(Composite parent) {
-			browser = new Browser(parent, SWT.BORDER);
+			browser = new Browser(parent, SWT.NONE);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
 			browser.addLocationListener(new LocationListener() {
 				public void changed(LocationEvent event) {
@@ -786,33 +815,61 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private String getCdataMessage(Node messageNode) {
 			String message = null;
+			Node cdataNode = getCdataNode(messageNode);
+			if (cdataNode != null) {
+				message = contentHelper.getNodeValue(cdataNode);
+			}
+			return message;
+		}
+
+		private Node getCdataNode(Node messageNode) {
 			NodeList childList = messageNode.getChildNodes();
 			for (int i = 0; i < childList.getLength(); i++) {
 				Node child = childList.item(i);
 				if (Objects.equal(child.getNodeName(), RulesetConstants.CDATA)) {
-					message = contentHelper.getNodeValue(child).trim();
-					break;
+					return child;
 				}
 			}
-			return message;
+			return null;
 		}
 		
-		protected void setValue(String value) {
+		protected void setMessage(String value) {
 			Node node = getMessageNode();
 			CMNode cmNode = getMessageCmNode();
 			try {
 				model.aboutToChangeModel();
 				if (node != null) {
-					contentHelper.setNodeValue(node, value);
+					Node cdataNode = getCdataNode(node);
+					String currentMessage = contentHelper.getNodeValue(node);
+					if (currentMessage != null && !currentMessage.isEmpty()) {
+						contentHelper.setNodeValue(node, value);
+					}
+					else if (cdataNode != null) {
+						contentHelper.setNodeValue(cdataNode, value);
+					}
+					else {
+						createCdataNode(node, value);
+					}
 				}
 				else {
 					AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, element, element.getChildNodes().getLength());
 					newNodeAction.runWithoutTransaction();
+					List<Node> newNodes = newNodeAction.getResult();
+					if (!newNodes.isEmpty()) {
+						node = newNodes.get(0);
+						contentHelper.setNodeValue(node, "");
+						createCdataNode(node, value);
+					}
 				}
 			}
 			finally {
 				model.changedModel();
 			}
+		}
+		
+		private void createCdataNode(Node messageNode, String value) {
+			Node cdataNode = messageNode.getOwnerDocument().createCDATASection(value);
+			messageNode.appendChild(cdataNode);
 		}
 		
 		protected void createSourceViewer(Composite parent) {
@@ -852,6 +909,7 @@ public class HintDelegate extends ElementUiDelegate {
 				public void documentAboutToBeChanged(DocumentEvent event) {}
 				public void documentChanged(DocumentEvent event) {
 					if (!blockNotification) {
+						setMessage(document.get());
 						updatePreview();
 					}
 				}

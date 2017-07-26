@@ -284,13 +284,6 @@ public class ConfigurationBlock {
 			
 			if (visible) {
 				data.right = new FormAttachment(toolbar);
-				/*FormData toolbarData = (FormData)toolbar.getLayoutData();
-				if (data.top != null) {
-					toolbarData.top = new FormAttachment(data.top.control);
-				}
-				if (data.bottom != null) {
-					toolbarData.bottom = new FormAttachment(data.bottom.control);
-				}*/
 			}
 			else {
 				data.right = new FormAttachment(100);

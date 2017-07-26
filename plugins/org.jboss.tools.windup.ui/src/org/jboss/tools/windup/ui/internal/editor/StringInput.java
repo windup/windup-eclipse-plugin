@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class StringInput implements IStorageEditorInput {
 	
 	public static class StringStorage implements IStorage {
