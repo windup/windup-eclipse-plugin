@@ -10,12 +10,11 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
-import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_tabTitle;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
@@ -58,6 +56,8 @@ public class RulesetEditor {
 	@Inject private IMenuService menuService;
 	
 	@Inject	private RulesetElementUiDelegateRegistry widgetRegistry;
+	
+	@Inject private IFile file;
 	
 	private Composite stackComposite;
 	private Composite gettingStartedComposite;
@@ -123,16 +123,19 @@ public class RulesetEditor {
 		sash.setFont(comp.getFont());
 		sash.setVisible(true);
 		
+		String leftPref = file.getFullPath()+SASH_LEFT;
+		String rightPref = file.getFullPath()+SASH_RIGHT;
+		
 		sash.addDisposeListener((e) -> {
-			preferences.put(SASH_LEFT, String.valueOf(sash.getWeights()[0]));
-			preferences.put(SASH_RIGHT, String.valueOf(sash.getWeights()[1]));
+			preferences.put(leftPref, String.valueOf(sash.getWeights()[0]));
+			preferences.put(rightPref, String.valueOf(sash.getWeights()[1]));
 		});
 		
 		elementsSection = createLeftSide(sash);
 		createRightSide(sash);
 		
-		int left = preferences.getInt(SASH_LEFT, SASH_LEFT_DEFAULT);
-		int right = preferences.getInt(SASH_RIGHT, SASH_RIGHT_DEFAULT);
+		int left = preferences.getInt(leftPref, SASH_LEFT_DEFAULT);
+		int right = preferences.getInt(rightPref, SASH_RIGHT_DEFAULT);
 		
 		sash.setWeights(new int[]{left, right});
 				
@@ -181,6 +184,8 @@ public class RulesetEditor {
 		if (form.isDisposed()) {
 			return;
 		}
+		int left = sash.getWeights()[0];
+		int right = sash.getWeights()[1];
 		Control top = gettingStartedComposite;
 		if (element != null) {
 			IEclipseContext child = context.createChild();
@@ -194,7 +199,9 @@ public class RulesetEditor {
 			}
 		}
 		((StackLayout)stackComposite.getLayout()).topControl = top;
+
 		stackComposite.layout(true, true);
+		sash.setWeights(new int[]{left, right});
 	}
 }
 

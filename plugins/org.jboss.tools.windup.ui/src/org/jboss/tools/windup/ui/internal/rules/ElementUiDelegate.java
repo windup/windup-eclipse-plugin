@@ -81,13 +81,6 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Override
 	protected void tabItemSelected(CTabItem item) {
-	/*	form.layout(true);
-		form.getParent().layout(true, true);
-		form.getParent().notifyListeners(SWT.Resize, null);
-		form.getParent().getParent().layout(true, true);
-		form.getParent().getParent().notifyListeners(SWT.Resize, null);
-		form.getParent().getParent().getParent().layout(true, true);
-		form.getParent().getParent().getParent().notifyListeners(SWT.Resize, null);*/
 	}
 	
 	@Override
