@@ -71,6 +71,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
@@ -194,10 +195,6 @@ public class RulesetElementUiDelegateFactory {
 				uiDelegate = createControls(JavaClassDelegate.class, context);
 				break;
 			}
-			case RulesetConstants.JAVA_CLASS_LOCATION: {
-				uiDelegate = createControls(LocationDelegate.class, context);
-				break;
-			}
 			case RulesetConstants.HINT_NAME: { 
 				uiDelegate = createControls(HintDelegate.class, context);
 				break;
@@ -308,12 +305,18 @@ public class RulesetElementUiDelegateFactory {
 		protected void createTabs() {
 			addTab(DetailsTab.class);
 		}
+	
+		@Override
+		public Object[] getChildren() {
+			return new Object[] {};
+		}
 		
 		public static class DetailsTab extends ElementAttributesContainer {
 			
 			@PostConstruct
 			@SuppressWarnings("unchecked")
 			public void createControls(Composite parent, CTabItem item) {
+				item.setText(Messages.ruleElementDetails);
 				Composite client = super.createSection(parent, 3);
 				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 				if (ed != null) {
@@ -334,19 +337,17 @@ public class RulesetElementUiDelegateFactory {
 					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 3));
 					    	}
 				    }
+				    createLocationRow(client);
 				}
 			}
-		}
-	}
-	
-	public static class LocationDelegate extends ElementUiDelegate {
-		
-		@Override
-		protected void createTabs() {
-			addTab(DetailsTab.class);
-		}
-		
-		public static class DetailsTab extends ElementAttributesContainer {
+			
+			private void createLocationRow(Composite parent) {
+				Composite client = super.createSection(parent, 2);
+				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+				ChoiceAttributeRow row = createLocationRow(ed);
+				rows.add(row);
+				row.createContents(client, toolkit, 2);
+			}
 			
 			private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
 				return new ChoiceAttributeRow(element.getParentNode(), element, cmNode, true) {
@@ -405,23 +406,8 @@ public class RulesetElementUiDelegateFactory {
 					}
 				};
 			}
-			
-			@PostConstruct
-			public void createControls(Composite parent) {
-				Composite client = super.createSection(parent, 2);
-				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-				ChoiceAttributeRow row = createLocationRow(ed);
-				rows.add(row);
-				row.createContents(client, toolkit, 2);
-			}
-		}
-		
-		@Override
-		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
-			return true;
 		}
 	}
-	
 	
 	public static abstract class NodeRow implements IControlHoverContentProvider {
 		
