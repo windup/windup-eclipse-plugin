@@ -153,8 +153,8 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private CheckboxTreeViewer tagsTreeViewer;
 		
-		private ChoiceAttributeRow createEffortRow(Node node, CMNode cmNode) {
-			return new ChoiceAttributeRow(element, node, cmNode, true) {
+		private ChoiceAttributeRow createEffortRow(CMNode cmNode) {
+			return new ChoiceAttributeRow(element, cmNode, true) {
 				@Override
 				protected List<String> getOptions() {
 					return Arrays.stream(HINT_EFFORT.values()).map(e -> computeUiValue(e)).
@@ -221,14 +221,13 @@ public class HintDelegate extends ElementUiDelegate {
 			if (ed != null) {
 				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-			    		Node node = findNode(element, ed, declaration);
 				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
-				    		ChoiceAttributeRow row = createEffortRow(node, declaration);
+				    		ChoiceAttributeRow row = createEffortRow(declaration);
 				    		rows.add(row);
 				    		row.createContents(client, toolkit, 2);
 				    	}
 				    	else {
-				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 2));
+				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 2));
 				    	}
 			    }
 			}
@@ -357,6 +356,7 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		@Override
 		protected void bind() {
+			super.bind();
 			loadTags();
 		}
 		
@@ -602,11 +602,16 @@ public class HintDelegate extends ElementUiDelegate {
 					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(linkElement, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 					
 				    for (CMAttributeDeclaration declaration : availableAttributeList) {
-				    		Node node = ElementUiDelegate.findNode(linkElement, ed, declaration);
 				    	  	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
-							ReferenceNodeRow row = new ReferenceNodeRow(element, node, declaration) {
+							ReferenceNodeRow row = new ReferenceNodeRow(element, declaration) {
+								@Override
+								protected Node getNode() {
+									return ElementUiDelegate.findNode(linkElement, ed, declaration);
+								}
+
 								@Override
 								protected void openReference() {
+									Node node = getNode();
 									if (node != null && !node.getNodeValue().isEmpty()) {
 										try {
 											PlatformUI.getWorkbench().getBrowserSupport()
@@ -623,7 +628,7 @@ public class HintDelegate extends ElementUiDelegate {
 							addToolbar(group, left, right, row);
 				    	  	}
 				    	  	else {
-				    	  		TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, node, declaration, left, 2);
+				    	  		TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(linkElement, toolkit, /*node,*/ declaration, left, 2);
 				    	  		rows.add(row);
 				    	  		addToolbar(group, left, right, row);
 				    	  	}
@@ -682,8 +687,8 @@ public class HintDelegate extends ElementUiDelegate {
 		}
 	}
 	
-	protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, Node node, CMNode cmNode, Composite parent, int columns) {
-		TextNodeRow row = new TextNodeRow(parentNode, node, cmNode);
+	protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, CMNode cmNode, Composite parent, int columns) {
+		TextNodeRow row = new TextNodeRow(parentNode, cmNode);
 		row.createContents(parent, toolkit, columns);
 		return row;
 	}

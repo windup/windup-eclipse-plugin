@@ -21,7 +21,6 @@ import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
 import org.jboss.tools.windup.ui.internal.rules.ElementDetailsSection;
-import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
@@ -38,17 +37,25 @@ public class ElementAttributesContainer extends ElementDetailsSection {
 		if (ed != null) {
 			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 		    for (CMAttributeDeclaration declaration : availableAttributeList) {
-		    		Node node = ElementUiDelegate.findNode(element, ed, declaration);
-		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, /*getSpan()*/ span));
+		    		//Node node = ElementUiDelegate.findNode(element, ed, declaration);
+		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, parent, /*getSpan()*/ span));
 		    }
 		    if (availableAttributeList.isEmpty() && !Boolean.TRUE.equals(ed.getProperty("isInferred"))) { //$NON-NLS-1$
-		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element.getParentNode(), toolkit, element, ed, parent, /*getSpan()*/ span));
+		    		TextNodeRow row = new TextNodeRow(element.getParentNode(), ed) {
+		    			@Override
+		    			protected Node getNode() {
+		    				return element;
+		    			}
+		    		};
+				row.createContents(parent, toolkit, span);
+				rows.add(row);
+		    		//rows.add(ElementAttributesContainer.createTextAttributeRow(element.getParentNode(), toolkit, element, ed, parent, /*getSpan()*/ span));
 		    }
 		}
 	}
     
-    protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, Node node, CMNode cmNode, Composite parent, int columns) {
-    		TextNodeRow row = new TextNodeRow(parentNode, node, cmNode);
+    protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, CMNode cmNode, Composite parent, int columns) {
+    		TextNodeRow row = new TextNodeRow(parentNode, cmNode);
 		row.createContents(parent, toolkit, columns);
 		return row;
     }

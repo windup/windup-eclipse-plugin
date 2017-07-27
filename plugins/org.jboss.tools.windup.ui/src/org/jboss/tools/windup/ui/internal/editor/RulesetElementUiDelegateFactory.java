@@ -76,6 +76,7 @@ import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -268,7 +269,7 @@ public class RulesetElementUiDelegateFactory {
 				    		Node node = findNode(element, ed, declaration);
 					    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
 					    		IProject project = context.get(IFile.class).getProject();
-					    		ReferenceNodeRow row = new ReferenceNodeRow(element, node, declaration) {
+					    		ReferenceNodeRow row = new ReferenceNodeRow(element, declaration) {
 								@Override
 								protected void openReference() {
 									if (node != null && !node.getNodeValue().isEmpty()) {
@@ -286,7 +287,7 @@ public class RulesetElementUiDelegateFactory {
 							row.createContents(parent, toolkit, 2);
 					    	}
 					    	else {
-					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, parent, 2));
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, parent, 2));
 					    	}
 				    }
 				}
@@ -322,35 +323,63 @@ public class RulesetElementUiDelegateFactory {
 				if (ed != null) {
 					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 				    for (CMAttributeDeclaration declaration : availableAttributeList) {
-				    		Node node = findNode(element, ed, declaration);
 					    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.JAVA_CLASS_REFERENCES)) {
 					    		IFile file = context.get(IFile.class);
 					    		IProject project = null;
 					    		if (file != null) {
 					    			project = file.getProject();
 					    		}
-					    		ClassAttributeRow row = new ClassAttributeRow(element, node, declaration, project);
+					    		ClassAttributeRow row = new ClassAttributeRow(element, declaration, project) {
+					    			@Override
+					    			protected Node getNode() {
+					    				return findNode(element, ed, declaration);
+					    			}
+					    		};
 							rows.add(row);
 							row.createContents(client, toolkit, 2);
 					    	}
 					    	else {
-					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, node, declaration, client, 3));
+					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 					    	}
 				    }
 				    createLocationRow(client);
 				}
 			}
 			
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			private CMElementDeclaration getLocationCmNode() {
+				List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
+						ModelQuery.VALIDITY_STRICT);
+				Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
+					if (candidate instanceof CMElementDeclaration) {
+						return RulesetConstants.JAVA_CLASS_LOCATION.equals(((CMElementDeclaration)candidate).getElementName());
+					}
+					return false;
+				}).findFirst();
+				if (found.isPresent()) {
+					return found.get();
+				}
+				return null;
+			}
+			
 			private void createLocationRow(Composite parent) {
-				Composite client = super.createSection(parent, 2);
-				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-				ChoiceAttributeRow row = createLocationRow(ed);
+				CMNode cmNode = getLocationCmNode();
+				ChoiceAttributeRow row = createLocationRow(cmNode);
 				rows.add(row);
-				row.createContents(client, toolkit, 2);
+				row.createContents(parent, toolkit, 3);
 			}
 			
 			private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
-				return new ChoiceAttributeRow(element.getParentNode(), element, cmNode, true) {
+				return new ChoiceAttributeRow(element, cmNode, true) {
+					
+					@Override
+					protected Node getNode() {
+						NodeList list = element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION);
+						if (list.getLength() > 0) {
+							return list.item(0);
+						}
+						return null;
+					}
 					
 					@Override
 					protected List<String> getOptions() {
@@ -362,15 +391,6 @@ public class RulesetElementUiDelegateFactory {
 						return location.getLabel() + " - " + location.getDescription();
 					}
 
-					private org.w3c.dom.Text findTextChild(Element element) {
-						for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
-							if (child instanceof org.w3c.dom.Text) {
-								return (org.w3c.dom.Text)child;
-							}
-						}
-						return null;
-					}
-					
 					@Override
 					protected String modelToDisplayValue(String modelValue) {
 						if (modelValue == null || modelValue.isEmpty()) {
@@ -412,7 +432,6 @@ public class RulesetElementUiDelegateFactory {
 	public static abstract class NodeRow implements IControlHoverContentProvider {
 		
 		protected Node parent;
-		protected Node node;
 		protected CMNode cmNode;
 		
 		protected IStructuredModel model;
@@ -424,12 +443,10 @@ public class RulesetElementUiDelegateFactory {
 		protected XMLTableTreePropertyDescriptorFactory propertyDescriptorFactory = new XMLTableTreePropertyDescriptorFactory();
 		protected TreeContentHelper contentHelper = new TreeContentHelper();
 		
-		public NodeRow(Node parent, Node node, CMNode cmNode) {
+		public NodeRow(Node parent, CMNode cmNode) {
 			this.parent = parent;
-			this.node = node;
 			this.cmNode = cmNode;
-			Node target = node != null ? node : parent;
-			this.model = ((IDOMNode) target).getModel();
+			this.model = ((IDOMNode) parent).getModel();
 			this.modelQuery = ModelQueryUtil.getModelQuery(model);
 		}
 		
@@ -467,6 +484,7 @@ public class RulesetElementUiDelegateFactory {
 		protected String getNodeLabel() {
 			boolean required = false;
 			String label = "";
+			Node node = getNode();
 			switch (node.getNodeType()) {
 				case Node.ATTRIBUTE_NODE: {
 					//CMAttributeDeclaration ad = modelQuery.getCMAttributeDeclaration((Attr) node);
@@ -495,7 +513,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		protected String getLabel() {
-			if (node == null) {
+			if (getNode() == null) {
 				return getCmNodeLabel();
 			}
 			else {
@@ -505,15 +523,22 @@ public class RulesetElementUiDelegateFactory {
 		
 		protected String getValue() {
 			String result = ""; //$NON-NLS-1$
+			Node node = getNode();
 			if (node != null) {
 				result = contentHelper.getNodeValue(node);	
 			}
 			return result != null ? result : ""; //$NON-NLS-1$
 		}
 		
+		protected Node getNode() {
+			CMElementDeclaration parentEd = modelQuery.getCMElementDeclaration((Element)parent);
+			return ElementUiDelegate.findNode((Element)parent, parentEd, cmNode);
+		}
+		
 		protected void setValue(String value) {
 			try {
 				model.aboutToChangeModel();
+				Node node = getNode();
 				if (node != null) {
 					contentHelper.setNodeValue(node, value);
 				}
@@ -521,7 +546,8 @@ public class RulesetElementUiDelegateFactory {
 					AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, parent, parent.getChildNodes().getLength());
 					newNodeAction.runWithoutTransaction();
 					if (!newNodeAction.getResult().isEmpty()) {
-						this.node = (Node)newNodeAction.getResult().get(0);
+						node = (Node)newNodeAction.getResult().get(0);
+						contentHelper.setNodeValue(node, value);
 					}
 				}
 			}
@@ -546,8 +572,8 @@ public class RulesetElementUiDelegateFactory {
 		protected Text text;
 		protected Control label;
 
-		public TextNodeRow(Node parentNode, Node node, CMNode cmNode) {
-			super(parentNode, node, cmNode);
+		public TextNodeRow(Node parentNode, CMNode cmNode) {
+			super(parentNode, cmNode);
 		}
 		
 		@Override
@@ -580,6 +606,7 @@ public class RulesetElementUiDelegateFactory {
 		public Control getTextControl() {
 			return text;
 		}
+		
 		@Override
 		protected void update() {
 			if (!Objects.equal(text.getText(), super.getValue())) {
@@ -595,8 +622,8 @@ public class RulesetElementUiDelegateFactory {
 	
 	public static abstract class ReferenceNodeRow extends TextNodeRow {
 
-		public ReferenceNodeRow(Node parentNode, Node node, CMNode cmNode) {
-			super(parentNode, node, cmNode);
+		public ReferenceNodeRow(Node parentNode, CMNode cmNode) {
+			super(parentNode, cmNode);
 		}
 
 		@Override
@@ -618,8 +645,8 @@ public class RulesetElementUiDelegateFactory {
 	
 	public static abstract class ButtonAttributeRow extends ReferenceNodeRow {
 
-		public ButtonAttributeRow(Node parentNode, Node node, CMNode cmNode) {
-			super(parentNode, node, cmNode);
+		public ButtonAttributeRow(Node parentNode, CMNode cmNode) {
+			super(parentNode, cmNode);
 		}
 
 		@Override
@@ -645,12 +672,12 @@ public class RulesetElementUiDelegateFactory {
 		protected abstract void browse();
 	}
 	
-	public static class ClassAttributeRow extends ButtonAttributeRow {
+	public abstract static class ClassAttributeRow extends ButtonAttributeRow {
 
 		private IProject project;
 
-		public ClassAttributeRow(Node parentNode, Node node, CMNode cmNode, IProject project) {
-			super(parentNode, node, cmNode);
+		public ClassAttributeRow(Node parentNode, CMNode cmNode, IProject project) {
+			super(parentNode, cmNode);
 			this.project = project;
 		}
 
@@ -699,14 +726,14 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	public static class ChoiceAttributeRow extends NodeRow {
+	public abstract static class ChoiceAttributeRow extends NodeRow {
 		
 		protected ComboPart combo;
 		private Control label;
 		private boolean readOnly; 
 
-		public ChoiceAttributeRow(Node parentNode, Node node, CMNode cmNode, boolean readOnly) {
-			super(parentNode, node, cmNode);
+		public ChoiceAttributeRow(Node parentNode, CMNode cmNode, boolean readOnly) {
+			super(parentNode, cmNode);
 			this.readOnly = readOnly;
 		}
 		
