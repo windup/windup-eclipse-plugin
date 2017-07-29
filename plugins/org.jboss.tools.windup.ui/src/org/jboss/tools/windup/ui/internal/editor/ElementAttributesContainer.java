@@ -37,8 +37,7 @@ public class ElementAttributesContainer extends ElementDetailsSection {
 		if (ed != null) {
 			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 		    for (CMAttributeDeclaration declaration : availableAttributeList) {
-		    		//Node node = ElementUiDelegate.findNode(element, ed, declaration);
-		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, parent, /*getSpan()*/ span));
+		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, parent, span));
 		    }
 		    if (availableAttributeList.isEmpty() && !Boolean.TRUE.equals(ed.getProperty("isInferred"))) { //$NON-NLS-1$
 		    		TextNodeRow row = new TextNodeRow(element.getParentNode(), ed) {
@@ -49,12 +48,11 @@ public class ElementAttributesContainer extends ElementDetailsSection {
 		    		};
 				row.createContents(parent, toolkit, span);
 				rows.add(row);
-		    		//rows.add(ElementAttributesContainer.createTextAttributeRow(element.getParentNode(), toolkit, element, ed, parent, /*getSpan()*/ span));
 		    }
 		}
 	}
     
-    protected static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, CMNode cmNode, Composite parent, int columns) {
+    public static TextNodeRow createTextAttributeRow(Node parentNode, FormToolkit toolkit, CMNode cmNode, Composite parent, int columns) {
     		TextNodeRow row = new TextNodeRow(parentNode, cmNode);
 		row.createContents(parent, toolkit, columns);
 		return row;

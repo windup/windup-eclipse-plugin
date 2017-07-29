@@ -29,6 +29,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
@@ -55,8 +57,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -69,8 +73,10 @@ import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
+import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -299,7 +305,7 @@ public class RulesetElementUiDelegateFactory {
 		
 		@Override
 		protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
-			return true;
+			return false;
 		}
 		
 		@Override
@@ -319,6 +325,9 @@ public class RulesetElementUiDelegateFactory {
 			public void createControls(Composite parent, CTabItem item) {
 				item.setText(Messages.ruleElementDetails);
 				Composite client = super.createSection(parent, 3);
+				Section section = (Section)client.getParent();
+				//String oldDescription = section.getDescription();
+				section.setDescription(RuleMessages.javaclass_description);
 				CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 				if (ed != null) {
 					List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
@@ -342,7 +351,7 @@ public class RulesetElementUiDelegateFactory {
 					    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 					    	}
 				    }
-				    createLocationRow(client);
+				    createLocationSection(parent);
 				}
 			}
 			
@@ -362,11 +371,16 @@ public class RulesetElementUiDelegateFactory {
 				return null;
 			}
 			
-			private void createLocationRow(Composite parent) {
+			private void createLocationSection(Composite parent) {
+				Pair<Section, Composite> result = super.createScrolledSection(parent,RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription,
+						ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
+				Section section = result.getFirst();
+				Composite client = result.getSecond();
+				GridLayoutFactory.fillDefaults().numColumns(2).applyTo(client);
 				CMNode cmNode = getLocationCmNode();
 				ChoiceAttributeRow row = createLocationRow(cmNode);
 				rows.add(row);
-				row.createContents(parent, toolkit, 3);
+				row.createContents(client, toolkit, 2);
 			}
 			
 			private ChoiceAttributeRow createLocationRow(CMNode cmNode) {

@@ -9,6 +9,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -24,6 +25,8 @@ import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
+import org.eclipse.xtext.util.Pair;
+import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate.IElementDetailsContainer;
 import org.w3c.dom.Element;
@@ -68,11 +71,11 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		return client;
 	}
 	
-	protected Section createScrolledSection(Composite parent, int columns) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
+	protected Pair<Section, Composite> createScrolledSection(Composite parent, String text, String description, int style) {
+		Section section = toolkit.createSection(parent, style);
+		section.setText(text);
+		section.setDescription(description);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
-		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
@@ -82,8 +85,15 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		scroll.setExpandVertical(true);
 		section.setClient(scroll);
 		
+		Composite client = toolkit.createComposite(scroll);
+		client.setLayout(new FormLayout());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+		scroll.setContent(client);
+		
+		toolkit.paintBordersFor(client);
+		
 		section.setExpanded(true);
-		return section;
+		return Tuples.create(section, client);
 	}
 	
 	protected Section createSection(Composite parent, String title, int style) {
