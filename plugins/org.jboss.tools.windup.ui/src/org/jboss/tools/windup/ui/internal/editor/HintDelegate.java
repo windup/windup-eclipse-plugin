@@ -125,9 +125,9 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ReferenceNodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
-import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate;
-import org.jboss.tools.windup.ui.internal.rules.ListContainer;
-import org.jboss.tools.windup.ui.internal.rules.ListItem;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ListContainer;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ListItem;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

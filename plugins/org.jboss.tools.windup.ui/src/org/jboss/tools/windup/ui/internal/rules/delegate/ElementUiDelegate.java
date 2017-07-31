@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.rules;
+package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +45,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.BaseTabStack.TabWrapper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

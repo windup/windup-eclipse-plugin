@@ -20,7 +20,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
-import org.jboss.tools.windup.ui.internal.rules.ElementDetailsSection;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ElementDetailsSection;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;

@@ -1,4 +1,14 @@
-package org.jboss.tools.windup.ui.internal.rules;
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
+package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import javax.inject.Inject;
 
@@ -28,7 +38,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.rules.ElementUiDelegate.IElementDetailsContainer;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate.IElementDetailsContainer;
 import org.w3c.dom.Element;
 
 @SuppressWarnings({"restriction"})

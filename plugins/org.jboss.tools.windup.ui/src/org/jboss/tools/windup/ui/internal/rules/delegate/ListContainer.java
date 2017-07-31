@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.ui.internal.rules;
+package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.util.Iterator;
 import java.util.List;

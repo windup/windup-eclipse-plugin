@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.ui.internal.editor.issues.WindupIssuesTab;
 import org.jboss.tools.windup.ui.internal.editor.launch.WindupConfigurationTab;
 import org.jboss.tools.windup.ui.internal.editor.report.WindupReportTab;
-import org.jboss.tools.windup.ui.internal.rules.BaseTabStack;
+import org.jboss.tools.windup.ui.internal.rules.delegate.BaseTabStack;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
 import com.google.common.base.Objects;
