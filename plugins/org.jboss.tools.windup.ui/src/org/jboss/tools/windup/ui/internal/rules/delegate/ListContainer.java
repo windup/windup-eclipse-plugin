@@ -38,7 +38,7 @@ public abstract class ListContainer {
 			ListItem linkContainer = findListItem(linkElement);
 			
 			if (linkContainer == null) {
-				linkContainer = createListItem(parent, linkElement); //new ListItem(parent, linkElement, this);
+				linkContainer = createListItem(parent, linkElement);
 				items.add(linkContainer);
 			}
 			

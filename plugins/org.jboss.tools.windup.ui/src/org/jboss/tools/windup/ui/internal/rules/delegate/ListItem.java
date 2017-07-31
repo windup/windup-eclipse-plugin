@@ -17,9 +17,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
-import org.jboss.tools.windup.ui.internal.editor.ConfigurationBlock;
-import org.jboss.tools.windup.ui.internal.editor.ConfigurationBlock.ToolbarContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ConfigurationBlock.ToolbarContainer;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;

@@ -79,6 +79,7 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -125,38 +126,6 @@ public class RulesetElementUiDelegateFactory {
 		static final String TAG_NAME = "tag"; //$NON-NLS-1$
 	}
 
-	enum HINT_EFFORT {
-		
-		INFORMATION(0, "Information", "An informational warning with very low or no priority for migration."),
-		TRIVIAL(1, "Trivial", "The migration is a trivial change or a simple library swap with no or minimal API changes."),
-		COMPLEX(3, "Complex", "The changes required for the migration task are complex, but have a documented solution."),
-		REDESIGN(5, "Redesign", "The migration task requires a redesign or a complete library change, with significant API changes."),
-		REARCHITECTURE(7, "Rearchitecture", "The migration requires a complete rearchitecture of the component or subsystem."),
-		UNKNOWN(13, "Unknown", "The migration solution is not known and may need a complete rewrite.");
-		
-		private int effort;
-		private String label;
-		private String description;
-		
-		HINT_EFFORT(int effort, String label, String description) {
-			this.effort = effort;
-			this.label = label;
-			this.description = description;
-		}
-		
-		public int getEffort() {
-			return effort;
-		}
-		
-		public String getLabel() {
-			return label;
-		}
-		
-		public String getDescription() {
-			return description;
-		}
-	}
-	
 	public IElementUiDelegate createElementUiDelegate(Element element, IEclipseContext context) {
 		IElementUiDelegate uiDelegate = null;
 		String nodeName = element.getNodeName();
