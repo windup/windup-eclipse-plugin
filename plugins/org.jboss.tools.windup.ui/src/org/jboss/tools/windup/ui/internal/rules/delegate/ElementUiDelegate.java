@@ -44,8 +44,9 @@ import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
-import org.jboss.tools.windup.ui.internal.rules.delegate.BaseTabStack.TabWrapper;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -63,6 +64,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	@Inject @Optional protected Form form;
 	@Inject @Optional protected Composite parent;
 	@Inject @Optional protected IFile file;
+	@Inject @Optional protected RulesetElementUiDelegateFactory uiDelegateFactory;
 	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
 	protected TreeContentHelper contentHelper = new TreeContentHelper();
@@ -78,6 +80,10 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		this.model = ((IDOMNode) element).getModel();
 		this.modelQuery = ModelQueryUtil.getModelQuery(model);
 		this.elementDeclaration = modelQuery.getCMElementDeclaration(element);
+	}
+	
+	@Override
+	public void createControls(Composite parent, Element element, CMElementDeclaration ed, List<NodeRow> rows) {
 	}
 	
 	@Override
@@ -178,6 +184,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		context.set(ModelQuery.class, modelQuery);
 		context.set(CMElementDeclaration.class, elementDeclaration);
 		context.set(TreeContentHelper.class, contentHelper);
+		context.set(IElementUiDelegate.class, this);
 		return context;
 	}
 	

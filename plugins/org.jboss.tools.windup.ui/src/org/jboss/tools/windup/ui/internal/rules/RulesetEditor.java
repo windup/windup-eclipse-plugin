@@ -35,6 +35,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorRulesSection;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateRegistry;
 import org.w3c.dom.Document;
@@ -158,6 +159,7 @@ public class RulesetEditor {
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {
 		child.set(Composite.class, parent);
+		child.set(RulesetElementUiDelegateFactory.class, widgetRegistry.getUIDelegateFactory());
 		return ContextInjectionFactory.make(clazz, child);
 	}
 	

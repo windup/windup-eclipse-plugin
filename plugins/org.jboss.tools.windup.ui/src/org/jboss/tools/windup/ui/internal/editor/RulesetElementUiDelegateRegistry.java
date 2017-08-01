@@ -62,4 +62,8 @@ public class RulesetElementUiDelegateRegistry {
 	public IElementUiDelegate getUiDelegate(Element element) {
 		return elementUiDelegates.get(element);
 	}
+	
+	public RulesetElementUiDelegateFactory getUIDelegateFactory() {
+		return factory;
+	}
 }

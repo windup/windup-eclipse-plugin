@@ -77,9 +77,11 @@ import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationLiteralDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -136,6 +138,10 @@ public class RulesetElementUiDelegateFactory {
 				uiDelegate = createControls(JavaClassDelegate.class, context);
 				break;
 			}
+			case RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL: { 
+				uiDelegate = createControls(JavaClassAnnotationLiteralDelegate.class, context);
+				break;
+			}
 			case RulesetConstants.HINT_NAME: { 
 				uiDelegate = createControls(HintDelegate.class, context);
 				break;
@@ -161,6 +167,7 @@ public class RulesetElementUiDelegateFactory {
 		void setFocus();
 		void fillContextMenu(IMenuManager manager, TreeViewer viewer);
 		Object[] getChildren();
+		void createControls(Composite parent, Element element, CMElementDeclaration ed, List<NodeRow> rows);
 	}
 	
 	public static class DefaultDelegate extends ElementUiDelegate {
@@ -216,6 +223,8 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		protected String getCmNodeLabel() {
+			CMAttributeDeclaration ad = (CMAttributeDeclaration)cmNode;
+			boolean required = (ad.getUsage() == CMAttributeDeclaration.REQUIRED);
 			String result = "?" + cmNode + "?"; //$NON-NLS-1$ //$NON-NLS-2$
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=155800
 			if (cmNode.getNodeType() == CMNode.ELEMENT_DECLARATION){
@@ -233,7 +242,10 @@ public class RulesetElementUiDelegateFactory {
 					result = descriptionBuilder.buildDescription(cmNode);
 				}
 			}
-			return result;
+			if (required) {
+				return NLS.bind(Messages.ElementAttributeRow_AttrLabelReq, result);
+			}
+			return NLS.bind(Messages.ElementAttributeRow_AttrLabel, result);
 		}
 		
 		protected String getNodeLabel() {
