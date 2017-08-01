@@ -44,11 +44,11 @@ public class BaseTabStack {
 	
 	protected void createFolder(Composite parent) {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
-		this.folder = new CTabFolder(parent, SWT.BOTTOM|SWT.FLAT);
+		this.folder = new CTabFolder(parent, SWT.BOTTOM);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(folder);
-		folder.setBackground(toolkit.getColors().getBackground());
-		parent.setBackground(toolkit.getColors().getBackground());
-		parent.getParent().setBackground(toolkit.getColors().getBackground());
+		//folder.setBackground(toolkit.getColors().getBackground());
+		//parent.setBackground(toolkit.getColors().getBackground());
+		//parent.getParent().setBackground(toolkit.getColors().getBackground());
 		folder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

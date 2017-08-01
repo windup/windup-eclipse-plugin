@@ -25,4 +25,16 @@ public class RuleMessages extends NLS {
     public static String javaclass_description;
     public static String javaclass_locationSectionTitle;
     public static String javaclass_locationDescription;
+    
+    /*
+     * 	<annotation-list></annotation-list>
+					<annotation-literal />
+					<annotation-type></annotation-type>
+     */
+    
+    public static String javaclass_annotation_list_sectionTitle;
+    public static String javaclass_annotation_list_description;
+    
+    public static String javaclass_annotation_literal_sectionTitle;
+    public static String javaclass_annotation_literal_description;
 }

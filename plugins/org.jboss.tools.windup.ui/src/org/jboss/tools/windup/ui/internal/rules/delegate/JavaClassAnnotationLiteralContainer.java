@@ -10,10 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -21,34 +19,37 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
+import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate.JAVA_CLASS_REFERENCE_LOCATION;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings({"restriction"})
-public class JavaClassLocationContainer {
+public class JavaClassAnnotationLiteralContainer {
 	
 	private static final int MIN_WIDTH = 350;
 	
@@ -62,7 +63,7 @@ public class JavaClassLocationContainer {
 	private ScrolledComposite scroll;
 	private ListContainer locationListContainer;
 	
-	public JavaClassLocationContainer(Element element, IStructuredModel model, ModelQuery modelQuery, CMElementDeclaration elementDeclaration, 
+	public JavaClassAnnotationLiteralContainer(Element element, IStructuredModel model, ModelQuery modelQuery, CMElementDeclaration elementDeclaration, 
 			FormToolkit toolkit) {
 		this.element = element;
 		this.model = model;
@@ -86,7 +87,7 @@ public class JavaClassLocationContainer {
 	
 	private List<Element> collectLocations() {
 		List<Element> links = Lists.newArrayList();
-		NodeList list = element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION);
+		NodeList list = element.getElementsByTagName(RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL);
 		for (int i = 0; i < list.getLength(); i++) {
 			links.add((Element)list.item(i));
 		}
@@ -99,7 +100,7 @@ public class JavaClassLocationContainer {
 				ModelQuery.VALIDITY_STRICT);
 		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
 			if (candidate instanceof CMElementDeclaration) {
-				return RulesetConstants.JAVA_CLASS_LOCATION.equals(((CMElementDeclaration)candidate).getElementName());
+				return RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL.equals(((CMElementDeclaration)candidate).getElementName());
 			}
 			return false;
 		}).findFirst();
@@ -110,7 +111,7 @@ public class JavaClassLocationContainer {
 	}
 	
 	public void createControls(Composite parent) {
-		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription,
+		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,RuleMessages.javaclass_annotation_literal_sectionTitle, RuleMessages.javaclass_annotation_literal_description,
 				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
 		Section section = result.getFirst();
 		Composite client = result.getSecond();
@@ -145,15 +146,36 @@ public class JavaClassLocationContainer {
 					protected void createControls() {
 						CMElementDeclaration ed = modelQuery.getCMElementDeclaration(itemElement);
 						
-						Composite left = toolkit.createComposite(this);
-						GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
-						GridDataFactory.fillDefaults().grab(true, false).applyTo(left);
+						Group group = new Group(this, SWT.SHADOW_IN);
+						group.setBackground(toolkit.getColors().getBackground());
+						group.setForeground(toolkit.getColors().getBackground());
+						GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+						group.setLayout(new FormLayout());
 						
-						ChoiceAttributeRow row = createLocationRow(ed, listElement);
-						row.createContents(left, toolkit, 2);
-			    	  		rows.add(row);
-			    	  		
-			    	  		createDeleteLocationElementButton(left, listElement);
+						Composite left = new Composite(group, SWT.NONE);
+						GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
+						FormData leftData = new FormData();
+						leftData.left = new FormAttachment(0);
+						left.setLayoutData(leftData);
+						
+						Composite right = new Composite(group, SWT.NONE);
+						GridLayoutFactory.fillDefaults().numColumns(1).applyTo(right);
+						FormData rightData = new FormData();
+						rightData.right = new FormAttachment(100);
+						rightData.bottom = new FormAttachment(73);
+						right.setLayoutData(rightData);
+						
+						leftData.right = new FormAttachment(right);
+						
+						createToolbar(right, this);
+						
+						List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(itemElement, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+						
+					    for (CMAttributeDeclaration declaration : availableAttributeList) {
+			    	  			TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(itemElement, toolkit, declaration, left, 2);
+				    	  		rows.add(row);
+				    	  		//addToolbar(group, left, right, row, toolbarContainer);
+					    }
 					}
 				};
 				return item;
@@ -162,74 +184,20 @@ public class JavaClassLocationContainer {
 		return listContainer;
 	}
 	
-	private void createDeleteLocationElementButton(Composite parent, Element locationElement) {
-		ToolBar toolbar = new ToolBar(parent, SWT.FLAT|SWT.HORIZONTAL|SWT.NO_FOCUS);
-		ToolItem addItem = new ToolItem(toolbar, SWT.PUSH);
-		addItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_DELETE_CONFIG));
-		addItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(locationElement));
-				deleteAction.run();
-			}
+	private Control createToolbar(Composite parent, ListItem thisItem) {
+		ToolBar toolbar = new ToolBar(parent, SWT.FLAT|SWT.VERTICAL);
+		ToolItem deleteLinkItem = new ToolItem(toolbar, SWT.PUSH);
+		deleteLinkItem.setToolTipText(Messages.RulesetEditor_remove);
+		deleteLinkItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_DELETE_CONFIG));
+		//deleteLinkItem.getControl().setCursor(parent.getShell().getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		deleteLinkItem.addSelectionListener(new SelectionAdapter() {
+	    		@Override
+	    		public void widgetSelected(SelectionEvent e) {
+    				DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(thisItem.getLinkElement()));
+	    			deleteAction.run();
+	    		}
 		});
-	}
-	
-	private ChoiceAttributeRow createLocationRow(CMNode cmNode, Element listElement) {
-		return new ChoiceAttributeRow(element, cmNode, true) {
-			@Override
-			protected Control createLabel(Composite parent, FormToolkit toolkit) {
-				return null;
-			}
-			
-			@Override
-			protected Node getNode() {
-				return listElement;
-			}
-			
-			@Override
-			protected List<String> getOptions() {
-				return Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).map(e -> computeUiValue(e)).
-						collect(Collectors.toList());
-			}
-			
-			private String computeUiValue(JAVA_CLASS_REFERENCE_LOCATION location) {
-				return location.getLabel() + " - " + location.getDescription();
-			}
-
-			@Override
-			protected String modelToDisplayValue(String modelValue) {
-				if (modelValue == null || modelValue.isEmpty()) {
-					return "";
-				}
-				
-				Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-					return Objects.equal(e.getLabel(), modelValue);
-				}).findFirst();
-				
-				if (location.isPresent()) {
-					return computeUiValue(location.get());
-				}
-				
-				return "";
-			}
-			
-			@Override
-			protected String displayToModelValue(String uiValue) {
-				if (uiValue.isEmpty()) {
-					return "";
-				}
-				
-				Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-					return Objects.equal(uiValue, computeUiValue(e));
-				}).findFirst();
-				
-				if (location.isPresent()) {
-					return location.get().getLabel();
-				}
-				
-				return "";
-			}
-		};
+	    GridLayoutFactory.fillDefaults().applyTo(toolbar);
+	    return toolbar;
 	}
 }

@@ -46,7 +46,7 @@ public class LinkDelegate extends ElementUiDelegate {
 		addTab(DetailsTab.class);
 	}
 	
-	private class DetailsTab extends ElementAttributesContainer {
+	public static class DetailsTab extends ElementAttributesContainer {
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")

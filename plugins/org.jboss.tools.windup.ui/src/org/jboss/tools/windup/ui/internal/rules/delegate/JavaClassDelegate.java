@@ -75,25 +75,20 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 	}
 	
-	@Override
-	protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
-		return false;
-	}
-	
-	@Override
 	protected void createTabs() {
 		addTab(DetailsTab.class);
 	}
 
 	@Override
 	public Object[] getChildren() {
-		return new Object[] {};
+		return super.getChildren();
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		private JavaClassLocationContainer locationContainer;
 		private JavaClassAnnotationListContainer annotationListContainer;
+		private JavaClassAnnotationLiteralContainer annotationLiteralContainer;
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
@@ -135,6 +130,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			locationContainer.createControls(parent);
 			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit);
 			annotationListContainer.createControls(parent);
+			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit);
+			annotationLiteralContainer.createControls(parent);
 		}
 		
 		@Override
@@ -142,6 +139,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			super.bind();
 			locationContainer.bind();
 			annotationListContainer.bind();
+			annotationLiteralContainer.bind();
 		}
 	}
 }

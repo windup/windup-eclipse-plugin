@@ -118,6 +118,8 @@ public class RulesetElementUiDelegateFactory {
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references"; //$NON-NLS-1$
 		static final String JAVA_CLASS_LOCATION = "location"; //$NON-NLS-1$
+		static final String JAVA_CLASS_ANNOTATION_LIST = "annotation-list"; //$NON-NLS-1$
+		static final String JAVA_CLASS_ANNOTATION_LITERAL = "annotation-literal"; //$NON-NLS-1$
 		
 		static final String LINK_NAME = "link"; //$NON-NLS-1$
 		static final String LINK_HREF = "href"; //$NON-NLS-1$
