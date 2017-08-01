@@ -81,7 +81,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		return client;
 	}
 	
-	protected Pair<Section, Composite> createScrolledSection(Composite parent, String text, String description, int style) {
+	public static Pair<Section, Composite> createScrolledSection(FormToolkit toolkit, Composite parent, String text, String description, int style) {
 		Section section = toolkit.createSection(parent, style);
 		section.setText(text);
 		section.setDescription(description);

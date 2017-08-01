@@ -10,35 +10,26 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
-import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 
@@ -101,6 +92,9 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	
 	public static class DetailsTab extends ElementAttributesContainer {
 		
+		private JavaClassLocationContainer locationContainer;
+		private JavaClassAnnotationListContainer annotationListContainer;
+		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent, CTabItem item) {
@@ -136,90 +130,18 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			}
 		}
 		
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		private CMElementDeclaration getLocationCmNode() {
-			List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
-					ModelQuery.VALIDITY_STRICT);
-			Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
-				if (candidate instanceof CMElementDeclaration) {
-					return RulesetConstants.JAVA_CLASS_LOCATION.equals(((CMElementDeclaration)candidate).getElementName());
-				}
-				return false;
-			}).findFirst();
-			if (found.isPresent()) {
-				return found.get();
-			}
-			return null;
-		}
-		
 		private void createLocationSection(Composite parent) {
-			Pair<Section, Composite> result = super.createScrolledSection(parent,RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription,
-					ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
-			Section section = result.getFirst();
-			Composite client = result.getSecond();
-			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(client);
-			CMNode cmNode = getLocationCmNode();
-			ChoiceAttributeRow row = createLocationRow(cmNode);
-			rows.add(row);
-			row.createContents(client, toolkit, 2);
+			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit);
+			locationContainer.createControls(parent);
+			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit);
+			annotationListContainer.createControls(parent);
 		}
 		
-		private ChoiceAttributeRow createLocationRow(CMNode cmNode) {
-			return new ChoiceAttributeRow(element, cmNode, true) {
-				
-				@Override
-				protected Node getNode() {
-					NodeList list = element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION);
-					if (list.getLength() > 0) {
-						return list.item(0);
-					}
-					return null;
-				}
-				
-				@Override
-				protected List<String> getOptions() {
-					return Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).map(e -> computeUiValue(e)).
-							collect(Collectors.toList());
-				}
-				
-				private String computeUiValue(JAVA_CLASS_REFERENCE_LOCATION location) {
-					return location.getLabel() + " - " + location.getDescription();
-				}
-
-				@Override
-				protected String modelToDisplayValue(String modelValue) {
-					if (modelValue == null || modelValue.isEmpty()) {
-						return "";
-					}
-					
-					Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-						return Objects.equal(e.getLabel(), modelValue);
-					}).findFirst();
-					
-					if (location.isPresent()) {
-						return computeUiValue(location.get());
-					}
-					
-					return "";
-				}
-				
-				@Override
-				protected String displayToModelValue(String uiValue) {
-					if (uiValue.isEmpty()) {
-						return "";
-					}
-					
-					Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-						return Objects.equal(uiValue, computeUiValue(e));
-					}).findFirst();
-					
-					if (location.isPresent()) {
-						return location.get().getLabel();
-					}
-					
-					return "";
-				}
-			};
+		@Override
+		protected void bind() {
+			super.bind();
+			locationContainer.bind();
+			annotationListContainer.bind();
 		}
 	}
 }
