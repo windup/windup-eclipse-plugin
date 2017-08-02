@@ -28,7 +28,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.w3c.dom.Element;
 
 @SuppressWarnings({"restriction"})
-public class JavaClassAnnotationListDelegate extends ElementUiDelegate {
+public class JavaClassAnnotationTypeDelegate extends ElementUiDelegate {
 	
 	protected void createTabs() {
 		addTab(DetailsTab.class);
@@ -55,8 +55,8 @@ public class JavaClassAnnotationListDelegate extends ElementUiDelegate {
 			item.setText(Messages.ruleElementDetails);
 			Composite client = super.createSection(parent, 2);
 			Section section = (Section)client.getParent();
-			section.setText(RuleMessages.javaclass_annotation_list_sectionTitle);
-			section.setDescription(RuleMessages.javaclass_annotation_list_description);
+			section.setText(RuleMessages.javaclass_annotation_type_sectionTitle);
+			section.setDescription(RuleMessages.javaclass_annotation_type_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			
 			if (ed != null) {

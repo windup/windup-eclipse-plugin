@@ -83,6 +83,7 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationListDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationLiteralDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationTypeDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
@@ -124,6 +125,7 @@ public class RulesetElementUiDelegateFactory {
 		static final String JAVA_CLASS_LOCATION = "location"; //$NON-NLS-1$
 		static final String JAVA_CLASS_ANNOTATION_LIST = "annotation-list"; //$NON-NLS-1$
 		static final String JAVA_CLASS_ANNOTATION_LITERAL = "annotation-literal"; //$NON-NLS-1$
+		static final String JAVA_CLASS_ANNOTATION_TYPE = "annotation-type"; //$NON-NLS-1$
 		
 		static final String LINK_NAME = "link"; //$NON-NLS-1$
 		static final String LINK_HREF = "href"; //$NON-NLS-1$
@@ -150,6 +152,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL: { 
 				uiDelegate = createControls(JavaClassAnnotationLiteralDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE: { 
+				uiDelegate = createControls(JavaClassAnnotationTypeDelegate.class, context);
 				break;
 			}
 			case RulesetConstants.HINT_NAME: { 

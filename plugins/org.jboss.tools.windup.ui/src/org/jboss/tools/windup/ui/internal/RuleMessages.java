@@ -37,4 +37,7 @@ public class RuleMessages extends NLS {
     
     public static String javaclass_annotation_literal_sectionTitle;
     public static String javaclass_annotation_literal_description;
+    
+    public static String javaclass_annotation_type_sectionTitle;
+    public static String javaclass_annotation_type_description;
 }

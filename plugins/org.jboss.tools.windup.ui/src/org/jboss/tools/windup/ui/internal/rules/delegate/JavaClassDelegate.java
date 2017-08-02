@@ -88,6 +88,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		private JavaClassLocationContainer locationContainer;
 		private JavaClassAnnotationLiteralContainer annotationLiteralContainer;
 		private JavaClassAnnotationListContainer annotationListContainer;
+		private JavaClassAnnotationTypeContainer annotationTypeContainer;
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
@@ -130,6 +131,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			annotationLiteralContainer.createControls(parent);
 			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
 			annotationListContainer.createControls(parent);
+			annotationTypeContainer = new JavaClassAnnotationTypeContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
+			annotationTypeContainer.createControls(parent);
 		}
 		
 		@Override
@@ -138,6 +141,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			locationContainer.bind();
 			annotationLiteralContainer.bind();
 			annotationListContainer.bind();
+			annotationTypeContainer.bind();
 		}
 	}
 }
