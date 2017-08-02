@@ -114,7 +114,7 @@ public class JavaClassAnnotationLiteralContainer {
 		return null;
 	}
 	
-	public void createControls(Composite parent) {
+	public Section createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,
 				RuleMessages.javaclass_annotation_literal_sectionTitle, RuleMessages.javaclass_annotation_literal_description,
 				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
@@ -124,6 +124,7 @@ public class JavaClassAnnotationLiteralContainer {
 		this.parentControl = client;
 		this.locationListContainer = createLocationListContainer();
 		createSectionToolbar(section);
+		return section;
  	}
 	
 	private void createSectionToolbar(Section section) {

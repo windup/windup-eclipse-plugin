@@ -109,7 +109,7 @@ public class JavaClassLocationContainer {
 		return null;
 	}
 	
-	public void createControls(Composite parent) {
+	public Section createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription,
 				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
 		Section section = result.getFirst();
@@ -118,6 +118,7 @@ public class JavaClassLocationContainer {
 		this.parentControl = client;
 		this.locationListContainer = createLocationListContainer();
 		createSectionToolbar(section);
+		return section;
  	}
 	
 	private void createSectionToolbar(Section section) {

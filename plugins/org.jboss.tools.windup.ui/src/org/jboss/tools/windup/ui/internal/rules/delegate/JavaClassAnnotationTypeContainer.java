@@ -114,7 +114,7 @@ public class JavaClassAnnotationTypeContainer {
 		return null;
 	}
 	
-	public void createControls(Composite parent) {
+	public Section createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,
 				RuleMessages.javaclass_annotation_type_sectionTitle, RuleMessages.javaclass_annotation_type_description,
 				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
@@ -124,6 +124,7 @@ public class JavaClassAnnotationTypeContainer {
 		this.parentControl = client;
 		this.locationListContainer = createLocationListContainer();
 		createSectionToolbar(section);
+		return section;
  	}
 	
 	private void createSectionToolbar(Section section) {
@@ -175,15 +176,6 @@ public class JavaClassAnnotationTypeContainer {
 						createToolbar(right, this);
 						IElementUiDelegate delegate = uiDelegateFactory.createElementUiDelegate(listElement, context);
 						delegate.createControls(left, listElement, ed, rows);
-						
-						/*
-						List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(itemElement, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-						
-					    for (CMAttributeDeclaration declaration : availableAttributeList) {
-			    	  			TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(itemElement, toolkit, declaration, left, 2);
-				    	  		rows.add(row);
-				    	  		//addToolbar(group, left, right, row, toolbarContainer);
-					    }*/
 					}
 				};
 				return item;

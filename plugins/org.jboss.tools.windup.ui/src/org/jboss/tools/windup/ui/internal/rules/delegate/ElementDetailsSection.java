@@ -79,14 +79,14 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		glayout.marginTop = 0;
 		glayout.marginRight = 0;
 		glayout.marginLeft = 0;
-		glayout.marginBottom = 0;
+		//glayout.marginBottom = 0;
 		client.setLayout(glayout);
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		
-		section.setExpanded(true);
+		//section.setExpanded(true);
 		return client;
 	}
 	
@@ -111,7 +111,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		
 		toolkit.paintBordersFor(client);
 		
-		section.setExpanded(true);
+		//section.setExpanded(true);
 		return Tuples.create(section, client);
 	}
 	

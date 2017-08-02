@@ -17,6 +17,9 @@ import javax.annotation.PostConstruct;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
@@ -94,9 +97,15 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.ruleElementDetails);
+			parent.setLayout(new FormLayout());
 			Composite client = super.createSection(parent, 3);
 			Section section = (Section)client.getParent();
 			section.setDescription(RuleMessages.javaclass_description);
+			FormData data = new FormData();
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
+			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
 				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
@@ -120,19 +129,42 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 				    	}
 			    }
-			    createLocationSection(parent);
+			    createSections(parent, section);
 			}
 		}
 		
-		private void createLocationSection(Composite parent) {
+		private void createSections(Composite parent, Section top) {
 			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
-			locationContainer.createControls(parent);
+			Section section = locationContainer.createControls(parent);
+			FormData data = new FormData();
+			data.top = new FormAttachment(top);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
+			
+			data = new FormData();
+			data.top = new FormAttachment(section);
 			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
-			annotationLiteralContainer.createControls(parent);
+			section = annotationLiteralContainer.createControls(parent);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
+			
+			data = new FormData();
+			data.top = new FormAttachment(section);
 			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
-			annotationListContainer.createControls(parent);
+			section = annotationListContainer.createControls(parent);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
+			
+			data = new FormData();
+			data.top = new FormAttachment(section);
 			annotationTypeContainer = new JavaClassAnnotationTypeContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
-			annotationTypeContainer.createControls(parent);
+			section = annotationTypeContainer.createControls(parent);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+			section.setLayoutData(data);
 		}
 		
 		@Override
