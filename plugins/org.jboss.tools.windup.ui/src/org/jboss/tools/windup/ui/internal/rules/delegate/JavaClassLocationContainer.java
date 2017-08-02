@@ -10,10 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -23,7 +21,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -31,7 +28,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -39,15 +35,11 @@ import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate.JAVA_CLASS_REFERENCE_LOCATION;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings({"restriction"})
@@ -152,18 +144,11 @@ public class JavaClassLocationContainer {
 					@Override
 					protected void createControls() {
 						CMElementDeclaration ed = modelQuery.getCMElementDeclaration(itemElement);
-						
 						Composite left = toolkit.createComposite(this);
 						GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
 						GridDataFactory.fillDefaults().grab(true, false).applyTo(left);
-						
-						//ChoiceAttributeRow row = createLocationRow(ed, listElement);
 						IElementUiDelegate delegate = uiDelegateFactory.createElementUiDelegate(listElement, context);
 						delegate.createControls(left, listElement, ed, rows);
-						
-						/*row.createContents(left, toolkit, 2);
-			    	  		rows.add(row);*/
-			    	  		
 			    	  		createDeleteLocationElementButton(left, listElement);
 					}
 				};

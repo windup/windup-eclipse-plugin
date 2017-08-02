@@ -128,7 +128,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			locationContainer.createControls(parent);
 			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
 			annotationLiteralContainer.createControls(parent);
-			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit);
+			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
 			annotationListContainer.createControls(parent);
 		}
 		

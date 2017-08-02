@@ -13,6 +13,7 @@ package org.jboss.tools.windup.ui.internal.rules.delegate;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -31,7 +32,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.xtext.util.Pair;
@@ -40,9 +40,9 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
-import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -62,14 +62,18 @@ public class JavaClassAnnotationListContainer {
 	private Composite parentControl;
 	private ScrolledComposite scroll;
 	private ListContainer locationListContainer;
+	private RulesetElementUiDelegateFactory uiDelegateFactory;
+	private IEclipseContext context;
 	
 	public JavaClassAnnotationListContainer(Element element, IStructuredModel model, ModelQuery modelQuery, CMElementDeclaration elementDeclaration, 
-			FormToolkit toolkit) {
+			FormToolkit toolkit, RulesetElementUiDelegateFactory uiDelegateFactory, IEclipseContext context) {
 		this.element = element;
 		this.model = model;
 		this.modelQuery = modelQuery;
 		this.elementDeclaration = elementDeclaration;
 		this.toolkit = toolkit;
+		this.uiDelegateFactory = uiDelegateFactory;
+		this.context = context;
 	}
 	
 	public void bind() {
@@ -168,14 +172,17 @@ public class JavaClassAnnotationListContainer {
 						leftData.right = new FormAttachment(right);
 						
 						createToolbar(right, this);
+						IElementUiDelegate delegate = uiDelegateFactory.createElementUiDelegate(listElement, context);
+						delegate.createControls(left, listElement, ed, rows);
 						
+						/*
 						List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(itemElement, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 						
 					    for (CMAttributeDeclaration declaration : availableAttributeList) {
 			    	  			TextNodeRow row = ElementAttributesContainer.createTextAttributeRow(itemElement, toolkit, declaration, left, 2);
 				    	  		rows.add(row);
 				    	  		//addToolbar(group, left, right, row, toolbarContainer);
-					    }
+					    }*/
 					}
 				};
 				return item;

@@ -81,6 +81,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationListDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationLiteralDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
@@ -141,6 +142,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.JAVA_CLASS_LOCATION: { 
 				uiDelegate = createControls(JavaClassLocationDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.JAVA_CLASS_ANNOTATION_LIST: { 
+				uiDelegate = createControls(JavaClassAnnotationListDelegate.class, context);
 				break;
 			}
 			case RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL: { 
