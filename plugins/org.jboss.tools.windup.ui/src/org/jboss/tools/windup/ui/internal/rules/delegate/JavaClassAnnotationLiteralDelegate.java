@@ -14,16 +14,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -62,11 +54,6 @@ public class JavaClassAnnotationLiteralDelegate extends ElementUiDelegate {
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.ruleElementDetails);
 			Composite client = super.createSection(parent, 2);
-			GridLayout glayout = (GridLayout)client.getLayout();
-			glayout.marginTop = 0;
-			glayout.marginRight = 0;
-			glayout.marginLeft = 0;
-			glayout.marginBottom = 0;
 			Section section = (Section)client.getParent();
 			section.setText(RuleMessages.javaclass_annotation_literal_sectionTitle);
 			section.setDescription(RuleMessages.javaclass_annotation_literal_description);

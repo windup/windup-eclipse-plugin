@@ -22,7 +22,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
@@ -87,8 +86,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		private JavaClassLocationContainer locationContainer;
-		private JavaClassAnnotationListContainer annotationListContainer;
 		private JavaClassAnnotationLiteralContainer annotationLiteralContainer;
+		private JavaClassAnnotationListContainer annotationListContainer;
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
@@ -96,7 +95,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			item.setText(Messages.ruleElementDetails);
 			Composite client = super.createSection(parent, 3);
 			Section section = (Section)client.getParent();
-			//String oldDescription = section.getDescription();
 			section.setDescription(RuleMessages.javaclass_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
@@ -126,20 +124,20 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 		
 		private void createLocationSection(Composite parent) {
-			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit);
+			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
 			locationContainer.createControls(parent);
-			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit);
-			annotationListContainer.createControls(parent);
 			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
 			annotationLiteralContainer.createControls(parent);
+			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit);
+			annotationListContainer.createControls(parent);
 		}
 		
 		@Override
 		protected void bind() {
 			super.bind();
 			locationContainer.bind();
-			annotationListContainer.bind();
 			annotationLiteralContainer.bind();
+			annotationListContainer.bind();
 		}
 	}
 }

@@ -76,6 +76,10 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		Composite client = toolkit.createComposite(section);
 		//int span = computeColumns();
 		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, /*span*/ columns);
+		glayout.marginTop = 0;
+		glayout.marginRight = 0;
+		glayout.marginLeft = 0;
+		glayout.marginBottom = 0;
 		client.setLayout(glayout);
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		

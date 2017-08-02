@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -37,7 +38,9 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate.JAVA_CLASS_REFERENCE_LOCATION;
 import org.w3c.dom.Element;
@@ -62,13 +65,18 @@ public class JavaClassLocationContainer {
 	private ScrolledComposite scroll;
 	private ListContainer locationListContainer;
 	
+	private RulesetElementUiDelegateFactory uiDelegateFactory;
+	private IEclipseContext context;
+	
 	public JavaClassLocationContainer(Element element, IStructuredModel model, ModelQuery modelQuery, CMElementDeclaration elementDeclaration, 
-			FormToolkit toolkit) {
+			FormToolkit toolkit, RulesetElementUiDelegateFactory uiDelegateFactory, IEclipseContext context) {
 		this.element = element;
 		this.model = model;
 		this.modelQuery = modelQuery;
 		this.elementDeclaration = elementDeclaration;
 		this.toolkit = toolkit;
+		this.uiDelegateFactory = uiDelegateFactory;
+		this.context = context;
 	}
 	
 	public void bind() {
@@ -149,9 +157,12 @@ public class JavaClassLocationContainer {
 						GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
 						GridDataFactory.fillDefaults().grab(true, false).applyTo(left);
 						
-						ChoiceAttributeRow row = createLocationRow(ed, listElement);
-						row.createContents(left, toolkit, 2);
-			    	  		rows.add(row);
+						//ChoiceAttributeRow row = createLocationRow(ed, listElement);
+						IElementUiDelegate delegate = uiDelegateFactory.createElementUiDelegate(listElement, context);
+						delegate.createControls(left, listElement, ed, rows);
+						
+						/*row.createContents(left, toolkit, 2);
+			    	  		rows.add(row);*/
 			    	  		
 			    	  		createDeleteLocationElementButton(left, listElement);
 					}
@@ -173,63 +184,5 @@ public class JavaClassLocationContainer {
 				deleteAction.run();
 			}
 		});
-	}
-	
-	private ChoiceAttributeRow createLocationRow(CMNode cmNode, Element listElement) {
-		return new ChoiceAttributeRow(element, cmNode, true) {
-			@Override
-			protected Control createLabel(Composite parent, FormToolkit toolkit) {
-				return null;
-			}
-			
-			@Override
-			protected Node getNode() {
-				return listElement;
-			}
-			
-			@Override
-			protected List<String> getOptions() {
-				return Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).map(e -> computeUiValue(e)).
-						collect(Collectors.toList());
-			}
-			
-			private String computeUiValue(JAVA_CLASS_REFERENCE_LOCATION location) {
-				return location.getLabel() + " - " + location.getDescription();
-			}
-
-			@Override
-			protected String modelToDisplayValue(String modelValue) {
-				if (modelValue == null || modelValue.isEmpty()) {
-					return "";
-				}
-				
-				Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-					return Objects.equal(e.getLabel(), modelValue);
-				}).findFirst();
-				
-				if (location.isPresent()) {
-					return computeUiValue(location.get());
-				}
-				
-				return "";
-			}
-			
-			@Override
-			protected String displayToModelValue(String uiValue) {
-				if (uiValue.isEmpty()) {
-					return "";
-				}
-				
-				Optional<JAVA_CLASS_REFERENCE_LOCATION> location = Arrays.stream(JAVA_CLASS_REFERENCE_LOCATION.values()).filter(e -> {
-					return Objects.equal(uiValue, computeUiValue(e));
-				}).findFirst();
-				
-				if (location.isPresent()) {
-					return location.get().getLabel();
-				}
-				
-				return "";
-			}
-		};
 	}
 }

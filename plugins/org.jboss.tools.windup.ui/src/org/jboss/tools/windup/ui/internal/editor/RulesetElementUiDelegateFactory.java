@@ -83,6 +83,7 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationLiteralDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
@@ -136,6 +137,10 @@ public class RulesetElementUiDelegateFactory {
 		switch (nodeName) {
 			case RulesetConstants.JAVACLASS_NAME: { 
 				uiDelegate = createControls(JavaClassDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.JAVA_CLASS_LOCATION: { 
+				uiDelegate = createControls(JavaClassLocationDelegate.class, context);
 				break;
 			}
 			case RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL: { 
