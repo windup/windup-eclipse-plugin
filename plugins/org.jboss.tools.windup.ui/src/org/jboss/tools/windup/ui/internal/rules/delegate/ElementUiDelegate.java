@@ -216,6 +216,19 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		return contentHelper.getChildren(element);
 	}
 	
+	@Override
+	public List<Element> collectTreeChildren(Element parent) {
+		return Lists.newArrayList();
+	}
+	
+	@Override
+	public void createTreeItemControls(Composite parent, Element element) {
+	}
+	
+	@Override
+	public void createChildTreeItemControls(Composite parent, Element element) {
+	}
+	
 	public static Node findNode(Element parent, CMElementDeclaration ed, CMNode cmNode) {
 		Node node = null;
 		switch (cmNode.getNodeType()) {

@@ -184,6 +184,10 @@ public class RulesetElementUiDelegateFactory {
 		void fillContextMenu(IMenuManager manager, TreeViewer viewer);
 		Object[] getChildren();
 		void createControls(Composite parent, Element element, CMElementDeclaration ed, List<NodeRow> rows);
+		
+		List<Element> collectTreeChildren(Element parent);
+		void createTreeItemControls(Composite parent, Element element);
+		void createChildTreeItemControls(Composite parent, Element element);
 	}
 	
 	public static class DefaultDelegate extends ElementUiDelegate {

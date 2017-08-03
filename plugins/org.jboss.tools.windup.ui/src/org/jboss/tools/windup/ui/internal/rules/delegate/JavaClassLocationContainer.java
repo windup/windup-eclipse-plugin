@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,13 +27,12 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
-import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -59,9 +56,10 @@ public class JavaClassLocationContainer {
 	
 	private RulesetElementUiDelegateFactory uiDelegateFactory;
 	private IEclipseContext context;
+	private TreeContentHelper contentHelper;
 	
 	public JavaClassLocationContainer(Element element, IStructuredModel model, ModelQuery modelQuery, CMElementDeclaration elementDeclaration, 
-			FormToolkit toolkit, RulesetElementUiDelegateFactory uiDelegateFactory, IEclipseContext context) {
+			FormToolkit toolkit, RulesetElementUiDelegateFactory uiDelegateFactory, IEclipseContext context, TreeContentHelper contentHelper) {
 		this.element = element;
 		this.model = model;
 		this.modelQuery = modelQuery;
@@ -69,6 +67,7 @@ public class JavaClassLocationContainer {
 		this.toolkit = toolkit;
 		this.uiDelegateFactory = uiDelegateFactory;
 		this.context = context;
+		this.contentHelper = contentHelper;
 	}
 	
 	public void bind() {
@@ -116,7 +115,7 @@ public class JavaClassLocationContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.locationListContainer = createLocationListContainer();
+		this.locationListContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
 		createSectionToolbar(section);
 		return section;
  	}
@@ -135,40 +134,5 @@ public class JavaClassLocationContainer {
 			}
 		});
 		section.setTextClient(toolbar);
-	}
-	
-	private ListContainer createLocationListContainer() {
-		ListContainer listContainer = new ListContainer() {
-			@Override
-			protected ListItem createListItem(Composite parent, Element listElement) {
-				ListItem item = new ListItem(parent, listElement) {
-					@Override
-					protected void createControls() {
-						CMElementDeclaration ed = modelQuery.getCMElementDeclaration(itemElement);
-						Composite left = toolkit.createComposite(this);
-						GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
-						GridDataFactory.fillDefaults().grab(true, false).applyTo(left);
-						IElementUiDelegate delegate = uiDelegateFactory.createElementUiDelegate(listElement, context);
-						delegate.createControls(left, listElement, ed, rows);
-			    	  		createDeleteLocationElementButton(left, listElement);
-					}
-				};
-				return item;
-			}
-		};
-		return listContainer;
-	}
-	
-	private void createDeleteLocationElementButton(Composite parent, Element locationElement) {
-		ToolBar toolbar = new ToolBar(parent, SWT.FLAT|SWT.HORIZONTAL|SWT.NO_FOCUS);
-		ToolItem addItem = new ToolItem(toolbar, SWT.PUSH);
-		addItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_DELETE_CONFIG));
-		addItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DeleteNodeAction deleteAction = new DeleteNodeAction(model, Lists.newArrayList(locationElement));
-				deleteAction.run();
-			}
-		});
 	}
 }

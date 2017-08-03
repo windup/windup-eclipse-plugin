@@ -134,7 +134,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 		
 		private void createSections(Composite parent, Section top) {
-			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
+			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
 			Section section = locationContainer.createControls(parent);
 			FormData data = new FormData();
 			data.top = new FormAttachment(top);
@@ -144,7 +144,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			
 			data = new FormData();
 			data.top = new FormAttachment(section);
-			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
+			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
 			section = annotationLiteralContainer.createControls(parent);
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
@@ -152,7 +152,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			
 			data = new FormData();
 			data.top = new FormAttachment(section);
-			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
+			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
 			section = annotationListContainer.createControls(parent);
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
@@ -160,7 +160,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			
 			data = new FormData();
 			data.top = new FormAttachment(section);
-			annotationTypeContainer = new JavaClassAnnotationTypeContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context);
+			annotationTypeContainer = new JavaClassAnnotationTypeContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
 			section = annotationTypeContainer.createControls(parent);
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);

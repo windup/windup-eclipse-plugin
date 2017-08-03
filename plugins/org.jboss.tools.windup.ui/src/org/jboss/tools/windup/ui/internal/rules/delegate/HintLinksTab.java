@@ -10,49 +10,32 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
-import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ReferenceNodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
-import org.jboss.tools.windup.ui.internal.rules.delegate.ConfigurationBlock.ToolbarContainer;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings({"restriction"})
@@ -72,13 +55,13 @@ public class HintLinksTab extends ElementAttributesContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.listContainer = createListContainer();
+		this.listContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
 		listContainer.createControls(client, collectLinks());
 		ConfigurationBlock.addToolbarListener(client);
 		createSectionToolbar(section);
 	}
 	
-	private ListContainer createListContainer() {
+	/*private ListContainer createListContainer() {
 		ListContainer listContainer = new ListContainer() {
 			@Override
 			protected ListItem createListItem(Composite parent, Element listElement) {
@@ -196,7 +179,7 @@ public class HintLinksTab extends ElementAttributesContainer {
 			}
 		};
 		return listContainer; 
-	}
+	}*/
 	
 	private void createSectionToolbar(Section section) {
 		ToolBar toolbar = new ToolBar(section, SWT.FLAT|SWT.HORIZONTAL);
