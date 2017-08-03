@@ -10,8 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.SWT;
@@ -35,9 +37,8 @@ import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Objects;
 
 @SuppressWarnings({"restriction"})
 public class JavaClassAnnotationTypeContainer {
@@ -78,17 +79,19 @@ public class JavaClassAnnotationTypeContainer {
 	}
 	
 	private void loadLocations() {
-		locationListContainer.createControls(parentControl, collectLocations());
+		locationListContainer.createControls(parentControl, collectAnnotationTypeElements());
 		locationListContainer.bind();
 	}
 	
-	private List<Element> collectLocations() {
-		List<Element> links = Lists.newArrayList();
-		NodeList list = element.getElementsByTagName(RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE);
-		for (int i = 0; i < list.getLength(); i++) {
-			links.add((Element)list.item(i));
-		}
-		return links;
+	private List<Element> collectAnnotationTypeElements() {
+		Object[] elementChildren = contentHelper.getChildren(element);
+		return Arrays.stream(elementChildren).filter(o -> {
+			if (o instanceof Element && 
+					Objects.equal(RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE, ((Element)o).getNodeName())) {
+				return true;
+			}
+			return false;
+		}).map(o -> (Element)o).collect(Collectors.toList());
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

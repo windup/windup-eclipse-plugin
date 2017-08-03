@@ -20,15 +20,20 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ReferenceNodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Objects;
@@ -46,40 +51,48 @@ public class LinkDelegate extends ElementUiDelegate {
 		addTab(DetailsTab.class);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void createControls(Composite parent, Element element, CMElementDeclaration ed, List<NodeRow> rows) {
+		List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+		for (CMAttributeDeclaration declaration : availableAttributeList) {
+    			Node node = findNode(element, ed, declaration);
+		    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
+		    		IProject project = context.get(IFile.class).getProject();
+		    		ReferenceNodeRow row = new ReferenceNodeRow(element, declaration) {
+					@Override
+					protected void openReference() {
+						if (node != null && !node.getNodeValue().isEmpty()) {
+						 	try {
+								PlatformUI.getWorkbench().getBrowserSupport().
+									createBrowser(WindupUIPlugin.PLUGIN_ID).openURL(new URL(node.getNodeValue()));
+							}
+							catch (Exception e) {
+								WindupUIPlugin.log(e);
+							}
+						}
+					}
+		    		}; 
+				rows.add(row);
+				row.createContents(parent, toolkit, 2);
+		    	}
+		    	else {
+		    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, parent, 2));
+		    	}
+		}
+	}
+	
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		@PostConstruct
-		@SuppressWarnings("unchecked")
 		private void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.ruleElementDetails);
+			Composite client = super.createSection(parent, 2);
+			Section section = (Section)client.getParent();
+			section.setText(RuleMessages.link_title);
+			section.setDescription(RuleMessages.link_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-			    		Node node = findNode(element, ed, declaration);
-				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
-				    		IProject project = context.get(IFile.class).getProject();
-				    		ReferenceNodeRow row = new ReferenceNodeRow(element, declaration) {
-							@Override
-							protected void openReference() {
-								if (node != null && !node.getNodeValue().isEmpty()) {
-								 	try {
-										PlatformUI.getWorkbench().getBrowserSupport().
-											createBrowser(WindupUIPlugin.PLUGIN_ID).openURL(new URL(node.getNodeValue()));
-									}
-									catch (Exception e) {
-										WindupUIPlugin.log(e);
-									}
-								}
-							}
-				    		}; 
-						rows.add(row);
-						row.createContents(parent, toolkit, 2);
-				    	}
-				    	else {
-				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, parent, 2));
-				    	}
-			    }
+				uiDelegate.createControls(client, element, ed, rows);
 			}
 		}
 	}

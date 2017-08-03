@@ -29,7 +29,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
-import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
@@ -48,14 +48,14 @@ public class HintLinksTab extends ElementAttributesContainer {
 		
 	@PostConstruct
 	public void createControls(Composite parent, CTabItem item) {
-		item.setText(Messages.linksTab);
-		Pair<Section, Composite> result = ElementAttributesContainer.createScrolledSection(toolkit, parent, Messages.linksTab, Messages.RulesetEditor_linksSectionDescription,
+		item.setText(RuleMessages.link_title);
+		Pair<Section, Composite> result = ElementAttributesContainer.createScrolledSection(toolkit, parent, RuleMessages.link_title, RuleMessages.link_description,
 				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
 		Section section = result.getFirst();
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.listContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		this.listContainer =  new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
 		listContainer.createControls(client, collectLinks());
 		ConfigurationBlock.addToolbarListener(client);
 		createSectionToolbar(section);

@@ -76,7 +76,7 @@ public class ListContainer {
 		}
 	}
 	
-	private ListItem createListItem(Composite parent, Element element) {
+	protected ListItem createListItem(Composite parent, Element element) {
 		return new ListItem(parent, toolkit, element, contentHelper, modelQuery, model, uiDelegateFactory, context);
 	}
 	

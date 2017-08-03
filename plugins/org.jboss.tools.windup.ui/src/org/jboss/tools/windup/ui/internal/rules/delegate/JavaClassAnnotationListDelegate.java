@@ -58,7 +58,6 @@ public class JavaClassAnnotationListDelegate extends ElementUiDelegate {
 			section.setText(RuleMessages.javaclass_annotation_list_sectionTitle);
 			section.setDescription(RuleMessages.javaclass_annotation_list_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			
 			if (ed != null) {
 				uiDelegate.createControls(client, element, ed, rows);
 			}

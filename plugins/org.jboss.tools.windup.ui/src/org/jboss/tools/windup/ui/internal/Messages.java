@@ -110,8 +110,6 @@ public class Messages extends NLS
     public static String RulesetEditor_tagsSectionAddDialogTitle;
     public static String RulesetEditor_tagsSectionAddDialog;
     
-    public static String RulesetEditor_linksSectionDescription;
-    
     public static String RulesetEditor_messageSection;
     public static String RulesetEditor_messageSectionDescription;
     public static String RulesetEditor_messageContentAssist;
@@ -127,7 +125,6 @@ public class Messages extends NLS
     public static String ruleElementDetails;
 
     public static String tagsTab;
-    public static String linksTab;
     public static String messageTab;
 
     public static String report_has_no_information_on_resource;
