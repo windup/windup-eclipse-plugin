@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.common;bundle-version="2.12.0",
  com.google.inject;bundle-version="3.0.0",
  org.apache.log4j;bundle-version="1.2.15",
- org.eclipse.emf.ecore;bundle-version="2.12.0"
+ org.eclipse.emf.ecore;bundle-version="2.12.0",
+ org.jsoup
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %plugin.vendor
@@ -41,7 +42,8 @@ Bundle-ClassPath: .,
  xtext/org.eclipse.xtext-2.11.0.jar,
  xtext/org.eclipse.xtext.util-2.11.0.jar,
  xtext/org.eclipse.xtext.xbase.lib-2.11.0.jar,
- libs/markdown4j-2.2.jar
+ libs/markdown4j-2.2.jar,
+ lib/xsoup.jar
 Export-Package: org.eclipse.xtend.core,
  org.eclipse.xtend.core.compiler,
  org.eclipse.xtend.core.compiler.batch,
@@ -267,5 +269,6 @@ Export-Package: org.eclipse.xtend.core,
  org.jboss.windup.tooling.quickfix,
  org.jboss.windup.tooling.rules,
  org.jboss.windup.util,
- org.markdown4j
+ org.markdown4j,
+ us.codecraft.xsoup
 Import-Package: org.slf4j
