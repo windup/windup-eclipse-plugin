@@ -828,6 +828,10 @@
                 name="http://windup.jboss.org/schema/jboss-ruleset"
                 uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd">
           </uri>
+          <system
+                systemId="http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"
+                uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd">
+          </system>
        </catalogContribution>
     </extension>
     <extension

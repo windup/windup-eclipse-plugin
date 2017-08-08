@@ -65,7 +65,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	protected abstract void bind();
 	
 	protected Composite createSection(Composite parent, int columns) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
 		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$

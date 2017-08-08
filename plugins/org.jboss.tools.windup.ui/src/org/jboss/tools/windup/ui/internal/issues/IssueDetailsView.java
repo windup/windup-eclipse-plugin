@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat, Inc.
+ * Copyright (c) 2017 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -123,6 +123,46 @@ public class IssueDetailsView {
 		form.reflow(true);
 	}
 	
+	public static void addPrism(Document doc) {
+		try {
+			Bundle bundle = WindupUIPlugin.getDefault().getBundle();
+			Elements codeElements = doc.getElementsByTag("code");
+			codeElements.forEach(element -> {
+				Set<String> classNames = element.classNames();
+				Set<String> newNames = Sets.newHashSet();
+				classNames.forEach(className -> {
+					// prismjs requires prefix, i'm not sure about another/easier workaround.
+					newNames.add("language-"+className);
+				});
+				element.classNames(newNames);
+			});
+			
+			DocumentType type = new DocumentType("html", "", "", "");
+			doc.insertChildren(0, Lists.newArrayList(type));
+			
+			Element head = doc.head();
+			Element css = doc.createElement("link");
+			
+		    URL fileURL = FileLocator.find(bundle, new Path("html/prism.css"), null);
+		    String srcPath = FileLocator.resolve(fileURL).getPath();
+			
+			css.attr("href", srcPath);
+			css.attr("rel", "stylesheet");
+			head.appendChild(css);
+			
+			Element body = doc.body();
+			Element script = doc.createElement("script");
+			
+			fileURL = FileLocator.find(bundle, new Path("html/prism.js"), null);
+			srcPath = FileLocator.resolve(fileURL).getPath();
+			
+			script.attr("src", srcPath);
+			body.appendChild(script);
+		} catch (Exception e) {
+			WindupUIPlugin.log(e);
+		}
+	}
+	
 	private static class DetailsComposite extends Composite {
 
 		private IMarker marker;
@@ -143,46 +183,11 @@ public class IssueDetailsView {
 		}
 		
 		private void refresh(Issue issue) {
-			String html = buildText(issue);
 			try {
-				Bundle bundle = WindupUIPlugin.getDefault().getBundle();
-				
+				String html = buildText(issue);
 				File htmlFile = File.createTempFile("tmp", ".html");
 				Document doc = Jsoup.parse(html);
-				
-				Elements codeElements = doc.getElementsByTag("code");
-				codeElements.forEach(element -> {
-					Set<String> classNames = element.classNames();
-					Set<String> newNames = Sets.newHashSet();
-					classNames.forEach(className -> {
-						// prismjs requires prefix, i'm not sure about another/easier workaround.
-						newNames.add("language-"+className);
-					});
-					element.classNames(newNames);
-				});
-				
-				DocumentType type = new DocumentType("html", "", "", "");
-				doc.insertChildren(0, Lists.newArrayList(type));
-				
-				Element head = doc.head();
-				Element css = doc.createElement("link");
-				
-			    URL fileURL = FileLocator.find(bundle, new Path("html/prism.css"), null);
-			    String srcPath = FileLocator.resolve(fileURL).getPath();
-				
-				css.attr("href", srcPath);
-				css.attr("rel", "stylesheet");
-				head.appendChild(css);
-				
-				Element body = doc.body();
-				Element script = doc.createElement("script");
-				
-				fileURL = FileLocator.find(bundle, new Path("html/prism.js"), null);
-				srcPath = FileLocator.resolve(fileURL).getPath();
-				
-				script.attr("src", srcPath);
-				body.appendChild(script);
-				
+				IssueDetailsView.addPrism(doc);
 				FileUtils.write(htmlFile, doc.html());
 				browserViewer.setURL(htmlFile.getAbsolutePath());;
 			} catch (Exception e) {
