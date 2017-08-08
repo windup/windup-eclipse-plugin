@@ -1,24 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension3;
-import org.eclipse.jface.text.IInformationControlExtension5;
-import org.eclipse.jface.text.IViewportListener;
-import org.eclipse.jface.text.IWidgetTokenKeeper;
-import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
-import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -37,39 +23,13 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * Implements a sticky hover control, i.e. a control that replaces a hover
- * with an enriched and focusable control.
- * <p>
- * The information control is made visible on request by calling
- * {@link #showInformationControl(Rectangle)}.
- * </p>
- * <p>
- * Clients usually instantiate and configure this class before using it. The configuration
- * must be consistent: This means the used {@link org.eclipse.jface.text.IInformationControlCreator}
- * must create an information control expecting information in the same format the configured
- * {@link org.eclipse.jface.text.information.IInformationProvider}s use to encode the information they provide.
- * </p>
- *
- * @since 3.4
- */
-public class StickyHoverManager extends InformationControlReplacer implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
-
-	/**
-	 * Priority of the info controls managed by this sticky hover manager.
-	 * <p>
-	 * Note: Only applicable when info control does not have focus.
-	 * -5 as value has been chosen in order to be beaten by the hovers of TextViewerHoverManager.
-	 * </p>
-	 */
-	private static final int WIDGET_PRIORITY= -5;
-
+public class StickyHoverManager extends InformationControlReplacer {
 
 	/**
 	 * Internal information control closer. Listens to several events issued by its subject control
 	 * and closes the information control when necessary.
 	 */
-	class Closer implements IInformationControlCloser, ControlListener, MouseListener, IViewportListener, KeyListener, FocusListener, Listener {
+	class Closer implements IInformationControlCloser, ControlListener, MouseListener, KeyListener, FocusListener, Listener {
 		//TODO: Catch 'Esc' key in fInformationControlToClose: Don't dispose, just hideInformationControl().
 		// This would allow to reuse the information control also when the user explicitly closes it.
 
@@ -171,11 +131,6 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		}
 
 		@Override
-		public void viewportChanged(int topIndex) {
-			hideInformationControl();
-		}
-
-		@Override
 		public void keyPressed(KeyEvent e) {
 			hideInformationControl();
 		}
@@ -209,7 +164,6 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 
 				IInformationControl infoControl= getCurrentInformationControl2();
 				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
-//					if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): activeShell= " + fDisplay.getActiveShell()); //$NON-NLS-1$
 					IInformationControlExtension3 iControl3= (IInformationControlExtension3) infoControl;
 					Rectangle controlBounds= iControl3.getBounds();
 					if (controlBounds != null) {
@@ -239,10 +193,6 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		}
 	}
 
-
-	//private TextViewer fTextViewer;
-
-	
 	protected static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
 		@Override
 		public IInformationControl doCreateInformationControl(Shell shell) {
@@ -250,94 +200,10 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		}
 	}
 
-	/**
-	 * Creates a new sticky hover manager.
-	 *
-	 * @param textViewer the text viewer
-	 */
 	public StickyHoverManager(Control control) {
 		super(new DefaultInformationControlCreator());
-
 		setCloser(new Closer());
-
 		install(control);
 	}
-
-	@Override
-	protected void showInformationControl(Rectangle subjectArea) {
-		super.showInformationControl(subjectArea);
-//		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
-//			super.showInformationControl(subjectArea);
-//		else
-//			if (DEBUG)
-//				System.out.println("cancelled StickyHoverManager.showInformationControl(..): did not get widget token (with prio)"); //$NON-NLS-1$
-	}
-
-	@Override
-	public void hideInformationControl() {
-		try {
-			super.hideInformationControl();
-		} finally {
-			//if (fTextViewer != null)
-			//	fTextViewer.releaseWidgetToken(this);
-		}
-	}
-
-	@Override
-	protected void handleInformationControlDisposed() {
-		try {
-			super.handleInformationControlDisposed();
-		} finally {
-			//if (fTextViewer != null)
-			//	fTextViewer.releaseWidgetToken(this);
-		}
-	}
-
-	@Override
-	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
-		hideInformationControl();
-		if (DEBUG)
-			System.out.println("StickyHoverManager gave up widget token (no prio)"); //$NON-NLS-1$
-		return true;
-	}
-
-	@Override
-	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
-		if (getCurrentInformationControl2() != null) {
-			if (getCurrentInformationControl2().isFocusControl()) {
-				if (DEBUG)
-					System.out.println("StickyHoverManager kept widget token (focused)"); //$NON-NLS-1$
-				return false;
-			} else if (priority > WIDGET_PRIORITY) {
-				hideInformationControl();
-				if (DEBUG)
-					System.out.println("StickyHoverManager gave up widget token (prio)"); //$NON-NLS-1$
-				return true;
-			} else {
-				if (DEBUG)
-					System.out.println("StickyHoverManager kept widget token (prio)"); //$NON-NLS-1$
-				return false;
-			}
-		}
-		if (DEBUG)
-			System.out.println("StickyHoverManager gave up widget token (no iControl)"); //$NON-NLS-1$
-		return true;
-	}
-
-	@Override
-	public boolean setFocus(IWidgetTokenOwner owner) {
-		IInformationControl iControl= getCurrentInformationControl2();
-		if (iControl instanceof IInformationControlExtension5) {
-			IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
-			if (iControl5.isVisible()) {
-				iControl.setFocus();
-				return iControl.isFocusControl();
-			}
-			return false;
-		}
-		iControl.setFocus();
-		return iControl.isFocusControl();
-	}
-
 }
 
