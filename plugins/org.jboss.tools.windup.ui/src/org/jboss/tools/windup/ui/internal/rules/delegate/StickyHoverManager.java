@@ -63,10 +63,8 @@ public class StickyHoverManager extends InformationControlReplacer {
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addMouseListener(this);
-				fSubjectControl.addKeyListener(this);
+				
 			}
-
-			//fTextViewer.addViewportListener(this);
 
 			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
 			if (fInformationControlToClose != null)
@@ -76,6 +74,9 @@ public class StickyHoverManager extends InformationControlReplacer {
 			if (!fDisplay.isDisposed()) {
 				fDisplay.addFilter(SWT.MouseMove, this);
 				fDisplay.addFilter(SWT.FocusOut, this);
+				
+				// TODO: Temporary solution for keypress
+				fDisplay.addFilter(SWT.KeyDown, this);
 			}
 		}
 
@@ -99,6 +100,9 @@ public class StickyHoverManager extends InformationControlReplacer {
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.MouseMove, this);
 				fDisplay.removeFilter(SWT.FocusOut, this);
+				
+				// TODO: Temporary solution for keypress
+				fDisplay.removeFilter(SWT.KeyDown, this);
 			}
 
 			fDisplay= null;
@@ -187,6 +191,15 @@ public class StickyHoverManager extends InformationControlReplacer {
 				IInformationControl iControl= getCurrentInformationControl2();
 				if (iControl != null && ! iControl.isFocusControl())
 					hideInformationControl();
+			}
+			// TODO: Temporary solution for keypress
+			else if (event.type == SWT.KeyDown) {
+				if (!(event.widget instanceof Control) || event.widget.isDisposed())
+					return;
+				IInformationControl infoControl= getCurrentInformationControl2();
+				if (infoControl != null && !infoControl.isFocusControl()) {
+					hideInformationControl();
+				}
 			}
 		}
 	}

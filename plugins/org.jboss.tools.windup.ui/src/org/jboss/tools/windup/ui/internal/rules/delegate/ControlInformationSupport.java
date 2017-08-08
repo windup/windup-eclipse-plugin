@@ -134,6 +134,10 @@ public class ControlInformationSupport {
 			}
 		}
 		
+		public void hide() {
+			
+		}
+		
 		public void setFocus() {
 			IInformationControl iControl= getCurrentInformationControl();
 			if (canReplace(iControl)) {
@@ -145,13 +149,11 @@ public class ControlInformationSupport {
 		}
 		
 		private void activateContext() {
-			System.out.println("activating context...");
 			WindupUIPlugin.getDefault().getContext().set(HoverInfoControlManager.class, this);
 			contextActivation = contextService.activateContext(WindupConstants.RULESET_EDITOR_CONTEXT);
 		}
 		
 		private void deactivateContext() {
-			System.out.println("deactivating context...");
 			WindupUIPlugin.getDefault().getContext().set(HoverInfoControlManager.class, null);
 			contextService.deactivateContext(contextActivation);
 		}

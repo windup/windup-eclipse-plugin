@@ -141,6 +141,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					fDisplay.addFilter(SWT.MouseMove, this);
 					fDisplay.addFilter(SWT.MouseEnter, this);
 					fDisplay.addFilter(SWT.MouseExit, this);
+					
+					// TODO: Temporary solution for keypress
+					fDisplay.addFilter(SWT.KeyDown, this);
 				}
 			}
 		}
@@ -183,6 +186,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fDisplay.removeFilter(SWT.MouseMove, this);
 				fDisplay.removeFilter(SWT.MouseEnter, this);
 				fDisplay.removeFilter(SWT.MouseExit, this);
+				
+				// TODO: Temporary solution for keypress
+				fDisplay.removeFilter(SWT.KeyDown, this);
 			}
 			fDisplay= null;
 		}
@@ -320,6 +326,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				case SWT.MouseEnter:
 				case SWT.MouseExit:
 					handleMouseMove(event);
+					break;
+				case SWT.KeyDown: // TODO: Temporary solution for keypress
+					hideInformationControl();
 					break;
 			}
 		}
