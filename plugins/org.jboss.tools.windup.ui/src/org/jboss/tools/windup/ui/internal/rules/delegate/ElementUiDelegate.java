@@ -100,19 +100,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Override
 	public void setFocus() {
-		//folder.getSelection().getControl().setFocus();
-		//folder.getSelection().getControl().forceFocus();
-		/*for (TabWrapper wrapper : tabs.values()) {
-			ContextInjectionFactory.invoke(wrapper.getObject(), 
-					Focus.class, wrapper.getContext(), null);
-		}*/
 	}
-	
-	/*@Override
-	public void setFocus() {
-		section.getClient().setFocus();
-		section.getClient().forceFocus();
-	}*/
 	
 	@Override
 	public void fillContextMenu(IMenuManager manager, TreeViewer treeViewer) {
