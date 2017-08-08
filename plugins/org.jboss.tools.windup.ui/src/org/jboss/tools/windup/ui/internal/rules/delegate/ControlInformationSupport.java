@@ -57,6 +57,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 
 @SuppressWarnings("restriction")
@@ -80,7 +81,12 @@ public class ControlInformationSupport {
 		manager.install(control, control.getShell());
 	}
 	
-	public class HoverInfoControlManager extends AbstractHoverInformationControlManager {
+	public static class HoverInfoControlManager extends AbstractHoverInformationControlManager {
+		
+		private IContextService contextService = (IContextService)PlatformUI.getWorkbench()
+				.getService(IContextService.class);
+		
+		private IContextActivation contextActivation;
 		 
 		public HoverInfoControlManager(IInformationControlCreator creator, Control control) {
 			super(creator);
@@ -126,6 +132,263 @@ public class ControlInformationSupport {
 				super.setCustomInformationControlCreator(getHoverControlCreator());
 	    			setInformation(createInput(label), label.getBounds());
 			}
+		}
+		
+		public void setFocus() {
+			IInformationControl iControl= getCurrentInformationControl();
+			if (canReplace(iControl)) {
+				if (cancelReplacingDelay()) {
+					replaceInformationControl(true);
+				}
+			}
+			deactivateContext();
+		}
+		
+		private void activateContext() {
+			System.out.println("activating context...");
+			WindupUIPlugin.getDefault().getContext().set(HoverInfoControlManager.class, this);
+			contextActivation = contextService.activateContext(WindupConstants.RULESET_EDITOR_CONTEXT);
+		}
+		
+		private void deactivateContext() {
+			System.out.println("deactivating context...");
+			WindupUIPlugin.getDefault().getContext().set(HoverInfoControlManager.class, null);
+			contextService.deactivateContext(contextActivation);
+		}
+		
+		private PresenterControlCreator fPresenterControlCreator;
+		
+		public IInformationControlCreator getInformationPresenterControlCreator() {
+			if (fPresenterControlCreator == null)
+				fPresenterControlCreator= new PresenterControlCreator(null);
+			return fPresenterControlCreator;
+		}
+		
+		private HoverControlCreator fHoverControlCreator;
+		
+		public IInformationControlCreator getHoverControlCreator() {
+			if (fHoverControlCreator == null)
+				fHoverControlCreator= new HoverControlCreator(getInformationPresenterControlCreator(), this);
+			return fHoverControlCreator;
+		}
+	}
+	
+	/**
+	 * Presenter control creator.
+	 *
+	 * @since 3.3
+	 */
+	public static final class PresenterControlCreator extends AbstractReusableInformationControlCreator {
+
+		private final IWorkbenchSite fSite;
+
+		/**
+		 * Creates a new PresenterControlCreator.
+		 * 
+		 * @param site the site or <code>null</code> if none
+		 * @since 3.6
+		 */
+		public PresenterControlCreator(IWorkbenchSite site) {
+			fSite= site;
+		}
+
+		/*
+		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+		 */
+		@Override
+		public IInformationControl doCreateInformationControl(Shell parent) {
+			if (BrowserInformationControl.isAvailable(parent)) {
+				ToolBarManager tbm= new ToolBarManager(SWT.FLAT);
+				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
+				BrowserInformationControl iControl= new BrowserInformationControl(parent, font, tbm);
+
+				final BackAction backAction= new BackAction(iControl);
+				backAction.setEnabled(false);
+				tbm.add(backAction);
+				final ForwardAction forwardAction= new ForwardAction(iControl);
+				tbm.add(forwardAction);
+				forwardAction.setEnabled(false);
+
+				final ShowInJavadocViewAction showInJavadocViewAction= new ShowInJavadocViewAction(iControl);
+				tbm.add(showInJavadocViewAction);
+				final OpenDeclarationAction openDeclarationAction= new OpenDeclarationAction(iControl);
+				tbm.add(openDeclarationAction);
+
+				final SimpleSelectionProvider selectionProvider= new SimpleSelectionProvider();
+				if (fSite != null) {
+					OpenAttachedJavadocAction openAttachedJavadocAction= new OpenAttachedJavadocAction(fSite);
+					openAttachedJavadocAction.setSpecialSelectionProvider(selectionProvider);
+					openAttachedJavadocAction.setImageDescriptor(JavaPluginImages.DESC_ELCL_OPEN_BROWSER);
+					openAttachedJavadocAction.setDisabledImageDescriptor(JavaPluginImages.DESC_DLCL_OPEN_BROWSER);
+					selectionProvider.addSelectionChangedListener(openAttachedJavadocAction);
+					selectionProvider.setSelection(new StructuredSelection());
+					tbm.add(openAttachedJavadocAction);
+				}
+
+				IInputChangedListener inputChangeListener= new IInputChangedListener() {
+					@Override
+					public void inputChanged(Object newInput) {
+						backAction.update();
+						forwardAction.update();
+						if (newInput == null) {
+							selectionProvider.setSelection(new StructuredSelection());
+						} else if (newInput instanceof BrowserInformationControlInput) {
+							BrowserInformationControlInput input= (BrowserInformationControlInput) newInput;
+							Object inputElement= input.getInputElement();
+							selectionProvider.setSelection(new StructuredSelection(inputElement));
+							boolean isJavaElementInput= inputElement instanceof IJavaElement;
+							showInJavadocViewAction.setEnabled(isJavaElementInput);
+							openDeclarationAction.setEnabled(isJavaElementInput);
+						}
+					}
+				};
+				iControl.addInputChangeListener(inputChangeListener);
+
+				tbm.update(true);
+
+				addLinkListener(iControl);
+				return iControl;
+
+			} else {
+				return new DefaultInformationControl(parent, true);
+			}
+		}
+	}
+
+	
+	/**
+	 * Hover control creator.
+	 *
+	 * @since 3.3
+	 */
+	public static final class HoverControlCreator extends AbstractReusableInformationControlCreator implements IPropertyChangeListener {
+		/**
+		 * The information presenter control creator.
+		 * @since 3.4
+		 */
+		private final IInformationControlCreator fInformationPresenterControlCreator;
+		/**
+		 * <code>true</code> to use the additional info affordance, <code>false</code> to use the hover affordance.
+		 */
+		private final boolean fAdditionalInfoAffordance;
+		
+		private HoverInfoControlManager hoverManager;
+
+		/**
+		 * @param informationPresenterControlCreator control creator for enriched hover
+		 * @since 3.4
+		 */
+		public HoverControlCreator(IInformationControlCreator informationPresenterControlCreator, HoverInfoControlManager hoverManager) {
+			this(informationPresenterControlCreator, false);
+			this.hoverManager = hoverManager;
+		}
+
+		/**
+		 * @param informationPresenterControlCreator control creator for enriched hover
+		 * @param additionalInfoAffordance <code>true</code> to use the additional info affordance, <code>false</code> to use the hover affordance
+		 * @since 3.4
+		 */
+		public HoverControlCreator(IInformationControlCreator informationPresenterControlCreator, boolean additionalInfoAffordance) {
+			fInformationPresenterControlCreator= informationPresenterControlCreator;
+			fAdditionalInfoAffordance= additionalInfoAffordance;
+		}
+
+		private BrowserInformationControl iControl;
+		
+		@Override
+		public boolean canReplace(IInformationControlCreator creator) {
+			return super.canReplace(creator);
+		}
+		
+		private String getTooltipAffordance() {
+			return RuleMessages.Editor_toolTip_affordance;
+		}
+		
+		/*
+		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+		 */
+		@Override
+		public IInformationControl doCreateInformationControl(Shell parent) {
+			if (BrowserInformationControl.isAvailable(parent)) {
+				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
+				iControl= new BrowserInformationControl(parent, font, getTooltipAffordance()) {
+					/*
+					 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+					 */
+					@Override
+					public IInformationControlCreator getInformationPresenterControlCreator() {
+						return fInformationPresenterControlCreator;
+					}
+					
+					@Override
+					public void setVisible(boolean visible) {
+						super.setVisible(visible);
+						if (visible) {
+							hoverManager.activateContext();
+						} else {
+							hoverManager.deactivateContext();
+						}
+					}
+				};
+				
+				JFaceResources.getColorRegistry().addListener(this); // So propertyChange() method is triggered in context of IPropertyChangeListener
+				setHoverColors();
+				
+				addLinkListener(iControl);
+				return iControl;
+			} else {
+				return new DefaultInformationControl(parent, getTooltipAffordance()) {
+					@Override
+					public IInformationControlCreator getInformationPresenterControlCreator() {
+						return new IInformationControlCreator() {
+							@Override
+							public IInformationControl createInformationControl(Shell parentShell) {
+								return new DefaultInformationControl(parentShell, (ToolBarManager) null, new FallbackInformationPresenter());
+							}
+						};
+					}
+				};
+			}
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			String property= event.getProperty();
+			if (iControl != null &&
+					(property.equals("org.eclipse.jdt.ui.Javadoc.foregroundColor") //$NON-NLS-1$
+							|| property.equals("org.eclipse.jdt.ui.Javadoc.backgroundColor"))) { //$NON-NLS-1$
+				setHoverColors();
+			}
+		}
+		
+		private void setHoverColors() {
+			ColorRegistry registry = JFaceResources.getColorRegistry();
+			Color fgRGB = registry.get("org.eclipse.jdt.ui.Javadoc.foregroundColor"); //$NON-NLS-1$ 
+			Color bgRGB = registry.get("org.eclipse.jdt.ui.Javadoc.backgroundColor"); //$NON-NLS-1$ 
+			iControl.setForegroundColor(fgRGB);
+			iControl.setBackgroundColor(bgRGB);
+		}
+
+		@Override
+		public void widgetDisposed(DisposeEvent e) {
+			super.widgetDisposed(e);
+			//Called when active editor is closed.
+			JFaceResources.getColorRegistry().removeListener(this);
+		}
+
+		/*
+		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
+		 */
+		@Override
+		public boolean canReuse(IInformationControl control) {
+			if (!super.canReuse(control))
+				return false;
+
+			if (control instanceof IInformationControlExtension4) {
+				((IInformationControlExtension4)control).setStatusText(getTooltipAffordance());
+			}
+
+			return true;
 		}
 	}
 	
@@ -273,241 +536,6 @@ public class ControlInformationSupport {
 		}
 	}
 	
-	
-	/**
-	 * Presenter control creator.
-	 *
-	 * @since 3.3
-	 */
-	public static final class PresenterControlCreator extends AbstractReusableInformationControlCreator {
-
-		private final IWorkbenchSite fSite;
-
-		/**
-		 * Creates a new PresenterControlCreator.
-		 * 
-		 * @param site the site or <code>null</code> if none
-		 * @since 3.6
-		 */
-		public PresenterControlCreator(IWorkbenchSite site) {
-			fSite= site;
-		}
-
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-		 */
-		@Override
-		public IInformationControl doCreateInformationControl(Shell parent) {
-			if (BrowserInformationControl.isAvailable(parent)) {
-				ToolBarManager tbm= new ToolBarManager(SWT.FLAT);
-				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
-				BrowserInformationControl iControl= new BrowserInformationControl(parent, font, tbm);
-
-				final BackAction backAction= new BackAction(iControl);
-				backAction.setEnabled(false);
-				tbm.add(backAction);
-				final ForwardAction forwardAction= new ForwardAction(iControl);
-				tbm.add(forwardAction);
-				forwardAction.setEnabled(false);
-
-				final ShowInJavadocViewAction showInJavadocViewAction= new ShowInJavadocViewAction(iControl);
-				tbm.add(showInJavadocViewAction);
-				final OpenDeclarationAction openDeclarationAction= new OpenDeclarationAction(iControl);
-				tbm.add(openDeclarationAction);
-
-				final SimpleSelectionProvider selectionProvider= new SimpleSelectionProvider();
-				if (fSite != null) {
-					OpenAttachedJavadocAction openAttachedJavadocAction= new OpenAttachedJavadocAction(fSite);
-					openAttachedJavadocAction.setSpecialSelectionProvider(selectionProvider);
-					openAttachedJavadocAction.setImageDescriptor(JavaPluginImages.DESC_ELCL_OPEN_BROWSER);
-					openAttachedJavadocAction.setDisabledImageDescriptor(JavaPluginImages.DESC_DLCL_OPEN_BROWSER);
-					selectionProvider.addSelectionChangedListener(openAttachedJavadocAction);
-					selectionProvider.setSelection(new StructuredSelection());
-					tbm.add(openAttachedJavadocAction);
-				}
-
-				IInputChangedListener inputChangeListener= new IInputChangedListener() {
-					@Override
-					public void inputChanged(Object newInput) {
-						backAction.update();
-						forwardAction.update();
-						if (newInput == null) {
-							selectionProvider.setSelection(new StructuredSelection());
-						} else if (newInput instanceof BrowserInformationControlInput) {
-							BrowserInformationControlInput input= (BrowserInformationControlInput) newInput;
-							Object inputElement= input.getInputElement();
-							selectionProvider.setSelection(new StructuredSelection(inputElement));
-							boolean isJavaElementInput= inputElement instanceof IJavaElement;
-							showInJavadocViewAction.setEnabled(isJavaElementInput);
-							openDeclarationAction.setEnabled(isJavaElementInput);
-						}
-					}
-				};
-				iControl.addInputChangeListener(inputChangeListener);
-
-				tbm.update(true);
-
-				addLinkListener(iControl);
-				return iControl;
-
-			} else {
-				return new DefaultInformationControl(parent, true);
-			}
-		}
-	}
-	
-	private PresenterControlCreator fPresenterControlCreator;
-	
-	public IInformationControlCreator getInformationPresenterControlCreator() {
-		if (fPresenterControlCreator == null)
-			fPresenterControlCreator= new PresenterControlCreator(null);
-		return fPresenterControlCreator;
-	}
-	
-	private HoverControlCreator fHoverControlCreator;
-	
-	public IInformationControlCreator getHoverControlCreator() {
-		if (fHoverControlCreator == null)
-			fHoverControlCreator= new HoverControlCreator(getInformationPresenterControlCreator());
-		return fHoverControlCreator;
-	}
-
-	/**
-	 * Hover control creator.
-	 *
-	 * @since 3.3
-	 */
-	public static final class HoverControlCreator extends AbstractReusableInformationControlCreator implements IPropertyChangeListener {
-		/**
-		 * The information presenter control creator.
-		 * @since 3.4
-		 */
-		private final IInformationControlCreator fInformationPresenterControlCreator;
-		/**
-		 * <code>true</code> to use the additional info affordance, <code>false</code> to use the hover affordance.
-		 */
-		private final boolean fAdditionalInfoAffordance;
-
-		/**
-		 * @param informationPresenterControlCreator control creator for enriched hover
-		 * @since 3.4
-		 */
-		public HoverControlCreator(IInformationControlCreator informationPresenterControlCreator) {
-			this(informationPresenterControlCreator, false);
-		}
-
-		/**
-		 * @param informationPresenterControlCreator control creator for enriched hover
-		 * @param additionalInfoAffordance <code>true</code> to use the additional info affordance, <code>false</code> to use the hover affordance
-		 * @since 3.4
-		 */
-		public HoverControlCreator(IInformationControlCreator informationPresenterControlCreator, boolean additionalInfoAffordance) {
-			fInformationPresenterControlCreator= informationPresenterControlCreator;
-			fAdditionalInfoAffordance= additionalInfoAffordance;
-		}
-
-		private BrowserInformationControl iControl;
-		
-		@Override
-		public boolean canReplace(IInformationControlCreator creator) {
-			return super.canReplace(creator);
-		}
-		
-		private String getTooltipAffordance() {
-			return RuleMessages.Editor_toolTip_affordance;
-		}
-		
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-		 */
-		@Override
-		public IInformationControl doCreateInformationControl(Shell parent) {
-			if (BrowserInformationControl.isAvailable(parent)) {
-				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
-				iControl= new BrowserInformationControl(parent, font, getTooltipAffordance()) {
-					/*
-					 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
-					 */
-					@Override
-					public IInformationControlCreator getInformationPresenterControlCreator() {
-						return fInformationPresenterControlCreator;
-					}
-					
-					private IContextActivation activation = null;
-					@Override
-					public void setVisible(boolean visible) {
-						super.setVisible(visible);
-						IContextService contextService = (IContextService)PlatformUI.getWorkbench()
-								.getService(IContextService.class);
-						if (visible) {
-							activation = contextService.activateContext(WindupConstants.RULESET_EDITOR_CONTEXT);
-						}
-						else if (activation != null) {
-							contextService.deactivateContext(activation);
-						}
-					}
-				};
-				
-				JFaceResources.getColorRegistry().addListener(this); // So propertyChange() method is triggered in context of IPropertyChangeListener
-				setHoverColors();
-				
-				addLinkListener(iControl);
-				return iControl;
-			} else {
-				return new DefaultInformationControl(parent, getTooltipAffordance()) {
-					@Override
-					public IInformationControlCreator getInformationPresenterControlCreator() {
-						return new IInformationControlCreator() {
-							@Override
-							public IInformationControl createInformationControl(Shell parentShell) {
-								return new DefaultInformationControl(parentShell, (ToolBarManager) null, new FallbackInformationPresenter());
-							}
-						};
-					}
-				};
-			}
-		}
-
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			String property= event.getProperty();
-			if (iControl != null &&
-					(property.equals("org.eclipse.jdt.ui.Javadoc.foregroundColor") //$NON-NLS-1$
-							|| property.equals("org.eclipse.jdt.ui.Javadoc.backgroundColor"))) { //$NON-NLS-1$
-				setHoverColors();
-			}
-		}
-		
-		private void setHoverColors() {
-			ColorRegistry registry = JFaceResources.getColorRegistry();
-			Color fgRGB = registry.get("org.eclipse.jdt.ui.Javadoc.foregroundColor"); //$NON-NLS-1$ 
-			Color bgRGB = registry.get("org.eclipse.jdt.ui.Javadoc.backgroundColor"); //$NON-NLS-1$ 
-			iControl.setForegroundColor(fgRGB);
-			iControl.setBackgroundColor(bgRGB);
-		}
-
-		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			super.widgetDisposed(e);
-			//Called when active editor is closed.
-			JFaceResources.getColorRegistry().removeListener(this);
-		}
-
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
-		 */
-		@Override
-		public boolean canReuse(IInformationControl control) {
-			if (!super.canReuse(control))
-				return false;
-
-			if (control instanceof IInformationControlExtension4) {
-				((IInformationControlExtension4)control).setStatusText(getTooltipAffordance());
-			}
-
-			return true;
-		}
-	}
 	
 	private static void addLinkListener(final BrowserInformationControl control) {
 		control.addLocationListener(JavaElementLinks.createLocationListener(new JavaElementLinks.ILinkHandler() {
