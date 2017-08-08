@@ -54,10 +54,16 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
+import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 
 @SuppressWarnings("restriction")
 public class ControlInformationSupport {
+	
+	private static final int TEXT_HOVER_WIDTH_CHARS = 100; 
+	private static final int TEXT_HOVER_HEIGHT_CHARS = 12;
 	
 	public static final String INFORMATION = "informationData";
 	
@@ -78,12 +84,8 @@ public class ControlInformationSupport {
 		 
 		public HoverInfoControlManager(IInformationControlCreator creator, Control control) {
 			super(creator);
+			setSizeConstraints(TEXT_HOVER_WIDTH_CHARS, TEXT_HOVER_HEIGHT_CHARS, false, true);
 			getInternalAccessor().setInformationControlReplacer(new StickyHoverManager(control));
-			//replacer.takesFocusWhenVisible(true);
-			//getInternalAccessor().setInformationControlReplacer(replacer);
-			//InformationControlReplacer replacer = new InformationControlReplacer(replacementInformationControlCreator);
-			//replacer.takesFocusWhenVisible(true);
-			//getInternalAccessor().setInformationControlReplacer(replacer);
 			setAnchor(ANCHOR_BOTTOM);
 			setFallbackAnchors(new Anchor[] {ANCHOR_BOTTOM, ANCHOR_RIGHT, ANCHOR_LEFT} );
 		}
@@ -299,13 +301,7 @@ public class ControlInformationSupport {
 			if (BrowserInformationControl.isAvailable(parent)) {
 				ToolBarManager tbm= new ToolBarManager(SWT.FLAT);
 				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
-				BrowserInformationControl iControl= new BrowserInformationControl(parent, font, tbm) {
-					@Override
-					public boolean containsControl(Control control) {
-						// TODO Auto-generated method stub
-						return super.containsControl(control);
-					}
-				};
+				BrowserInformationControl iControl= new BrowserInformationControl(parent, font, tbm);
 
 				final BackAction backAction= new BackAction(iControl);
 				backAction.setEnabled(false);
@@ -417,21 +413,38 @@ public class ControlInformationSupport {
 			return super.canReplace(creator);
 		}
 		
+		private String getTooltipAffordance() {
+			return RuleMessages.Editor_toolTip_affordance;
+		}
+		
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
 		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
-			String tooltipAffordanceString= fAdditionalInfoAffordance ? JavaPlugin.getAdditionalInfoAffordanceString() : EditorsUI.getTooltipAffordanceString();
 			if (BrowserInformationControl.isAvailable(parent)) {
 				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
-				iControl= new BrowserInformationControl(parent, font, tooltipAffordanceString) {
+				iControl= new BrowserInformationControl(parent, font, getTooltipAffordance()) {
 					/*
 					 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
 					 */
 					@Override
 					public IInformationControlCreator getInformationPresenterControlCreator() {
 						return fInformationPresenterControlCreator;
+					}
+					
+					private IContextActivation activation = null;
+					@Override
+					public void setVisible(boolean visible) {
+						super.setVisible(visible);
+						IContextService contextService = (IContextService)PlatformUI.getWorkbench()
+								.getService(IContextService.class);
+						if (visible) {
+							activation = contextService.activateContext(WindupConstants.RULESET_EDITOR_CONTEXT);
+						}
+						else if (activation != null) {
+							contextService.deactivateContext(activation);
+						}
 					}
 				};
 				
@@ -441,7 +454,7 @@ public class ControlInformationSupport {
 				addLinkListener(iControl);
 				return iControl;
 			} else {
-				return new DefaultInformationControl(parent, tooltipAffordanceString) {
+				return new DefaultInformationControl(parent, getTooltipAffordance()) {
 					@Override
 					public IInformationControlCreator getInformationPresenterControlCreator() {
 						return new IInformationControlCreator() {
@@ -489,8 +502,7 @@ public class ControlInformationSupport {
 				return false;
 
 			if (control instanceof IInformationControlExtension4) {
-				String tooltipAffordanceString= fAdditionalInfoAffordance ? JavaPlugin.getAdditionalInfoAffordanceString() : EditorsUI.getTooltipAffordanceString();
-				((IInformationControlExtension4)control).setStatusText(tooltipAffordanceString);
+				((IInformationControlExtension4)control).setStatusText(getTooltipAffordance());
 			}
 
 			return true;

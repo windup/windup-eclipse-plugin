@@ -14,6 +14,8 @@ package org.jboss.tools.windup.model.domain;
  * Common constants used to share data throughout the Windup tooling.
  */
 public interface WindupConstants {
+	
+	String RULESET_EDITOR_CONTEXT = "org.jboss.tools.windup.ui.rulesetEditorScope";
 
 	/**
 	 * Windup launch configuration IDs.

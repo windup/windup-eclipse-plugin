@@ -86,8 +86,6 @@ public class StickyHoverManager extends InformationControlReplacer {
 				return;
 			fIsActive= false;
 
-			//fTextViewer.removeViewportListener(this);
-
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeMouseListener(this);

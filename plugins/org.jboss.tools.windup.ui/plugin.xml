@@ -557,6 +557,11 @@
             id="org.jboss.tools.windup.ui.openRuleDefinition"
             name="Open Rule Definition">
       </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.delegate.ShowInformationHandler"
+            id="org.jboss.tools.windup.ui.showInformation"
+            name="Show Tooltip Information">
+      </command>
    </extension>
     <extension
              point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -894,5 +899,23 @@
              </parameter>
           </describer>
        </content-type>
+    </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="org.jboss.tools.windup.ui.showInformation"
+             contextId="org.jboss.tools.windup.ui.rulesetEditorScope"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="F2">
+       </key>
+    </extension>
+    <extension
+          point="org.eclipse.ui.contexts">
+       <context
+             description="%context.rulesetEditor.editingText.description"
+             id="org.jboss.tools.windup.ui.rulesetEditorScope"
+             name="%context.rulesetEditor.editingText.name"
+             parentId="org.eclipse.ui.contexts.window">
+       </context>
     </extension>
 </plugin>

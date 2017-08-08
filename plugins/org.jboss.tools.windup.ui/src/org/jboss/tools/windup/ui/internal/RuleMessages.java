@@ -22,6 +22,8 @@ public class RuleMessages extends NLS {
 
     private RuleMessages(){}
     
+    public static String Editor_toolTip_affordance;
+    
     public static String javaclass_description;
     public static String javaclass_locationSectionTitle;
     public static String javaclass_locationDescription;
