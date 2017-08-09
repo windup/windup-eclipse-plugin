@@ -45,6 +45,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -133,7 +135,9 @@ public class ControlInformationSupport {
 			else {
 				Label label = (Label)widget;
 				super.setCustomInformationControlCreator(getHoverControlCreator());
-	    			setInformation(createInput(label), label.getBounds());
+				Rectangle bounds = label.getBounds();
+				Rectangle area = new Rectangle(0, 0, bounds.width, bounds.height);
+	    			setInformation(createInput(label), area);
 			}
 		}
 		
@@ -336,8 +340,8 @@ public class ControlInformationSupport {
 					}
 					
 					@Override
-					public void setSize(int width, int height) {
-						super.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+					public Point computeSizeHint() {
+						return new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 					}
 				};
 				

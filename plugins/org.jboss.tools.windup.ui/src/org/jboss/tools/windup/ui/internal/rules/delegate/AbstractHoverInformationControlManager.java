@@ -195,16 +195,16 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 		@Override
 		public void mouseMove(MouseEvent event) {
-			/*if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl())) {
+			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl())) {
 				if (!fSubjectArea.contains(event.x, event.y)) {
 					hideInformationControl();
 				}
 
-			} else if (getCurrentInformationControl() != null && !getCurrentInformationControl().isFocusControl()) {
+			} else  if (getCurrentInformationControl() != null && !getCurrentInformationControl().isFocusControl()) {
 				if (!inKeepUpZone(event.x, event.y, fSubjectControl, fSubjectArea, true)) {
 					hideInformationControl();
 				}
-			}*/
+			}
 		}
 
 		@Override
@@ -381,7 +381,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				 *  completely outside of the subject control.
 				 */
 				if (!inKeepUpZone(mouseLoc.x, mouseLoc.y, fSubjectControl, fSubjectArea, true)) {
-					//hideInformationControl();
+					hideInformationControl();
 					return;
 				}
 			}
