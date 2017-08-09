@@ -65,6 +65,9 @@ public class ControlInformationSupport {
 	
 	private static final int TEXT_HOVER_WIDTH_CHARS = 100; 
 	private static final int TEXT_HOVER_HEIGHT_CHARS = 12;
+
+	private static final int DEFAULT_WIDTH = 700;
+	private static final int DEFAULT_HEIGHT = 209;
 	
 	public static final String INFORMATION = "informationData";
 	
@@ -330,6 +333,11 @@ public class ControlInformationSupport {
 						} else {
 							hoverManager.deactivateContext();
 						}
+					}
+					
+					@Override
+					public void setSize(int width, int height) {
+						super.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 					}
 				};
 				

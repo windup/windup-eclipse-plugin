@@ -10,16 +10,15 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -29,14 +28,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
-import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.TextUtil;
@@ -53,32 +50,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMDocumentation;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMNodeList;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.eclipse.wst.xml.core.internal.contentmodel.util.CMDescriptionBuilder;
 import org.eclipse.wst.xml.core.internal.contentmodel.util.DOMNamespaceHelper;
 import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
-import org.eclipse.xtext.util.Pair;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.RuleMessages;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationListDelegate;
@@ -87,10 +80,12 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationType
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.markdown4j.Markdown4jProcessor;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -220,7 +215,7 @@ public class RulesetElementUiDelegateFactory {
 		protected ModelQuery modelQuery;
 		
 		protected boolean blockNotification;
-		protected IInformationControl infoControl;
+		private IInformationControl infoControl;
 		
 		protected XMLTableTreePropertyDescriptorFactory propertyDescriptorFactory = new XMLTableTreePropertyDescriptorFactory();
 		protected TreeContentHelper contentHelper = new TreeContentHelper();
@@ -292,11 +287,40 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		protected Control createLabel(Composite parent, FormToolkit toolkit) {
-			createTextHover(parent);
+			//createTextHover(parent);
 			Label label = toolkit.createLabel(parent, getLabel(), SWT.NULL);
 			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-			PDETextHover.addHoverListenerToControl(infoControl, label, this);
+			
+			String documentation = getDocumentation();
+			if (documentation != null) {
+				if (BrowserInformationControl.isAvailable(parent)) {
+					label.setData(ControlInformationSupport.INFORMATION, documentation);
+					ControlInformationSupport support = new ControlInformationSupport(label);
+				}
+			}
 			return label;
+		}
+		
+		public String getDocumentation() {
+			try {
+				Object documentation = cmNode.getProperty("documentation"); //$NON-NLS-1$
+				if (documentation != null && documentation instanceof CMNodeList) {
+					CMNodeList nodeList = (CMNodeList)documentation;
+					for (int i = 0; i < nodeList.getLength(); i++) {
+						Object node = nodeList.item(i);
+						if (node instanceof CMDocumentation) {
+							String markdown = ((CMDocumentation)node).getValue();
+							String html = new Markdown4jProcessor().process(markdown);
+							Document document = Jsoup.parse(html);
+							IssueDetailsView.addPrism(document);
+							return document.html();
+						}
+					}
+				}
+			} catch (Exception e) {
+				WindupUIPlugin.log(e);
+			}
+			return null;
 		}
 		
 		protected String getLabel() {
@@ -344,13 +368,22 @@ public class RulesetElementUiDelegateFactory {
 		}
 		
 		protected void createTextHover(Control control) {
-			infoControl = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
-			infoControl.setSizeConstraints(300, 600);
+			//infoControl = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
+			//infoControl.setSizeConstraints(300, 600);
 		}
 
 		@Override
 		public String getHoverContent(Control c) {
-			return null;
+			try {
+				Bundle bundle = WindupUIPlugin.getDefault().getBundle();
+				URL fileURL = FileLocator.find(bundle, new Path("html/rulesDevelopmentGuide.html"), null);
+			    String srcPath = FileLocator.resolve(fileURL).getPath();
+				Document doc = Jsoup.parse(new File(srcPath), null);
+				return doc.html();
+			} catch (Exception e) {
+				WindupUIPlugin.log(e);
+			}
+			return "<b>Hello</b> <a href=\"https://www.w3schools.com/html/\">Visit our HTML tutorial</a>";
 		}
 	}
 	
@@ -423,7 +456,7 @@ public class RulesetElementUiDelegateFactory {
 					openReference();
 				}
 			});
-			PDETextHover.addHoverListenerToControl(infoControl, link, this);
+			//PDETextHover.addHoverListenerToControl(infoControl, link, this);
 			return link;
 		}
 

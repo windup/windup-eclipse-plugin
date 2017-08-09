@@ -63,7 +63,7 @@ public class StickyHoverManager extends InformationControlReplacer {
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addMouseListener(this);
-				
+				fSubjectControl.addKeyListener(this);
 			}
 
 			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
