@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.actions.OpenBrowserUtil;
-import org.eclipse.jdt.internal.ui.actions.SimpleSelectionProvider;
 import org.eclipse.jdt.internal.ui.infoviews.JavadocView;
 import org.eclipse.jdt.internal.ui.text.java.hover.JavadocBrowserInformationControlInput;
 import org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover;
@@ -25,12 +24,10 @@ import org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.FallbackInformat
 import org.eclipse.jdt.internal.ui.viewsupport.JavaElementLinks;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
-import org.eclipse.jdt.ui.actions.OpenAttachedJavadocAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.BrowserInformationControlInput;
-import org.eclipse.jface.internal.text.html.BrowserInput;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
@@ -38,12 +35,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension4;
-import org.eclipse.jface.text.IInputChangedListener;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -52,8 +44,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -169,7 +159,7 @@ public class ControlInformationSupport {
 		
 		public IInformationControlCreator getInformationPresenterControlCreator() {
 			if (fPresenterControlCreator == null)
-				fPresenterControlCreator= new PresenterControlCreator(null);
+				fPresenterControlCreator= new PresenterControlCreator();
 			return fPresenterControlCreator;
 		}
 		
@@ -182,28 +172,8 @@ public class ControlInformationSupport {
 		}
 	}
 	
-	/**
-	 * Presenter control creator.
-	 *
-	 * @since 3.3
-	 */
 	public static final class PresenterControlCreator extends AbstractReusableInformationControlCreator {
 
-		private final IWorkbenchSite fSite;
-
-		/**
-		 * Creates a new PresenterControlCreator.
-		 * 
-		 * @param site the site or <code>null</code> if none
-		 * @since 3.6
-		 */
-		public PresenterControlCreator(IWorkbenchSite site) {
-			fSite= site;
-		}
-
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-		 */
 		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
@@ -211,47 +181,8 @@ public class ControlInformationSupport {
 				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
 				BrowserInformationControl iControl= new BrowserInformationControl(parent, font, tbm);
 
-				final BackAction backAction= new BackAction(iControl);
-				backAction.setEnabled(false);
-				tbm.add(backAction);
-				final ForwardAction forwardAction= new ForwardAction(iControl);
-				tbm.add(forwardAction);
-				forwardAction.setEnabled(false);
-
-				final ShowInJavadocViewAction showInJavadocViewAction= new ShowInJavadocViewAction(iControl);
-				tbm.add(showInJavadocViewAction);
 				final OpenDeclarationAction openDeclarationAction= new OpenDeclarationAction(iControl);
 				tbm.add(openDeclarationAction);
-
-				final SimpleSelectionProvider selectionProvider= new SimpleSelectionProvider();
-				if (fSite != null) {
-					OpenAttachedJavadocAction openAttachedJavadocAction= new OpenAttachedJavadocAction(fSite);
-					openAttachedJavadocAction.setSpecialSelectionProvider(selectionProvider);
-					openAttachedJavadocAction.setImageDescriptor(JavaPluginImages.DESC_ELCL_OPEN_BROWSER);
-					openAttachedJavadocAction.setDisabledImageDescriptor(JavaPluginImages.DESC_DLCL_OPEN_BROWSER);
-					selectionProvider.addSelectionChangedListener(openAttachedJavadocAction);
-					selectionProvider.setSelection(new StructuredSelection());
-					tbm.add(openAttachedJavadocAction);
-				}
-
-				IInputChangedListener inputChangeListener= new IInputChangedListener() {
-					@Override
-					public void inputChanged(Object newInput) {
-						backAction.update();
-						forwardAction.update();
-						if (newInput == null) {
-							selectionProvider.setSelection(new StructuredSelection());
-						} else if (newInput instanceof BrowserInformationControlInput) {
-							BrowserInformationControlInput input= (BrowserInformationControlInput) newInput;
-							Object inputElement= input.getInputElement();
-							selectionProvider.setSelection(new StructuredSelection(inputElement));
-							boolean isJavaElementInput= inputElement instanceof IJavaElement;
-							showInJavadocViewAction.setEnabled(isJavaElementInput);
-							openDeclarationAction.setEnabled(isJavaElementInput);
-						}
-					}
-				};
-				iControl.addInputChangeListener(inputChangeListener);
 
 				tbm.update(true);
 
@@ -264,42 +195,13 @@ public class ControlInformationSupport {
 		}
 	}
 
-	
-	/**
-	 * Hover control creator.
-	 *
-	 * @since 3.3
-	 */
-	public static final class HoverControlCreator extends AbstractReusableInformationControlCreator implements IPropertyChangeListener {
-		/**
-		 * The information presenter control creator.
-		 * @since 3.4
-		 */
+	public static final class HoverControlCreator extends AbstractReusableInformationControlCreator {
 		private final IInformationControlCreator fInformationPresenterControlCreator;
-		/**
-		 * <code>true</code> to use the additional info affordance, <code>false</code> to use the hover affordance.
-		 */
-		private final boolean fAdditionalInfoAffordance;
-		
 		private HoverInfoControlManager hoverManager;
 
-		/**
-		 * @param informationPresenterControlCreator control creator for enriched hover
-		 * @since 3.4
-		 */
 		public HoverControlCreator(IInformationControlCreator informationPresenterControlCreator, HoverInfoControlManager hoverManager) {
-			this(informationPresenterControlCreator, false);
-			this.hoverManager = hoverManager;
-		}
-
-		/**
-		 * @param informationPresenterControlCreator control creator for enriched hover
-		 * @param additionalInfoAffordance <code>true</code> to use the additional info affordance, <code>false</code> to use the hover affordance
-		 * @since 3.4
-		 */
-		public HoverControlCreator(IInformationControlCreator informationPresenterControlCreator, boolean additionalInfoAffordance) {
 			fInformationPresenterControlCreator= informationPresenterControlCreator;
-			fAdditionalInfoAffordance= additionalInfoAffordance;
+			this.hoverManager = hoverManager;
 		}
 
 		private BrowserInformationControl iControl;
@@ -313,17 +215,11 @@ public class ControlInformationSupport {
 			return RuleMessages.Editor_toolTip_affordance;
 		}
 		
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-		 */
 		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
 				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
 				iControl= new BrowserInformationControl(parent, font, getTooltipAffordance()) {
-					/*
-					 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
-					 */
 					@Override
 					public IInformationControlCreator getInformationPresenterControlCreator() {
 						return fInformationPresenterControlCreator;
@@ -345,9 +241,7 @@ public class ControlInformationSupport {
 					}
 				};
 				
-				JFaceResources.getColorRegistry().addListener(this); // So propertyChange() method is triggered in context of IPropertyChangeListener
 				setHoverColors();
-				
 				addLinkListener(iControl);
 				return iControl;
 			} else {
@@ -365,16 +259,6 @@ public class ControlInformationSupport {
 			}
 		}
 
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			String property= event.getProperty();
-			if (iControl != null &&
-					(property.equals("org.eclipse.jdt.ui.Javadoc.foregroundColor") //$NON-NLS-1$
-							|| property.equals("org.eclipse.jdt.ui.Javadoc.backgroundColor"))) { //$NON-NLS-1$
-				setHoverColors();
-			}
-		}
-		
 		private void setHoverColors() {
 			ColorRegistry registry = JFaceResources.getColorRegistry();
 			Color fgRGB = registry.get("org.eclipse.jdt.ui.Javadoc.foregroundColor"); //$NON-NLS-1$ 
@@ -384,161 +268,30 @@ public class ControlInformationSupport {
 		}
 
 		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			super.widgetDisposed(e);
-			//Called when active editor is closed.
-			JFaceResources.getColorRegistry().removeListener(this);
-		}
-
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
-		 */
-		@Override
 		public boolean canReuse(IInformationControl control) {
 			if (!super.canReuse(control))
 				return false;
-
 			if (control instanceof IInformationControlExtension4) {
 				((IInformationControlExtension4)control).setStatusText(getTooltipAffordance());
 			}
-
 			return true;
 		}
 	}
 	
-	/**
-	 * Action to go back to the previous input in the hover control.
-	 *
-	 * @since 3.4
-	 */
-	private static final class BackAction extends Action {
-		private final BrowserInformationControl fInfoControl;
-
-		public BackAction(BrowserInformationControl infoControl) {
-			fInfoControl= infoControl;
-			setText("Back");
-			ISharedImages images= PlatformUI.getWorkbench().getSharedImages();
-			setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-			setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
-
-			update();
-		}
-
-		@Override
-		public void run() {
-			BrowserInformationControlInput previous= (BrowserInformationControlInput) fInfoControl.getInput().getPrevious();
-			if (previous != null) {
-				fInfoControl.setInput(previous);
-			}
-		}
-
-		public void update() {
-			BrowserInformationControlInput current= fInfoControl.getInput();
-
-			if (current != null && current.getPrevious() != null) {
-				BrowserInput previous= current.getPrevious();
-				setToolTipText("Back");
-				setEnabled(true);
-			} else {
-				setToolTipText("Back");
-				setEnabled(false);
-			}
-		}
-	}
-
-	/**
-	 * Action to go forward to the next input in the hover control.
-	 *
-	 * @since 3.4
-	 */
-	private static final class ForwardAction extends Action {
-		private final BrowserInformationControl fInfoControl;
-
-		public ForwardAction(BrowserInformationControl infoControl) {
-			fInfoControl= infoControl;
-			setText("Forward");
-			ISharedImages images= PlatformUI.getWorkbench().getSharedImages();
-			setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
-			setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
-
-			update();
-		}
-
-		@Override
-		public void run() {
-			BrowserInformationControlInput next= (BrowserInformationControlInput) fInfoControl.getInput().getNext();
-			if (next != null) {
-				fInfoControl.setInput(next);
-			}
-		}
-
-		public void update() {
-			BrowserInformationControlInput current= fInfoControl.getInput();
-
-			if (current != null && current.getNext() != null) {
-				setToolTipText("Next");
-				setEnabled(true);
-			} else {
-				setToolTipText("Forward");
-				setEnabled(false);
-			}
-		}
-	}
-
-	/**
-	 * Action that shows the current hover contents in the Javadoc view.
-	 *
-	 * @since 3.4
-	 */
-	private static final class ShowInJavadocViewAction extends Action {
-		private final BrowserInformationControl fInfoControl;
-
-		public ShowInJavadocViewAction(BrowserInformationControl infoControl) {
-			fInfoControl= infoControl;
-			setText("Show in JavaDoc");
-			setImageDescriptor(JavaPluginImages.DESC_OBJS_JAVADOCTAG); //TODO: better image
-		}
-
-		/*
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
-		@Override
-		public void run() {
-			JavadocBrowserInformationControlInput infoInput= (JavadocBrowserInformationControlInput) fInfoControl.getInput(); //TODO: check cast
-			fInfoControl.notifyDelayedInputChange(null);
-			fInfoControl.dispose(); //FIXME: should have protocol to hide, rather than dispose
-			try {
-				JavadocView view= (JavadocView) JavaPlugin.getActivePage().showView(JavaUI.ID_JAVADOC_VIEW);
-				view.setInput(infoInput);
-			} catch (PartInitException e) {
-				JavaPlugin.log(e);
-			}
-		}
-	}
-
-	/**
-	 * Action that opens the current hover input element.
-	 *
-	 * @since 3.4
-	 */
 	private static final class OpenDeclarationAction extends Action {
 		private final BrowserInformationControl fInfoControl;
 
 		public OpenDeclarationAction(BrowserInformationControl infoControl) {
 			fInfoControl= infoControl;
 			setText("Open Declaration");
-			JavaPluginImages.setLocalImageDescriptors(this, "goto_input.png"); //$NON-NLS-1$ //TODO: better images
+			JavaPluginImages.setLocalImageDescriptors(this, "goto_input.png");
 		}
 
-		/*
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
-			JavadocBrowserInformationControlInput infoInput= (JavadocBrowserInformationControlInput) fInfoControl.getInput(); //TODO: check cast
+			JavadocBrowserInformationControlInput infoInput= (JavadocBrowserInformationControlInput) fInfoControl.getInput();
 			fInfoControl.notifyDelayedInputChange(null);
-			fInfoControl.dispose(); //FIXME: should have protocol to hide, rather than dispose
-
+			fInfoControl.dispose();
 			try {
 				//FIXME: add hover location to editor navigation history?
 				JavadocHover.openDeclaration(infoInput.getElement());
@@ -557,7 +310,7 @@ public class ControlInformationSupport {
 			public void handleJavadocViewLink(IJavaElement linkTarget) {
 				control.notifyDelayedInputChange(null);
 				control.setVisible(false);
-				control.dispose(); //FIXME: should have protocol to hide, rather than dispose
+				control.dispose();
 				try {
 					JavadocView view= (JavadocView) JavaPlugin.getActivePage().showView(JavaUI.ID_JAVADOC_VIEW);
 					view.setInput(linkTarget);
@@ -578,7 +331,7 @@ public class ControlInformationSupport {
 			@Override
 			public void handleDeclarationLink(IJavaElement linkTarget) {
 				control.notifyDelayedInputChange(null);
-				control.dispose(); //FIXME: should have protocol to hide, rather than dispose
+				control.dispose();
 				// TODO: ME
 				/*try {
 					//FIXME: add hover location to editor navigation history?
@@ -593,11 +346,9 @@ public class ControlInformationSupport {
 			@Override
 			public boolean handleExternalLink(URL url, Display display) {
 				control.notifyDelayedInputChange(null);
-				control.dispose(); //FIXME: should have protocol to hide, rather than dispose
-
+				control.dispose();
 				// Open attached Javadoc links
 				OpenBrowserUtil.open(url, display);
-
 				return true;
 			}
 
@@ -606,5 +357,4 @@ public class ControlInformationSupport {
 			}
 		}));
 	}
-
 }
