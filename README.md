@@ -13,7 +13,7 @@ Before you can install the Windup plugin, you'll need to have [JBoss Tools](http
 
 Building the project generates a zip archive containing an Eclipse update site under site/target/. You can install the features into Eclipse from the archive via "Help > Install New Software > Add... > Archive...".
 
-Also, a [nightly build](http://download.jboss.org/jbosstools/neon/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
+Also, a [nightly build](http://download.jboss.org/jbosstools/oxygen/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
 
 ## Get the code
 
