@@ -165,11 +165,6 @@ public class HintDelegate extends ElementUiDelegate {
 				private String computeUiValue(HINT_EFFORT effort) {
 					return effort.getEffort() + " - " + effort.getLabel() + " - " + effort.getDescription();
 				}
-				
-				@Override
-				public String getHoverContent(Control c) {
-					return Messages.RulesetEditor_hintEffortTooltip;
-				}
 			};
 		}
 		

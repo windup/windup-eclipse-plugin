@@ -224,10 +224,10 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 	 */
 	@Override
 	public void keyPressed() {
-		IInformationControl infoControl= getCurrentInformationControl2();
+		/*IInformationControl infoControl= getCurrentInformationControl2();
 		if (infoControl != null && !infoControl.isFocusControl()) {
 			hideInformationControl();
-		}
+		}*/
 	}
 	
 	@Override
@@ -236,8 +236,8 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 		InternalAccessor accessor = getInternalAccessor();
 		IInformationControl iControl = accessor.getCurrentInformationControl();
 		if (iControl != null && fInformationControlCloser != null) {
-			ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(previousManager);
-			ControlInformationSupport.DISPLAY_EVENT_HANDLER.start(this);
+			//ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(previousManager);
+			//ControlInformationSupport.DISPLAY_EVENT_HANDLER.start(this);
 		}
 	}
 	
@@ -247,14 +247,18 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 		InternalAccessor accessor = getInternalAccessor();
 		IInformationControl iControl = accessor.getCurrentInformationControl();
 		if (iControl != null && fInformationControl != null) {
-			ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
+			//ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
+
+			ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(previousManager);
 		}
 	}
 	
 	@Override
 	protected void handleInformationControlDisposed() {
 		super.handleInformationControlDisposed();
-		ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
+		//ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
+		
+		ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(previousManager);
 	}
 
 	protected static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {

@@ -28,6 +28,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.InternalAccessor;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.BrowserInformationControlInput;
@@ -181,10 +182,14 @@ public class ControlInformationSupport {
 				public void mouseHover(MouseEvent e) {
 					// stupid MouseTracker doesn't get deactivated once replacement takes hover and mouse e
 					IInformationControl iControl = getInformationControl();
-					if (iControl != null && iControl instanceof IInformationControlExtension5) {
-						if (!((IInformationControlExtension5)iControl).isVisible() && Display.getCurrent().getActiveShell() == control.getShell()) {
-							showInformation();
-						}
+					InternalAccessor accessor = getInternalAccessor();
+					InformationControlReplacer replacer = accessor.getInformationControlReplacer();
+					if (replacer.getCurrentInformationControl2() != null && !((IInformationControlExtension5)replacer.getCurrentInformationControl2()).isVisible()) {
+						if (iControl != null && iControl instanceof IInformationControlExtension5) {
+							if (!((IInformationControlExtension5)iControl).isVisible() && Display.getCurrent().getActiveShell() == control.getShell()) {
+								showInformation();
+							}
+						}					
 					}
 				}
 				@Override
@@ -223,17 +228,17 @@ public class ControlInformationSupport {
 			hideInformationControl();
 		}
 		
-		private BrowserInformationControlInput createInput(Label label) {
-			Object data = label.getData(INFORMATION);
+		private BrowserInformationControlInput createInput(Control control) {
+			Object data = control.getData(INFORMATION);
 			if (data != null) {
 				return new BrowserInformationControlInput(null) {
 					@Override
 					public String getInputName() {
-						return label.getText();
+						return control.toString();
 					}
 					@Override
 					public Object getInputElement() {
-						return label;
+						return control;
 					}
 					@Override
 					public String getHtml() {
@@ -255,11 +260,11 @@ public class ControlInformationSupport {
 				setInformation(null, null);
 			}
 			else {
-				Label label = (Label)widget;
+				Control control = (Control)widget;
 				super.setCustomInformationControlCreator(getHoverControlCreator());
-				Rectangle bounds = label.getBounds();
+				Rectangle bounds = control.getBounds();
 				Rectangle area = new Rectangle(0, 0, bounds.width, bounds.height);
-	    			setInformation(createInput(label), area);
+	    			setInformation(createInput(control), area);
 			}
 		}
 		

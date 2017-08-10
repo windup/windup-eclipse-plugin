@@ -206,7 +206,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	public static abstract class NodeRow implements IControlHoverContentProvider {
+	public static abstract class NodeRow {
 		
 		protected Node parent;
 		protected CMNode cmNode;
@@ -309,8 +309,8 @@ public class RulesetElementUiDelegateFactory {
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Object node = nodeList.item(i);
 						if (node instanceof CMDocumentation) {
-							String markdown = ((CMDocumentation)node).getValue();
-							String html = new Markdown4jProcessor().process(markdown);
+							String html = ((CMDocumentation)node).getValue();
+							//String html = new Markdown4jProcessor().process(markdown);
 							Document document = Jsoup.parse(html);
 							IssueDetailsView.addPrism(document);
 							return document.html();
@@ -370,20 +370,6 @@ public class RulesetElementUiDelegateFactory {
 		protected void createTextHover(Control control) {
 			//infoControl = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
 			//infoControl.setSizeConstraints(300, 600);
-		}
-
-		@Override
-		public String getHoverContent(Control c) {
-			try {
-				Bundle bundle = WindupUIPlugin.getDefault().getBundle();
-				URL fileURL = FileLocator.find(bundle, new Path("html/rulesDevelopmentGuide.html"), null);
-			    String srcPath = FileLocator.resolve(fileURL).getPath();
-				Document doc = Jsoup.parse(new File(srcPath), null);
-				return doc.html();
-			} catch (Exception e) {
-				WindupUIPlugin.log(e);
-			}
-			return "<b>Hello</b> <a href=\"https://www.w3schools.com/html/\">Visit our HTML tutorial</a>";
 		}
 	}
 	
@@ -456,7 +442,13 @@ public class RulesetElementUiDelegateFactory {
 					openReference();
 				}
 			});
-			//PDETextHover.addHoverListenerToControl(infoControl, link, this);
+			String documentation = getDocumentation();
+			if (documentation != null) {
+				if (BrowserInformationControl.isAvailable(parent)) {
+					link.setData(ControlInformationSupport.INFORMATION, documentation);
+					ControlInformationSupport support = new ControlInformationSupport(link);
+				}
+			}
 			return link;
 		}
 
