@@ -11,7 +11,9 @@
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.net.URL;
+import java.util.Objects;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -26,22 +28,31 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.text.InternalAccessor;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.BrowserInformationControlInput;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension4;
+import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PartInitException;
@@ -66,29 +77,149 @@ public class ControlInformationSupport {
 	protected static final String DEFAULT_FONT = JFaceResources.getFontRegistry().hasValueFor("org.eclipse.jdt.ui.javadocfont") ? "org.eclipse.jdt.ui.javadocfont" : JFaceResources.DIALOG_FONT;
 
 	public ControlInformationSupport(Control control) {
-		IInformationControlCreator creator = new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, false);
-			}
-		};
-		HoverInfoControlManager manager = new HoverInfoControlManager(creator, control);
-		manager.install(control, control.getShell());
+		new HoverInfoControlManager(control);
 	}
 	
-	public static class HoverInfoControlManager extends AbstractHoverInformationControlManager {
+	public static DisplayEventHandler DISPLAY_EVENT_HANDLER = new DisplayEventHandler();
+	
+	public static class DisplayEventHandler {
+		
+		interface DisplayController {
+			void keyPressed();
+			Control getSubjectControl();
+		}
+		
+		private Control subjectControl;
+		private Display display; 
+		private DisplayController controller;
+		
+		private boolean isActive = false;
+		
+		public void start(DisplayController controller) {
+			if (isActive && Objects.equals(this.controller, controller)) {
+				return;
+			}
+			
+			Assert.isTrue(!isActive);
+			Assert.isTrue(subjectControl == null);
+			Assert.isTrue(this.controller == null);
+			
+			isActive = true;
+			this.subjectControl = controller.getSubjectControl();
+			this.display = subjectControl.getDisplay();
+			this.controller = controller;
+			
+			activate();
+		}
+		
+		private void activate() {
+			subjectControl.addDisposeListener(subjectControlDisposeListener);
+			display.addFilter(SWT.KeyDown, displayKeyListener);
+		}
+		
+		public void stop(DisplayController controller) {
+			if (!isActive || !(Objects.equals(this.controller, controller))) {
+				return;
+			}
+			deactivate();
+		}
+		
+		private void deactivate() {
+			removeListeners();
+			isActive = false;
+			subjectControl = null;
+			display = null;
+			controller = null;
+		}
+		
+		
+		private void removeListeners() {
+			if (!subjectControl.isDisposed()) {
+				subjectControl.removeDisposeListener(subjectControlDisposeListener);
+			}
+			if (!display.isDisposed()) {
+				display.removeFilter(SWT.KeyDown, displayKeyListener);
+			}
+		}
+		
+		private DisposeListener subjectControlDisposeListener = new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				deactivate();
+			}
+		};
+		
+		private Listener displayKeyListener = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.type == SWT.KeyDown) {
+					if (!(event.widget instanceof Control) || event.widget.isDisposed()) {
+						return;
+					}
+					controller.keyPressed();
+				}
+			}
+		};			
+	}
+	
+	public static class HoverInfoControlManager extends AbstractHoverInformationControlManager implements DisplayEventHandler.DisplayController {
 		
 		private IContextService contextService = (IContextService)PlatformUI.getWorkbench()
 				.getService(IContextService.class);
 		
 		private IContextActivation contextActivation;
-		 
-		public HoverInfoControlManager(IInformationControlCreator creator, Control control) {
-			super(creator);
+		
+		public HoverInfoControlManager(Control control) {
+			super(createControlCreator());
 			setSizeConstraints(TEXT_HOVER_WIDTH_CHARS, TEXT_HOVER_HEIGHT_CHARS, false, true);
-			getInternalAccessor().setInformationControlReplacer(new StickyHoverManager(control));
+			getInternalAccessor().setInformationControlReplacer(new StickyHoverManager(control, this));
 			setAnchor(ANCHOR_BOTTOM);
-			setFallbackAnchors(new Anchor[] {ANCHOR_BOTTOM, ANCHOR_RIGHT, ANCHOR_LEFT} );
+			setFallbackAnchors(new Anchor[] {ANCHOR_BOTTOM, ANCHOR_RIGHT, ANCHOR_LEFT});
+			install(control, control.getShell());
+			control.addMouseTrackListener(new MouseTrackListener() {
+				@Override
+				public void mouseHover(MouseEvent e) {
+					IInformationControl iControl = getInformationControl();
+					if (iControl != null && iControl instanceof IInformationControlExtension5) {
+						if (!((IInformationControlExtension5)iControl).isVisible()) {
+							showInformation();
+						}
+					}
+				}
+				@Override
+				public void mouseExit(MouseEvent e) {
+				}
+				@Override
+				public void mouseEnter(MouseEvent e) {
+				}
+			});
+		}
+		
+		private static IInformationControlCreator createControlCreator() {
+			return new IInformationControlCreator() {
+				@Override
+				public IInformationControl createInformationControl(Shell parent) {
+					return new DefaultInformationControl(parent, false);
+				}
+			};
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.DisplayEventHandler.DisplayController#getControl()
+		 */
+		@Override
+		public Control getSubjectControl() {
+			return super.getSubjectControl();
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.DisplayEventHandler.DisplayController#keyPressed()
+		 */
+		@Override
+		public void keyPressed() {
+			hideInformationControl();
 		}
 		
 		private BrowserInformationControlInput createInput(Label label) {
@@ -131,18 +262,39 @@ public class ControlInformationSupport {
 			}
 		}
 		
-		public void hide() {
-			
-		}
-		
 		public void setFocus() {
-			IInformationControl iControl= getCurrentInformationControl();
-			if (canReplace(iControl)) {
-				if (cancelReplacingDelay()) {
-					replaceInformationControl(true);
-				}
+			InternalAccessor accessor = getInternalAccessor();
+			IInformationControl iControl = accessor.getCurrentInformationControl();
+			if (accessor.canReplace(iControl)) {
+				accessor.replaceInformationControl(true);
 			}
 			deactivateContext();
+		}
+		
+		@Override
+		protected void showInformationControl(Rectangle subjectArea) {
+			super.showInformationControl(subjectArea);
+			InternalAccessor accessor = getInternalAccessor();
+			IInformationControl iControl = accessor.getCurrentInformationControl();
+			if (iControl != null && fInformationControlCloser != null) {
+				DISPLAY_EVENT_HANDLER.start(this);
+			}
+		}
+		
+		@Override
+		protected void hideInformationControl() {
+			super.hideInformationControl();
+			InternalAccessor accessor = getInternalAccessor();
+			IInformationControl iControl = accessor.getCurrentInformationControl();
+			if (iControl != null && fInformationControl != null) {
+				DISPLAY_EVENT_HANDLER.stop(this);
+			}
+		}
+		
+		@Override
+		protected void handleInformationControlDisposed() {
+			super.handleInformationControlDisposed();
+			DISPLAY_EVENT_HANDLER.stop(this);
 		}
 		
 		private void activateContext() {
@@ -177,7 +329,7 @@ public class ControlInformationSupport {
 		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
-				ToolBarManager tbm= new ToolBarManager(SWT.FLAT);
+				ToolBarManager tbm = new ToolBarManager(SWT.FLAT);
 				String font= PreferenceConstants.APPEARANCE_JAVADOC_FONT;
 				BrowserInformationControl iControl= new BrowserInformationControl(parent, font, tbm);
 
@@ -196,6 +348,7 @@ public class ControlInformationSupport {
 	}
 
 	public static final class HoverControlCreator extends AbstractReusableInformationControlCreator {
+		
 		private final IInformationControlCreator fInformationPresenterControlCreator;
 		private HoverInfoControlManager hoverManager;
 

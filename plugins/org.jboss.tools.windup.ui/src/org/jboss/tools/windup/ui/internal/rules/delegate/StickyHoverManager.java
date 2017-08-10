@@ -1,6 +1,7 @@
-
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
+import org.eclipse.jface.internal.text.InformationControlReplacer;
+import org.eclipse.jface.internal.text.InternalAccessor;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
@@ -22,8 +23,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.DisplayEventHandler;
 
-public class StickyHoverManager extends InformationControlReplacer {
+@SuppressWarnings("restriction")
+public class StickyHoverManager extends InformationControlReplacer implements ControlInformationSupport.DisplayEventHandler.DisplayController {
 
 	/**
 	 * Internal information control closer. Listens to several events issued by its subject control
@@ -74,9 +77,6 @@ public class StickyHoverManager extends InformationControlReplacer {
 			if (!fDisplay.isDisposed()) {
 				fDisplay.addFilter(SWT.MouseMove, this);
 				fDisplay.addFilter(SWT.FocusOut, this);
-				
-				// TODO: Temporary solution for keypress
-				fDisplay.addFilter(SWT.KeyDown, this);
 			}
 		}
 
@@ -100,9 +100,6 @@ public class StickyHoverManager extends InformationControlReplacer {
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.MouseMove, this);
 				fDisplay.removeFilter(SWT.FocusOut, this);
-				
-				// TODO: Temporary solution for keypress
-				fDisplay.removeFilter(SWT.KeyDown, this);
 			}
 
 			fDisplay= null;
@@ -192,16 +189,57 @@ public class StickyHoverManager extends InformationControlReplacer {
 				if (iControl != null && ! iControl.isFocusControl())
 					hideInformationControl();
 			}
-			// TODO: Temporary solution for keypress
-			else if (event.type == SWT.KeyDown) {
-				if (!(event.widget instanceof Control) || event.widget.isDisposed())
-					return;
-				IInformationControl infoControl= getCurrentInformationControl2();
-				if (infoControl != null && !infoControl.isFocusControl()) {
-					hideInformationControl();
-				}
-			}
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.DisplayEventHandler.DisplayController#getControl()
+	 */
+	@Override
+	public Control getSubjectControl() {
+		return super.getSubjectControl();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.DisplayEventHandler.DisplayController#keyPressed()
+	 */
+	@Override
+	public void keyPressed() {
+		IInformationControl infoControl= getCurrentInformationControl2();
+		if (infoControl != null && !infoControl.isFocusControl()) {
+			hideInformationControl();
+		}
+	}
+	
+	@Override
+	protected void showInformationControl(Rectangle subjectArea) {
+		super.showInformationControl(subjectArea);
+		InternalAccessor accessor = getInternalAccessor();
+		IInformationControl iControl = accessor.getCurrentInformationControl();
+		if (iControl != null && fInformationControlCloser != null) {
+			ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(previousManager);
+			ControlInformationSupport.DISPLAY_EVENT_HANDLER.start(this);
+		}
+	}
+	
+	@Override
+	public void hideInformationControl() {
+		super.hideInformationControl();
+		InternalAccessor accessor = getInternalAccessor();
+		IInformationControl iControl = accessor.getCurrentInformationControl();
+		if (iControl != null && fInformationControl != null) {
+			ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
+			getSubjectControl().notifyListeners(SWT.MouseExit, new Event());
+		}
+	}
+	
+	@Override
+	protected void handleInformationControlDisposed() {
+		super.handleInformationControlDisposed();
+		ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
+		getSubjectControl().notifyListeners(SWT.MouseExit, new Event());
 	}
 
 	protected static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
@@ -210,9 +248,12 @@ public class StickyHoverManager extends InformationControlReplacer {
 			return new DefaultInformationControl(shell, true);
 		}
 	}
-
-	public StickyHoverManager(Control control) {
+	
+	private DisplayEventHandler.DisplayController previousManager;
+	
+	public StickyHoverManager(Control control, DisplayEventHandler.DisplayController previousManager) {
 		super(new DefaultInformationControlCreator());
+		this.previousManager = previousManager;
 		setCloser(new Closer());
 		install(control);
 	}
