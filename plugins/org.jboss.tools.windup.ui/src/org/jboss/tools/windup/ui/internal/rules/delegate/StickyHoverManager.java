@@ -160,8 +160,25 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 			if (event.type == SWT.MouseMove) {
 				if (!(event.widget instanceof Control) || event.widget.isDisposed())
 					return;
-
+				
 				IInformationControl infoControl= getCurrentInformationControl2();
+				
+				// another controls mouseExit will cause inKeepUpZone to use a null subjectArea if it hasn't yet been made visible causing NPE.
+				// no elegant way around it until we do a re-write. For now, easiet just to close on mouse exit regardless of being focus control.
+				if (infoControl != null && infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
+					IInformationControlExtension3 iControl3 = (IInformationControlExtension3) infoControl;
+					Rectangle controlBounds= iControl3.getBounds();
+					if (controlBounds != null) {
+						Point mouseLoc= event.display.map((Control) event.widget, null, event.x, event.y);
+						int margin= getKeepUpMargin();
+						Geometry.expand(controlBounds, margin, margin, margin, margin);
+						if (!controlBounds.contains(mouseLoc)) {
+							hideInformationControl();
+						}
+					}
+				} 
+				
+				// this wont' get called since we're doing the above.
 				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
 					IInformationControlExtension3 iControl3= (IInformationControlExtension3) infoControl;
 					Rectangle controlBounds= iControl3.getBounds();
@@ -175,12 +192,12 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 					}
 
 				} else {
-					/*
-					 * TODO: need better understanding of why/if this is needed.
-					 * Looks like the same panic code we have in org.eclipse.jface.text.AbstractHoverInformationControlManager.Closer.handleMouseMove(Event)
-					 */
-					if (fDisplay != null && !fDisplay.isDisposed())
-						fDisplay.removeFilter(SWT.MouseMove, this);
+					
+					 // TODO: need better understanding of why/if this is needed.
+					 // Looks like the same panic code we have in org.eclipse.jface.text.AbstractHoverInformationControlManager.Closer.handleMouseMove(Event)
+					 
+					//if (fDisplay != null && !fDisplay.isDisposed())
+					//	fDisplay.removeFilter(SWT.MouseMove, this);
 				}
 
 			} else if (event.type == SWT.FocusOut) {
@@ -231,7 +248,6 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 		IInformationControl iControl = accessor.getCurrentInformationControl();
 		if (iControl != null && fInformationControl != null) {
 			ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
-			getSubjectControl().notifyListeners(SWT.MouseExit, new Event());
 		}
 	}
 	
@@ -239,7 +255,6 @@ public class StickyHoverManager extends InformationControlReplacer implements Co
 	protected void handleInformationControlDisposed() {
 		super.handleInformationControlDisposed();
 		ControlInformationSupport.DISPLAY_EVENT_HANDLER.stop(this);
-		getSubjectControl().notifyListeners(SWT.MouseExit, new Event());
 	}
 
 	protected static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {

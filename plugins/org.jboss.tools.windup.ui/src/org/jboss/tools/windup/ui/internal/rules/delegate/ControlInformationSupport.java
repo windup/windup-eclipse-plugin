@@ -179,9 +179,10 @@ public class ControlInformationSupport {
 			control.addMouseTrackListener(new MouseTrackListener() {
 				@Override
 				public void mouseHover(MouseEvent e) {
+					// stupid MouseTracker doesn't get deactivated once replacement takes hover and mouse e
 					IInformationControl iControl = getInformationControl();
 					if (iControl != null && iControl instanceof IInformationControlExtension5) {
-						if (!((IInformationControlExtension5)iControl).isVisible()) {
+						if (!((IInformationControlExtension5)iControl).isVisible() && Display.getCurrent().getActiveShell() == control.getShell()) {
 							showInformation();
 						}
 					}
