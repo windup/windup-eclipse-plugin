@@ -104,11 +104,65 @@
                     <xs:element ref="annotation-literal"/>
                 </xs:choice>
             </xs:sequence>
-            <xs:attribute type="xs:string" name="references" />
-            <xs:attribute type="xs:string" name="matchesSource" />
-            <xs:attribute type="xs:string" name="as" use="optional" />
-            <xs:attribute type="xs:string" name="from" use="optional" />
-            <xs:attribute type="xs:string" name="in" use="optional" />
+            <xs:attribute type="xs:string" name="references">
+            <xs:annotation>
+                    <xs:documentation>
+        <![CDATA[
+        <p>The package or class name to match on. Wildcard characters can be used.</p>
+        <p>
+            <em>This attribute is required.</em> 
+        </p>
+        <p>
+            <strong>NOTE</strong>
+        </p>
+        <p>For performance reasons, you should not start the reference with wildcard characters.</p>
+        <p>For example, use
+            <code>weblogic.apache.xml.{*}</code> instead of 
+            <code>{web}.apache.xml.{*}</code>.
+        </p>
+        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="matchesSource">
+              <xs:annotation>
+                    <xs:documentation>
+        <![CDATA[
+        <p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
+        <p>
+            <em>This attribute is required.</em>
+        </p>
+        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="as" use="optional">
+              <xs:annotation>
+                    <xs:documentation>
+        <![CDATA[
+        <p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the from attribute.</p>
+        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="from" use="optional">
+              <xs:annotation>
+                    <xs:documentation>
+        <![CDATA[
+        <p>Begin the search query with the filtered result from a previous search identified by its as <i>VARIABLE_NAME</i>.</p>
+        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="in" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+        <![CDATA[
+        <p>Filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
+        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
 
@@ -284,7 +338,16 @@
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="severity" type="severity-type" use="optional" />
             <xs:attribute name="in" type="xs:string" use="optional" />
-            <xs:attribute name="effort" type="xs:byte" use="optional" />
+            <xs:attribute name="effort" type="xs:byte" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+        <![CDATA[
+        Red Hat Application Migration Toolkit uses story points to express the level of effort needed to migrate particular application constructs, and the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.
+        ]]>
+                </xs:documentation>
+            </xs:annotation>
+            </xs:attribute>
+            
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
