@@ -39,6 +39,19 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
 	private RulesetDesignPage designPage;
 	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Object getAdapter(Class key) {
+		if (super.getContainer() == null || super.getContainer().isDisposed()) {
+			return null;
+		}
+		CTabFolder folder = (CTabFolder)super.getContainer();
+		if (folder.getItem(0).isDisposed()) {
+			return null;
+		}
+		return super.getAdapter(key);
+	}
+	
 	@Override
 	protected void createPages() {
 		CTabFolder folder = (CTabFolder)super.getContainer();
