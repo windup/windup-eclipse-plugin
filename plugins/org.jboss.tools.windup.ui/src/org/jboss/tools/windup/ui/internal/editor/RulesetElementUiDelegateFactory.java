@@ -82,6 +82,7 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelega
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.markdown4j.Markdown4jProcessor;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
@@ -310,9 +311,12 @@ public class RulesetElementUiDelegateFactory {
 						Object node = nodeList.item(i);
 						if (node instanceof CMDocumentation) {
 							String html = ((CMDocumentation)node).getValue();
-							//String html = new Markdown4jProcessor().process(markdown);
 							Document document = Jsoup.parse(html);
 							IssueDetailsView.addPrism(document);
+							org.jsoup.nodes.Element body = document.body();
+							org.jsoup.nodes.Element style = document.createElement("style"); //$NON-NLS-1$
+							style.html("body {background-color: #fff7be}"); //$NON-NLS-1$
+							document.head().appendChild(style);
 							return document.html();
 						}
 					}
