@@ -29,8 +29,10 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
@@ -38,6 +40,7 @@ import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ModifyEvent;
@@ -48,6 +51,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
@@ -72,6 +77,7 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.PresenterControlCreator;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationListDelegate;
@@ -296,7 +302,7 @@ public class RulesetElementUiDelegateFactory {
 			if (documentation != null) {
 				if (BrowserInformationControl.isAvailable(parent)) {
 					label.setData(ControlInformationSupport.INFORMATION, documentation);
-					ControlInformationSupport support = new ControlInformationSupport(label);
+					new ControlInformationSupport(label);
 				}
 			}
 			return label;
@@ -578,7 +584,7 @@ public class RulesetElementUiDelegateFactory {
 			GridData gd = new GridData(span == 2 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL);
 			gd.widthHint = 20;
 			gd.horizontalSpan = span - 1;
-			gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
+			//gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 			combo.getControl().setLayoutData(gd);
 			combo.addSelectionListener(new SelectionAdapter() {
 				@Override

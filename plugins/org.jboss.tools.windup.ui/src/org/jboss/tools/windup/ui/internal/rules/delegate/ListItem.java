@@ -114,7 +114,7 @@ public class ListItem extends Composite {
 	    return toolbar;
 	}
 	
-	private Pair<Composite, Composite> createListItemContainers(Composite parent) {
+	protected Pair<Composite, Composite> createListItemContainers(Composite parent) {
 		Group group = new Group(parent, SWT.SHADOW_IN);
 		group.setBackground(toolkit.getColors().getBackground());
 		group.setForeground(toolkit.getColors().getBackground());

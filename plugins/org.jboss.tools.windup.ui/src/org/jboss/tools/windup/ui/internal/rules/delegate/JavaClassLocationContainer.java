@@ -14,10 +14,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -29,6 +35,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.xtext.util.Pair;
+import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
@@ -115,7 +122,44 @@ public class JavaClassLocationContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.locationListContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		this.locationListContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context) {
+			protected ListItem createListItem(Composite parent, Element element) {
+				return new ListItem(parent, toolkit, element, contentHelper, modelQuery, model, uiDelegateFactory, context) {
+					@Override
+					protected Pair<Composite, Composite> createListItemContainers(Composite parent) {
+
+						Composite group = toolkit.createComposite(parent);
+						GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
+						group.setLayout(new FormLayout());
+						
+						Composite left = toolkit.createComposite(group);
+						GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(left);
+						FormData leftData = new FormData();
+						leftData.left = new FormAttachment(0);
+						left.setLayoutData(leftData);
+						
+						Composite right = toolkit.createComposite(group);
+						
+						GridLayout gridLayout = new GridLayout(1, false);
+						gridLayout.marginWidth = 0;
+						gridLayout.marginHeight = 0;
+						gridLayout.marginTop = 3;
+						gridLayout.verticalSpacing = 0;
+						gridLayout.horizontalSpacing = 0;
+						right.setLayout(gridLayout);
+						
+						FormData rightData = new FormData();
+						rightData.right = new FormAttachment(100);
+						rightData.bottom = new FormAttachment(73);
+						right.setLayoutData(rightData);
+						
+						leftData.right = new FormAttachment(right);
+						
+						return Tuples.create(left, right);
+					}
+				};
+			};
+		};
 		createSectionToolbar(section);
 		return section;
  	}
