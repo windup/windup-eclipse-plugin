@@ -201,13 +201,6 @@ public class ControlInformationSupport {
 			});
 		}
 		
-		@Override
-		protected void handleSubjectControlDisposed() {
-			if (getInformationControl() != null) {
-				super.handleSubjectControlDisposed();
-			}
-		}
-		
 		private static IInformationControlCreator createControlCreator() {
 			return new IInformationControlCreator() {
 				@Override
