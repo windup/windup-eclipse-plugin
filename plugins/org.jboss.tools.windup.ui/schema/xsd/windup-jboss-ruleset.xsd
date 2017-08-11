@@ -97,7 +97,16 @@
     <xs:element name="javaclass">
         <xs:complexType mixed="true">
             <xs:sequence>
-                <xs:element type="xs:string" name="location" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element type="xs:string" name="location" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+	                    <xs:documentation>
+	                        <![CDATA[
+	                            <p>The location where the reference was found in a Java class.</p>
+	                            <p>Location can refer to annotations, field and variable declarations, imports, and methods.</p>
+	                        ]]>
+	                    </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
                     <xs:element ref="annotation-type"/>
                     <xs:element ref="annotation-list"/>
@@ -105,61 +114,61 @@
                 </xs:choice>
             </xs:sequence>
             <xs:attribute type="xs:string" name="references">
-            <xs:annotation>
+                <xs:annotation>
                     <xs:documentation>
-        <![CDATA[
-        <p>The package or class name to match on. Wildcard characters can be used.</p>
-        <p>
-            <em>This attribute is required.</em> 
-        </p>
-        <p>
-            <strong>NOTE</strong>
-        </p>
-        <p>For performance reasons, you should not start the reference with wildcard characters.</p>
-        <p>For example, use
-            <code>weblogic.apache.xml.{*}</code> instead of 
-            <code>{web}.apache.xml.{*}</code>.
-        </p>
-        ]]>
+				        <![CDATA[
+					        <p>The package or class name to match on. Wildcard characters can be used.</p>
+					        <p>
+					            <em>This attribute is required.</em> 
+					        </p>
+					        <p>
+					            <strong>NOTE</strong>
+					        </p>
+					        <p>For performance reasons, you should not start the reference with wildcard characters.</p>
+					        <p>For example, use
+					            <code>weblogic.apache.xml.{*}</code> instead of 
+					            <code>{web}.apache.xml.{*}</code>.
+					        </p>
+				        ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:attribute>
             <xs:attribute type="xs:string" name="matchesSource">
               <xs:annotation>
                     <xs:documentation>
-        <![CDATA[
-        <p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
-        <p>
-            <em>This attribute is required.</em>
-        </p>
-        ]]>
+				        <![CDATA[
+					        <p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
+					        <p>
+					            <em>This attribute is required.</em>
+					        </p>
+				        ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:attribute>
             <xs:attribute type="xs:string" name="as" use="optional">
               <xs:annotation>
                     <xs:documentation>
-        <![CDATA[
-        <p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the from attribute.</p>
-        ]]>
+				        <![CDATA[
+				            <p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the from attribute.</p>
+				        ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:attribute>
             <xs:attribute type="xs:string" name="from" use="optional">
               <xs:annotation>
                     <xs:documentation>
-        <![CDATA[
-        <p>Begin the search query with the filtered result from a previous search identified by its as <i>VARIABLE_NAME</i>.</p>
-        ]]>
+				        <![CDATA[
+				            <p>Begin the search query with the filtered result from a previous search identified by its as <i>VARIABLE_NAME</i>.</p>
+				        ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:attribute>
             <xs:attribute type="xs:string" name="in" use="optional">
                 <xs:annotation>
                     <xs:documentation>
-        <![CDATA[
-        <p>Filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
-        ]]>
+				        <![CDATA[
+				            <p>Filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
+				        ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:attribute>
@@ -168,6 +177,28 @@
 
     <!-- Annotation Conditions -->
     <xs:element name="annotation-type">
+      <xs:annotation>
+            <xs:documentation>
+                <![CDATA[
+                    <p>Match on a particular annotation type.</p>
+                    <p>You can supply subconditions to be matched against the annotation elements.</p>
+                    <p>The below example would match on a <code>Calendar</code> field declaration annotated with:
+                    <p>
+                        <code>@MyAnnotation(myvalue="test")</code>.
+                    </p>
+                    <p>
+                        <code>
+							<javaclass references="java.util.Calendar">
+							    <location>FIELD_DECLARATION</location>
+							    <annotation-type pattern="org.package.MyAnnotation">
+							        <annotation-literal name="myvalue" pattern="test"/>
+							    </annotation-type>
+							</javaclass>
+                        </code>
+                    </p>
+                ]]>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -183,6 +214,28 @@
     </xs:element>
 
     <xs:element name="annotation-list">
+        <xs:annotation>
+            <xs:documentation>
+                <![CDATA[
+                    <p>Match on an item in an array within an annotation.</p>
+                    <p>If an array index is not specified, the condition will be matched if it applies to any item in the array.</p>
+                    <p>You can supply subconditions to be matched against this element.<p>
+                    <p>The below example would match on <code>@MyAnnotation(mylist={"one","two"})</code>.</p>
+                    <p>
+                        <code>
+                            <javaclass references="org.package.MyAnnotation" >
+                                <location>ANNOTATION</location>
+                                <annotation-list name="mylist">
+                                    <annotation-literal pattern="two"/>
+                                </annotation-list>
+                            </javaclass>
+                     <p>Note that in this case, the <code><javaclass></code> refers to an annotation <code>@MyAnnotation</code>,<p>
+                     <p>so the top-level annotation filter, <code><annotation-list></code> must specify the name attribute.</p>
+                     <p>If the <code><javaclass></code> referred to a class that is annotated, then the top-level annotation filter<p>
+                     <p>used would be <code><annotation-type></code>.</p>
+                ]]>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -198,6 +251,25 @@
     </xs:element>
 
     <xs:element name="annotation-literal">
+        <xs:annotation>
+            <xs:documentation>
+                <![CDATA[
+                    <p>Match on literal values inside of annotations.</p>
+                    <p>The below example would match on <code>@MyAnnotation(myvalue="test")</code>.</p>
+                    <p>
+                        <code>
+                            <javaclass references="org.package.MyAnnotation">
+                                <location>ANNOTATION</location>
+                                <annotation-literal name="myvalue" pattern="test"/>
+                            </javaclass>
+                        </code>
+                     <p>Note that in this case, the <code><javaclass></code> refers to an annotation <code>@MyAnnotation</code>,</p>
+                     <p>so the top-level annotation filter, <code><annotation-literal></code> must specify the name attribute.</p>'
+                     <p>If the <code><javaclass></code> referred to a class that is annotated, then the top-level annotation filter</p>
+                     <p>used would be <code><annotation-type></code>.</p>
+                ]]>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:attribute type="xs:string" name="name" use="optional"/>
             <xs:attribute type="xs:string" name="pattern"/>
@@ -330,24 +402,91 @@
     <xs:element name="hint">
         <xs:complexType mixed="true">
             <xs:sequence>
-                <xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string" />
-                <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
-                <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
-                <xs:element ref="quickfix" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string">
+	                <xs:annotation>
+	                    <xs:documentation>
+	                        <![CDATA[
+	                            <p>A message describing the migration hint.</p>
+	                        ]]>                
+	                    </xs:documentation>
+	                </xs:annotation>
+                </xs:element>
+                <xs:element ref="link" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <![CDATA[
+                                <p>Identify or classify links to informational content.</p>
+                                <p></p>
+                            ]]>                
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <![CDATA[
+                                <p>Define a custom tag for this hint.</p>
+                            ]]>                
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element ref="quickfix" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <![CDATA[
+                                <p>Contains information to be used by the Eclipse plugin to perform quick fixes when the rule condition is met.</p>
+                            ]]>                
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
             </xs:sequence>
-            <xs:attribute name="title" type="xs:string" use="required"/>
-            <xs:attribute name="severity" type="severity-type" use="optional" />
-            <xs:attribute name="in" type="xs:string" use="optional" />
-            <xs:attribute name="effort" type="xs:byte" use="optional" >
-            <xs:annotation>
-                <xs:documentation>
-        <![CDATA[
-        Red Hat Application Migration Toolkit uses story points to express the level of effort needed to migrate particular application constructs, and the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.
-        ]]>
-                </xs:documentation>
-            </xs:annotation>
+            <xs:attribute name="title" type="xs:string" use="required">
+	            <xs:annotation>
+	                <xs:documentation>
+	                    <![CDATA[
+		                    <p>The title of this hint.</p>
+		                    <p>
+		                        <em>This attribute is required.</em>
+		                    </p>
+                        ]]>                
+	                </xs:documentation>
+	            </xs:annotation>
             </xs:attribute>
-            
+            <!-- <xs:attribute name="severity" type="severity-type" use="optional" /> -->
+            <xs:attribute name="category-id" type="severity-type" use="optional">
+            <xs:annotation>
+                 <xs:documentation>
+                 <![CDATA[
+                    <p>A reference to a category as defined in <code>RHAMT_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
+                    <p>The default categories are:</p>
+                    <ul>
+					    <li>mandatory</li>
+					    <li>optional</li>
+					    <li>potential</li>
+					</ul>
+                 ]]>
+                 </xs:documentation>
+            </xs:annotation>            
+            </xs:attribute>
+            <xs:attribute name="in" type="xs:string" use="optional">
+            <xs:annotation>
+                    <xs:documentation>
+                        <![CDATA[
+                            <p>Create a new <em>Hint</em> in the <code>FileLocationModel</code> resolved by the given variable</p>
+                        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="effort" type="xs:byte" use="optional" >
+	            <xs:annotation>
+	                <xs:documentation>
+				        <![CDATA[
+					        <p>Story points are used to express the level of effort needed to migrate particular application constructs,</p>
+					        <p>and the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
+				        ]]>
+	                </xs:documentation>
+	            </xs:annotation>
+            </xs:attribute>
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
