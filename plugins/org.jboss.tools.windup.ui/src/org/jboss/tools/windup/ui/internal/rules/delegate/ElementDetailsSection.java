@@ -65,11 +65,17 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	protected abstract void bind();
 	
 	protected Composite createSection(Composite parent, int columns) {
+		return createSection(parent, columns, toolkit, element);
+	}
+	
+	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
-		section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		
+		if (element != null) {
+			section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
+		}
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		

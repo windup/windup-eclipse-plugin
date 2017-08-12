@@ -16,16 +16,20 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
@@ -37,6 +41,9 @@ import com.google.common.base.Objects;
 
 @SuppressWarnings({"restriction"})
 public class JavaClassDelegate extends ElementUiDelegate {
+	
+	private static final int SASH_LEFT_DEFAULT = 550;
+	private static final int SASH_RIGHT_DEFAULT = 400;
 	
 	enum JAVA_CLASS_REFERENCE_LOCATION {
 		
@@ -77,6 +84,88 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 	}
 	
+	private Composite containerControl;
+	private SashForm sash;
+	
+	private DetailsTab detailsTab;
+	
+	@Override
+	public void update() {
+		detailsTab.update();
+	}
+	
+	@Override
+	public Control getControl() {
+		if (containerControl == null) {
+			containerControl = createContainerControl(parent);
+			createControls(containerControl);
+		}
+		return containerControl;
+	}
+	
+	private Composite createContainerControl(Composite parent) {
+		Composite container = toolkit.createComposite(parent);
+		//container.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+//		FormLayout layout = new FormLayout();
+//		layout.spacing = 5;
+//		container.setLayout(layout);
+		GridLayoutFactory.fillDefaults().applyTo(container);
+		return container;
+	}
+	
+	private void createControls(Composite parent) {
+		
+		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.VERTICAL);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
+		sash.setOrientation(SWT.HORIZONTAL);
+		sash.setFont(parent.getFont());
+		sash.setVisible(true);
+		
+		Composite leftContainer = toolkit.createComposite(sash);
+		GridLayoutFactory.fillDefaults().applyTo(leftContainer);
+		//leftContainer.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		FormData leftData = new FormData();
+		leftData.top = new FormAttachment(null);
+		leftData.left = new FormAttachment(0);
+		leftData.bottom = new FormAttachment(100);
+		leftContainer.setLayoutData(leftData);
+		
+		IEclipseContext context = super.createTabContext(leftContainer);
+		detailsTab = super.create(DetailsTab.class, context);
+		
+		Composite rightContainer = toolkit.createComposite(sash);
+		GridLayoutFactory.fillDefaults().applyTo(rightContainer);
+		//rightContainer.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
+		FormData rightData = new FormData();
+		rightData.top = new FormAttachment(null);
+		rightData.bottom = new FormAttachment(100);
+		rightData.left = new FormAttachment(leftContainer);
+		rightData.right = new FormAttachment(100);
+		rightContainer.setLayoutData(rightData);
+		
+		leftData.right = new FormAttachment(50);
+		
+		createJavaEditor(rightContainer);
+		
+		sash.setWeights(new int[]{SASH_LEFT_DEFAULT, SASH_RIGHT_DEFAULT});
+	}
+	
+	private void createJavaEditor(Composite parent) {
+		parent.setLayout(new FormLayout());
+		Composite client = ElementDetailsSection.createSection(parent, 3, toolkit, null);
+		Section section = (Section)client.getParent();
+		section.setText("Java Source Code"); //$NON-NLS-1$
+		FormData data = new FormData();
+		data.top = new FormAttachment(0);
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.bottom = new FormAttachment(100);
+		section.setLayoutData(data);
+		
+		new JavaEmbeddedEditor(client);
+	}
+
 	protected void createTabs() {
 		addTab(DetailsTab.class);
 	}
@@ -95,8 +184,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent, CTabItem item) {
-			item.setText(Messages.ruleElementDetails);
+		public void createControls(Composite parent/*, CTabItem item*/) {
+			//item.setText(Messages.ruleElementDetails);
 			parent.setLayout(new FormLayout());
 			Composite client = super.createSection(parent, 3);
 			Section section = (Section)client.getParent();

@@ -133,14 +133,11 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:attribute>
-            <xs:attribute type="xs:string" name="matchesSource" use="required">
+            <xs:attribute type="xs:string" name="matchesSource" use="optional">
               <xs:annotation>
                     <xs:documentation>
 				        <![CDATA[
 					        <p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
-					        <p>
-					            <em>This attribute is required.</em>
-					        </p>
 				        ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -472,7 +469,7 @@
             <xs:annotation>
                     <xs:documentation>
                         <![CDATA[
-                            <p>Create a new <em>Hint</em> in the <code>FileLocationModel</code> resolved by the given variable</p>
+                            <p>Create a new <code>Hint</code> in the <code>FileLocationModel</code> resolved by the given variable.</p>
                         ]]>
                     </xs:documentation>
                 </xs:annotation>

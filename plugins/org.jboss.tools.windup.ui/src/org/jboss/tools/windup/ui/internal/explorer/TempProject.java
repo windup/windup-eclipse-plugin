@@ -106,10 +106,14 @@ public class TempProject {
 	}
 	
 	public IResource createResource(String contents) {
+		return createResource(contents, TMP_FILE_NAME);
+	}
+	
+	public IResource createResource(String contents, String fileName) {
 		try {
 			IProject project = createTmpProject();
 			IFolder folder = getTmpFolder(project);
-			IResource resource = folder.getFile(TMP_FILE_NAME);
+			IResource resource = folder.getFile(fileName);
 			InputStream input = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 			if (!resource.exists()) {
 				((IFile)resource).create(input, true, new NullProgressMonitor());
