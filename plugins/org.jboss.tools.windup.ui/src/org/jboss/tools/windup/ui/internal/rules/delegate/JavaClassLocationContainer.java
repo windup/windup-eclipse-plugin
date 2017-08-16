@@ -41,7 +41,9 @@ import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate.JAVA_CLASS_REFERENCE_LOCATION;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
@@ -88,6 +90,11 @@ public class JavaClassLocationContainer {
 	private void loadLocations() {
 		locationListContainer.createControls(parentControl, collectLocations());
 		locationListContainer.bind();
+	}
+	
+	public boolean isEmpty() {
+		NodeList list = element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION);
+		return list.getLength() == 0;
 	}
 	
 	private List<Element> collectLocations() {
@@ -171,12 +178,25 @@ public class JavaClassLocationContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CMElementDeclaration linkCmNode = getLocationCmNode();
-				AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-						model, element, linkCmNode, element.getChildNodes().getLength(), null);
-				action.run();
+				createLocationElement();
 			}
 		});
 		section.setTextClient(toolbar);
+	}
+	
+	private Node createLocationElement() {
+		CMElementDeclaration linkCmNode = getLocationCmNode();
+		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
+				model, element, linkCmNode, element.getChildNodes().getLength(), null);
+		action.run();
+		if (!action.getResult().isEmpty()) {
+			return action.getResult().get(0);
+		}
+		return null;
+	}
+	
+	public void createLocationWithAnnotationType() {
+		Node locationNode = createLocationElement();
+		contentHelper.setNodeValue(locationNode, JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getLabel());
 	}
 }

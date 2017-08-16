@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.Section;
@@ -42,7 +43,7 @@ import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.DOMEmitter;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Node;
@@ -197,9 +198,28 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		IDocument document = sourceViewer.getDocument();
 		String annotationSource = document.get();
 		Annotation annotation = AnnotationUtil.getAnnotationElement(annotationSource);
-		DOMEmitter emitter = new DOMEmitter() {
+		IAnnotationEmitter emitter = new IAnnotationEmitter() {
+			@Override
+			public void emitSingleValue(String value) {
+			}
+			@Override
+			public void emitMemberValuePair(String name, String value) {
+			}
+			@Override
+			public void emitEndMemberValuePairArrayInitializer() {
+			}
+			@Override
+			public void emitBeginMemberValuePairArrayInitializer(String name) {
+			}
+			@Override
+			public void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext) {
+				if (evaluationContext.isTopLevelContext()) {
+					detailsTab.initWithAnnotationReference(annotation.getTypeName().getFullyQualifiedName());
+				}
+				
+			}
 		};
-		annotation.accept(new SnippetAnnotationVisitor(emitter, new EvaluationContext(null)));
+		annotation.accept(new SnippetAnnotationVisitor(emitter));
 	}
 	
 	protected void createTabs() {
@@ -217,6 +237,15 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		private JavaClassAnnotationLiteralContainer annotationLiteralContainer;
 		private JavaClassAnnotationListContainer annotationListContainer;
 		private JavaClassAnnotationTypeContainer annotationTypeContainer;
+		
+		private ClassAttributeRow javaClassReferenceRow;
+		
+		public void initWithAnnotationReference(String annotationName) {
+			if (((Text)javaClassReferenceRow.getTextControl()).getText().isEmpty() && locationContainer.isEmpty()) {
+				javaClassReferenceRow.setText(annotationName);
+				locationContainer.createLocationWithAnnotationType();
+			}
+		}
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
@@ -241,14 +270,14 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    		if (file != null) {
 				    			project = file.getProject();
 				    		}
-				    		ClassAttributeRow row = new ClassAttributeRow(element, declaration, project) {
+				    		javaClassReferenceRow = new ClassAttributeRow(element, declaration, project) {
 				    			@Override
 				    			protected Node getNode() {
 				    				return findNode(element, ed, declaration);
 				    			}
 				    		};
-						rows.add(row);
-						row.createContents(client, toolkit, 2);
+						rows.add(javaClassReferenceRow);
+						javaClassReferenceRow.createContents(client, toolkit, 2);
 				    	}
 				    	else {
 				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));

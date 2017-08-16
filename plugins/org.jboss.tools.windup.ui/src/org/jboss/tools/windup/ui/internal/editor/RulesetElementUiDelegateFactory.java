@@ -423,6 +423,10 @@ public class RulesetElementUiDelegateFactory {
 			return text;
 		}
 		
+		public void setText(String textValue) {
+			text.setText(textValue);
+		}
+		
 		@Override
 		protected void update() {
 			if (!Objects.equal(text.getText(), super.getValue())) {

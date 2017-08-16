@@ -1,10 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
@@ -12,28 +22,26 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
-import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.DOMEmitter;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 
 import com.google.common.base.Objects;
 
 public class SnippetAnnotationVisitor extends ASTVisitor {
 	
-	private DOMEmitter emitter;
-	private EvaluationContext evaluationContext;
+	private IAnnotationEmitter emitter;
 	
-	public SnippetAnnotationVisitor(DOMEmitter emitter, EvaluationContext evaluationContext) {
+	public SnippetAnnotationVisitor(IAnnotationEmitter emitter) {
 		this.emitter = emitter;
-		this.evaluationContext = evaluationContext;
 	}
 	
 	public static class AnnotationVisitor extends ASTVisitor {
 		
 		protected Annotation thisAnnotation;
 		protected EvaluationContext evaluationContext;
-		protected DOMEmitter emitter;
+		protected IAnnotationEmitter emitter;
 		
-		public AnnotationVisitor(Annotation thisAnnotation, EvaluationContext evaluationContext, DOMEmitter emitter) {
+		public AnnotationVisitor(Annotation thisAnnotation, EvaluationContext evaluationContext, IAnnotationEmitter emitter) {
 			this.thisAnnotation = thisAnnotation;
 			this.evaluationContext = evaluationContext;
 			this.emitter = emitter;
@@ -42,8 +50,15 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 	
 	private static class NormalAnnotationVisitor extends AnnotationVisitor {
 		
-		public NormalAnnotationVisitor(NormalAnnotation thisAnnotation, EvaluationContext evaluationContext, DOMEmitter emitter) {
+		@SuppressWarnings("unchecked")
+		public NormalAnnotationVisitor(NormalAnnotation thisAnnotation, EvaluationContext evaluationContext, IAnnotationEmitter emitter) {
 			super(thisAnnotation, evaluationContext, emitter);
+			if (thisAnnotation.values().isEmpty()) {
+				// similar to marker annotation, just has "()"
+			}
+			else {
+				thisAnnotation.values().forEach(valueObject -> ((ASTNode)valueObject).accept(this));
+			}
 		}
 		@Override
 		public boolean visit(MemberValuePair node) {
@@ -85,7 +100,7 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 		public boolean visit(NormalAnnotation node) {
 			if (!Objects.equal(thisAnnotation, node)) {
 				System.out.println("NormalAnnotationVisitor#visit(NormalAnnotation node) " + node.getTypeName());
-				node.accept(new NormalAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter));
+				new NormalAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter);
 				return false;
 			}
 			return true;
@@ -94,43 +109,30 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 		@Override
 		public boolean visit(MarkerAnnotation node) {
 			System.out.println("NormalAnnotationVisitor#visit(MarkerAnnotation node) " + node.getTypeName());
-			node.accept(new MarkerAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter));
+			new MarkerAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter);
 			return false;
 		}
 		
 		@Override
 		public boolean visit(SingleMemberAnnotation node) {
 			System.out.println("NormalAnnotationVisitor#visit(SingleMemberAnnotation node) " + node.getTypeName());
-			node.accept(new SingleMemberAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter));
+			new SingleMemberAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter);
 			return false;
 		}
 	}
 	
 	private static class MarkerAnnotationVisitor extends AnnotationVisitor {
-		
-		public MarkerAnnotationVisitor(MarkerAnnotation thisAnnotation, EvaluationContext evaluationContext, DOMEmitter emitter) {
+		public MarkerAnnotationVisitor(MarkerAnnotation thisAnnotation, EvaluationContext evaluationContext, IAnnotationEmitter emitter) {
 			super(thisAnnotation, evaluationContext, emitter);
-		}
-		
-		@Override
-		public boolean visit(SimpleName node) {
-			System.out.println("MarkerAnnotationVisitor#visit(SimpleName node) " + node.getIdentifier());
-			
-			return false;
-		}
-		
-		@Override
-		public boolean visit(QualifiedName node) {
-			System.out.println("MarkerAnnotationVisitor#visit(QualifiedName node) " + node.getName());
-			
-			return false;
+			emitter.emitAnnotation(thisAnnotation, evaluationContext);
 		}
 	}
 	
 	private static class SingleMemberAnnotationVisitor extends AnnotationVisitor {
 		
-		public SingleMemberAnnotationVisitor(SingleMemberAnnotation thisAnnotation, EvaluationContext evaluationContext, DOMEmitter emitter) {
+		public SingleMemberAnnotationVisitor(SingleMemberAnnotation thisAnnotation, EvaluationContext evaluationContext, IAnnotationEmitter emitter) {
 			super(thisAnnotation, evaluationContext, emitter);
+			thisAnnotation.getValue().accept(this);
 		}
 		
 		@Override
@@ -156,11 +158,31 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 			System.out.println("SingleMemberAnnotationVisitor#visit(StringLiteral node) " + node.getLiteralValue());
 			return false;
 		}
+
+		@Override
+		public boolean visit(ArrayInitializer node) {
+			System.out.println("SingleMemberAnnotationVisitor#visit(ArrayInitializer node) " + node.expressions().toString());
+			return true;
+		}
+		
+		@Override
+		public boolean visit(NormalAnnotation node) {
+			System.out.println("SingleMemberAnnotationVisitor#visit(NormalAnnotation node) " + node.getTypeName());
+			new NormalAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter);
+			return false;
+		}
+		
+		@Override
+		public boolean visit(MarkerAnnotation node) {
+			System.out.println("SingleMemberAnnotationVisitor#visit(MarkerAnnotation node) " + node.getTypeName());
+			new MarkerAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter);
+			return false;
+		}
 		
 		@Override
 		public boolean visit(SingleMemberAnnotation node) {
 			if (!Objects.equal(thisAnnotation, node)) {
-				node.accept(new SingleMemberAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter));
+				new SingleMemberAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter);
 				return false;
 			}
 			return true;
@@ -170,57 +192,21 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(NormalAnnotation node) {
 		System.out.println("SnippetAnnotationVisitor#visit(NormalAnnotation node) " + node.getTypeName());
-		node.accept(new NormalAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter));
+		new NormalAnnotationVisitor(node, new EvaluationContext(null), emitter);
 		return false;
 	}
 	
 	@Override
 	public boolean visit(MarkerAnnotation node) {
 		System.out.println("SnippetAnnotationVisitor#visit(MarkerAnnotation node) " + node.getTypeName());
-		node.accept(new MarkerAnnotationVisitor(node, new EvaluationContext(evaluationContext), emitter));
+		new MarkerAnnotationVisitor(node, new EvaluationContext(null), emitter);
 		return false;
 	}
 	
 	@Override
 	public boolean visit(SingleMemberAnnotation node) {
 		System.out.println("SnippetAnnotationVisitor#visit(SingleMemberAnnotation node) " + node.getTypeName());
-		node.accept(new SingleMemberAnnotationVisitor(node, new EvaluationContext(evaluationContext),emitter));
+		new SingleMemberAnnotationVisitor(node, new EvaluationContext(null), emitter);
 		return false;
-	}
-	
-	@Override
-	public boolean visit(MemberValuePair node) {
-		System.out.println("SnippetAnnotationVisitor#visit(MemberValuePair node) " + node.getName() + " = " + node.getValue());
-		return true;
-	}
-	
-	@Override
-	public boolean visit(SimpleName node) {
-		System.out.println("SnippetAnnotationVisitor#visit(SimpleName node) " + node.getIdentifier());
-		return true;
-	}
-	
-	@Override
-	public boolean visit(QualifiedName node) {
-		System.out.println("SnippetAnnotationVisitor#visit(QualifiedName node) " + node.getName());
-		return true;
-	}
-	
-	@Override
-	public boolean visit(ConditionalExpression node) {
-		System.out.println("SnippetAnnotationVisitor#visit(ConditionalExpression node) " + node.getExpression().toString());
-		return true;
-	}
-	
-	@Override
-	public boolean visit(StringLiteral node) {
-		System.out.println("SnippetAnnotationVisitor#visit(StringLiteral node) " + node.getEscapedValue());
-		return true;
-	}
-	
-	@Override
-	public boolean visit(ArrayInitializer node) {
-		System.out.println("SnippetAnnotationVisitor#visit(ArrayInitializer node) " + node.toString());
-		return true;
 	}
 }

@@ -44,8 +44,7 @@ public class AnnotationUtil {
 		}
 	}
 	
-	public static class DOMEmitter {
-		
+	public static interface IAnnotationEmitter {
 		// if evaluationContext parent is null, we're at the top-level.
 		// if at top level:
 		// 		* if reference is empty, set reference to the annotation, and
@@ -53,26 +52,21 @@ public class AnnotationUtil {
 		
 		// 		* Otherwise, if reference is not empty, 
 		// 		* create <annotation-type pattern=annotationName></annotation-type>
-		public void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext) {
-		}
+		void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext);
 		
 		// results in <annotation-literal pattern=value /> 
 		// this should cover @MyAnnotation("myValue") and
 		// a single value in an array initializer @MyAnnotation(mylist={"myValue", 1+2==2?true:false, "myValue2"})
-		public void emitSingleValue(String value) {
-		}
+		void emitSingleValue(String value);
 		
 		// results in <annotation-literal name=name pattern=value />
 		// this covers conditionExpression and Annotation
-		public void emitMemberValuePair(String name, String value) {
-		}
+		void emitMemberValuePair(String name, String value);
 		
 		// results in <annotation-type pattern=name></annotation-type>
-		public void emitBeginMemberValuePairArrayInitializer(String name) {
-		}
+		void emitBeginMemberValuePairArrayInitializer(String name);
 		
-		public void emitEndMemberValuePairArrayInitializer() {
-		}
+		void emitEndMemberValuePairArrayInitializer();
 	}
 	
 	public static Annotation getAnnotationElement(String annotation) {
