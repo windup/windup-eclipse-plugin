@@ -17,23 +17,33 @@ import javax.annotation.PostConstruct;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.DOMEmitter;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Node;
 
@@ -88,6 +98,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	private SashForm sash;
 	
 	private DetailsTab detailsTab;
+	
+	private JavaEmbeddedEditor annotationEditor;
 	
 	@Override
 	public void update() {
@@ -163,9 +175,33 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		data.bottom = new FormAttachment(100);
 		section.setLayoutData(data);
 		
-		new JavaEmbeddedEditor(client);
+		createAnnotationSourceSectionToolbar(section);
+		
+		this.annotationEditor = new JavaEmbeddedEditor(client);
 	}
-
+	
+	private void createAnnotationSourceSectionToolbar(Section section) {
+		ToolBar toolbar = new ToolBar(section, SWT.FLAT|SWT.HORIZONTAL);
+		ToolItem addItem = new ToolItem(toolbar, SWT.PUSH);
+		addItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_NEW_ANNOTATION));
+		addItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				generateAnnotation(annotationEditor.getSourceViewer());
+			}
+		});
+		section.setTextClient(toolbar);
+	}
+	
+	private void generateAnnotation(JDISourceViewer sourceViewer) {
+		IDocument document = sourceViewer.getDocument();
+		String annotationSource = document.get();
+		Annotation annotation = AnnotationUtil.getAnnotationElement(annotationSource);
+		DOMEmitter emitter = new DOMEmitter() {
+		};
+		annotation.accept(new SnippetAnnotationVisitor(emitter, new EvaluationContext(null)));
+	}
+	
 	protected void createTabs() {
 		addTab(DetailsTab.class);
 	}
