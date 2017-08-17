@@ -31,6 +31,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDependenciesPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDocumentationPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorOverviewPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetExamplesPage;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -102,6 +103,10 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
 	public void selectAndReveal(Element element) {
 		designPage.getEditor().selectAndReveal(element);
+	}
+	
+	public IElementUiDelegate getUiDelegate(Element element) {
+		return designPage.getEditor().getUiDelegate(element);
 	}
 	
 	public static final class RulesetDesignPage implements IDesignViewer {

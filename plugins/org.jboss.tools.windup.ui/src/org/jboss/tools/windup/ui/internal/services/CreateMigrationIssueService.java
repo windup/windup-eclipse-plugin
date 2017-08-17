@@ -152,7 +152,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 				            		RulesetEditor.ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
 							if (editorPart instanceof RulesetEditorWrapper) {
 								RulesetEditorWrapper wrapper = (RulesetEditorWrapper)editorPart;
-								Element element = creationService.createRuleFromEditorSelection(theEditor, wrapper.getDocument());
+								Element element = creationService.createRuleFromEditorSelection(theEditor, wrapper);
 								if (element != null) {
 									wrapper.selectAndReveal(element);
 								}

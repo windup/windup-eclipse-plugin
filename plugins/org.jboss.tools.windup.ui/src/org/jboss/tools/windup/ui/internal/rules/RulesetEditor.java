@@ -182,6 +182,17 @@ public class RulesetEditor {
 		new Label(parent, SWT.NONE);
 	}
 	
+	public IElementUiDelegate getUiDelegate(Element element) {
+		return widgetRegistry.getOrCreateUiDelegate(element, createUiDelegateContext(element));
+	}
+	
+	private IEclipseContext createUiDelegateContext(Element element) {
+		IEclipseContext child = context.createChild();
+		child.set(Element.class, element);
+		child.set(Composite.class, stackComposite);
+		return child;
+	}
+	
 	public void updateDetails(Element element) {
 		if (form.isDisposed()) {
 			return;
@@ -190,10 +201,7 @@ public class RulesetEditor {
 		int right = sash.getWeights()[1];
 		Control top = gettingStartedComposite;
 		if (element != null) {
-			IEclipseContext child = context.createChild();
-			child.set(Element.class, element);
-			child.set(Composite.class, stackComposite);
-			IElementUiDelegate uiDelegate = widgetRegistry.getOrCreateUiDelegate(element, child);
+			IElementUiDelegate uiDelegate = widgetRegistry.getOrCreateUiDelegate(element, createUiDelegateContext(element));
 			if (uiDelegate != null) { 
 				top = uiDelegate.getControl();
 				uiDelegate.update();

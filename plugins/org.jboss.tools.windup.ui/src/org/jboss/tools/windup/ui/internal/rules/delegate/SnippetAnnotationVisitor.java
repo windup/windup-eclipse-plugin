@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
@@ -74,6 +75,10 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 				emitter.emitMemberValuePair(node.getName().getFullyQualifiedName(), ((QualifiedName)node.getValue()).getFullyQualifiedName(), evaluationContext);
 				return false;
 			}
+			else if (node.getValue() instanceof BooleanLiteral) {
+				emitter.emitMemberValuePair(node.getName().getFullyQualifiedName(), String.valueOf(((BooleanLiteral)node.getValue()).booleanValue()), evaluationContext);
+				return false;
+			}
 			else if (node.getValue() instanceof ArrayInitializer) {
 				visitingMemberPairArrayInitializer = true;
 				emitter.emitBeginMemberValuePairArrayInitializer(node.getName().getFullyQualifiedName(), evaluationContext);
@@ -81,6 +86,13 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 				return false;
 			}
 			return true;
+		}
+		
+		@Override
+		public boolean visit(BooleanLiteral node) {
+			System.out.println("NormalAnnotationVisitor#visit(BooleanLiteral node) " + String.valueOf(node.booleanValue()));
+			emitter.emitSingleValue(String.valueOf(node.booleanValue()), evaluationContext);
+			return false;
 		}
 		
 		@Override
@@ -179,6 +191,13 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 		public boolean visit(SimpleName node) {
 			System.out.println("SingleMemberAnnotationVisitor#visit(SimpleName node) " + node.getIdentifier());
 			emitter.emitSingleValue(node.getFullyQualifiedName(), evaluationContext);
+			return false;
+		}
+		
+		@Override
+		public boolean visit(BooleanLiteral node) {
+			System.out.println("SingleMemberAnnotationVisitor#visit(BooleanLiteral node) " + String.valueOf(node.booleanValue()));
+			emitter.emitSingleValue(String.valueOf(node.booleanValue()), evaluationContext);
 			return false;
 		}
 		

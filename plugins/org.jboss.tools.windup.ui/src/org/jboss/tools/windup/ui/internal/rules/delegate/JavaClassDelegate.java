@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -31,7 +32,6 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.Section;
@@ -43,8 +43,8 @@ import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -199,6 +199,10 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		IDocument document = sourceViewer.getDocument();
 		String annotationSource = document.get();
 		Annotation annotation = AnnotationUtil.getAnnotationElement(annotationSource);
+		generateAnnotationElements(annotation);
+	}
+	
+	public void generateAnnotationElements(Annotation annotation) {
 		IAnnotationEmitter emitter = new IAnnotationEmitter() {
 			@Override
 			public void emitSingleValue(String value, EvaluationContext evaluationContext) {
@@ -243,14 +247,19 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			@Override
 			public void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext) {
 				String annotationName = annotation.getTypeName().getFullyQualifiedName();
+				ITypeBinding typeBinding= annotation.resolveTypeBinding();
+				if (typeBinding != null) {
+					annotationName = typeBinding.getQualifiedName();
+				}
 				if (evaluationContext.isTopLevelContext()) {
-					boolean inititialized = detailsTab.initWithAnnotationReference(annotationName, element);
-					if (!inititialized) {
-						Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, element);
-						evaluationContext.setElement(anntotationTypeNode);
+					boolean initialized = isJavaclassInitialized(element);
+					if (!initialized) {
+						detailsTab.initialize(annotationName, element);
+						evaluationContext.setElement(element);
 					}
 					else {
-						evaluationContext.setElement(element);
+						Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, element);
+						evaluationContext.setElement(anntotationTypeNode);
 					}
 				}
 				else {
@@ -261,6 +270,14 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			}
 		};
 		annotation.accept(new SnippetAnnotationVisitor(emitter));
+	}
+	
+	private boolean isJavaclassInitialized(Element element) {
+		if (element.getAttribute(RulesetConstants.JAVA_CLASS_REFERENCES).isEmpty() && 
+				element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION).getLength() == 0) {
+			return false;
+		}
+		return true;
 	}
 	
 	protected void createTabs() {
@@ -281,13 +298,9 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		private ClassAttributeRow javaClassReferenceRow;
 		
-		public boolean initWithAnnotationReference(String annotationName, Element parent) {
-			if (((Text)javaClassReferenceRow.getTextControl()).getText().isEmpty() && locationContainer.isEmpty()) {
-				javaClassReferenceRow.setText(annotationName);
-				locationContainer.createLocationWithAnnotationType(parent);
-				return true;
-			}
-			return false;
+		public void initialize(String annotationName, Element parent) {
+			javaClassReferenceRow.setText(annotationName);
+			locationContainer.createLocationWithAnnotationType(parent);
 		}
 		
 		private Node createAnnotationType(String pattern, Element parent) {
