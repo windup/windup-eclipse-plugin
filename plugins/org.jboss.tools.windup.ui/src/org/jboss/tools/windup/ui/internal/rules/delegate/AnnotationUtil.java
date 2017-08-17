@@ -28,6 +28,9 @@ public class AnnotationUtil {
 		}
 		
 		public Object getElement() {
+			if (element == null) {
+				return parentContext.getElement();
+			}
 			return element;
 		}
 		
@@ -57,16 +60,19 @@ public class AnnotationUtil {
 		// results in <annotation-literal pattern=value /> 
 		// this should cover @MyAnnotation("myValue") and
 		// a single value in an array initializer @MyAnnotation(mylist={"myValue", 1+2==2?true:false, "myValue2"})
-		void emitSingleValue(String value);
+		void emitSingleValue(String value, EvaluationContext evaluationContext);
 		
 		// results in <annotation-literal name=name pattern=value />
 		// this covers conditionExpression and Annotation
-		void emitMemberValuePair(String name, String value);
+		void emitMemberValuePair(String name, String value, EvaluationContext evaluationContext);
 		
 		// results in <annotation-type pattern=name></annotation-type>
-		void emitBeginMemberValuePairArrayInitializer(String name);
+		void emitBeginMemberValuePairArrayInitializer(String name, EvaluationContext evaluationContext);
 		
-		void emitEndMemberValuePairArrayInitializer();
+		void emitEndMemberValuePairArrayInitializer(EvaluationContext evaluationContext);
+		
+		void emitBeginArrayInitializer(EvaluationContext evaluationContext);
+		void emitEndArrayInitializer(EvaluationContext evaluationContext);
 	}
 	
 	public static Annotation getAnnotationElement(String annotation) {

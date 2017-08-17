@@ -46,6 +46,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Objects;
@@ -200,23 +201,63 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		Annotation annotation = AnnotationUtil.getAnnotationElement(annotationSource);
 		IAnnotationEmitter emitter = new IAnnotationEmitter() {
 			@Override
-			public void emitSingleValue(String value) {
+			public void emitSingleValue(String value, EvaluationContext evaluationContext) {
+				detailsTab.createAnnotationLiteral(value, (Element)evaluationContext.getElement());
 			}
 			@Override
-			public void emitMemberValuePair(String name, String value) {
+			public void emitMemberValuePair(String name, String value, EvaluationContext evaluationContext) {
+				detailsTab.createAnnotationLiteral(name, value, (Element)evaluationContext.getElement());
 			}
+			
 			@Override
-			public void emitEndMemberValuePairArrayInitializer() {
+			public void emitBeginMemberValuePairArrayInitializer(String name, EvaluationContext evaluationContext) {
+				Node annotationList = detailsTab.createAnnotationList(name, (Element)evaluationContext.getElement());
+				evaluationContext.setElement(annotationList);
 			}
+			
 			@Override
-			public void emitBeginMemberValuePairArrayInitializer(String name) {
+			public void emitEndMemberValuePairArrayInitializer(EvaluationContext evaluationContext) {
+				// popup to the current context's element's parent.
+				Element element = (Element)evaluationContext.getElement();
+				element = (Element)element.getParentNode();
+				// not sure if this is right, we might need to get the parent context (witch might already have this parent element as its elemnt)
+				evaluationContext.setElement(element);
 			}
+			
+			@Override
+			public void emitBeginArrayInitializer(EvaluationContext evaluationContext) {
+				// Assuming we're handling arrays with no name (ie., not a MemberValuePair) as nameless annotation-list
+				Node annotationList = detailsTab.createAnnotationList(null, (Element)evaluationContext.getElement());
+				evaluationContext.setElement(annotationList);
+			}
+			
+			@Override
+			public void emitEndArrayInitializer(EvaluationContext evaluationContext) {
+				// popup to the current context's element's parent.
+				Element element = (Element)evaluationContext.getElement();
+				element = (Element)element.getParentNode();
+				// not sure if this is right, we might need to get the parent context (witch might already have this parent element as its elemnt)
+				evaluationContext.setElement(element);
+			}
+			
 			@Override
 			public void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext) {
+				String annotationName = annotation.getTypeName().getFullyQualifiedName();
 				if (evaluationContext.isTopLevelContext()) {
-					detailsTab.initWithAnnotationReference(annotation.getTypeName().getFullyQualifiedName());
+					boolean inititialized = detailsTab.initWithAnnotationReference(annotationName, element);
+					if (!inititialized) {
+						Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, element);
+						evaluationContext.setElement(anntotationTypeNode);
+					}
+					else {
+						evaluationContext.setElement(element);
+					}
 				}
-				
+				else {
+					Element parent = (Element)evaluationContext.getElement();
+					Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, parent);
+					evaluationContext.setElement(anntotationTypeNode);
+				}
 			}
 		};
 		annotation.accept(new SnippetAnnotationVisitor(emitter));
@@ -240,11 +281,29 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		private ClassAttributeRow javaClassReferenceRow;
 		
-		public void initWithAnnotationReference(String annotationName) {
+		public boolean initWithAnnotationReference(String annotationName, Element parent) {
 			if (((Text)javaClassReferenceRow.getTextControl()).getText().isEmpty() && locationContainer.isEmpty()) {
 				javaClassReferenceRow.setText(annotationName);
-				locationContainer.createLocationWithAnnotationType();
+				locationContainer.createLocationWithAnnotationType(parent);
+				return true;
 			}
+			return false;
+		}
+		
+		private Node createAnnotationType(String pattern, Element parent) {
+			return annotationTypeContainer.createAnnotationTypeWithPattern(pattern, parent);
+		}
+		
+		private void createAnnotationLiteral(String value, Element parent) {
+			annotationLiteralContainer.createAnnotationLiteralWithValue(null, value, parent);
+		}
+		
+		private void createAnnotationLiteral(String name, String value, Element parent) {
+			annotationLiteralContainer.createAnnotationLiteralWithValue(name, value, parent);
+		}
+		
+		private Node createAnnotationList(String name, Element parent) {
+			return annotationListContainer.createAnnotationList(name, parent);
 		}
 		
 		@PostConstruct

@@ -178,16 +178,16 @@ public class JavaClassLocationContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				createLocationElement();
+				createLocationElement(element);
 			}
 		});
 		section.setTextClient(toolbar);
 	}
 	
-	private Node createLocationElement() {
+	private Node createLocationElement(Element parent) {
 		CMElementDeclaration linkCmNode = getLocationCmNode();
 		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, element, linkCmNode, element.getChildNodes().getLength(), null);
+				model, parent, linkCmNode, parent.getChildNodes().getLength(), null);
 		action.run();
 		if (!action.getResult().isEmpty()) {
 			return action.getResult().get(0);
@@ -195,8 +195,8 @@ public class JavaClassLocationContainer {
 		return null;
 	}
 	
-	public void createLocationWithAnnotationType() {
-		Node locationNode = createLocationElement();
+	public void createLocationWithAnnotationType(Element parent) {
+		Node locationNode = createLocationElement(parent);
 		contentHelper.setNodeValue(locationNode, JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getLabel());
 	}
 }

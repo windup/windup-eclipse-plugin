@@ -139,12 +139,17 @@ public class ListItem extends Composite {
 		return Tuples.create(left, right);
 	}
 	
+	public void delete() {
+		childItems.forEach(childItem -> childItem.delete());
+		super.dispose();
+	}
+	
 	public ListItem createChildControls(Composite parent, ListItem previousContainer, int childLevel) {
 		List<Element> childElements = collectChildElements();
 		for (Iterator<ListItem> iter = childItems.iterator(); iter.hasNext();) {
 			ListItem item = iter.next();
 			if (!childElements.contains(item.getLinkElement())) {
-				item.dispose();
+				item.delete();
 				iter.remove();
 			}
 		}

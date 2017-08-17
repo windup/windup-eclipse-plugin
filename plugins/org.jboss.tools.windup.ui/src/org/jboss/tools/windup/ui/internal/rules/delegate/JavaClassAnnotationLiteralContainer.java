@@ -27,6 +27,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
@@ -37,6 +38,7 @@ import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.google.common.base.Objects;
 
@@ -95,7 +97,7 @@ public class JavaClassAnnotationLiteralContainer {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getLocationCmNode() {
+	private CMElementDeclaration getLiteralCmNode() {
 		List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
 				ModelQuery.VALIDITY_STRICT);
 		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
@@ -130,12 +132,43 @@ public class JavaClassAnnotationLiteralContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CMElementDeclaration linkCmNode = getLocationCmNode();
-				AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-						model, element, linkCmNode, element.getChildNodes().getLength(), null);
-				action.run();
+				createAnnotationLiteral(element);
 			}
 		});
 		section.setTextClient(toolbar);
+	}
+	
+	private Node createAnnotationLiteral(Element parent) {
+		CMElementDeclaration literalCmNode = getLiteralCmNode();
+		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
+				model, parent, literalCmNode, parent.getChildNodes().getLength(), null);
+		action.run();
+		if (!action.getResult().isEmpty()) {
+			return action.getResult().get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void createAnnotationLiteralWithValue(String name, String value, Element parent) {
+		Node literalNode = createAnnotationLiteral(parent);
+		CMElementDeclaration literalCmNode = getLiteralCmNode();
+		List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent((Element)literalNode, literalCmNode, ModelQuery.INCLUDE_ATTRIBUTES);
+		if (name != null) {
+			CMAttributeDeclaration nameDeclaration = availableAttributeList.get(0);
+			AddNodeAction newNameAction = new AddNodeAction(model, nameDeclaration, literalNode, literalNode.getChildNodes().getLength());
+			newNameAction.runWithoutTransaction();
+			if (!newNameAction.getResult().isEmpty()) {
+				Node nameNode = (Node)newNameAction.getResult().get(0);
+				contentHelper.setNodeValue(nameNode, name);
+			}
+		}
+		CMAttributeDeclaration patterDeclaration = availableAttributeList.get(1);
+		AddNodeAction newPatternAction = new AddNodeAction(model, patterDeclaration, literalNode, literalNode.getChildNodes().getLength());
+		newPatternAction.runWithoutTransaction();
+		if (!newPatternAction.getResult().isEmpty()) {
+			Node patternNode = (Node)newPatternAction.getResult().get(0);
+			contentHelper.setNodeValue(patternNode, value);
+		}
 	}
 }

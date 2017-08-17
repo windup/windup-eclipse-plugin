@@ -53,7 +53,7 @@ public class ListContainer {
 		for (Iterator<ListItem> iter = items.iterator(); iter.hasNext();) {
 			ListItem item = iter.next();
 			if (!elements.contains(item.getLinkElement())) {
-				item.dispose();
+				item.delete();
 				iter.remove();
 			}
 		}

@@ -27,6 +27,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
@@ -37,6 +38,7 @@ import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.google.common.base.Objects;
 
@@ -95,7 +97,7 @@ public class JavaClassAnnotationListContainer {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getLocationCmNode() {
+	private CMElementDeclaration getListCmNode() {
 		List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
 				ModelQuery.VALIDITY_STRICT);
 		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
@@ -129,12 +131,36 @@ public class JavaClassAnnotationListContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CMElementDeclaration linkCmNode = getLocationCmNode();
-				AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-						model, element, linkCmNode, element.getChildNodes().getLength(), null);
-				action.run();
+				createAnnotationList(element);
 			}
 		});
 		section.setTextClient(toolbar);
+	}
+	
+	private Node createAnnotationList(Element parent) {
+		CMElementDeclaration listCmNode = getListCmNode();
+		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
+				model, parent, listCmNode, parent.getChildNodes().getLength(), null);
+		action.run();
+		if (!action.getResult().isEmpty()) {
+			return action.getResult().get(0);
+		}
+		return null;
+	}
+	
+	public Node createAnnotationList(String name, Element parent) {
+		Node annotationList = createAnnotationList(parent);
+		if (name != null) {
+			CMElementDeclaration listCmNode = getListCmNode();
+			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent((Element)annotationList, listCmNode, ModelQuery.INCLUDE_ATTRIBUTES);
+			CMAttributeDeclaration nameDeclaration = availableAttributeList.get(1);
+			AddNodeAction newNodeAction = new AddNodeAction(model, nameDeclaration, annotationList, annotationList.getChildNodes().getLength());
+			newNodeAction.runWithoutTransaction();
+			if (!newNodeAction.getResult().isEmpty() && name != null && !name.isEmpty()) {
+				Node nameNode = (Node)newNodeAction.getResult().get(0);
+				contentHelper.setNodeValue(nameNode, name);
+			}
+		}
+		return annotationList;
 	}
 }
