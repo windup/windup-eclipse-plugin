@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -152,9 +154,9 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 				            		RulesetEditor.ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
 							if (editorPart instanceof RulesetEditorWrapper) {
 								RulesetEditorWrapper wrapper = (RulesetEditorWrapper)editorPart;
-								Element element = creationService.createRuleFromEditorSelection(theEditor, wrapper);
-								if (element != null) {
-									wrapper.selectAndReveal(element);
+								List<Element> elements = creationService.createRulesFromEditorSelection(theEditor, wrapper);
+								if (elements != null && !elements.isEmpty()) {
+									wrapper.selectAndReveal(elements.get(elements.size()-1));
 								}
 							}
 						} catch (PartInitException e) {

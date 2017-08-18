@@ -10,7 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,26 +21,16 @@ import javax.inject.Singleton;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.ArrayType;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
-import org.eclipse.jdt.core.dom.IntersectionType;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.NameQualifiedType;
-import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.QualifiedName;
-import org.eclipse.jdt.core.dom.QualifiedType;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.TypeParameter;
-import org.eclipse.jdt.core.dom.UnionType;
-import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
@@ -46,8 +39,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
-import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -61,41 +54,50 @@ public class RulesetSelectionCreationService {
 
 	@Inject private RulesetDOMService domService;
 
-	public Element createRuleFromEditorSelection(ITextEditor editor, RulesetEditorWrapper wrapper) {
+	public List<Element> createRulesFromEditorSelection(ITextEditor editor, RulesetEditorWrapper wrapper) {
 		if (editor instanceof JavaEditor) {
 			return createRuleFromJavaEditorSelection((JavaEditor)editor, wrapper);
 		}
 		return null;
 	}
 	
-	private Element createRuleFromJavaEditorSelection(JavaEditor editor, RulesetEditorWrapper wrapper) {
+	private List<Element> createRuleFromJavaEditorSelection(JavaEditor editor, RulesetEditorWrapper wrapper) {
 		Document document = wrapper.getDocument();
 		if (SelectionConverter.getInputAsCompilationUnit(editor) != null) {
 			ITextSelection textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
 			JavaTextSelection javaSelection= new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
 			try {
 				ASTNode[] nodes = javaSelection.resolveSelectedNodes();
+				
+				List<Element> javaClassElements = Arrays.stream(nodes).filter(node -> {
+					if (node instanceof Annotation || (node instanceof Name && node.getParent() instanceof Annotation)) {
+						return true;
+					}
+					return false;
+				}).map(node -> {
+					if (node instanceof Name && node.getParent() instanceof Annotation) {
+						node = node.getParent();
+					}
+					return createJavaClassElementForAnnotations(wrapper, Lists.newArrayList((Annotation)node));
+				}).filter(Objects::nonNull).collect(Collectors.toList());
+				
+				if (!javaClassElements.isEmpty()) {
+					return javaClassElements;
+				}
+				
 				if (nodes != null && nodes.length == 1) {
 					
 					ASTNode node = nodes[0];
 					
-					if (node instanceof Annotation) {
-						return createJavaClassElementForAnnotations(wrapper, Lists.newArrayList((Annotation)node));
-					}
-					
-					else if (node instanceof Name && node.getParent() instanceof Annotation) {
-						return createJavaClassElementForAnnotations(wrapper, Lists.newArrayList((Annotation)node.getParent()));
-					}
-					
 					// <javaclass references="..." /> IMPORT
 					if (node instanceof ImportDeclaration) {
 						String importName = ((ImportDeclaration)node).getName().getFullyQualifiedName();
-						return createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName);
+						return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName));
 					}
 					// <javaclass references="..." /> IMPORT
 					if (node instanceof QualifiedName && node.getParent() instanceof ImportDeclaration) {
 						String importName = ((ImportDeclaration)node.getParent()).getName().getFullyQualifiedName();
-						return createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName);
+						return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName));
 					}
 					// <javaclass references="..." /> IMPLEMENTS_TYPE
 					if (node instanceof SimpleType && node.getParent() != null &&
@@ -105,7 +107,7 @@ public class RulesetSelectionCreationService {
 						if (binding != null) {
 							referenceName = binding.getQualifiedName();
 						}
-						return createJavaClassReferenceElement(document, TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), referenceName);
+						return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), referenceName));
 					}
 				}
 			}
@@ -138,7 +140,31 @@ public class RulesetSelectionCreationService {
 		}
 		else if (parent instanceof FieldDeclaration) {
 			location = TypeReferenceLocation.FIELD_DECLARATION.toString();
-			javaClassElement = domService.createJavaClassReferencesImportElement(((SimpleType)((FieldDeclaration)parent).getType()).getName().getFullyQualifiedName(), rulesetElement);
+			
+			// The type the annotation is attached to.
+			Type parameterType = ((FieldDeclaration)parent).getType();
+			
+			String referenceName = "";
+			
+			// If primitive, we don't really a way to specify it in the javaclass reference attribute, so 
+			// we set it up to match a javaclass containing the annotation, instead of isolating it down to
+			// a method parameter.
+			if (parameterType.isPrimitiveType()) {
+				location = "";
+				referenceName = annotation.getTypeName().getFullyQualifiedName();
+				ITypeBinding typeBinding = annotation.resolveTypeBinding();
+				if (typeBinding != null) {
+					referenceName = typeBinding.getQualifiedName();
+				}
+				javaClassElement = domService.createJavaClassReferencesImportElement(referenceName, rulesetElement);
+				evaluationContext.setElement(javaClassElement);
+			}
+			else if (!(referenceName = findParamterType(parameterType)).isEmpty()) {
+				javaClassElement = domService.createJavaClassReferencesImportElement(referenceName, rulesetElement);
+			}
+			else {
+				return null;
+			}
 		}
 		else if (parent instanceof MethodDeclaration) {
 			// location METHOD
@@ -201,18 +227,13 @@ public class RulesetSelectionCreationService {
 	
 	private String findParamterType(Type type) {
 		ITypeBinding binding = type.resolveBinding();
+		if (binding != null && binding.isArray()) {
+			return binding.getElementType().getQualifiedName();
+		}
 		if (binding != null) {
-			return binding.getQualifiedName();
+			return binding.getTypeDeclaration().getQualifiedName();
 		}
-		WindupUIPlugin.logErrorMessage("Parameter type not resolved using type binding.");
-		return "";
-	}
-	
-	private String getTypeBinding(Expression expression) {
-		ITypeBinding typeBinding = expression.resolveTypeBinding();
-		if (typeBinding != null) {
-			return typeBinding.getQualifiedName();
-		}
+		WindupUIPlugin.logErrorMessage(type.toString() + "Parameter type not resolved using type binding.");
 		return "";
 	}
 	
