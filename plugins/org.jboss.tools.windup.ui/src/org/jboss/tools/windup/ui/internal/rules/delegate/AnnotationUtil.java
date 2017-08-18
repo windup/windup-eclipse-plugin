@@ -45,6 +45,10 @@ public class AnnotationUtil {
 		public boolean isTopLevelContext() {
 			return parentContext == null;
 		}
+		
+		public boolean isInitialized() {
+			return element != null;
+		}
 	}
 	
 	public static interface IAnnotationEmitter {

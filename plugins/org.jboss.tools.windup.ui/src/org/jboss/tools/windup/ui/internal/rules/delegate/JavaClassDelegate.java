@@ -199,10 +199,10 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		IDocument document = sourceViewer.getDocument();
 		String annotationSource = document.get();
 		Annotation annotation = AnnotationUtil.getAnnotationElement(annotationSource);
-		generateAnnotationElements(annotation);
+		generateAnnotationElements(annotation, new EvaluationContext(null));
 	}
 	
-	public void generateAnnotationElements(Annotation annotation) {
+	public void generateAnnotationElements(Annotation annotation, EvaluationContext evaluationContext) {
 		IAnnotationEmitter emitter = new IAnnotationEmitter() {
 			@Override
 			public void emitSingleValue(String value, EvaluationContext evaluationContext) {
@@ -257,7 +257,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 						detailsTab.initialize(annotationName, element);
 						evaluationContext.setElement(element);
 					}
-					else {
+					else if (!evaluationContext.isInitialized()){
 						Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, element);
 						evaluationContext.setElement(anntotationTypeNode);
 					}
@@ -269,7 +269,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				}
 			}
 		};
-		annotation.accept(new SnippetAnnotationVisitor(emitter));
+		annotation.accept(new SnippetAnnotationVisitor(emitter, evaluationContext));
 	}
 	
 	private boolean isJavaclassInitialized(Element element) {

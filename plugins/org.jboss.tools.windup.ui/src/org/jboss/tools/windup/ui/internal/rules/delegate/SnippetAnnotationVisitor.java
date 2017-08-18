@@ -30,9 +30,11 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotat
 public class SnippetAnnotationVisitor extends ASTVisitor {
 	
 	private IAnnotationEmitter emitter;
+	private EvaluationContext evaluationContext;
 	
-	public SnippetAnnotationVisitor(IAnnotationEmitter emitter) {
+	public SnippetAnnotationVisitor(IAnnotationEmitter emitter, EvaluationContext evaluationContext) {
 		this.emitter = emitter;
+		this.evaluationContext = evaluationContext;
 	}
 	
 	public static class AnnotationVisitor extends ASTVisitor {
@@ -263,21 +265,21 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(NormalAnnotation node) {
 		System.out.println("SnippetAnnotationVisitor#visit(NormalAnnotation node) " + node.getTypeName());
-		new NormalAnnotationVisitor(node, new EvaluationContext(null), emitter);
+		new NormalAnnotationVisitor(node, evaluationContext, emitter);
 		return false;
 	}
 	
 	@Override
 	public boolean visit(MarkerAnnotation node) {
 		System.out.println("SnippetAnnotationVisitor#visit(MarkerAnnotation node) " + node.getTypeName());
-		new MarkerAnnotationVisitor(node, new EvaluationContext(null), emitter);
+		new MarkerAnnotationVisitor(node, evaluationContext, emitter);
 		return false;
 	}
 	
 	@Override
 	public boolean visit(SingleMemberAnnotation node) {
 		System.out.println("SnippetAnnotationVisitor#visit(SingleMemberAnnotation node) " + node.getTypeName());
-		new SingleMemberAnnotationVisitor(node, new EvaluationContext(null), emitter);
+		new SingleMemberAnnotationVisitor(node, evaluationContext, emitter);
 		return false;
 	}
 }
