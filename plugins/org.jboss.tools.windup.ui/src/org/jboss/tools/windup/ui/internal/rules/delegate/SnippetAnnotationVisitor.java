@@ -127,7 +127,7 @@ public class SnippetAnnotationVisitor extends ASTVisitor {
 		
 		@Override
 		public boolean visit(ConditionalExpression node) {
-			System.out.println("NormalAnnotationVisitor#visit(ConditionalExpression node) " + node.getExpression().toString());
+			//System.out.println("NormalAnnotationVisitor#visit(ConditionalExpression node) " + node.getExpression().toString());
 			emitter.emitSingleValue(node.getExpression().toString(), evaluationContext);
 			return true;
 		}

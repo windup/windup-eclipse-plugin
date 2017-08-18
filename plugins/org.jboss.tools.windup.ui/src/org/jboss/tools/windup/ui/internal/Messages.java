@@ -121,6 +121,7 @@ public class Messages extends NLS
     public static String rulesMenuNew;
     
     public static String ruleElementDetails;
+    public static String ruleElementMainTab;
 
     public static String tagsTab;
     public static String messageTab;

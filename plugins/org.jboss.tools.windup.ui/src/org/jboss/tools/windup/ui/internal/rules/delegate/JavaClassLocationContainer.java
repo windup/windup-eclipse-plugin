@@ -80,15 +80,19 @@ public class JavaClassLocationContainer {
 	}
 	
 	public void bind() {
-		loadLocations();
+		List<Element> locations = collectLocations();
+		loadLocations(locations);
+		if (!locations.isEmpty()) {
+			((Section)scroll.getParent()).setExpanded(true);
+		}
 		scroll.setMinHeight(locationListContainer.computeHeight());
 		int width = locationListContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
 		scroll.setMinWidth(width);
 		parentControl.getParent().getParent().getParent().layout(true, true);
 	}
 	
-	private void loadLocations() {
-		locationListContainer.createControls(parentControl, collectLocations());
+	private void loadLocations(List<Element> location) {
+		locationListContainer.createControls(parentControl, location);
 		locationListContainer.bind();
 	}
 	

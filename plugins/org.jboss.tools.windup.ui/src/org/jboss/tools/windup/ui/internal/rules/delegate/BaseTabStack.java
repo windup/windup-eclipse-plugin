@@ -19,13 +19,19 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.google.common.collect.Maps;
@@ -44,8 +50,19 @@ public class BaseTabStack {
 	
 	protected void createFolder(Composite parent) {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
-		this.folder = new CTabFolder(parent, SWT.BOTTOM);
+		ColorRegistry reg = JFaceResources.getColorRegistry();
+		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
+			  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
+		folder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.FLAT);
+		folder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
+		folder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
+		folder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		folder.setBorderVisible(true);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(folder);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		folder.setLayoutData(gd);
+		folder.setFont(parent.getFont());
 		//folder.setBackground(toolkit.getColors().getBackground());
 		//parent.setBackground(toolkit.getColors().getBackground());
 		//parent.getParent().setBackground(toolkit.getColors().getBackground());
@@ -62,7 +79,7 @@ public class BaseTabStack {
 	}
 	
 	protected <T> TabWrapper addTab(Class<T> clazz) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		CTabItem item = new CTabItem(folder, SWT.BORDER);
 		Composite parent = toolkit.createComposite(folder);
 		GridLayoutFactory.fillDefaults().applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);

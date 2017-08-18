@@ -138,7 +138,7 @@ public class RulesetEditorRulesSection {
 	
 	@PostConstruct
 	private void create(Composite parent) {
-		parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		//parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		
 		Composite container = toolkit.createComposite(parent);
 		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(container);

@@ -73,15 +73,19 @@ public class JavaClassAnnotationLiteralContainer {
 	}
 	
 	public void bind() {
-		loadLocations();
+		List<Element> literals = collectAnnotationLiteralElements();
+		loadLocations(literals);
+		if (!literals.isEmpty()) {
+			((Section)scroll.getParent()).setExpanded(true);
+		}
 		scroll.setMinHeight(locationListContainer.computeHeight());
 		int width = locationListContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
 		scroll.setMinWidth(width);
 		parentControl.getParent().getParent().getParent().layout(true, true);
 	}
 	
-	private void loadLocations() {
-		locationListContainer.createControls(parentControl, collectAnnotationLiteralElements());
+	private void loadLocations(List<Element> literals) {
+		locationListContainer.createControls(parentControl, literals);
 		locationListContainer.bind();
 	}
 	

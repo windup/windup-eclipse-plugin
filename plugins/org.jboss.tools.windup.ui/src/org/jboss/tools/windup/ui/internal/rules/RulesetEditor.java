@@ -29,6 +29,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -178,7 +179,7 @@ public class RulesetEditor {
 	}
 	
 	protected void createGettingStarted(Composite parent) {
-		parent.setBackground(toolkit.getColors().getBackground());
+		//parent.setBackground(toolkit.getColors().getBackground());
 		new Label(parent, SWT.NONE);
 	}
 	

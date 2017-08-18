@@ -42,6 +42,7 @@ import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
 import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
@@ -150,9 +151,11 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	protected <T> TabWrapper addTab(Class<T> clazz) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_MAIN_TAB));
 		Composite parent = toolkit.createComposite(folder);
-		GridLayoutFactory.fillDefaults().applyTo(parent);
+		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+		
 		item.setControl(parent);
 		IEclipseContext child = createTabContext(parent);
 		child.set(CTabItem.class, item);

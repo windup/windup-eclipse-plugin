@@ -103,6 +103,9 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_RULES_FORM = "icons/rules/rules_form.png"; //$NON-NLS-1$
     public static final String IMG_GARBAGE = "icons/delete.gif"; //$NON-NLS-1$
     
+    public static final String IMG_SETTINGS_TAB = "icons/rules/settings.png"; //$NON-NLS-1$
+    public static final String IMG_MAIN_TAB = "icons/rules/main_tab.png"; //$NON-NLS-1$
+    
     // The shared instance
     private static WindupUIPlugin plugin;
     
@@ -245,6 +248,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_ADD, createImageDescriptor(IMG_ADD));
 		reg.put(IMG_GARBAGE, createImageDescriptor(IMG_GARBAGE));
 		reg.put(IMG_NEW_ANNOTATION, createImageDescriptor(IMG_NEW_ANNOTATION));
+		reg.put(IMG_SETTINGS_TAB, createImageDescriptor(IMG_SETTINGS_TAB));
+		reg.put(IMG_MAIN_TAB, createImageDescriptor(IMG_MAIN_TAB));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

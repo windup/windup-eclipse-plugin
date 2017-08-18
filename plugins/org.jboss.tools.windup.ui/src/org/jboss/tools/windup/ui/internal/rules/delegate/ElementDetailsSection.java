@@ -76,7 +76,15 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		if (element != null) {
 			section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
 		}
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		//section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridLayout layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        layout.marginTop = 0;
+        layout.horizontalSpacing = 0;
+        layout.verticalSpacing = 0;
+        section.setLayout(layout);
+		
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Composite client = toolkit.createComposite(section);

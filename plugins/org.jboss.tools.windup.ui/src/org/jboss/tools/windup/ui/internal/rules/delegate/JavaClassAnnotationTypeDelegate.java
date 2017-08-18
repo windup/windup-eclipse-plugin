@@ -14,8 +14,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -51,7 +51,7 @@ public class JavaClassAnnotationTypeDelegate extends ElementUiDelegate {
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		@PostConstruct
-		public void createControls(Composite parent, CTabItem item) {
+		public void createControls(Composite parent, TabItem item) {
 			item.setText(Messages.ruleElementDetails);
 			Composite client = super.createSection(parent, 2);
 			Section section = (Section)client.getParent();

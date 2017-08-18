@@ -16,22 +16,23 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.Section;
@@ -39,6 +40,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
@@ -96,18 +98,19 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 	}
 	
-	private Composite containerControl;
-	private SashForm sash;
+	//private Composite containerControl;
+	//private SashForm sash;
 	
 	private DetailsTab detailsTab;
 	
 	private JavaEmbeddedEditor annotationEditor;
 	
-	@Override
+	/*@Override
 	public void update() {
 		detailsTab.update();
-	}
+	}*/
 	
+	/*
 	@Override
 	public Control getControl() {
 		if (containerControl == null) {
@@ -115,7 +118,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			createControls(containerControl);
 		}
 		return containerControl;
-	}
+	}*/
 	
 	private Composite createContainerControl(Composite parent) {
 		Composite container = toolkit.createComposite(parent);
@@ -128,7 +131,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		return container;
 	}
 	
-	private void createControls(Composite parent) {
+	/*private void createControls(Composite parent) {
 		
 		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.VERTICAL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
@@ -138,7 +141,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		Composite leftContainer = toolkit.createComposite(sash);
 		GridLayoutFactory.fillDefaults().applyTo(leftContainer);
-		//leftContainer.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 		FormData leftData = new FormData();
 		leftData.top = new FormAttachment(null);
 		leftData.left = new FormAttachment(0);
@@ -150,7 +152,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		Composite rightContainer = toolkit.createComposite(sash);
 		GridLayoutFactory.fillDefaults().applyTo(rightContainer);
-		//rightContainer.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
 		FormData rightData = new FormData();
 		rightData.top = new FormAttachment(null);
 		rightData.bottom = new FormAttachment(100);
@@ -163,7 +164,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		createJavaEditor(rightContainer);
 		
 		sash.setWeights(new int[]{SASH_LEFT_DEFAULT, SASH_RIGHT_DEFAULT});
-	}
+	}*/
 	
 	private void createJavaEditor(Composite parent) {
 		parent.setLayout(new FormLayout());
@@ -281,7 +282,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	}
 	
 	protected void createTabs() {
-		addTab(DetailsTab.class);
+		this.detailsTab = (DetailsTab)addTab(DetailsTab.class).getObject();
 	}
 
 	@Override
@@ -321,16 +322,26 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent/*, CTabItem item*/) {
-			//item.setText(Messages.ruleElementDetails);
+		public void createControls(Composite parent, CTabItem item) {
+			item.setText(Messages.ruleElementMainTab);
 			parent.setLayout(new FormLayout());
-			Composite client = super.createSection(parent, 3);
-			Section section = (Section)client.getParent();
-			section.setDescription(RuleMessages.javaclass_description);
+			//Composite client = super.createSection(parent, 3);
+			//Section section = (Section)client.getParent();
+			//section.setDescription(RuleMessages.javaclass_description);
+			
+			Composite client = toolkit.createComposite(parent);
+			//client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 3);
+			glayout.marginTop = 5;
+			glayout.marginRight = 5;
+			glayout.marginLeft = 5;
+			//glayout.marginBottom = 0;
+			client.setLayout(glayout);
+			
 			FormData data = new FormData();
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
+			client.setLayoutData(data);
 			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
@@ -355,11 +366,11 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 				    	}
 			    }
-			    createSections(parent, section);
+			    createSections(parent, client);
 			}
 		}
 		
-		private void createSections(Composite parent, Section top) {
+		private void createSections(Composite parent, Composite top) {
 			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
 			Section section = locationContainer.createControls(parent);
 			FormData data = new FormData();

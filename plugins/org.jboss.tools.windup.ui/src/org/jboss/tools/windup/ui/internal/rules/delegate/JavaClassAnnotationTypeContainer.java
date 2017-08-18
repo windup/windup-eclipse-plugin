@@ -73,15 +73,19 @@ public class JavaClassAnnotationTypeContainer {
 	}
 	
 	public void bind() {
-		loadLocations();
+		List<Element> elements = collectAnnotationTypeElements();
+		loadTypes(elements);
+		if (!elements.isEmpty()) {
+			((Section)scroll.getParent()).setExpanded(true);
+		}
 		scroll.setMinHeight(locationListContainer.computeHeight());
 		int width = locationListContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
 		scroll.setMinWidth(width);
 		parentControl.getParent().getParent().getParent().layout(true, true);
 	}
 	
-	private void loadLocations() {
-		locationListContainer.createControls(parentControl, collectAnnotationTypeElements());
+	private void loadTypes(List<Element> elements) {
+		locationListContainer.createControls(parentControl, elements);
 		locationListContainer.bind();
 	}
 	
