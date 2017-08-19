@@ -90,6 +90,11 @@ public class Messages extends NLS
     public static String documentationTitle;
     public static String examplesTitle;
     
+    public static String collapseAll;
+    public static String expandAll;
+    public static String deleteElement;
+    public static String newElement;
+    
     public static String ElementAttributeRow_AttrLabelReq;
     public static String ElementAttributeRow_AttrLabel;
     

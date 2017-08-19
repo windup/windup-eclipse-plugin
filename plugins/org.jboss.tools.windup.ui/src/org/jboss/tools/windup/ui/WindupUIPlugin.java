@@ -49,7 +49,15 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_ADD = "icons/add.gif"; //$NON-NLS-1$
     public static final String IMG_HELP = "icons/help.png"; //$NON-NLS-1$
     public static final String IMG_NEW_CONFIG = "icons/new_con.png"; //$NON-NLS-1$
+    
+    public static final String IMG_COLLAPSE_ALL = "icons/collapseall.png"; //$NON-NLS-1$
+    public static final String IMG_COLLAPSE_ALL_DISABLED = "icons/dlcl16/collapseall.png"; //$NON-NLS-1$
+    
+    public static final String IMG_EXPAND_ALL_DISABLED = "icons/dlcl16/expandall.png"; //$NON-NLS-1$
+    
     public static final String IMG_DELETE_CONFIG = "icons/delete_config.png"; //$NON-NLS-1$
+    public static final String IMG_DELETE_CONFIG_DISABLED = "icons/dlcl16/delete_config.png"; //$NON-NLS-1$
+    
     public static final String IMG_WINDUP = "icons/windup.png"; //$NON-NLS-1$
     public static final String IMG_JRE = "icons/module_view.png"; //$NON-NLS-1$
     public static final String IMG_SEARCH = "icons/search.png"; //$NON-NLS-1$
@@ -250,6 +258,9 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_NEW_ANNOTATION, createImageDescriptor(IMG_NEW_ANNOTATION));
 		reg.put(IMG_SETTINGS_TAB, createImageDescriptor(IMG_SETTINGS_TAB));
 		reg.put(IMG_MAIN_TAB, createImageDescriptor(IMG_MAIN_TAB));
+		reg.put(IMG_DELETE_CONFIG_DISABLED, createImageDescriptor(IMG_DELETE_CONFIG_DISABLED));
+		reg.put(IMG_COLLAPSE_ALL, createImageDescriptor(IMG_COLLAPSE_ALL));
+		reg.put(IMG_COLLAPSE_ALL_DISABLED, createImageDescriptor(IMG_COLLAPSE_ALL_DISABLED));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

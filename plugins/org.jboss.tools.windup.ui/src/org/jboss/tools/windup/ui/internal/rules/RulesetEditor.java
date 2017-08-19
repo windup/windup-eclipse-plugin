@@ -112,6 +112,7 @@ public class RulesetEditor {
 		menuService.populateContributionManager((ContributionManager)form.getToolBarManager(), TOOLBAR_ID);
 		
 		Composite comp = form.getBody();
+		comp.setBackground(parent.getBackground());
 		GridLayoutFactory.fillDefaults().applyTo(comp);
 
 		context.set(Form.class, form);

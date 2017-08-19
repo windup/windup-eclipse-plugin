@@ -12,7 +12,6 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_CREATED;
 import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED;
-import static org.jboss.tools.windup.ui.internal.Messages.rulesSectionTitle;
 
 import java.util.Iterator;
 import java.util.List;
@@ -45,18 +44,19 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -108,6 +108,8 @@ public class RulesetEditorRulesSection {
 	private Button upButton;
 	private Button downButton;
 	
+	private RulesetElementsView elementsView;
+	
 	public ISelectionProvider getSelectionProvider() {
 		return treeViewer;
 	}
@@ -137,6 +139,46 @@ public class RulesetEditorRulesSection {
 	}
 	
 	@PostConstruct
+	private void createRulesetElementArea(Composite parent) {
+        Composite comp = new Composite(parent, SWT.FLAT);
+        GridLayout gridLayout = new GridLayout(1, false);
+        gridLayout.marginHeight = 0;
+        gridLayout.marginWidth = 0;
+        comp.setLayout(gridLayout);
+        comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
+        ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+        ToolBar toolBar = toolBarManager.createControl(viewForm);
+        toolBar.setBackground(parent.getBackground());
+        viewForm.setTopLeft(toolBar);
+        viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
+        gridLayout = new GridLayout();
+        gridLayout.marginHeight = 5;
+        gridLayout.marginWidth = 5;
+        viewFormContents.setLayout(gridLayout);
+        viewFormContents.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        elementsView = new RulesetElementsView();
+        elementsView.createControls(viewFormContents, toolBarManager);
+		Text filterText = elementsView.getFilteringTextControl();
+		if (filterText != null){
+			filterText.setFocus();
+		}
+
+		this.treeViewer = (TreeViewer)elementsView.getViewer();
+		treeViewer.setContentProvider(provider);
+		treeViewer.setLabelProvider(provider);
+		createViewerContextMenu();
+
+		Control control = treeViewer.getControl();
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);
+        viewForm.setContent(viewFormContents);
+	}
+	
+	//@PostConstruct
 	private void create(Composite parent) {
 		//parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		
@@ -144,23 +186,25 @@ public class RulesetEditorRulesSection {
 		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		
-		Section section = toolkit.createSection(container, Section.TITLE_BAR);
-		section.setText(rulesSectionTitle);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+//		Section section = toolkit.createSection(container, Section.TITLE_BAR);
+//		section.setText(rulesSectionTitle);
+//		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+
+		createToolbar(container);
 		
-		Composite client = toolkit.createComposite(section);
+		Composite client = toolkit.createComposite(/*section*/container);
 		toolkit.paintBordersFor(client);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(client);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
-		section.setClient(client);
+		//section.setClient(client);
 		
-		createControls(client, section);
+		createControls(client);
 		
 		focus();
 	}
 	
-	private void createControls(Composite parent, Section section) {
-		createToolbar(section);
+	private void createControls(Composite parent/*, Section section*/) {
+		//createToolbar(section);
 		this.treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		treeViewer.addSelectionChangedListener((e) -> {
 			Element selectedElement = (Element)((StructuredSelection)e.getSelection()).getFirstElement();
@@ -285,10 +329,10 @@ public class RulesetEditorRulesSection {
 		return button;
 	}
 	
-	private void createToolbar(Section section) {
+	private void createToolbar(Composite parent) {
 		this.toolBarManager = new ToolBarManager(SWT.FLAT);
-		ToolBar toolBar = this.toolBarManager.createControl(section);
-		section.setTextClient(toolBar);
+		ToolBar toolBar = this.toolBarManager.createControl(parent);
+//		section.setTextClient(toolBar);
 		menuService.populateContributionManager((ContributionManager)toolBarManager, TOOLBAR_ID);
 	}
 	
