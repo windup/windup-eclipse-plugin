@@ -135,7 +135,7 @@ public class RulesetSelectionCreationService {
 		String location = "";
 		
 		EvaluationContext evaluationContext = new EvaluationContext(null);
-		if (parent instanceof TypeDeclaration) {
+		if (parent instanceof TypeDeclaration || parent instanceof MethodDeclaration) {
 			javaClassElement = domService.createJavaClassElement(rulesetElement.getOwnerDocument());
 		}
 		else if (parent instanceof FieldDeclaration) {
@@ -165,17 +165,6 @@ public class RulesetSelectionCreationService {
 			else {
 				return null;
 			}
-		}
-		else if (parent instanceof MethodDeclaration) {
-			// location METHOD
-			location = TypeReferenceLocation.METHOD.toString();
-			String annotationName = annotation.getTypeName().getFullyQualifiedName();
-			ITypeBinding typeBinding= annotation.resolveTypeBinding();
-			if (typeBinding != null) {
-				annotationName = typeBinding.getQualifiedName();
-			}
-			javaClassElement = domService.createJavaClassReferencesImportElement(annotationName, rulesetElement);
-			evaluationContext.setElement(javaClassElement);
 		}
 		else if (parent instanceof SingleVariableDeclaration && parent.getParent() instanceof MethodDeclaration) {
 			location = TypeReferenceLocation.METHOD_PARAMETER.toString();

@@ -27,9 +27,6 @@ public class RulesetElementsTree extends FilteredTree {
 		this.filter = filter;
 	}
 
-	/**
-	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
-	 */
 	@Override
 	protected TreeViewer doCreateTreeViewer(Composite cparent, int style) {
 		treeViewer = new TreeViewer(cparent, style);
