@@ -161,6 +161,7 @@ public class RulesetEditorRulesSection {
         viewFormContents.setLayout(gridLayout);
         viewFormContents.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         elementsView = new RulesetElementsView();
+        elementsView.setDomService(domService);
         elementsView.createControls(viewFormContents, toolBarManager);
 		Text filterText = elementsView.getFilteringTextControl();
 		if (filterText != null){

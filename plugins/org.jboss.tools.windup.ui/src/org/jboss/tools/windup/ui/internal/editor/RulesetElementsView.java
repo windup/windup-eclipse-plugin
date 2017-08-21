@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.PageBook;
+import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 
 public class RulesetElementsView extends AbstractElementView {
 	
@@ -29,6 +30,12 @@ public class RulesetElementsView extends AbstractElementView {
 	private DeleteRulesetElementAction deleteElementAction;
 	private RulesetElementsExpandAllAction expandAllAction;
 	private RulesetElementsCollapseAllAction collapseAllAction;
+	
+	private RulesetDOMService domService;
+	
+	public void setDomService(RulesetDOMService domService) {
+		this.domService = domService;
+	}
 	
 	@Override
 	protected Viewer createViewer(Composite parent) {
@@ -50,7 +57,7 @@ public class RulesetElementsView extends AbstractElementView {
 	}
 	
 	protected void createActions(ToolBarManager manager) {
-		manager.add(new NewRulesetElementAction(getViewer()));
+		manager.add(new NewRulesetElementAction(getViewer(), domService));
 		manager.add(deleteElementAction = new DeleteRulesetElementAction(getViewer()));
 		manager.add(new Separator());
 		manager.add(expandAllAction = new RulesetElementsExpandAllAction(getViewer()));
