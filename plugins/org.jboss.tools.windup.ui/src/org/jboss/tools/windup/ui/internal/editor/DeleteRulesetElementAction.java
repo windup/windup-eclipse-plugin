@@ -21,9 +21,11 @@ import org.jboss.tools.windup.ui.internal.Messages;
 public class DeleteRulesetElementAction extends BaseSelectionListenerAction {
 
 	private Viewer viewer;
+	private RulesetEditorRulesSection section;
 	
-	public DeleteRulesetElementAction(Viewer viewer) {
+	public DeleteRulesetElementAction(RulesetEditorRulesSection section, Viewer viewer) {
 		super(Messages.deleteElement);
+		this.section = section;
 		this.viewer = viewer;
 		viewer.addSelectionChangedListener(this);
 	}
@@ -44,8 +46,9 @@ public class DeleteRulesetElementAction extends BaseSelectionListenerAction {
 		return selection.size() == 1;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void performAction() {
-		
+		section.removeNodes(((IStructuredSelection)viewer.getSelection()).toList());
 	}
 	
 	@Override

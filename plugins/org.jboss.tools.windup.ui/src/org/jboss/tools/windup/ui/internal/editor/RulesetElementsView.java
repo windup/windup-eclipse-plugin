@@ -31,9 +31,11 @@ public class RulesetElementsView extends AbstractElementView {
 	private RulesetElementsExpandAllAction expandAllAction;
 	private RulesetElementsCollapseAllAction collapseAllAction;
 	
+	private RulesetEditorRulesSection section;
 	private RulesetDOMService domService;
 	
-	public void setDomService(RulesetDOMService domService) {
+	public void init(RulesetEditorRulesSection section, RulesetDOMService domService) {
+		this.section = section;
 		this.domService = domService;
 	}
 	
@@ -58,7 +60,7 @@ public class RulesetElementsView extends AbstractElementView {
 	
 	protected void createActions(ToolBarManager manager) {
 		manager.add(new NewRulesetElementAction(getViewer(), domService));
-		manager.add(deleteElementAction = new DeleteRulesetElementAction(getViewer()));
+		manager.add(deleteElementAction = new DeleteRulesetElementAction(section, getViewer()));
 		manager.add(new Separator());
 		manager.add(expandAllAction = new RulesetElementsExpandAllAction(getViewer()));
 		manager.add(collapseAllAction = new RulesetElementsCollapseAllAction(getViewer()));

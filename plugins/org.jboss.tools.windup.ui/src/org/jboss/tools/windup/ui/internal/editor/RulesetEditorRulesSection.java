@@ -161,7 +161,7 @@ public class RulesetEditorRulesSection {
         viewFormContents.setLayout(gridLayout);
         viewFormContents.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         elementsView = new RulesetElementsView();
-        elementsView.setDomService(domService);
+        elementsView.init(this, domService);
         elementsView.createControls(viewFormContents, toolBarManager);
 		Text filterText = elementsView.getFilteringTextControl();
 		if (filterText != null){
@@ -241,7 +241,7 @@ public class RulesetEditorRulesSection {
 				Document document = (Document)treeViewer.getInput();
 				Element rulesetElement = domService.findOrCreateRulesetElement(document);
 				Element rulesElement = domService.findOrCreateRulesElement(rulesetElement);
-				createRule(rulesElement);
+				//createRule(rulesElement);
 			}
 		});
 		this.removeButton = createButton(container, Messages.RulesetEditor_remove);
@@ -289,25 +289,6 @@ public class RulesetEditorRulesSection {
 				}
 			}
 		});
-	}
-	
-	private void createRule(Element rulesElement) {
-		IStructuredModel model = ((IDOMDocument)treeViewer.getInput()).getModel();
-		ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
-		CMElementDeclaration ed = modelQuery.getCMElementDeclaration(rulesElement);
-		if (ed != null) {
-			CMElementDeclaration cmNode = (CMElementDeclaration)modelQuery.getAvailableContent(rulesElement, ed, ModelQuery.VALIDITY_STRICT).get(1);
-			AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-					model, rulesElement, cmNode, rulesElement.getChildNodes().getLength(), treeViewer);
-			action.run();
-			List<Node> result = action.getResult();
-			if (!result.isEmpty()) {
-				Element ruleElement = (Element)result.get(0);
-				domService.generateNextRuleId(ruleElement);
-				treeViewer.expandToLevel(ruleElement, TreeViewer.ALL_LEVELS);
-				treeViewer.setSelection(new StructuredSelection(ruleElement), true);
-			}
-		}
 	}
 	
 	private void createPlaceholder(Composite parent) {
@@ -412,7 +393,7 @@ public class RulesetEditorRulesSection {
 		this.treeViewer.getControl().update();
 	}
 	
-	private void removeNodes(List<Element> elements) {
+	public void removeNodes(List<Element> elements) {
 		if (elements.isEmpty()) {
 			return;
 		}
