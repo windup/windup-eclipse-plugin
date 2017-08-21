@@ -37,6 +37,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -59,16 +60,12 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.modelquery.ModelQueryUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -169,8 +166,11 @@ public class RulesetEditorRulesSection {
 		}
 
 		this.treeViewer = (TreeViewer)elementsView.getViewer();
+		
+		DelegatingStyledCellLabelProvider styleProvider = new DelegatingStyledCellLabelProvider(provider);
+		provider.setFilterText(elementsView.getFilteringTextControl());
 		treeViewer.setContentProvider(provider);
-		treeViewer.setLabelProvider(provider);
+		treeViewer.setLabelProvider(styleProvider);
 		createViewerContextMenu();
 
 		Control control = treeViewer.getControl();

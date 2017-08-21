@@ -26,12 +26,22 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelP
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.osgi.util.TextProcessor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.TextStyle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.misc.StringMatcher.Position;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,8 +49,11 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("restriction")
 @Creatable
-public class RulesSectionContentProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
+public class RulesSectionContentProvider extends StyledCellLabelProvider implements ITreeContentProvider, ILabelProvider, IStyledLabelProvider {
+	
+	private static Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 	
 	private static final Image RULE;
 	private static final Image XML_NODE;
@@ -56,6 +69,12 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 	}
 	
 	private RulesetElementUiDelegateRegistry elementUiRegistry = new RulesetElementUiDelegateRegistry(new RulesetElementUiDelegateFactory()); 
+	
+	private Text filterText;
+	
+	public void setFilterText(Text filterText) {
+		this.filterText = filterText;
+	}
 	
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -155,10 +174,24 @@ public class RulesSectionContentProvider implements ITreeContentProvider, ILabel
 
 	@Override
 	public StyledString getStyledText(Object element) {
+		String text = filterText.getText();
 		StyledString style = new StyledString(getText(element));
+		if (element instanceof Element && !text.isEmpty()) {
+			StringMatcher matcher = IssueExplorer.getFilterMatcher(text);
+			String label = style.getString();
+			Position position = matcher.find(label, 0, label.length());
+			if (position != null && (position.getEnd() - position.getStart()) > 0) {
+				style.setStyle(position.getStart(), position.getEnd() - position.getStart(), new Styler() {
+					@Override
+					public void applyStyles(TextStyle textStyle) {
+						textStyle.background = YELLOW;
+					}
+				});
+			}
+		}
 		return style;
 	}
-
+	
 	@Override
 	public void addListener(ILabelProviderListener listener) {}
 	

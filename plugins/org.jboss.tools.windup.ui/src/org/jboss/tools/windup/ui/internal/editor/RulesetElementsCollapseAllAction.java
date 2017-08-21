@@ -15,6 +15,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMe
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -41,6 +42,7 @@ public class RulesetElementsCollapseAllAction extends Action {
 	}
 	
 	private void performAction() {
+		((TreeViewer)viewer).collapseAll();
 	}
 	
 	@Override

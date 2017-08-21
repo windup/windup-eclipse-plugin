@@ -12,16 +12,21 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.PageBook;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
+import org.w3c.dom.Element;
 
 public class RulesetElementsView extends AbstractElementView {
 	
@@ -41,10 +46,51 @@ public class RulesetElementsView extends AbstractElementView {
 	
 	@Override
 	protected Viewer createViewer(Composite parent) {
-		elementsTree = new RulesetElementsTree(parent, new PatternFilter());
+		elementsTree = new RulesetElementsTree(parent, createPatterFilter());
 		elementsTree.createViewControl();
 		addActionEnablementListeners();
+		getFilteringTextControl().addModifyListener(onSearch());
 		return elementsTree.getViewer();
+	}
+	
+	private ModifyListener onSearch() {
+		return e -> {
+			((TreeViewer)getViewer()).refresh();
+			((TreeViewer)getViewer()).expandAll();
+		};
+	}
+	
+	private PatternFilter createPatterFilter() {
+		return new PatternFilter() {
+			@Override
+			protected boolean isLeafMatch(Viewer viewer, Object element){
+		        String labelText = ((ILabelProvider)((DelegatingStyledCellLabelProvider) ((StructuredViewer) viewer)
+		                .getLabelProvider()).getStyledStringProvider()).getText(element);
+
+		        if(labelText == null) {
+					return false;
+				}
+		        return wordMatches(labelText);
+		    }
+			@Override
+			public boolean isElementVisible(Viewer viewer, Object element) {
+				boolean visible = super.isElementVisible(viewer, element);
+				if (!visible && element instanceof Element) {
+					visible = isVisible(viewer, (Element)element);
+				}
+				return visible;
+			}
+			
+			private boolean isVisible(Viewer viewer, Element element) {
+				if (isLeafMatch(viewer, element)) {
+					return true;
+				}
+				if (element.getParentNode() != null && element.getParentNode() instanceof Element) {
+					return isVisible(viewer, (Element)element.getParentNode());
+				}
+				return false;
+			}
+		};
 	}
 	
 	private void addActionEnablementListeners() {
