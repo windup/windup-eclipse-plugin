@@ -114,20 +114,35 @@ public class HintMessageTab extends ElementAttributesContainer {
 	private IHandlerService handlerService;
 	private IHandlerActivation contentAssistHandlerActivation;
 	
+	private Section sourceEditorSection;
+	private Section browserSection;
+	
 	@PostConstruct
 	public void createControls(Composite parent, CTabItem item) {
-		item.setText(Messages.messageTab);
+		//item.setText(Messages.messageTab);
+		item.setText(Messages.ruleElementMainTab);
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
-		parent = createMessageSection(parent);
+//		parent = createMessageSection(parent);
+//		createSash(parent);
+//		createSourceViewer(sash);
+//		parent = createPreviewSection(sash);
+//		createBrowser(parent);
+			
 		createSash(parent);
-		createSourceViewer(sash);
-		parent = createPreviewSection(sash);
-		createBrowser(parent);
+		
+		Composite messageClient = createMessageSection(sash);
+		this.sourceEditorSection = (Section)messageClient.getParent();
+		
+		createSourceViewer(messageClient);
+		Composite previewClient = createPreviewSection(sash);
+		this.browserSection = (Section)previewClient.getParent();
+		createBrowser(previewClient);
+		
 		updatePreview();
 	}
 	
 	private Composite createMessageSection(Composite parent) {
-		Section section = createSection(parent, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.NO_TITLE_FOCUS_BOX);
+		Section section = createSection(parent, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		section.setDescription(NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
 		return (Composite)section.getClient();
@@ -143,7 +158,7 @@ public class HintMessageTab extends ElementAttributesContainer {
     }
 	
 	private Composite createPreviewSection(Composite parent) {
-		Section section = createSection(parent, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.NO_TITLE_FOCUS_BOX);
+		Section section = createSection(parent, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		section.setDescription(NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME));
 		return (Composite)section.getClient();
@@ -162,9 +177,21 @@ public class HintMessageTab extends ElementAttributesContainer {
 	private void createSash(Composite parent) {
 		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.HORIZONTAL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
-		sash.setOrientation(SWT.VERTICAL);
+		sash.setOrientation(SWT.HORIZONTAL);
 		sash.setFont(parent.getFont());
 		sash.setVisible(true);
+	}
+	
+	public SashForm getSashForm() {
+		return sash;
+	}
+	
+	public Section getSourceEditorSection() {
+		return sourceEditorSection;
+	}
+	
+	public Section getBrowserSection() {
+		return browserSection;
 	}
 	
 	private void createBrowser(Composite parent) {
@@ -305,7 +332,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.WRAP;
 		IOverviewRuler overviewRuler = new OverviewRuler(new DefaultMarkerAnnotationAccess(), VERTICAL_RULER_WIDTH, colors);
 		
-		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true,	styles);
+		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true, styles);
 		
 		GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 500).applyTo(sourceViewer.getControl());
 		try {
