@@ -12,6 +12,7 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -38,7 +39,7 @@ public class RulesetElementsExpandAllAction extends Action {
 	}
 	
 	private void performAction() {
-		
+		((TreeViewer)viewer).expandAll();
 	}
 	
 	@Override
