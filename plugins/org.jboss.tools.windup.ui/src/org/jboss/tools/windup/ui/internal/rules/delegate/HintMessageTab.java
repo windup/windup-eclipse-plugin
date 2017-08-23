@@ -60,12 +60,11 @@ import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -106,7 +105,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 	
 	private Browser browser;
 	private IDocument document;
-	private SashForm sash;
+	//private SashForm sash;
 	
 	private SourceViewer sourceViewer;
 	private MarkdownLanguage language = new MarkdownLanguage();
@@ -114,35 +113,40 @@ public class HintMessageTab extends ElementAttributesContainer {
 	private IHandlerService handlerService;
 	private IHandlerActivation contentAssistHandlerActivation;
 	
-	private Section sourceEditorSection;
-	private Section browserSection;
+	private Composite sourceContainer;
+	private Composite previewContainer;
 	
 	@PostConstruct
-	public void createControls(Composite parent, CTabItem item) {
-		//item.setText(Messages.messageTab);
-		item.setText(Messages.ruleElementMainTab);
+	public void createControls(Composite parent) {
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
-//		parent = createMessageSection(parent);
-//		createSash(parent);
-//		createSourceViewer(sash);
-//		parent = createPreviewSection(sash);
-//		createBrowser(parent);
-			
-		createSash(parent);
 		
-		Composite messageClient = createMessageSection(sash);
-		
-		this.sourceEditorSection = (Section)messageClient.getParent();
+		Composite messageClient = createMessageSection(parent);
+		this.sourceContainer = messageClient.getParent().getParent();
 		createSourceViewer(messageClient);
-		Composite previewClient = createPreviewSection(sash);
-		this.browserSection = (Section)previewClient.getParent();
+		
+		Composite previewClient = createPreviewSection(parent);
+		this.previewContainer = previewClient.getParent().getParent();
 		createBrowser(previewClient);
 		
 		updatePreview();
 	}
 	
+	public void initExpansion() {
+		if (!getElementMessage().trim().isEmpty()) {
+			Section section = (Section)sourceContainer.getChildren()[0];
+			section.setExpanded(true);
+			section = (Section)previewContainer.getChildren()[0];
+			section.setExpanded(true);
+		}
+	}
+	
 	private Composite createMessageSection(Composite parent) {
-		Section section = createSection(parent, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+		Composite container = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		container.setLayout(layout);
+		
+		Section section = createSection(container, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		section.setDescription(NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
 		return (Composite)section.getClient();
@@ -158,7 +162,12 @@ public class HintMessageTab extends ElementAttributesContainer {
     }
 	
 	private Composite createPreviewSection(Composite parent) {
-		Section section = createSection(parent, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR);
+		Composite container = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		container.setLayout(layout);
+		
+		Section section = createSection(container, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		section.setDescription(NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME));
 		return (Composite)section.getClient();
@@ -174,29 +183,17 @@ public class HintMessageTab extends ElementAttributesContainer {
 		updatePreview();
 	}
 	
-	private void createSash(Composite parent) {
-		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.VERTICAL);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
-		sash.setOrientation(SWT.VERTICAL);
-		sash.setFont(parent.getFont());
-		sash.setVisible(true);
+	public Composite getSourceEditorContainer() {
+		return sourceContainer;
 	}
 	
-	public SashForm getSashForm() {
-		return sash;
-	}
-	
-	public Section getSourceEditorSection() {
-		return sourceEditorSection;
-	}
-	
-	public Section getBrowserSection() {
-		return browserSection;
+	public Composite getBrowserContainer() {
+		return previewContainer;
 	}
 	
 	private void createBrowser(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(browser);
 		browser.addLocationListener(new LocationListener() {
 			public void changed(LocationEvent event) {
 				event.doit = false;
@@ -334,7 +331,8 @@ public class HintMessageTab extends ElementAttributesContainer {
 		
 		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true, styles);
 		
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceViewer.getControl());
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(sourceViewer.getControl());
+		
 		try {
 			MarkupDocumentProvider documentProvider = new MarkupDocumentProvider();
 			documentProvider.connect(editorInput);

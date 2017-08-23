@@ -19,6 +19,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -46,6 +47,8 @@ import org.w3c.dom.Element;
 @SuppressWarnings({"restriction"})
 public abstract class ElementDetailsSection implements IElementDetailsContainer {
 	
+	public static final int DEFAULT_SCROLL_SECTION_MAX_HEGHT = 200;
+	
 	@Inject protected Element element;
 	@Inject protected IStructuredModel model;
 	@Inject protected ModelQuery modelQuery;
@@ -69,7 +72,11 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	}
 	
 	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+		return createSection(parent, columns, toolkit, element, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+	}
+	
+	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element, int style) {
+		Section section = toolkit.createSection(parent, style);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
 		
@@ -93,7 +100,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		glayout.marginTop = 0;
 		glayout.marginRight = 0;
 		glayout.marginLeft = 0;
-		//glayout.marginBottom = 0;
+		glayout.marginHeight = 0;
 		client.setLayout(glayout);
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -104,7 +111,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		return client;
 	}
 	
-	public static Pair<Section, Composite> createScrolledSection(FormToolkit toolkit, Composite parent, String text, String description, int style) {
+	public static Pair<Section, Composite> createScrolledSection(FormToolkit toolkit, Composite parent, String text, String description, int style, int maxHeight) {
 		Section section = toolkit.createSection(parent, style);
 		section.setText(text);
 		section.setDescription(description);
@@ -113,7 +120,15 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		
-		ScrolledComposite scroll = new ScrolledComposite(section, SWT.H_SCROLL|SWT.V_SCROLL);
+		ScrolledComposite scroll = new ScrolledComposite(section, SWT.H_SCROLL|SWT.V_SCROLL) {
+			public Point computeSize(int wHint, int hHint, boolean changed) {
+				Point size = super.computeSize(wHint, hHint, changed);
+				if (size.y > maxHeight) {
+					size.y = maxHeight;
+				}
+				return size;
+			};
+		};
 		scroll.setExpandHorizontal(true);
 		scroll.setExpandVertical(true);
 		section.setClient(scroll);
@@ -125,7 +140,6 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		
 		toolkit.paintBordersFor(client);
 		
-		//section.setExpanded(true);
 		return Tuples.create(section, client);
 	}
 	

@@ -15,25 +15,18 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.xtext.util.Pair;
-import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
@@ -47,70 +40,29 @@ import com.google.common.collect.Lists;
 @SuppressWarnings({"restriction"})
 public class HintLinksTab extends ElementAttributesContainer {
 	
-	private static final int MIN_WIDTH = 350;
 	private ListContainer listContainer;
 	private Composite parentControl;
 	private ScrolledComposite scroll;
 		
 	@PostConstruct
-	public void createControls(Composite parent, CTabItem item) {
+	public void createControls(Composite parent/*, CTabItem item*/) {
 		//item.setText(RuleMessages.link_title);
-		Pair<Section, Composite> result = doCreateScrolledSection(toolkit, parent, RuleMessages.link_title, RuleMessages.link_description,
-				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE);
+		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent, RuleMessages.link_title, RuleMessages.link_description,
+				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE, ElementDetailsSection.DEFAULT_SCROLL_SECTION_MAX_HEGHT);
 		Section section = result.getFirst();
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
-		scroll.setMinWidth(MIN_WIDTH);
-		//scroll.setMinHeight(350);
 		this.parentControl = client;
 		this.listContainer =  new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
 		listContainer.createControls(client, collectLinks());
-		scroll.setSize(SWT.DEFAULT, 350);
-		//GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 200).applyTo(client);
 		ConfigurationBlock.addToolbarListener(client);
 		createSectionToolbar(section);
 	}
 	
-	public Pair<Section, Composite> doCreateScrolledSection(FormToolkit toolkit, Composite parent, String text, String description, int style) {
-		Section section = toolkit.createSection(parent, style);
-		section.setText(text);
-		section.setDescription(description);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
-		
-		ScrolledComposite scroll = new ScrolledComposite(section, SWT.H_SCROLL|SWT.V_SCROLL) {
-			@Override
-			public Rectangle getBounds() {
-				Rectangle bounds = super.getBounds();
-				//bounds.height = 300;
-				return bounds;
-			}
-		};
-		scroll.setExpandHorizontal(true);
-		scroll.setExpandVertical(true);
-		section.setClient(scroll);
-		
-		Composite client = new Composite(scroll, toolkit.getOrientation()) {
-			@Override
-			public Rectangle getBounds() {
-				Rectangle bounds = super.getBounds();
-				bounds.height = listContainer.computeHeight();
-				return bounds;
-			}
-		};
-		toolkit.adapt(client);
-		client.setLayout(new FormLayout());
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
-		scroll.setContent(client);
-		
-		toolkit.paintBordersFor(client);
-		
-		//section.setExpanded(true);
-		return Tuples.create(section, client);
+	public Section getSection() {
+		return (Section)scroll.getParent();
 	}
-
+	
 	private void createSectionToolbar(Section section) {
 		ToolBar toolbar = new ToolBar(section, SWT.FLAT|SWT.HORIZONTAL);
 		ToolItem addItem = new ToolItem(toolbar, SWT.PUSH);
@@ -153,9 +105,7 @@ public class HintLinksTab extends ElementAttributesContainer {
 	protected void bind() {
 		super.bind();
 		loadLinks();
-		//scroll.setMinHeight(listContainer.computeHeight());
-		int width = listContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
-		//scroll.setMinWidth(width);
+		scroll.setMinHeight(listContainer.computeHeight());
 		parentControl.getParent().getParent().getParent().getParent().layout(true, true);
 		StringBuffer buff = new StringBuffer();
 		buff.append(RuleMessages.link_title);
