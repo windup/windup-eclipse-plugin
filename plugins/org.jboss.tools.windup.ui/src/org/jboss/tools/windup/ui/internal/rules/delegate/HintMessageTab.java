@@ -131,8 +131,8 @@ public class HintMessageTab extends ElementAttributesContainer {
 		createSash(parent);
 		
 		Composite messageClient = createMessageSection(sash);
-		this.sourceEditorSection = (Section)messageClient.getParent();
 		
+		this.sourceEditorSection = (Section)messageClient.getParent();
 		createSourceViewer(messageClient);
 		Composite previewClient = createPreviewSection(sash);
 		this.browserSection = (Section)previewClient.getParent();
@@ -175,9 +175,9 @@ public class HintMessageTab extends ElementAttributesContainer {
 	}
 	
 	private void createSash(Composite parent) {
-		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.HORIZONTAL);
+		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.VERTICAL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
-		sash.setOrientation(SWT.HORIZONTAL);
+		sash.setOrientation(SWT.VERTICAL);
 		sash.setFont(parent.getFont());
 		sash.setVisible(true);
 	}
@@ -334,7 +334,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		
 		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true, styles);
 		
-		GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 500).applyTo(sourceViewer.getControl());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceViewer.getControl());
 		try {
 			MarkupDocumentProvider documentProvider = new MarkupDocumentProvider();
 			documentProvider.connect(editorInput);

@@ -110,8 +110,6 @@ public class HintDelegate extends ElementUiDelegate {
 	@Override
 	protected void createTabs() {
 		addTab(DetailsTab.class);
-		addTab(HintLinksTab.class);
-		addTab(HintMessageTab.class);
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
@@ -119,8 +117,11 @@ public class HintDelegate extends ElementUiDelegate {
 		private static final String TAG_VALUE_COLUMN = "tagValueColumn";
 		
 		private HintMessageTab messageTab;
+		private HintLinksTab linksTab;
 		
 		private CheckboxTreeViewer tagsTreeViewer;
+		
+		private Section tagsSection;
 		
 		private ChoiceAttributeRow createEffortRow(CMNode cmNode) {
 			return new ChoiceAttributeRow(element, cmNode, true) {
@@ -215,28 +216,70 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private void createSections(Composite parent, Composite detailsClient) {
 			
-			Section tagsSection = createTagsSection(parent);
+			Composite container = toolkit.createComposite(parent);
+			GridLayout layout = new GridLayout();
+			layout.marginBottom = 5;
+			layout.marginTop = 0;
+			container.setLayout(layout);
 			
 			FormData data = new FormData();
-			data.top = new FormAttachment(detailsClient); //messageTab.getSashForm());
+			data.top = new FormAttachment(detailsClient);
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
-			tagsSection.setLayoutData(data);
+			container.setLayoutData(data);
 			
-			this.messageTab = createMessageArea(parent);
+			createTagsSection(container);
+					
+			data = new FormData();
+			data.top = new FormAttachment(container);
+			data.left = new FormAttachment(0);
+			data.right = new FormAttachment(100);
+						
+			container = toolkit.createComposite(parent);
+			layout = new GridLayout();
+			layout.marginBottom = 5;
+			container.setLayout(layout);
+			container.setLayoutData(data);
+			
+			linksTab = createLinksSection(container);
 			
 			data = new FormData();
-			data.top = new FormAttachment(tagsSection/*detailsClient*/);
+			data.top = new FormAttachment(container);
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
-			messageTab.getSashForm().setLayoutData(data);
+			data.bottom = new FormAttachment(100);
+						
+			container = toolkit.createComposite(parent);
+			layout = new GridLayout();
+			layout.marginBottom = 5;
+			container.setLayout(layout);
+			container.setLayoutData(data);
 			
+			this.messageTab = createMessageArea(container);
+			
+			if (tagsTreeViewer.getTree().getItemCount() > 0) {
+				tagsSection.setExpanded(true);
+			}
+			
+			linksTab.initExpansion();
+		}
+		
+		private HintLinksTab createLinksSection(Composite parent) {
+			IEclipseContext child = context.createChild();
+			child.set(Composite.class, parent);
+			return ContextInjectionFactory.make(HintLinksTab.class, child);
 		}
 		
 		private Section createTagsSection(Composite parent) {
 			Section section = createSection(parent, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
 			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
-			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK|SWT.SINGLE));
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+			
+			this.tagsSection = section;
+			
+			Composite client = (Composite)section.getClient();
+			
+			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree(client, SWT.CHECK|SWT.SINGLE));
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
 			tagsTreeViewer.setLabelProvider(new LabelProvider() {
 				@Override
@@ -251,8 +294,8 @@ public class HintDelegate extends ElementUiDelegate {
 			tagsTreeViewer.setAutoExpandLevel(0);
 			
 			Tree tree = tagsTreeViewer.getTree();
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
-			//GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
+			GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).applyTo(tree);
+		
 			
 			tagsTreeViewer.setCellEditors(new CellEditor[] {new TextCellEditor(tagsTreeViewer.getTree())});
 
@@ -281,7 +324,6 @@ public class HintDelegate extends ElementUiDelegate {
 				}
 			});
 			loadTags();
-			//section.setExpanded(true);
 			createSectionToolbar(section);
 			return section;
 		}
@@ -388,22 +430,24 @@ public class HintDelegate extends ElementUiDelegate {
 			for (Node localTag : localTags) {
 				tagsTreeViewer.setChecked(localTag, true);
 			}
+			
+			StringBuffer buff = new StringBuffer();
+			buff.append(Messages.RulesetEditor_tagsSection);
+			buff.append(" ("+tags.size()+")");
+			tagsSection.setText(buff.toString());
 		}
 		
 		private HintMessageTab createMessageArea(Composite parent) {
-			//parent = toolkit.createComposite(parent);
-			//GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(parent);	
 			IEclipseContext child = context.createChild();
-			//child.set(Composite.class, parent);
+			child.set(Composite.class, parent);
 			return ContextInjectionFactory.make(HintMessageTab.class, child);
 		}
 		
 		@Override
 		public void update() {
 			super.update();
-			if (messageTab != null) {
-				messageTab.update();
-			}
+			messageTab.update();
+			linksTab.update();
 		}
 	}
 	

@@ -10,9 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeViewer;
