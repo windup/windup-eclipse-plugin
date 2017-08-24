@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -43,7 +44,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -77,20 +77,29 @@ import com.google.common.collect.Sets;
 @SuppressWarnings("restriction")
 public class HintDelegate extends ElementUiDelegate {
 	
-	private Composite topContainer;
+	private ScrolledComposite topContainer;
 	private DetailsTab detailsTab;
+	private Composite client;
 	
 	@Override
 	public void update() {
 		detailsTab.update();
+		topContainer.setMinSize(client.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		topContainer.layout(true, true);
 	}
 	
 	@Override
 	public Control getControl() {
 		if (topContainer == null) {
-			topContainer = toolkit.createComposite(parent);
-			GridLayoutFactory.fillDefaults().applyTo(topContainer);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(topContainer);
+			topContainer = new ScrolledComposite(parent, SWT.H_SCROLL|SWT.V_SCROLL);
+			topContainer.setExpandHorizontal(true);
+			topContainer.setExpandVertical(true);
+			
+			client = toolkit.createComposite(topContainer);
+			GridLayoutFactory.fillDefaults().applyTo(client);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+			topContainer.setContent(client);
+			
 			createTabs();
 		}
 		return topContainer;
@@ -98,8 +107,7 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	@Override
 	protected <T> TabWrapper addTab(Class<T> clazz) {
-		Composite parent = toolkit.createComposite(topContainer);
-		parent.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		Composite parent = toolkit.createComposite(client);
 		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		IEclipseContext child = createTabContext(parent);
