@@ -45,8 +45,6 @@ import com.google.common.base.Objects;
 @SuppressWarnings({"restriction"})
 public class JavaClassAnnotationListContainer {
 	
-	private static final int MIN_WIDTH = 350;
-	
 	private Element element;
 	private IStructuredModel model;
 	private ModelQuery modelQuery;
@@ -55,7 +53,7 @@ public class JavaClassAnnotationListContainer {
 	private FormToolkit toolkit;
 	private Composite parentControl;
 	private ScrolledComposite scroll;
-	private ListContainer locationListContainer;
+	private ListContainer annotationListContainer;
 	private RulesetElementUiDelegateFactory uiDelegateFactory;
 	private IEclipseContext context;
 	private TreeContentHelper contentHelper;
@@ -72,21 +70,25 @@ public class JavaClassAnnotationListContainer {
 		this.contentHelper = contentHelper;
 	}
 	
-	public void bind() {
-		List<Element> elements = collectAnnotationListElements();
-		loadLocations(elements);
-		if (!elements.isEmpty()) {
+	private void initExpansionState() {
+		if (annotationListContainer.getItemCount() > 0) {
 			((Section)scroll.getParent()).setExpanded(true);
 		}
-		scroll.setMinHeight(locationListContainer.computeHeight());
-		int width = locationListContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
-		scroll.setMinWidth(width);
-		parentControl.getParent().getParent().getParent().layout(true, true);
+	}
+	
+	public void bind() {
+		loadLocations(collectAnnotationListElements());
+		scroll.setMinHeight(annotationListContainer.computeHeight());
+		
+		StringBuffer buff = new StringBuffer();
+		buff.append(RuleMessages.javaclass_annotation_list_sectionTitle);
+		buff.append(" (" + annotationListContainer.getItemCount() + ")");
+		((Section)scroll.getParent()).setText(buff.toString());
 	}
 	
 	private void loadLocations(List<Element> elements) {
-		locationListContainer.createControls(parentControl, elements);
-		locationListContainer.bind();
+		annotationListContainer.createControls(parentControl, elements);
+		annotationListContainer.bind();
 	}
 	
 	private List<Element> collectAnnotationListElements() {
@@ -123,7 +125,9 @@ public class JavaClassAnnotationListContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.locationListContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		this.annotationListContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		annotationListContainer.createControls(client, collectAnnotationListElements());
+		initExpansionState();
 		createSectionToolbar(section);
 		return section;
  	}
@@ -152,6 +156,7 @@ public class JavaClassAnnotationListContainer {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Node createAnnotationList(String name, Element parent) {
 		Node annotationList = createAnnotationList(parent);
 		if (name != null) {

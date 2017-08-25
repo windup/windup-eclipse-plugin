@@ -51,8 +51,6 @@ import com.google.common.collect.Lists;
 @SuppressWarnings({"restriction"})
 public class JavaClassLocationContainer {
 	
-	private static final int MIN_WIDTH = 350;
-	
 	private Element element;
 	private IStructuredModel model;
 	private ModelQuery modelQuery;
@@ -79,16 +77,20 @@ public class JavaClassLocationContainer {
 		this.contentHelper = contentHelper;
 	}
 	
-	public void bind() {
-		List<Element> locations = collectLocations();
-		loadLocations(locations);
-		if (!locations.isEmpty()) {
+	private void initExpansionState() {
+		if (locationListContainer.getItemCount() > 0) {
 			((Section)scroll.getParent()).setExpanded(true);
 		}
+	}
+	
+	public void bind() {
+		loadLocations(collectLocations());
 		scroll.setMinHeight(locationListContainer.computeHeight());
-		int width = locationListContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
-		scroll.setMinWidth(width);
-		parentControl.getParent().getParent().getParent().layout(true, true);
+		
+		StringBuffer buff = new StringBuffer();
+		buff.append(RuleMessages.javaclass_locationSectionTitle);
+		buff.append(" (" + locationListContainer.getItemCount() + ")");
+		((Section)scroll.getParent()).setText(buff.toString());
 	}
 	
 	private void loadLocations(List<Element> location) {
@@ -172,6 +174,8 @@ public class JavaClassLocationContainer {
 				};
 			};
 		};
+		locationListContainer.createControls(client, collectLocations());
+		initExpansionState();
 		createSectionToolbar(section);
 		return section;
  	}

@@ -45,8 +45,6 @@ import com.google.common.base.Objects;
 @SuppressWarnings({"restriction"})
 public class JavaClassAnnotationLiteralContainer {
 	
-	private static final int MIN_WIDTH = 350;
-	
 	private Element element;
 	private IStructuredModel model;
 	private ModelQuery modelQuery;
@@ -55,7 +53,7 @@ public class JavaClassAnnotationLiteralContainer {
 	private FormToolkit toolkit;
 	private Composite parentControl;
 	private ScrolledComposite scroll;
-	private ListContainer locationListContainer;
+	private ListContainer annotationLiteralContainer;
 	private RulesetElementUiDelegateFactory uiDelegateFactory;
 	private IEclipseContext context;
 	private TreeContentHelper contentHelper;
@@ -72,21 +70,24 @@ public class JavaClassAnnotationLiteralContainer {
 		this.contentHelper = contentHelper;
 	}
 	
-	public void bind() {
-		List<Element> literals = collectAnnotationLiteralElements();
-		loadLocations(literals);
-		if (!literals.isEmpty()) {
+	private void initExpansionState() {
+		if (annotationLiteralContainer.getItemCount() > 0) {
 			((Section)scroll.getParent()).setExpanded(true);
 		}
-		scroll.setMinHeight(locationListContainer.computeHeight());
-		int width = locationListContainer.getItemCount() > 0 ? MIN_WIDTH : 0;
-		scroll.setMinWidth(width);
-		parentControl.getParent().getParent().getParent().layout(true, true);
+	}
+	
+	public void bind() {
+		loadLocations(collectAnnotationLiteralElements());
+		scroll.setMinHeight(annotationLiteralContainer.computeHeight());
+		StringBuffer buff = new StringBuffer();
+		buff.append(RuleMessages.javaclass_annotation_literal_sectionTitle);
+		buff.append(" (" + annotationLiteralContainer.getItemCount() + ")");
+		((Section)scroll.getParent()).setText(buff.toString());
 	}
 	
 	private void loadLocations(List<Element> literals) {
-		locationListContainer.createControls(parentControl, literals);
-		locationListContainer.bind();
+		annotationLiteralContainer.createControls(parentControl, literals);
+		annotationLiteralContainer.bind();
 	}
 	
 	private List<Element> collectAnnotationLiteralElements() {
@@ -125,7 +126,9 @@ public class JavaClassAnnotationLiteralContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.locationListContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		this.annotationLiteralContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		annotationLiteralContainer.createControls(client, collectAnnotationLiteralElements());
+		initExpansionState();
 		createSectionToolbar(section);
 		return section;
  	}

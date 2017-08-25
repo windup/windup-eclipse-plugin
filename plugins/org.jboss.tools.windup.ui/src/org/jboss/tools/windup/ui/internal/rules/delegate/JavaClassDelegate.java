@@ -19,39 +19,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
-import org.jboss.tools.windup.ui.internal.rules.delegate.BaseTabStack.TabWrapper;
-import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate.DetailsTab;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -60,9 +44,6 @@ import com.google.common.base.Objects;
 
 @SuppressWarnings({"restriction"})
 public class JavaClassDelegate extends ElementUiDelegate {
-	
-	private static final int SASH_LEFT_DEFAULT = 550;
-	private static final int SASH_RIGHT_DEFAULT = 400;
 	
 	enum JAVA_CLASS_REFERENCE_LOCATION {
 		
@@ -101,108 +82,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		public String getDescription() {
 			return description;
 		}
-	}
-	
-	//private Composite containerControl;
-	//private SashForm sash;
-	
-	private JavaEmbeddedEditor annotationEditor;
-	
-	/*@Override
-	public void update() {
-		detailsTab.update();
-	}*/
-	
-	/*
-	@Override
-	public Control getControl() {
-		if (containerControl == null) {
-			containerControl = createContainerControl(parent);
-			createControls(containerControl);
-		}
-		return containerControl;
-	}*/
-	
-	private Composite createContainerControl(Composite parent) {
-		Composite container = toolkit.createComposite(parent);
-		//container.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-//		FormLayout layout = new FormLayout();
-//		layout.spacing = 5;
-//		container.setLayout(layout);
-		GridLayoutFactory.fillDefaults().applyTo(container);
-		return container;
-	}
-	
-	/*private void createControls(Composite parent) {
-		
-		this.sash = new SashForm(parent, SWT.SMOOTH|SWT.VERTICAL);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
-		sash.setOrientation(SWT.HORIZONTAL);
-		sash.setFont(parent.getFont());
-		sash.setVisible(true);
-		
-		Composite leftContainer = toolkit.createComposite(sash);
-		GridLayoutFactory.fillDefaults().applyTo(leftContainer);
-		FormData leftData = new FormData();
-		leftData.top = new FormAttachment(null);
-		leftData.left = new FormAttachment(0);
-		leftData.bottom = new FormAttachment(100);
-		leftContainer.setLayoutData(leftData);
-		
-		IEclipseContext context = super.createTabContext(leftContainer);
-		detailsTab = super.create(DetailsTab.class, context);
-		
-		Composite rightContainer = toolkit.createComposite(sash);
-		GridLayoutFactory.fillDefaults().applyTo(rightContainer);
-		FormData rightData = new FormData();
-		rightData.top = new FormAttachment(null);
-		rightData.bottom = new FormAttachment(100);
-		rightData.left = new FormAttachment(leftContainer);
-		rightData.right = new FormAttachment(100);
-		rightContainer.setLayoutData(rightData);
-		
-		leftData.right = new FormAttachment(50);
-		
-		createJavaEditor(rightContainer);
-		
-		sash.setWeights(new int[]{SASH_LEFT_DEFAULT, SASH_RIGHT_DEFAULT});
-	}*/
-	
-	private void createJavaEditor(Composite parent) {
-		parent.setLayout(new FormLayout());
-		Composite client = ElementDetailsSection.createSection(parent, 3, toolkit, null, "Java Source Code", null);
-		Section section = (Section)client.getParent();
-		FormData data = new FormData();
-		data.top = new FormAttachment(0);
-		data.left = new FormAttachment(0);
-		data.right = new FormAttachment(100);
-		data.bottom = new FormAttachment(100);
-		section.setLayoutData(data);
-		
-		createAnnotationSourceSectionToolbar(section);
-		
-		this.annotationEditor = new JavaEmbeddedEditor(client);
-	}
-	
-	private void createAnnotationSourceSectionToolbar(Section section) {
-		ToolBar toolbar = new ToolBar(section, SWT.FLAT|SWT.HORIZONTAL);
-		ToolItem addItem = new ToolItem(toolbar, SWT.PUSH);
-		addItem.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_NEW_ANNOTATION));
-		addItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				generateAnnotation(annotationEditor.getSourceViewer());
-			}
-		});
-		section.setTextClient(toolbar);
-	}
-	
-	private void generateAnnotation(JDISourceViewer sourceViewer) {
-		IDocument document = sourceViewer.getDocument();
-		String annotationSource = document.get();
-		Annotation annotation = AnnotationUtil.getAnnotationElement(annotationSource);
-		generateAnnotationElements(annotation, new EvaluationContext(null));
 	}
 	
 	public void generateAnnotationElements(Annotation annotation, EvaluationContext evaluationContext) {
@@ -351,26 +230,9 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		@PostConstruct
 		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent) {
-			parent.setLayout(new FormLayout());
-			Composite client = super.createSection(parent, 3, toolkit, element, Messages.ruleElementDetails, null);
+			Composite client = super.createSection(parent, 3, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX|Section.TWISTIE, Messages.ruleElementDetails, null);
 			Section section = (Section)client.getParent();
-			//section.setDescription(RuleMessages.javaclass_description);
-			
-			//Composite client = toolkit.createComposite(parent);
-			//client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 3);
-			glayout.marginTop = 5;
-			glayout.marginRight = 5;
-			glayout.marginLeft = 5;
-			//glayout.marginBottom = 0;
-			//client.setLayout(glayout);
-			
-			FormData data = new FormData();
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			//client.setLayoutData(data);
-			section.setLayoutData(data);
-			
+
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
 				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
@@ -399,37 +261,50 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 		
 		private void createSections(Composite parent, Composite top) {
+			
+			Composite container = toolkit.createComposite(parent);
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			container.setLayout(layout);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+
 			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			Section section = locationContainer.createControls(parent);
-			FormData data = new FormData();
-			data.top = new FormAttachment(top);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
+			locationContainer.createControls(container);
 			
-			data = new FormData();
-			data.top = new FormAttachment(section);
+			container = toolkit.createComposite(parent);
+			layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginBottom = 0;
+			layout.marginWidth = 0;
+			container.setLayout(layout);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+			
+			
 			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			section = annotationLiteralContainer.createControls(parent);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
+			annotationLiteralContainer.createControls(container);
 			
-			data = new FormData();
-			data.top = new FormAttachment(section);
+			container = toolkit.createComposite(parent);
+			layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginBottom = 0;
+			layout.marginWidth = 0;
+			container.setLayout(layout);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+			
 			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			section = annotationListContainer.createControls(parent);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
+			annotationListContainer.createControls(container);
 			
-			data = new FormData();
-			data.top = new FormAttachment(section);
+			container = toolkit.createComposite(parent);
+			layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginBottom = 0;
+			layout.marginWidth = 0;
+			container.setLayout(layout);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+			
 			annotationTypeContainer = new JavaClassAnnotationTypeContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			section = annotationTypeContainer.createControls(parent);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			section.setLayoutData(data);
+			annotationTypeContainer.createControls(container);
 		}
 		
 		@Override
