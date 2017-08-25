@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
@@ -40,6 +41,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
@@ -166,9 +168,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	
 	private void createJavaEditor(Composite parent) {
 		parent.setLayout(new FormLayout());
-		Composite client = ElementDetailsSection.createSection(parent, 3, toolkit, null);
+		Composite client = ElementDetailsSection.createSection(parent, 3, toolkit, null, "Java Source Code", null);
 		Section section = (Section)client.getParent();
-		section.setText("Java Source Code"); //$NON-NLS-1$
 		FormData data = new FormData();
 		data.top = new FormAttachment(0);
 		data.left = new FormAttachment(0);

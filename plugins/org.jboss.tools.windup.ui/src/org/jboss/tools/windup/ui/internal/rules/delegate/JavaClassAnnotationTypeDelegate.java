@@ -15,12 +15,9 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
@@ -51,14 +48,9 @@ public class JavaClassAnnotationTypeDelegate extends ElementUiDelegate {
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		@PostConstruct
-		public void createControls(Composite parent, TabItem item) {
-			item.setText(Messages.ruleElementDetails);
-			Composite client = super.createSection(parent, 2);
-			Section section = (Section)client.getParent();
-			section.setText(RuleMessages.javaclass_annotation_type_sectionTitle);
-			section.setDescription(RuleMessages.javaclass_annotation_type_description);
+		public void createControls(Composite parent) {
+			Composite client = super.createSection(parent, 2, RuleMessages.javaclass_annotation_type_sectionTitle, RuleMessages.javaclass_annotation_type_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
-			
 			if (ed != null) {
 				uiDelegate.createControls(client, element, ed, rows);
 			}

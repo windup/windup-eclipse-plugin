@@ -21,7 +21,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -116,10 +115,7 @@ public class JavaClassLocationDelegate extends ElementUiDelegate {
 		@PostConstruct
 		public void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.ruleElementDetails);
-			Composite client = super.createSection(parent, 2);
-			Section section = (Section)client.getParent();
-			section.setText(RuleMessages.javaclass_locationSectionTitle);
-			section.setDescription(RuleMessages.javaclass_locationDescription);
+			Composite client = super.createSection(parent, 2, RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
 				uiDelegate.createControls(client, element, ed, rows);

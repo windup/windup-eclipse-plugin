@@ -26,8 +26,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -68,21 +66,37 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	protected abstract void bind();
 	
 	protected Composite createSection(Composite parent, int columns) {
-		return createSection(parent, columns, toolkit, element);
+		return createSection(parent, columns, Messages.ruleElementDetails, null);
 	}
 	
-	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element) {
-		return createSection(parent, columns, toolkit, element, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+	protected Composite createSection(Composite parent, int columns, String text, String description) {
+		return createSection(parent, columns, toolkit, element, text, description);
 	}
 	
-	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element, int style) {
+	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element, String text, String description) {
+		return createSection(parent, columns, toolkit, element, ExpandableComposite.TITLE_BAR, text, description);
+	}
+	
+	public static Composite createSection(Composite parent, int columns, FormToolkit toolkit, Element element, int style, String text, String description) {
 		Section section = toolkit.createSection(parent, style);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
+		//section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		//section.setText(Messages.ruleElementDetails); //$NON-NLS-1$
 		
-		if (element != null) {
-			section.setDescription("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$
+		text = text != null ? text : Messages.ruleElementDetails;
+		section.setText(text);
+		
+		if (description != null) {
+			Label descriptionLabel = new Label(section, SWT.NONE);
+			descriptionLabel.setText(description);
+			section.setDescriptionControl(descriptionLabel);
 		}
+		
+		else if (element != null) {
+			Label descriptionLabel = new Label(section, SWT.NONE);
+			descriptionLabel.setText("Set the properties of '" + element.getNodeName() + "'. Required fields are denoted by '*'."); //$NON-NLS-1$ //$NON-NLS-2$
+			section.setDescriptionControl(descriptionLabel);
+		}
+		
 		//section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
@@ -92,7 +106,8 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
         layout.verticalSpacing = 0;
         section.setLayout(layout);
 		
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(section);
+		//section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Composite client = toolkit.createComposite(section);
 		//int span = computeColumns();
@@ -114,7 +129,9 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	public static Pair<Section, Composite> createScrolledSection(FormToolkit toolkit, Composite parent, String text, String description, int style, int maxHeight) {
 		Section section = toolkit.createSection(parent, style);
 		section.setText(text);
-		section.setDescription(description);
+		Label descriptionLabel = new Label(section, SWT.NONE);
+		descriptionLabel.setText(description);
+		section.setDescriptionControl(descriptionLabel);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -133,9 +150,9 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		scroll.setExpandVertical(true);
 		section.setClient(scroll);
 		
-		Composite client = toolkit.createComposite(scroll);
+		Composite client = toolkit.createComposite(scroll, SWT.BORDER);
 		client.setLayout(new FormLayout());
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, maxHeight).applyTo(client);
 		scroll.setContent(client);
 		
 		toolkit.paintBordersFor(client);
@@ -143,15 +160,16 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		return Tuples.create(section, client);
 	}
 	
-	protected Section createSection(Composite parent, String title, int style) {
+	protected Section createSection(Composite parent, String title, int style, String description) {
 		Section section = toolkit.createSection(parent, style);
-		section.addExpansionListener(new ExpansionAdapter() {
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-			}
-		});
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(title);
+		
+		if (description != null) {
+			Label descriptionLabel = new Label(section, SWT.NONE);
+			descriptionLabel.setText(description);
+			section.setDescriptionControl(descriptionLabel);
+		}
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(section);

@@ -42,7 +42,7 @@ public abstract class AbstractSection {
 	
 	@PostConstruct
 	protected void createSection(Composite parent) {
-		this.section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
+		this.section = toolkit.createSection(parent, Section.TITLE_BAR);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		Composite client = toolkit.createComposite(section);
 		toolkit.paintBordersFor(client);

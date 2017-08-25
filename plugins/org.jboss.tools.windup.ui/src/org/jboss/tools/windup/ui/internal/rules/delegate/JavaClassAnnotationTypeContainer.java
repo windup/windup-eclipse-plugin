@@ -119,7 +119,7 @@ public class JavaClassAnnotationTypeContainer {
 	public Section createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,
 				RuleMessages.javaclass_annotation_type_sectionTitle, RuleMessages.javaclass_annotation_type_description,
-				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE,
+				ExpandableComposite.TITLE_BAR | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE,
 				ElementDetailsSection.DEFAULT_SCROLL_SECTION_MAX_HEGHT);
 		Section section = result.getFirst();
 		Composite client = result.getSecond();

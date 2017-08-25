@@ -105,7 +105,6 @@ public class HintMessageTab extends ElementAttributesContainer {
 	
 	private Browser browser;
 	private IDocument document;
-	//private SashForm sash;
 	
 	private SourceViewer sourceViewer;
 	private MarkdownLanguage language = new MarkdownLanguage();
@@ -113,19 +112,17 @@ public class HintMessageTab extends ElementAttributesContainer {
 	private IHandlerService handlerService;
 	private IHandlerActivation contentAssistHandlerActivation;
 	
-	private Composite sourceContainer;
-	private Composite previewContainer;
+	private Section sourceSection;
+	private Section previewSection;
 	
 	@PostConstruct
 	public void createControls(Composite parent) {
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		
 		Composite messageClient = createMessageSection(parent);
-		this.sourceContainer = messageClient.getParent().getParent();
 		createSourceViewer(messageClient);
 		
 		Composite previewClient = createPreviewSection(parent);
-		this.previewContainer = previewClient.getParent().getParent();
 		createBrowser(previewClient);
 		
 		updatePreview();
@@ -133,10 +130,8 @@ public class HintMessageTab extends ElementAttributesContainer {
 	
 	public void initExpansion() {
 		if (!getElementMessage().trim().isEmpty()) {
-			Section section = (Section)sourceContainer.getChildren()[0];
-			section.setExpanded(true);
-			section = (Section)previewContainer.getChildren()[0];
-			section.setExpanded(true);
+			sourceSection.setExpanded(true);
+			previewSection.setExpanded(true);
 		}
 	}
 	
@@ -145,11 +140,12 @@ public class HintMessageTab extends ElementAttributesContainer {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		container.setLayout(layout);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		
-		Section section = createSection(container, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
-		section.setDescription(NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
-		return (Composite)section.getClient();
+		this.sourceSection = createSection(container, Messages.RulesetEditor_messageSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX,
+				NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceSection);
+		return (Composite)sourceSection.getClient();
 	}
 	
 	private String getBinding() {
@@ -166,11 +162,12 @@ public class HintMessageTab extends ElementAttributesContainer {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		container.setLayout(layout);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		
-		Section section = createSection(container, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
-		section.setDescription(NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME));
-		return (Composite)section.getClient();
+		this.previewSection = createSection(container, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX, 
+				NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME));
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(previewSection);
+		return (Composite)previewSection.getClient();
 	}
 	
 	@Override
@@ -183,12 +180,12 @@ public class HintMessageTab extends ElementAttributesContainer {
 		updatePreview();
 	}
 	
-	public Composite getSourceEditorContainer() {
-		return sourceContainer;
+	public Section getSourceEditorContainer() {
+		return sourceSection;
 	}
 	
-	public Composite getBrowserContainer() {
-		return previewContainer;
+	public Section getBrowserContainer() {
+		return previewSection;
 	}
 	
 	private void createBrowser(Composite parent) {

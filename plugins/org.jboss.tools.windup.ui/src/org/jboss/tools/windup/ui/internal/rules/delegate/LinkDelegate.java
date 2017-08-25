@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
@@ -32,7 +31,6 @@ import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ReferenceNodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -86,10 +84,7 @@ public class LinkDelegate extends ElementUiDelegate {
 		@PostConstruct
 		private void createControls(Composite parent, CTabItem item) {
 			item.setText(Messages.ruleElementDetails);
-			Composite client = super.createSection(parent, 2);
-			Section section = (Section)client.getParent();
-			section.setText(RuleMessages.link_title);
-			section.setDescription(RuleMessages.link_description);
+			Composite client = super.createSection(parent, 2, RuleMessages.link_title, RuleMessages.link_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
 				uiDelegate.createControls(client, element, ed, rows);

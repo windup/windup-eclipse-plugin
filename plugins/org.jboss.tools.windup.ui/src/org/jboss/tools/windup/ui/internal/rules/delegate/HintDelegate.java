@@ -34,22 +34,20 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -77,29 +75,21 @@ import com.google.common.collect.Sets;
 @SuppressWarnings("restriction")
 public class HintDelegate extends ElementUiDelegate {
 	
-	private ScrolledComposite topContainer;
+	private ScrolledForm topContainer;
 	private DetailsTab detailsTab;
-	private Composite client;
+	//private Composite client;
 	
 	@Override
 	public void update() {
 		detailsTab.update();
-		topContainer.setMinSize(client.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		topContainer.layout(true, true);
+		topContainer.reflow(true);
 	}
 	
 	@Override
 	public Control getControl() {
 		if (topContainer == null) {
-			topContainer = new ScrolledComposite(parent, SWT.H_SCROLL|SWT.V_SCROLL);
-			topContainer.setExpandHorizontal(true);
-			topContainer.setExpandVertical(true);
-			
-			client = toolkit.createComposite(topContainer);
-			GridLayoutFactory.fillDefaults().applyTo(client);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
-			topContainer.setContent(client);
-			
+			topContainer = toolkit.createScrolledForm(parent);
+			GridLayoutFactory.fillDefaults().applyTo(topContainer.getForm().getBody());
 			createTabs();
 		}
 		return topContainer;
@@ -107,10 +97,7 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	@Override
 	protected <T> TabWrapper addTab(Class<T> clazz) {
-		Composite parent = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(parent);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
-		IEclipseContext child = createTabContext(parent);
+		IEclipseContext child = createTabContext(topContainer.getBody());
 		T obj = create(clazz, child);
 		return new TabWrapper(obj, child, null);
 	}
@@ -219,39 +206,23 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent/*, CTabItem item*/) {
-			//item.setText(Messages.ruleElementMainTab);
-			parent.setLayout(new FormLayout());
-			
+		public void createControls(Composite parent) {
 			Composite mainDetailsContainer = toolkit.createComposite(parent);
 			
 			GridLayout layout = new GridLayout();
 			layout.marginWidth = 5;
-			layout.marginTop = 0;
 			layout.marginHeight = 0;
-			layout.marginBottom = 0;
 			mainDetailsContainer.setLayout(layout);
+		
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(mainDetailsContainer);
 			
-			FormData data = new FormData();
-			data.top = new FormAttachment(0);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			mainDetailsContainer.setLayoutData(data);
-			
-			Composite client = super.createSection(mainDetailsContainer, 2, toolkit, element, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX|Section.TWISTIE);
+			Composite client = super.createSection(mainDetailsContainer, 2, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX|Section.TWISTIE, 
+					null, null);
 			
 			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 2);
 			glayout.marginTop = 0;
-			glayout.marginRight = 5;
-			glayout.marginLeft = 5;
-			glayout.marginBottom = 5;
+			glayout.marginBottom = 0;
 			client.setLayout(glayout);
-			
-//			data = new FormData();
-//			data.left = new FormAttachment(0);
-//			data.right = new FormAttachment(100);
-//			//client.setLayoutData(data);
-//			client.getParent().setLayoutData(data);
 			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
@@ -269,58 +240,27 @@ public class HintDelegate extends ElementUiDelegate {
 			    createSections(parent, mainDetailsContainer);
 			}
 			((Section)client.getParent()).setExpanded(true);
-			
-			//this.messageTab = createMessageArea(parent);
-			//linksTab = createLinksSection(parent);
-			
-			/*data = new FormData();
-			data.top = new FormAttachment(mainDetailsContainer);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			data.bottom = new FormAttachment(100);
-			linksTab.getSection().setLayoutData(data);*/
 		}
 		
 		private void createSections(Composite parent, Composite detailsClient) {
 			
 			this.messageTab = createMessageArea(parent);
 			
-			FormData data = new FormData();
-			data.top = new FormAttachment(detailsClient);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			messageTab.getSourceEditorContainer().setLayoutData(data);
-			
-			data = new FormData();
-			data.top = new FormAttachment(messageTab.getSourceEditorContainer());
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			messageTab.getBrowserContainer().setLayoutData(data);
-			
-			data = new FormData();
-			data.top = new FormAttachment(messageTab.getBrowserContainer());
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			
 			Composite container = toolkit.createComposite(parent);
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
 			container.setLayout(layout);
-			container.setLayoutData(data);
+			
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 			
 			createTagsSection(container);
 			
-			data = new FormData();
-			data.top = new FormAttachment(container);
-			data.left = new FormAttachment(0);
-			data.right = new FormAttachment(100);
-			data.bottom = new FormAttachment(100);
-						
 			container = toolkit.createComposite(parent);
 			layout = new GridLayout();
 			layout.marginHeight = 0;
 			container.setLayout(layout);
-			container.setLayoutData(data);
+			
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 			
 			linksTab = createLinksSection(container);
 			
@@ -340,15 +280,13 @@ public class HintDelegate extends ElementUiDelegate {
 		}
 		
 		private Section createTagsSection(Composite parent) {
-			Section section = createSection(parent, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
-			section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
+			Section section = createSection(parent, Messages.RulesetEditor_tagsSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX,
+					NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 			
 			this.tagsSection = section;
 			
 			Composite client = (Composite)section.getClient();
-			
-			((GridLayout)client.getLayout()).marginBottom = 5;
 			
 			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree(client, SWT.CHECK|SWT.SINGLE));
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
@@ -544,85 +482,4 @@ public class HintDelegate extends ElementUiDelegate {
 		return result;*/
 		return super.getChildren();
 	}
-	
-	/*
-	private Section createTagsSection() {
-		Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_tagsSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
-		section.setDescription(NLS.bind(Messages.RulesetEditor_tagsSectionDescription, RulesetConstants.HINT_NAME));
-		section.addExpansionListener(new ExpansionAdapter() {
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
-			}
-		});
-		
-		tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
-		tagsTreeViewer.setContentProvider(new TreeContentProvider());
-		tagsTreeViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((Node)element).getTextContent();
-			}
-			@Override
-			public Image getImage(Object element) {
-				return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_TAG);
-			}
-		});
-		tagsTreeViewer.setAutoExpandLevel(0);
-		
-		Tree tree = tagsTreeViewer.getTree();
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 300).applyTo(tree);
-		
-		loadTags();
-		return section;
-	}
-	
-	@Override
-	public void update() {
-		super.update();
-		loadTags();
-	}
-	
-	private void loadTags() {
-		List<Node> tags = Lists.newArrayList();
-		NodeList list = element.getOwnerDocument().getElementsByTagName(RulesetConstants.TAG_NAME);
-		for (int i = 0; i < list.getLength(); i++) {
-			tags.add(list.item(i));
-		}
-		tagsTreeViewer.setInput(tags.toArray());
-	}
-	
-	private Section createLinksSection() {
-		Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_linksSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
-		section.setDescription(Messages.RulesetEditor_linksSectionDescription);
-		section.addExpansionListener(new ExpansionAdapter() {
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
-			}
-		});
-
-		linksTreeViewer = new CheckboxTreeViewer(toolkit.createTree((Composite)section.getClient(), SWT.CHECK));
-		linksTreeViewer.setContentProvider(new TreeContentProvider());
-		linksTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
-		linksTreeViewer.setAutoExpandLevel(0);
-		
-		Tree tree = linksTreeViewer.getTree();
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).applyTo(tree);
-
-		return section;
-	}
-	
-	private Section createMessageSection() {
-		Section section = ElementAttributesContainer.createSection(parent, toolkit, Messages.RulesetEditor_messageSection, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX);
-		section.setDescription(Messages.RulesetEditor_messageSectionDescription);
-		section.addExpansionListener(new ExpansionAdapter() {
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
-			}
-		});
-		return section;
-	}
-	*/
 }

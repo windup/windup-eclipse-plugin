@@ -128,7 +128,7 @@ public class JavaClassLocationContainer {
 	
 	public Section createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription,
-				ExpandableComposite.TITLE_BAR | Section.DESCRIPTION | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE,
+				ExpandableComposite.TITLE_BAR | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE,
 				ElementDetailsSection.DEFAULT_SCROLL_SECTION_MAX_HEGHT);
 		Section section = result.getFirst();
 		Composite client = result.getSecond();

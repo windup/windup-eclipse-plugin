@@ -205,8 +205,7 @@ public class RulesetElementUiDelegateFactory {
 			}
 			
 			@PostConstruct
-			private void createControls(Composite parent, CTabItem item) {
-				item.setText(Messages.ruleElementDetails);
+			private void createControls(Composite parent) {
 				Composite client = super.createSection(parent, 2);
 				super.createControls(client, 2);
 			}
