@@ -120,9 +120,11 @@ public class HintMessageTab extends ElementAttributesContainer {
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		
 		Composite messageClient = createMessageSection(parent);
+		((GridLayout)messageClient.getLayout()).marginBottom = 5;
 		createSourceViewer(messageClient);
 		
 		Composite previewClient = createPreviewSection(parent);
+		((GridLayout)previewClient.getLayout()).marginBottom = 5;
 		createBrowser(previewClient);
 		
 		updatePreview();
@@ -143,7 +145,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		
 		this.sourceSection = createSection(container, Messages.RulesetEditor_messageSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX,
-				NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
+				NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME) + " " + NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceSection);
 		return (Composite)sourceSection.getClient();
 	}
@@ -165,7 +167,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		
 		this.previewSection = createSection(container, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX, 
-				NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME));
+				null);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(previewSection);
 		return (Composite)previewSection.getClient();
 	}

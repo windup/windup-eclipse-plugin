@@ -40,7 +40,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -89,7 +88,7 @@ public class HintDelegate extends ElementUiDelegate {
 	public Control getControl() {
 		if (topContainer == null) {
 			topContainer = toolkit.createScrolledForm(parent);
-			GridLayoutFactory.fillDefaults().applyTo(topContainer.getForm().getBody());
+			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getForm().getBody());
 			createTabs();
 		}
 		return topContainer;
@@ -221,7 +220,7 @@ public class HintDelegate extends ElementUiDelegate {
 			
 			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 2);
 			glayout.marginTop = 0;
-			glayout.marginBottom = 0;
+			glayout.marginBottom = 5;
 			client.setLayout(glayout);
 			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
@@ -287,6 +286,7 @@ public class HintDelegate extends ElementUiDelegate {
 			this.tagsSection = section;
 			
 			Composite client = (Composite)section.getClient();
+			((GridLayout)client.getLayout()).marginBottom = 5;
 			
 			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree(client, SWT.CHECK|SWT.SINGLE));
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
