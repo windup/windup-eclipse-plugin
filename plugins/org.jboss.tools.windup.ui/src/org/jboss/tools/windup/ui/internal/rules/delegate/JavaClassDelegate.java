@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
@@ -33,8 +34,10 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -47,6 +50,8 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
+import org.jboss.tools.windup.ui.internal.rules.delegate.BaseTabStack.TabWrapper;
+import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate.DetailsTab;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -100,8 +105,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	
 	//private Composite containerControl;
 	//private SashForm sash;
-	
-	private DetailsTab detailsTab;
 	
 	private JavaEmbeddedEditor annotationEditor;
 	
@@ -280,6 +283,32 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		return true;
 	}
 	
+	private ScrolledForm topContainer;
+	private DetailsTab detailsTab;
+	
+	@Override
+	public void update() {
+		detailsTab.update();
+		topContainer.reflow(true);
+	}
+	
+	@Override
+	public Control getControl() {
+		if (topContainer == null) {
+			topContainer = toolkit.createScrolledForm(parent);
+			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getForm().getBody());
+			createTabs();
+		}
+		return topContainer;
+	}
+	
+	@Override
+	protected <T> TabWrapper addTab(Class<T> clazz) {
+		IEclipseContext child = createTabContext(topContainer.getBody());
+		T obj = create(clazz, child);
+		return new TabWrapper(obj, child, null);
+	}
+	
 	protected void createTabs() {
 		this.detailsTab = (DetailsTab)addTab(DetailsTab.class).getObject();
 	}
@@ -321,26 +350,26 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
-		public void createControls(Composite parent, CTabItem item) {
-			item.setText(Messages.ruleElementMainTab);
+		public void createControls(Composite parent) {
 			parent.setLayout(new FormLayout());
-			//Composite client = super.createSection(parent, 3);
-			//Section section = (Section)client.getParent();
+			Composite client = super.createSection(parent, 3, toolkit, element, Messages.ruleElementDetails, null);
+			Section section = (Section)client.getParent();
 			//section.setDescription(RuleMessages.javaclass_description);
 			
-			Composite client = toolkit.createComposite(parent);
+			//Composite client = toolkit.createComposite(parent);
 			//client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 3);
 			glayout.marginTop = 5;
 			glayout.marginRight = 5;
 			glayout.marginLeft = 5;
 			//glayout.marginBottom = 0;
-			client.setLayout(glayout);
+			//client.setLayout(glayout);
 			
 			FormData data = new FormData();
 			data.left = new FormAttachment(0);
 			data.right = new FormAttachment(100);
-			client.setLayoutData(data);
+			//client.setLayoutData(data);
+			section.setLayoutData(data);
 			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
@@ -365,7 +394,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 				    	}
 			    }
-			    createSections(parent, client);
+			    createSections(parent, section);
 			}
 		}
 		

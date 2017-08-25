@@ -141,6 +141,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		container.setLayout(layout);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		
@@ -163,6 +164,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		container.setLayout(layout);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
 		

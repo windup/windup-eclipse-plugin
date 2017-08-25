@@ -76,7 +76,6 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	private ScrolledForm topContainer;
 	private DetailsTab detailsTab;
-	//private Composite client;
 	
 	@Override
 	public void update() {
@@ -209,8 +208,8 @@ public class HintDelegate extends ElementUiDelegate {
 			Composite mainDetailsContainer = toolkit.createComposite(parent);
 			
 			GridLayout layout = new GridLayout();
-			layout.marginWidth = 5;
 			layout.marginHeight = 0;
+			layout.marginWidth = 0;
 			mainDetailsContainer.setLayout(layout);
 		
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(mainDetailsContainer);
@@ -248,6 +247,7 @@ public class HintDelegate extends ElementUiDelegate {
 			Composite container = toolkit.createComposite(parent);
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
+			layout.marginWidth = 0;
 			container.setLayout(layout);
 			
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
@@ -257,6 +257,7 @@ public class HintDelegate extends ElementUiDelegate {
 			container = toolkit.createComposite(parent);
 			layout = new GridLayout();
 			layout.marginHeight = 0;
+			layout.marginWidth = 0;
 			container.setLayout(layout);
 			
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);

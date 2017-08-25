@@ -116,6 +116,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		glayout.marginRight = 0;
 		glayout.marginLeft = 0;
 		glayout.marginHeight = 0;
+		glayout.marginBottom = 5;
 		client.setLayout(glayout);
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -150,7 +151,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		scroll.setExpandVertical(true);
 		section.setClient(scroll);
 		
-		Composite client = toolkit.createComposite(scroll, SWT.BORDER);
+		Composite client = toolkit.createComposite(scroll, SWT.NONE);
 		client.setLayout(new FormLayout());
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, maxHeight).applyTo(client);
 		scroll.setContent(client);
