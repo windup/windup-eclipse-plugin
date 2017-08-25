@@ -232,6 +232,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		public void createControls(Composite parent) {
 			Composite client = super.createSection(parent, 3, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX|Section.TWISTIE, Messages.ruleElementDetails, null);
 			Section section = (Section)client.getParent();
+			section.setExpanded(true);
 
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
