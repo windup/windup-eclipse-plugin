@@ -114,6 +114,12 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_SETTINGS_TAB = "icons/rules/settings.png"; //$NON-NLS-1$
     public static final String IMG_MAIN_TAB = "icons/rules/main_tab.png"; //$NON-NLS-1$
     
+    public static final String IMG_ANNOTATION = "icons/rules/annotation/annotation.gif"; //$NON-NLS-1$
+    public static final String IMG_ARRAY = "icons/rules/annotation/array.gif"; //$NON-NLS-1$
+    public static final String IMG_ATTRIBUTE = "icons/rules/annotation/attribute.png"; //$NON-NLS-1$
+    public static final String IMG_ARRAY_INDEX = "icons/rules/annotation/array_index.gif"; //$NON-NLS-1$
+
+
     // The shared instance
     private static WindupUIPlugin plugin;
     
@@ -261,6 +267,10 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_DELETE_CONFIG_DISABLED, createImageDescriptor(IMG_DELETE_CONFIG_DISABLED));
 		reg.put(IMG_COLLAPSE_ALL, createImageDescriptor(IMG_COLLAPSE_ALL));
 		reg.put(IMG_COLLAPSE_ALL_DISABLED, createImageDescriptor(IMG_COLLAPSE_ALL_DISABLED));
+		reg.put(IMG_ANNOTATION, createImageDescriptor(IMG_ANNOTATION));
+		reg.put(IMG_ARRAY, createImageDescriptor(IMG_ARRAY));
+		reg.put(IMG_ATTRIBUTE, createImageDescriptor(IMG_ATTRIBUTE));
+		reg.put(IMG_ARRAY_INDEX, createImageDescriptor(IMG_ARRAY_INDEX));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

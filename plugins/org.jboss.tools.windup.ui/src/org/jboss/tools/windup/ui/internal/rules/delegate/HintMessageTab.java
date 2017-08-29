@@ -259,7 +259,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 				message = contentHelper.getNodeValue(node);
 			}
 		}
-		return message;
+		return message == null ? "" : message;
 	}
 	
 	private String getCdataMessage(Node messageNode) {

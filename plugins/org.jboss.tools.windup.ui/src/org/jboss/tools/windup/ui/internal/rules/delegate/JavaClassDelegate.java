@@ -21,9 +21,14 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -34,6 +39,8 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationContentProvider;
+import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationModel;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -199,6 +206,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	
 	public static class DetailsTab extends ElementAttributesContainer {
 		
+		private TreeViewer annotationTree;
+		
 		private JavaClassLocationContainer locationContainer;
 		private JavaClassAnnotationLiteralContainer annotationLiteralContainer;
 		private JavaClassAnnotationListContainer annotationListContainer;
@@ -230,7 +239,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		@PostConstruct
 		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent) {
-			Composite client = super.createSection(parent, 3, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX|Section.TWISTIE, Messages.ruleElementDetails, null);
+			Composite client = super.createSection(parent, 3, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX, Messages.ruleElementDetails, null);
 			Section section = (Section)client.getParent();
 			section.setExpanded(true);
 
@@ -257,8 +266,41 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 				    	}
 			    }
-			    createSections(parent, section);
+			    //createSections(parent, section);
+			    createAnnotationModelTree(parent, section);
 			}
+		}
+		
+		private void createAnnotationModelTree(Composite parent, Composite top) {
+			Composite container = toolkit.createComposite(parent);
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			container.setLayout(layout);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+			
+			Group group = new Group(container, SWT.NONE);
+			GridLayoutFactory.fillDefaults().applyTo(group);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
+			
+			annotationTree = new TreeViewer(group, SWT.H_SCROLL | SWT.V_SCROLL);
+			
+			AnnotationModel annotationModel = new AnnotationModel(element, modelQuery, model);
+			AnnotationContentProvider provider = new AnnotationContentProvider();
+			DelegatingStyledCellLabelProvider styleProvider = new DelegatingStyledCellLabelProvider(provider);
+			annotationTree.setContentProvider(provider);
+			annotationTree.setLabelProvider(styleProvider);
+			annotationTree.setInput(annotationModel);
+			
+			Control control = annotationTree.getControl();
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			control.setLayoutData(gd);
+			
+			createAnnotationTreeContextMenu();
+		}
+		
+		private void createAnnotationTreeContextMenu() {
+			
 		}
 		
 		private void createSections(Composite parent, Composite top) {
@@ -311,10 +353,11 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		@Override
 		protected void bind() {
 			super.bind();
-			locationContainer.bind();
-			annotationLiteralContainer.bind();
-			annotationListContainer.bind();
-			annotationTypeContainer.bind();
+			annotationTree.refresh(element, true);
+//			locationContainer.bind();
+//			annotationLiteralContainer.bind();
+//			annotationListContainer.bind();
+//			annotationTypeContainer.bind();
 		}
 	}
 }
