@@ -36,8 +36,6 @@ public class AnnotationElement {
 	protected ModelQuery modelQuery;
 	protected IStructuredModel structuredModel;
 	
-	private AnnotationElement[] children = new AnnotationElement[] {};
-	
 	public AnnotationElement(Element element, ModelQuery modelQuery, IStructuredModel structuredModel) {
 		this(null, element);
 		this.modelQuery = modelQuery;
@@ -74,12 +72,8 @@ public class AnnotationElement {
 		return structuredModel;
 	}
 	
-	public final AnnotationElement[] getChildElements() {
-		return children;
-	}
-	
-	protected void setChildren(AnnotationElement[] children) {
-		this.children = children;
+	public AnnotationElement[] getChildElements() {
+		return new AnnotationElement[] {};
 	}
 	
 	protected Element getJavaclassElement() {
@@ -125,6 +119,10 @@ public class AnnotationElement {
 			this.cmNode = cmNode;
 		}
 		
+		public CMNode getCmNode() {
+			return cmNode;
+		}
+		
 		@Override
 		public Image getImage() {
 			return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_ATTRIBUTE);
@@ -139,7 +137,7 @@ public class AnnotationElement {
 			return buff.toString();
 		}
 		
-		protected String getValue() {
+		public String getValue() {
 			String result = ""; //$NON-NLS-1$
 			Node node = getNode();
 			if (node != null) {
@@ -155,23 +153,20 @@ public class AnnotationElement {
 		
 		public void setValue(String value) {
 			IStructuredModel model = getStructuredModel();
-			try {
-				model.aboutToChangeModel();
-				Node node = getNode();
-				if (node != null) {
+			Node node = getNode();
+			if (node != null) {
+				String currentValue = getValue();
+				if (!value.equals(currentValue)) {
 					contentHelper.setNodeValue(node, value);
 				}
-				else {
-					AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, getElement(), getElement().getChildNodes().getLength());
-					newNodeAction.runWithoutTransaction();
-					if (!newNodeAction.getResult().isEmpty()) {
-						node = (Node)newNodeAction.getResult().get(0);
-						contentHelper.setNodeValue(node, value);
-					}
-				}
 			}
-			finally {
-				model.changedModel();
+			else {
+				AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, getElement(), getElement().getChildNodes().getLength());
+				newNodeAction.runWithoutTransaction();
+				if (!newNodeAction.getResult().isEmpty()) {
+					node = (Node)newNodeAction.getResult().get(0);
+					contentHelper.setNodeValue(node, value);
+				}
 			}
 		}
 	}

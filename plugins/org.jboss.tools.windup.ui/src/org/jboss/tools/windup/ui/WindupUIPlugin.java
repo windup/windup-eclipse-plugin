@@ -117,8 +117,9 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_ANNOTATION = "icons/rules/annotation/annotation.gif"; //$NON-NLS-1$
     public static final String IMG_ARRAY = "icons/rules/annotation/array.gif"; //$NON-NLS-1$
     public static final String IMG_ATTRIBUTE = "icons/rules/annotation/attribute.png"; //$NON-NLS-1$
-    public static final String IMG_ARRAY_INDEX = "icons/rules/annotation/array_index.gif"; //$NON-NLS-1$
-
+    public static final String IMG_ARRAY_INDEX = "icons/rules/annotation/numberLiteral.gif"; //$NON-NLS-1$
+    public static final String IMG_EXPRESSION = "icons/rules/annotation/expression.png"; //$NON-NLS-1$
+    public static final String IMG_CHARACTER = "icons/rules/annotation/character.gif"; //$NON-NLS-1$
 
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -271,6 +272,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_ARRAY, createImageDescriptor(IMG_ARRAY));
 		reg.put(IMG_ATTRIBUTE, createImageDescriptor(IMG_ATTRIBUTE));
 		reg.put(IMG_ARRAY_INDEX, createImageDescriptor(IMG_ARRAY_INDEX));
+		reg.put(IMG_EXPRESSION, createImageDescriptor(IMG_EXPRESSION));
+		reg.put(IMG_CHARACTER, createImageDescriptor(IMG_CHARACTER));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

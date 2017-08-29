@@ -12,8 +12,10 @@ package org.jboss.tools.windup.ui.internal.rules.annotation;
 
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.w3c.dom.Element;
 
 @SuppressWarnings("restriction")
@@ -21,7 +23,11 @@ public class AnnotationLiteral extends AnnotationElement {
 
 	public AnnotationLiteral(AnnotationElement parent, Element element) {
 		super(parent, element);
-		setChildren(buildModel());
+	}
+	
+	@Override
+	public AnnotationElement[] getChildElements() {
+		return buildModel();
 	}
 	
 	@Override
@@ -29,6 +35,11 @@ public class AnnotationLiteral extends AnnotationElement {
 		StringBuffer buff = new StringBuffer();
 		buff.append("[Annotation Literal]"); //$NON-NLS-1$
 		return buff.toString();
+	}
+	
+	@Override
+	public Image getImage() {
+		return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CHARACTER);
 	}
 	
 	public AnnotationElement[] buildModel() {
@@ -47,6 +58,11 @@ public class AnnotationLiteral extends AnnotationElement {
 	public class AnnotationLiteralPatternElement extends AttributeElement {
 		public AnnotationLiteralPatternElement(AnnotationElement parent, CMNode node) {
 			super(parent, node);
+		}
+		
+		@Override
+		public Image getImage() {
+			return WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_EXPRESSION);
 		}
 	}
 }

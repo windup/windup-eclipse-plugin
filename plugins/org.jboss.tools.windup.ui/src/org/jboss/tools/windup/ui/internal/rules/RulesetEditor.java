@@ -161,6 +161,7 @@ public class RulesetEditor {
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {
 		child.set(Composite.class, parent);
+		child.set(RulesetElementUiDelegateRegistry.class, widgetRegistry);
 		child.set(RulesetElementUiDelegateFactory.class, widgetRegistry.getUIDelegateFactory());
 		return ContextInjectionFactory.make(clazz, child);
 	}

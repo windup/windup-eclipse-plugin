@@ -38,6 +38,7 @@ import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateRegistry;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate.IElementDetailsContainer;
 import org.w3c.dom.Element;
@@ -58,6 +59,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 	@Inject protected IFile file;
 	
 	@Inject protected RulesetElementUiDelegateFactory uiDelegateFactory;
+	@Inject protected RulesetElementUiDelegateRegistry uiDelegateRegistry;
 	@Inject protected IElementUiDelegate uiDelegate;
 	
 	@Override

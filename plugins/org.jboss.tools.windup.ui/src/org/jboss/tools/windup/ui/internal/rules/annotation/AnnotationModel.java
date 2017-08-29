@@ -30,7 +30,11 @@ public class AnnotationModel extends AnnotationElement {
 	
 	public AnnotationModel(Element javaclassElement, ModelQuery modelQuery, IStructuredModel model) {
 		super(javaclassElement, modelQuery, model);
-		setChildren(buildModel());
+	}
+	
+	@Override
+	public AnnotationElement[] getChildElements() {
+		return buildModel();
 	}
 	
 	private AnnotationElement[] buildModel() {
@@ -46,18 +50,27 @@ public class AnnotationModel extends AnnotationElement {
 			if (child instanceof Element) {
 				Element element = (Element)child;
 				if (Objects.equal(RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL, element.getNodeName())) {
-					AnnotationLiteral model = new AnnotationLiteral(this, element);
-					elementMap.put(element, model);
+					AnnotationElement model = elementMap.get(element);
+					if (model == null) {
+						model = new AnnotationLiteral(this, element);
+						elementMap.put(element, model);
+					}
 					literalElements.add(model);
 				}
 				else if (Objects.equal(RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE, element.getNodeName())) {
-					AnnotationType model = new AnnotationType(this, element);
-					elementMap.put(element, model);
+					AnnotationElement model = elementMap.get(element);
+					if (model == null) {
+						model = new AnnotationType(this, element);
+						elementMap.put(element, model);
+					}
 					typeElements.add(model);
 				}
 				else if (Objects.equal(RulesetConstants.JAVA_CLASS_ANNOTATION_LIST, element.getNodeName())) {
-					AnnotationList model = new AnnotationList(this, element);
-					elementMap.put(element, model);
+					AnnotationElement model = elementMap.get(element);
+					if (model == null) {
+						model = new AnnotationList(this, element);
+						elementMap.put(element, model);
+					}
 					listElements.add(model);
 				}
 			}
