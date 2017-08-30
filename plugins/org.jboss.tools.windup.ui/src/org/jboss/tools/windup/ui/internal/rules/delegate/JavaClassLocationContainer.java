@@ -196,7 +196,7 @@ public class JavaClassLocationContainer {
 	private Node createLocationElement(Element parent) {
 		CMElementDeclaration linkCmNode = getLocationCmNode();
 		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, linkCmNode, parent.getChildNodes().getLength(), null);
+				model, parent, linkCmNode, parent.getChildNodes().getLength(), null, null);
 		action.run();
 		if (!action.getResult().isEmpty()) {
 			return action.getResult().get(0);

@@ -45,4 +45,6 @@ public class RuleMessages extends NLS {
     
     public static String link_title;
     public static String link_description;
+    
+    public static String annotationDescription;
 }

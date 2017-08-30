@@ -161,7 +161,6 @@ public class RulesetEditor {
 	
 	private <T> T createChild(Class<T> clazz, Composite parent, IEclipseContext child) {
 		child.set(Composite.class, parent);
-		child.set(RulesetElementUiDelegateRegistry.class, widgetRegistry);
 		child.set(RulesetElementUiDelegateFactory.class, widgetRegistry.getUIDelegateFactory());
 		return ContextInjectionFactory.make(clazz, child);
 	}
@@ -193,7 +192,12 @@ public class RulesetEditor {
 		IEclipseContext child = context.createChild();
 		child.set(Element.class, element);
 		child.set(Composite.class, stackComposite);
+		child.set(RulesetEditor.class, this);
 		return child;
+	}
+	
+	public IElementUiDelegate getDelegate(Element element) {
+		return widgetRegistry.getOrCreateUiDelegate(element, createUiDelegateContext(element));
 	}
 	
 	public void updateDetails(Element element) {
@@ -204,7 +208,7 @@ public class RulesetEditor {
 		int right = sash.getWeights()[1];
 		Control top = gettingStartedComposite;
 		if (element != null) {
-			IElementUiDelegate uiDelegate = widgetRegistry.getOrCreateUiDelegate(element, createUiDelegateContext(element));
+			IElementUiDelegate uiDelegate = getDelegate(element);
 			if (uiDelegate != null) { 
 				top = uiDelegate.getControl();
 				uiDelegate.update();

@@ -71,7 +71,7 @@ public class HintLinksTab extends ElementAttributesContainer {
 			public void widgetSelected(SelectionEvent e) {
 				CMElementDeclaration linkCmNode = getLinkCmNode();
 				AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-						model, element, linkCmNode, element.getChildNodes().getLength(), null);
+						model, element, linkCmNode, element.getChildNodes().getLength(), null, null);
 				action.run();
 			}
 		});

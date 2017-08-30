@@ -12,7 +12,6 @@ package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -46,12 +45,14 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -62,13 +63,15 @@ import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
-import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ClassAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationContentProvider;
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationElement;
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationElement.AttributeElement;
@@ -209,6 +212,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	@Override
 	public void update() {
 		detailsTab.update();
+		topContainer.layout(true, true);
 		//topContainer.reflow(true);
 	}
 	
@@ -242,6 +246,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		@Inject private RulesetDOMService domService;
+		@Inject private RulesetEditor editor;
 		
 		private AnnotationModel annotationModel;
 		private TreeViewer annotationTree;
@@ -305,23 +310,44 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    	}
 			    }
 			    //createSections(parent, section);
+			    createLocationSection(parent);
 			    createAnnotationModelTree(parent, section);
 			}
 		}
 		
-		private void createAnnotationModelTree(Composite parent, Composite top) {
+		private void createLocationSection(Composite parent) {
 			Composite container = toolkit.createComposite(parent);
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
 			container.setLayout(layout);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+
+			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
+			locationContainer.createControls(container);
+		}
+		
+		private void createAnnotationModelTree(Composite parent, Composite top) {
 			
-			Group group = new Group(container, SWT.NONE);
-			GridLayoutFactory.fillDefaults().applyTo(group);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
+			Composite client = super.createSection(parent, 1, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX, "Annotation", 
+					RuleMessages.annotationDescription);
+			Section section = (Section)client.getParent();
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
+			section.setExpanded(true);
 			
-			annotationTree = new TreeViewer(group);
+			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(client);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+			
+			Composite left = toolkit.createComposite(client);
+			GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 0, 5).applyTo(left);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(left);
+			annotationTree = new TreeViewer(left);
+			
+			Composite right = toolkit.createComposite(client);
+			GridLayoutFactory.fillDefaults().applyTo(right);
+			GridDataFactory.fillDefaults().grab(false, true).applyTo(right);
+			
+			createToolbar(right);
 			
 			this.annotationModel = new AnnotationModel(element, modelQuery, model);
 			AnnotationContentProvider provider = new AnnotationContentProvider();
@@ -350,6 +376,38 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			annotationTree.setCellModifier(new XMLCMCellModifier());
 		}
 		
+		private void createToolbar(Composite parent) {
+			Button newLiteralButton = toolkit.createButton(parent, RuleMessages.javaclass_annotation_literal_sectionTitle, SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(newLiteralButton);
+			newLiteralButton.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_ADD));
+			newLiteralButton.setToolTipText(RuleMessages.javaclass_annotation_literal_description);
+			newLiteralButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+				}
+			});
+			
+			Button newTypeButton = toolkit.createButton(parent, RuleMessages.javaclass_annotation_type_sectionTitle, SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(newTypeButton);
+			newTypeButton.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_ADD));
+			newTypeButton.setToolTipText(RuleMessages.javaclass_annotation_type_description);
+			newTypeButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+				}
+			});
+			
+			Button newListButton = toolkit.createButton(parent, RuleMessages.javaclass_annotation_list_sectionTitle, SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(newListButton);
+			newListButton.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_ADD));
+			newListButton.setToolTipText(RuleMessages.javaclass_annotation_list_description);
+			newListButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+				}
+			});
+		}
+		
 		private void createViewerContextMenu() {
 			MenuManager popupMenuManager = new MenuManager();
 			IMenuListener listener = new IMenuListener() {
@@ -373,7 +431,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				if (ssel.toList().size() == 1) {
 					AnnotationElement annotationElement = (AnnotationElement)ssel.getFirstElement();
 					Element element = annotationElement.getElement();
-					IElementUiDelegate delegate = uiDelegateRegistry.getUiDelegate(element);
+					IElementUiDelegate delegate = editor.getDelegate(element);
 					if (delegate != null) {
 						delegate.fillContextMenu(manager, annotationTree);
 					}
@@ -518,7 +576,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		protected void bind() {
 			super.bind();
 			annotationTree.refresh(annotationModel, true);
-//			locationContainer.bind();
+			locationContainer.bind();
 //			annotationLiteralContainer.bind();
 //			annotationListContainer.bind();
 //			annotationTypeContainer.bind();

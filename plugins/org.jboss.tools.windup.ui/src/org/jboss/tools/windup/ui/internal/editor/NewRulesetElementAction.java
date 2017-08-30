@@ -69,7 +69,7 @@ public class NewRulesetElementAction extends BaseSelectionListenerAction {
 		if (ed != null) {
 			CMElementDeclaration cmNode = (CMElementDeclaration)modelQuery.getAvailableContent(rulesElement, ed, ModelQuery.VALIDITY_STRICT).get(1);
 			AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-					model, rulesElement, cmNode, rulesElement.getChildNodes().getLength(), (TreeViewer)viewer);
+					model, rulesElement, cmNode, rulesElement.getChildNodes().getLength(), null, (TreeViewer)viewer);
 			action.run();
 			List<Node> result = action.getResult();
 			if (!result.isEmpty()) {

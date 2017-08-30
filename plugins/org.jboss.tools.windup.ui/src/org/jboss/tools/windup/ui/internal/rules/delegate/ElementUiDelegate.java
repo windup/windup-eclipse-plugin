@@ -121,7 +121,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 					switch (cmNodeType) {
 						case CMNode.ELEMENT_DECLARATION : {
 							if (!shouldFilterElementInsertAction(action)) {
-								actionList.add(createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex(), treeViewer));
+								actionList.add(createAddElementAction(model, action.getParent(), (CMElementDeclaration) action.getCMNode(), action.getStartIndex(), this, treeViewer));
 							}
 							break;
 						}
@@ -179,21 +179,29 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		return context;
 	}
 	
-	public static Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index, TreeViewer treeViewer) {
+	public static Action createAddElementAction(IStructuredModel model, Node parent, CMElementDeclaration ed, int index, IElementUiDelegate delegate, TreeViewer treeViewer) {
 		Action action = null;
 		if (ed != null) {
 			action = new AddNodeAction(model, ed, parent, index) {
 				@Override
 				public void run() {
 					super.run();
-					if (treeViewer != null && !result.isEmpty()) {
+					if (!result.isEmpty()) {
 						Object element = result.get(0);
-						ITreeContentProvider provider = (ITreeContentProvider)treeViewer.getContentProvider();
-						Object[] children = provider.getChildren(parent);
-						java.util.Optional<Object> optional = Arrays.stream(children).filter(e -> Objects.equal(element, e)).findFirst();
-						if (optional.isPresent()) {
-							treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
-							treeViewer.setSelection(new StructuredSelection(element), true);
+						Object[] children = null;
+						if (delegate != null) {
+							children = delegate.getChildren();
+						}
+						else if (treeViewer != null) {
+							ITreeContentProvider provider = (ITreeContentProvider)treeViewer.getContentProvider();
+							children = provider.getChildren(element);
+						}
+						if (children != null) {
+							java.util.Optional<Object> optional = Arrays.stream(children).filter(e -> Objects.equal(element, e)).findFirst();
+							if (optional.isPresent()) {
+								treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
+								treeViewer.setSelection(new StructuredSelection(element), true);
+							}
 						}
 					}
 				}

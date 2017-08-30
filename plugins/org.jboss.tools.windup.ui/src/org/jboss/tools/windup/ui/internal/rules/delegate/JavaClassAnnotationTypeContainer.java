@@ -150,7 +150,7 @@ public class JavaClassAnnotationTypeContainer {
 	private Node createAnnotationType(Element parent) {
 		CMElementDeclaration linkCmNode = getAnnotationTypeCmNode();
 		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, linkCmNode, parent.getChildNodes().getLength(), null);
+				model, parent, linkCmNode, parent.getChildNodes().getLength(), null, null);
 		action.run();
 		if (!action.getResult().isEmpty()) {
 			return action.getResult().get(0);

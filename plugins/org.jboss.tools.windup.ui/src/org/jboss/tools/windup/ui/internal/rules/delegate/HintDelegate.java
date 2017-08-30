@@ -319,7 +319,7 @@ public class HintDelegate extends ElementUiDelegate {
 					if (event.getChecked()) {
 						CMElementDeclaration tagCmNode = getTagCmNode();
 						AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-								model, element, tagCmNode, element.getChildNodes().getLength(), null);
+								model, element, tagCmNode, element.getChildNodes().getLength(), null, null);
 						action.run();
 						List<Node> result = action.getResult();
 						if (!result.isEmpty()) {
@@ -382,7 +382,7 @@ public class HintDelegate extends ElementUiDelegate {
 				public void widgetSelected(SelectionEvent e) {
 					CMElementDeclaration linkCmNode = getTagCmNode();
 					AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-							model, element, linkCmNode, element.getChildNodes().getLength(), null);
+							model, element, linkCmNode, element.getChildNodes().getLength(), null, null);
 					action.run();
 				}
 			});

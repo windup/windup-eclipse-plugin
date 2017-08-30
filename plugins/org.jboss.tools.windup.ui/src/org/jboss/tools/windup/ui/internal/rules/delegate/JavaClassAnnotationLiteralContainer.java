@@ -149,7 +149,7 @@ public class JavaClassAnnotationLiteralContainer {
 	private Node createAnnotationLiteral(Element parent) {
 		CMElementDeclaration literalCmNode = getLiteralCmNode();
 		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, literalCmNode, parent.getChildNodes().getLength(), null);
+				model, parent, literalCmNode, parent.getChildNodes().getLength(), null, null);
 		action.run();
 		if (!action.getResult().isEmpty()) {
 			return action.getResult().get(0);

@@ -28,7 +28,7 @@ public class RulesetElementUiDelegateRegistry {
 	private Map<Node, IElementUiDelegate> elementUiDelegates = Maps.newHashMap();
 	
 	private RulesetElementUiDelegateFactory factory;
-	
+
 	@Inject
 	public RulesetElementUiDelegateRegistry(RulesetElementUiDelegateFactory factory) {
 		this.factory = factory;

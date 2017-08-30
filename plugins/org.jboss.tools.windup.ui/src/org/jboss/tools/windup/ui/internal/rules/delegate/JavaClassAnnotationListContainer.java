@@ -148,7 +148,7 @@ public class JavaClassAnnotationListContainer {
 	private Node createAnnotationList(Element parent) {
 		CMElementDeclaration listCmNode = getListCmNode();
 		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, listCmNode, parent.getChildNodes().getLength(), null);
+				model, parent, listCmNode, parent.getChildNodes().getLength(), null, null);
 		action.run();
 		if (!action.getResult().isEmpty()) {
 			return action.getResult().get(0);
