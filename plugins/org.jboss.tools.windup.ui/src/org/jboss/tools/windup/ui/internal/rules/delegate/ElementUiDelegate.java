@@ -25,7 +25,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -42,7 +41,6 @@ import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.eclipse.wst.xml.ui.internal.actions.BaseNodeActionManager.MyMenuManager;
 import org.eclipse.wst.xml.ui.internal.actions.MenuBuilder;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
@@ -136,9 +134,32 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		return false;
 	}
 	
-	protected Control control;
+	//protected Control control;
+	
+	private Form topContainer;
 	
 	@Override
+	public Control getControl() {
+		if (topContainer == null) {
+			topContainer = toolkit.createForm(parent);
+			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getBody());
+			createTabs();
+		}
+		return topContainer;
+	}
+	
+	@Override
+	protected <T> TabWrapper addTab(Class<T> clazz) {
+		Composite parent = toolkit.createComposite(topContainer.getBody());
+		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(parent);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+		IEclipseContext child = createTabContext(parent);
+		T object = create(clazz, child);
+		TabWrapper wrapper = new TabWrapper(object, child, null);
+		return wrapper;
+	}
+	
+	/*@Override
 	public Control getControl() {
 		if (folder == null) {
 			super.createFolder(parent);
@@ -163,7 +184,7 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 		TabWrapper wrapper = new TabWrapper(object, child, item);
 		tabs.put(item, wrapper);
 		return wrapper;
-	}
+	}*/
 	
 	protected abstract void createTabs();
 	

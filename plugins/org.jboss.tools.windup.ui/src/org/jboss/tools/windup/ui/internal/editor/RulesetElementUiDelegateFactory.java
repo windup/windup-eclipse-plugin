@@ -134,6 +134,16 @@ public class RulesetElementUiDelegateFactory {
 		static final String LINK_TITLE = "title"; //$NON-NLS-1$
 		
 		static final String TAG_NAME = "tag"; //$NON-NLS-1$
+		
+		// annotation-literal
+		static final String LITERAL_NAME = "name";
+		static final String LITERAL_PATTERN = "pattern";
+		
+		// annotation-type
+		static final String TYPE_PATTERN = "pattern";
+		
+		// annotation-list
+		static final String LIST_NAME = "name";
 	}
 
 	public IElementUiDelegate createElementUiDelegate(Element element, IEclipseContext context) {

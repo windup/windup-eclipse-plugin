@@ -50,8 +50,7 @@ public class JavaClassAnnotationLiteralDelegate extends ElementUiDelegate {
 	public static class DetailsTab extends ElementAttributesContainer {
 		
 		@PostConstruct
-		public void createControls(Composite parent, CTabItem item) {
-			item.setText(Messages.ruleElementDetails);
+		public void createControls(Composite parent) {
 			Composite client = super.createSection(parent, 2, RuleMessages.javaclass_annotation_literal_sectionTitle, RuleMessages.javaclass_annotation_literal_description);
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {

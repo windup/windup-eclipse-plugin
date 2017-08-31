@@ -10,187 +10,147 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
-import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
-import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
+import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
+import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.SnippetAnnotationVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.google.common.base.Objects;
-
+@SuppressWarnings("restriction")
 public class AnnotationService {
 	
-	private IStructuredModel model;
-	private ModelQuery modelQuery;
 	private TreeContentHelper contentHelper = new TreeContentHelper();
 	
-	public AnnotationService(IStructuredModel model, ModelQuery modelQuery) {
-		this.model = model;
-		this.modelQuery = modelQuery;
-	}
-	
 	// List
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getListCmNode(Element parent) {
-		CMElementDeclaration elementDeclaration = modelQuery.getCMElementDeclaration(parent);
-		List candidates = modelQuery.getAvailableContent(parent, elementDeclaration, 
-				ModelQuery.VALIDITY_STRICT);
-		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
-			if (candidate instanceof CMElementDeclaration) {
-				return RulesetConstants.JAVA_CLASS_ANNOTATION_LIST.equals(((CMElementDeclaration)candidate).getElementName());
-			}
-			return false;
-		}).findFirst();
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
-	}
-	
-	private Node createAnnotationList(Element parent) {
-		CMElementDeclaration listCmNode = getListCmNode(parent);
-		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, listCmNode, parent.getChildNodes().getLength(), null, null);
-		action.run();
-		if (!action.getResult().isEmpty()) {
-			return action.getResult().get(0);
-		}
-		return null;
-	}
-
-	public Node createAnnotationList(String name, Element parent) {
-		Node annotationList = createAnnotationList(parent);
+	public Element createAnnotationList(String name, Element parent) {
+		Element annotationList = createElement(parent, RulesetConstants.JAVA_CLASS_ANNOTATION_LIST);
 		if (name != null) {
-			CMElementDeclaration listCmNode = getListCmNode(parent);
-			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent((Element)annotationList, listCmNode, ModelQuery.INCLUDE_ATTRIBUTES);
-			CMAttributeDeclaration nameDeclaration = availableAttributeList.get(1);
-			AddNodeAction newNodeAction = new AddNodeAction(model, nameDeclaration, annotationList, annotationList.getChildNodes().getLength());
-			newNodeAction.runWithoutTransaction();
-			if (!newNodeAction.getResult().isEmpty() && name != null && !name.isEmpty()) {
-				Node nameNode = (Node)newNodeAction.getResult().get(0);
-				contentHelper.setNodeValue(nameNode, name);
-			}
+			annotationList.setAttribute(RulesetConstants.LIST_NAME, name);
 		}
 		return annotationList;
 	}
 	
 	// Type
-	
-	private List<Element> collectAnnotationTypeElements(Element parent) {
-		Object[] elementChildren = contentHelper.getChildren(parent);
-		return Arrays.stream(elementChildren).filter(o -> {
-			if (o instanceof Element && 
-					Objects.equal(RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE, ((Element)o).getNodeName())) {
-				return true;
-			}
-			return false;
-		}).map(o -> (Element)o).collect(Collectors.toList());
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getAnnotationTypeCmNode(Element parent) {
-		CMElementDeclaration elementDeclaration = modelQuery.getCMElementDeclaration(parent);
-		List candidates = modelQuery.getAvailableContent(parent, elementDeclaration, 
-				ModelQuery.VALIDITY_STRICT);
-		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
-			if (candidate instanceof CMElementDeclaration) {
-				return RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE.equals(((CMElementDeclaration)candidate).getElementName());
-			}
-			return false;
-		}).findFirst();
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
-	}
-	
-	private Node createAnnotationType(Element parent) {
-		CMElementDeclaration linkCmNode = getAnnotationTypeCmNode(parent);
-		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, linkCmNode, parent.getChildNodes().getLength(), null, null);
-		action.run();
-		if (!action.getResult().isEmpty()) {
-			return action.getResult().get(0);
-		}
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Node createAnnotationTypeWithPattern(String pattern, Element parent) {
-		Node annotationType = createAnnotationType(parent);
-		CMElementDeclaration typeCmNode = getAnnotationTypeCmNode(parent);
-		List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent((Element)annotationType, typeCmNode, ModelQuery.INCLUDE_ATTRIBUTES);
-		CMAttributeDeclaration patterDeclaration = availableAttributeList.get(1);
-		AddNodeAction newNodeAction = new AddNodeAction(model, patterDeclaration, annotationType, annotationType.getChildNodes().getLength());
-		newNodeAction.runWithoutTransaction();
-		if (!newNodeAction.getResult().isEmpty()) {
-			Node patternNode = (Node)newNodeAction.getResult().get(0);
-			contentHelper.setNodeValue(patternNode, pattern);
+	public Element createAnnotationTypeWithPattern(String pattern, Element parent) {
+		Element annotationType = createElement(parent, RulesetConstants.JAVA_CLASS_ANNOTATION_TYPE);
+		if (pattern != null) {
+			annotationType.setAttribute(RulesetConstants.TYPE_PATTERN, pattern);
 		}
 		return annotationType;
 	}
 	
 	// Literal
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getLiteralCmNode(Element parent) {
-		CMElementDeclaration elementDeclaration = modelQuery.getCMElementDeclaration(parent);
-		List candidates = modelQuery.getAvailableContent(parent, elementDeclaration, 
-				ModelQuery.VALIDITY_STRICT);
-		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
-			if (candidate instanceof CMElementDeclaration) {
-				return RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL.equals(((CMElementDeclaration)candidate).getElementName());
-			}
-			return false;
-		}).findFirst();
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
-	}
-	
-	private Node createAnnotationLiteral(Element parent) {
-		CMElementDeclaration literalCmNode = getLiteralCmNode(parent);
-		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, literalCmNode, parent.getChildNodes().getLength(), null, null);
-		action.run();
-		if (!action.getResult().isEmpty()) {
-			return action.getResult().get(0);
-		}
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void createAnnotationLiteralWithValue(String name, String value, Element parent) {
-		Node literalNode = createAnnotationLiteral(parent);
-		CMElementDeclaration literalCmNode = getLiteralCmNode(parent);
-		List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent((Element)literalNode, literalCmNode, ModelQuery.INCLUDE_ATTRIBUTES);
+	public Element createAnnotationLiteralWithValue(String name, String value, Element parent) {
+		Element literalElement = createElement(parent, RulesetConstants.JAVA_CLASS_ANNOTATION_LITERAL);
 		if (name != null) {
-			CMAttributeDeclaration nameDeclaration = availableAttributeList.get(0);
-			AddNodeAction newNameAction = new AddNodeAction(model, nameDeclaration, literalNode, literalNode.getChildNodes().getLength());
-			newNameAction.runWithoutTransaction();
-			if (!newNameAction.getResult().isEmpty()) {
-				Node nameNode = (Node)newNameAction.getResult().get(0);
-				contentHelper.setNodeValue(nameNode, name);
-			}
+			literalElement.setAttribute(RulesetConstants.LITERAL_NAME, name);
 		}
-		CMAttributeDeclaration patterDeclaration = availableAttributeList.get(1);
-		AddNodeAction newPatternAction = new AddNodeAction(model, patterDeclaration, literalNode, literalNode.getChildNodes().getLength());
-		newPatternAction.runWithoutTransaction();
-		if (!newPatternAction.getResult().isEmpty()) {
-			Node patternNode = (Node)newPatternAction.getResult().get(0);
-			contentHelper.setNodeValue(patternNode, value);
+		if (value != null) {
+			literalElement.setAttribute(RulesetConstants.LITERAL_PATTERN, value);
+		}
+		return literalElement;
+	}
+	
+	// Common
+	private Element createElement(Element parent, String name) {
+		Element element = parent.getOwnerDocument().createElement(name);
+		parent.appendChild(element);
+		return element;
+	}
+	
+	// Annotation Generation
+	
+	public void generateAnnotationElements(Element javaclassElement, Annotation annotation, EvaluationContext evaluationContext) {
+		
+		IAnnotationEmitter emitter = new IAnnotationEmitter() {
+			@Override
+			public void emitSingleValue(String value, EvaluationContext evaluationContext) {
+				createAnnotationLiteralWithValue(null, value, (Element)evaluationContext.getElement());
+			}
+			@Override
+			public void emitMemberValuePair(String name, String value, EvaluationContext evaluationContext) {
+				createAnnotationLiteralWithValue(name, value, (Element)evaluationContext.getElement());
+			}
+			
+			@Override
+			public void emitBeginMemberValuePairArrayInitializer(String name, EvaluationContext evaluationContext) {
+				Node annotationList = createAnnotationList(name, (Element)evaluationContext.getElement());
+				evaluationContext.setElement(annotationList);
+			}
+			
+			@Override
+			public void emitEndMemberValuePairArrayInitializer(EvaluationContext evaluationContext) {
+				// popup to the current context's element's parent.
+				Element element = (Element)evaluationContext.getElement();
+				element = (Element)element.getParentNode();
+				// not sure if this is right, we might need to get the parent context (witch might already have this parent element as its elemnt)
+				evaluationContext.setElement(element);
+			}
+			
+			@Override
+			public void emitBeginArrayInitializer(EvaluationContext evaluationContext) {
+				// Assuming we're handling arrays with no name (ie., not a MemberValuePair) as nameless annotation-list
+				Node annotationList = createAnnotationList(null, (Element)evaluationContext.getElement());
+				evaluationContext.setElement(annotationList);
+			}
+			
+			@Override
+			public void emitEndArrayInitializer(EvaluationContext evaluationContext) {
+				// popup to the current context's element's parent.
+				Element element = (Element)evaluationContext.getElement();
+				element = (Element)element.getParentNode();
+				// not sure if this is right, we might need to get the parent context (witch might already have this parent element as its elemnt)
+				evaluationContext.setElement(element);
+			}
+			
+			@Override
+			public void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext) {
+				String annotationName = annotation.getTypeName().getFullyQualifiedName();
+				ITypeBinding typeBinding= annotation.resolveTypeBinding();
+				if (typeBinding != null) {
+					annotationName = typeBinding.getQualifiedName();
+				}
+				if (evaluationContext.isTopLevelContext()) {
+					boolean initialized = isJavaclassInitialized(javaclassElement);
+					if (!initialized) {
+						javaclassElement.setAttribute(RulesetConstants.JAVA_CLASS_REFERENCES, annotationName);
+						createLocationWithName(javaclassElement, JavaClassDelegate.JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getLabel());
+						evaluationContext.setElement(javaclassElement);
+					}
+					else if (!evaluationContext.isInitialized()){
+						Node anntotationTypeNode = createAnnotationTypeWithPattern(annotationName, javaclassElement);
+						evaluationContext.setElement(anntotationTypeNode);
+					}
+				}
+				else {
+					Element parent = (Element)evaluationContext.getElement();
+					Node anntotationTypeNode = createAnnotationTypeWithPattern(annotationName, parent);
+					evaluationContext.setElement(anntotationTypeNode);
+				}
+			}
+		};
+		annotation.accept(new SnippetAnnotationVisitor(emitter, evaluationContext));
+	}
+	
+	public boolean isJavaclassInitialized(Element element) {
+		if (element.getAttribute(RulesetConstants.JAVA_CLASS_REFERENCES).isEmpty() && 
+				element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION).getLength() == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	// Location
+	public void createLocationWithName(Element javaClassElement, String name) {
+		Element locationElement = javaClassElement.getOwnerDocument().createElement(RulesetConstants.JAVA_CLASS_LOCATION);
+		javaClassElement.appendChild(locationElement);
+		if (name != null) {
+			contentHelper.setNodeValue(locationElement, name);
 		}
 	}
 }

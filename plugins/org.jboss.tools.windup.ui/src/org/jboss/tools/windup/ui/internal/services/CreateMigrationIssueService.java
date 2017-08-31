@@ -22,9 +22,14 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.MouseEvent;
@@ -36,11 +41,17 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocument;
+import org.eclipse.wst.sse.ui.internal.editor.EditorModelUtil;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.NewRuleFromSelectionWizard;
@@ -48,6 +59,7 @@ import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.ui.internal.services.ContextMenuService.WindupAction;
 import org.jboss.tools.windup.ui.internal.views.TaskListView;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @SuppressWarnings("restriction")
@@ -55,6 +67,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 
 	@Inject private EPartService partService;
 	@Inject private RulesetSelectionCreationService creationService;
+	@Inject private RulesetDOMService domService;
 	
 	private ITextEditor editor;
 	
@@ -123,7 +136,10 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		manager.add(CREATE_MIGRATION_TASK);
-		manager.add(createRuleFromSelectionAction(editor));
+		WindupAction action = createRuleFromSelectionAction(editor);
+		if (action != null) {
+			manager.add(action);
+		}
 	}
 	
 	@Override
@@ -137,34 +153,123 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 	}
 	
 	private WindupAction createRuleFromSelectionAction(ITextEditor theEditor) {
-		WindupAction action = new WindupAction(Messages.createRuleFromSelection,
-				WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
-				IEclipseContext context = WindupUIPlugin.getDefault().getContext();
-				NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
-				WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
-					public Point getInitialSize() {
-						return new Point(575, 220);
-					}
-				};
-				if (wizardDialog.open() == Window.OK) {
-					IFile ruleset = wizard.getRuleset();
-					if (ruleset != null && ruleset.exists()) {
-						try {
-				            IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(ruleset), 
-				            		RulesetEditor.ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
-							if (editorPart instanceof RulesetEditorWrapper) {
-								RulesetEditorWrapper wrapper = (RulesetEditorWrapper)editorPart;
-								List<Element> elements = creationService.createRulesFromEditorSelection(theEditor, wrapper);
-								if (elements != null && !elements.isEmpty()) {
-									wrapper.selectAndReveal(elements.get(elements.size()-1));
-								}
+		WindupAction action = null;
+		/*
+		 * TODO: I'm pretty sure we can create a JavaTextSelection without requiring the selection to come from within a JavaEditor.
+		 * This would make it flexible to allow creating the rule from a selection of text regardless of the editor the text is within.
+		 * We did something similar when we had an embedded java editor in the javaclass UI delegate. Could we re-use this functionality
+		 * and set it up in the background, and make it re-usable?
+		 */
+		if (theEditor instanceof JavaEditor) {
+			JavaEditor editor = (JavaEditor)theEditor;
+			if (SelectionConverter.getInputAsCompilationUnit(editor) != null) {
+				ITextSelection textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
+				JavaTextSelection javaSelection= new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
+				action = new WindupAction(Messages.createRuleFromSelection,
+					WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
+						IEclipseContext context = WindupUIPlugin.getDefault().getContext();
+						NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
+						WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
+							public Point getInitialSize() {
+								return new Point(575, 220);
 							}
-						} catch (PartInitException e) {
-							WindupUIPlugin.log(e);
+						};
+						if (wizardDialog.open() == Window.OK) {
+							IFile ruleset = wizard.getRuleset();
+							if (ruleset != null && ruleset.exists()) {
+									Document document = getDocument(ruleset);
+									if (document != null) {
+										IStructuredModel model = ((IDOMNode) document).getModel();
+										IStructuredDocument doc = model.getStructuredDocument();
+										boolean dirty = model.isDirty();
+										if (doc == null) {
+											FileEditorInput input = new FileEditorInput(ruleset);
+											TextFileDocumentProvider provider = new TextFileDocumentProvider();
+											
+											try {
+												provider.connect(input);
+												
+												IDocument iDoc = provider.getDocument(input);
+												model = StructuredModelManager.getModelManager().getModelForEdit((IStructuredDocument) iDoc);
+												EditorModelUtil.addFactoriesTo(model);
+												
+												document = ((IDOMModel) model).getDocument();
+												
+												createRule(wizard.openEditor(), document, javaSelection, ruleset);
+												provider.disconnect(input);
+											}
+											catch (Exception e) {
+												WindupUIPlugin.log(e);
+											}
+										}
+										else {
+											createRule(wizard.openEditor(), document, javaSelection, ruleset);
+										}
+										if (!dirty) {
+											try {
+												model.save();
+											}
+											catch (Exception e) {
+												WindupUIPlugin.log(e);
+											}
+										}
+									}
+									else {
+										WindupUIPlugin.logErrorMessage("Unable to obtain Document for rule generation." ); //$NON-NLS-1$
+									}
+							}
 						}
+					});
+			}
+		}
+		return action;
+	}
+	
+	private void createRule(boolean openEditor, Document document, JavaTextSelection javaSelection, IFile ruleset) {
+		try {
+			List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+			if (elements != null && !elements.isEmpty()) {
+				if (!openEditor) {
+					IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(new FileEditorInput(ruleset));
+					if (editorPart != null && editorPart instanceof RulesetEditorWrapper) {
+						RulesetEditorWrapper wrapper = (RulesetEditorWrapper)editorPart;
+						wrapper.selectAndReveal(elements.get(elements.size()-1));
 					}
 				}
-			});
-		return action;
+				if (openEditor) {
+					IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(ruleset), 
+		            		RulesetEditor.ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+					if (editorPart instanceof RulesetEditorWrapper) {
+						RulesetEditorWrapper wrapper = (RulesetEditorWrapper)editorPart;
+						wrapper.selectAndReveal(elements.get(elements.size()-1));
+					}					
+				}
+			}
+		}
+		catch (Exception e) {
+			WindupUIPlugin.log(e);
+		}
+	}
+	
+	private Document getDocument(IFile rulesetFile) {
+		IStructuredModel model = null;
+		try {
+			model = StructuredModelManager.getModelManager().getExistingModelForRead(rulesetFile);
+			if (model == null) {
+				model = StructuredModelManager.getModelManager().getModelForRead(rulesetFile);
+			}
+			if ((model != null) && (model instanceof IDOMModel)) {
+				return ((IDOMModel) model).getDocument();
+			}
+		} 
+		catch (Exception e) {
+			WindupUIPlugin.log(e);
+		}
+		finally {
+			if (model != null) {
+				model.releaseFromRead();
+			}
+		}
+		return null;
 	}
 }

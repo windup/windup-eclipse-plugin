@@ -214,7 +214,7 @@ public class HintDelegate extends ElementUiDelegate {
 		
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(mainDetailsContainer);
 			
-			Composite client = super.createSection(mainDetailsContainer, 2, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX|Section.TWISTIE, 
+			Composite client = super.createSection(mainDetailsContainer, 2, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX, 
 					null, null);
 			
 			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 2);

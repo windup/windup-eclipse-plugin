@@ -100,7 +100,7 @@ public class RulesetDOMService {
 		return javaclassElement;
 	}
 	
-	public Element createJavaClassReferenceLocation(Element javaClassElement) {
+	public Element createJavaClassLocation(Element javaClassElement) {
 		Element locationElement = javaClassElement.getOwnerDocument().createElement(RulesetConstants.JAVA_CLASS_LOCATION);
 		javaClassElement.appendChild(locationElement);
 		return locationElement;
@@ -173,13 +173,16 @@ public class RulesetDOMService {
 	}
 	
 	public static void format(IStructuredModel model, Node element, boolean deep) {
-		try {
-			model.aboutToChangeModel();
-			IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
-			formatProcessor.formatNode(element);
-		}
-		finally {
-			model.changedModel();
+		if (model.getStructuredDocument() != null) {
+			try {
+				model.aboutToChangeModel();
+				IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
+				formatProcessor.formatNode(element);
+			}
+			finally {
+				model.changedModel();
+	
+			}
 		}
 	}
 }

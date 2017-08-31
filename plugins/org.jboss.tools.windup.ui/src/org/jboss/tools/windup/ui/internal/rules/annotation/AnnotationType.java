@@ -42,8 +42,11 @@ public class AnnotationType extends AnnotationElement {
 	
 	private AnnotationElement[] buildModel() {
 		List<CMAttributeDeclaration> attributes = getAttributes();
-		this.patternElement = new AnnotationTypePatternElement(this, attributes.get(0));
-		List<AnnotationElement> children = Lists.newArrayList(patternElement);
+		AnnotationTypeNameElement nameELement = new AnnotationTypeNameElement(this, attributes.get(0));
+		this.patternElement = new AnnotationTypePatternElement(this, attributes.get(1));
+		List<AnnotationElement> children = Lists.newArrayList();
+		children.add(nameELement);
+		children.add(patternElement);
 		children.addAll(collectChildren());
 		return children.toArray(new AnnotationElement[children.size()]);
 	}
@@ -62,6 +65,12 @@ public class AnnotationType extends AnnotationElement {
 	
 	public static class AnnotationTypePatternElement extends AttributeElement {
 		public AnnotationTypePatternElement(AnnotationElement parent, CMNode node) {
+			super(parent, node);
+		}
+	}
+	
+	public static class AnnotationTypeNameElement extends AttributeElement {
+		public AnnotationTypeNameElement(AnnotationElement parent, CMNode node) {
 			super(parent, node);
 		}
 	}

@@ -41,6 +41,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 
 public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard {
@@ -49,6 +50,7 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 	private Combo rulesetCombo;
 	
 	private IFile selectedRuleset;
+	private boolean openEditor = true;
 	
 	private SelectCustomRulesetWizardPage rulesetPage;
 	
@@ -76,6 +78,10 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 	
 	public IFile getRuleset() {
 		return selectedRuleset;
+	}
+	
+	public boolean openEditor() {
+		return openEditor;
 	}
 	
 	private class SelectCustomRulesetWizardPage extends WizardPage {
@@ -132,6 +138,17 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 					}
 				}
 			});
+			
+			Button openEditorButton = new Button(container, SWT.CHECK);
+			openEditorButton.setText(RuleMessages.ruleGenerationOpenEditor);
+			openEditorButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					openEditor = openEditorButton.getSelection();
+				}
+			});
+			openEditorButton.setSelection(true);
+			
 			setControl(container);
 			modelService.cleanPhantomCustomRuleProviders();
 			

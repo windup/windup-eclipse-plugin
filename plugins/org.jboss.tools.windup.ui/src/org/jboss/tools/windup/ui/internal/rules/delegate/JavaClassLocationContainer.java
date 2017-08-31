@@ -38,12 +38,10 @@ import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
-import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate.JAVA_CLASS_REFERENCE_LOCATION;
+import org.jboss.tools.windup.ui.internal.services.AnnotationService;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
@@ -187,25 +185,10 @@ public class JavaClassLocationContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				createLocationElement(element);
+				AnnotationService annotationService = new AnnotationService();	
+				annotationService.createLocationWithName(element, null);
 			}
 		});
 		section.setTextClient(toolbar);
-	}
-	
-	private Node createLocationElement(Element parent) {
-		CMElementDeclaration linkCmNode = getLocationCmNode();
-		AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-				model, parent, linkCmNode, parent.getChildNodes().getLength(), null, null);
-		action.run();
-		if (!action.getResult().isEmpty()) {
-			return action.getResult().get(0);
-		}
-		return null;
-	}
-	
-	public void createLocationWithAnnotationType(Element parent) {
-		Node locationNode = createLocationElement(parent);
-		contentHelper.setNodeValue(locationNode, JAVA_CLASS_REFERENCE_LOCATION.ANNOTATION.getLabel());
 	}
 }

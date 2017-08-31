@@ -20,8 +20,6 @@ import javax.inject.Inject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -63,6 +61,7 @@ import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
+import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
@@ -76,8 +75,7 @@ import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationContentProv
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationElement;
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationElement.AttributeElement;
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationModel;
-import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
-import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.IAnnotationEmitter;
+import org.jboss.tools.windup.ui.internal.services.AnnotationService;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
@@ -89,7 +87,7 @@ import com.google.common.collect.Lists;
 @SuppressWarnings({"restriction"})
 public class JavaClassDelegate extends ElementUiDelegate {
 	
-	enum JAVA_CLASS_REFERENCE_LOCATION {
+	public static enum JAVA_CLASS_REFERENCE_LOCATION {
 		
 		ANNOTATION(TypeReferenceLocation.ANNOTATION.toString(), "A Java class references the annotation."),
 		CATCH_EXCEPTION_STATEMENT(TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT.toString(), "A Java class method catches the specified type."),
@@ -128,84 +126,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 	}
 	
-	public void generateAnnotationElements(Annotation annotation, EvaluationContext evaluationContext) {
-		IAnnotationEmitter emitter = new IAnnotationEmitter() {
-			@Override
-			public void emitSingleValue(String value, EvaluationContext evaluationContext) {
-				detailsTab.createAnnotationLiteral(value, (Element)evaluationContext.getElement());
-			}
-			@Override
-			public void emitMemberValuePair(String name, String value, EvaluationContext evaluationContext) {
-				detailsTab.createAnnotationLiteral(name, value, (Element)evaluationContext.getElement());
-			}
-			
-			@Override
-			public void emitBeginMemberValuePairArrayInitializer(String name, EvaluationContext evaluationContext) {
-				Node annotationList = detailsTab.createAnnotationList(name, (Element)evaluationContext.getElement());
-				evaluationContext.setElement(annotationList);
-			}
-			
-			@Override
-			public void emitEndMemberValuePairArrayInitializer(EvaluationContext evaluationContext) {
-				// popup to the current context's element's parent.
-				Element element = (Element)evaluationContext.getElement();
-				element = (Element)element.getParentNode();
-				// not sure if this is right, we might need to get the parent context (witch might already have this parent element as its elemnt)
-				evaluationContext.setElement(element);
-			}
-			
-			@Override
-			public void emitBeginArrayInitializer(EvaluationContext evaluationContext) {
-				// Assuming we're handling arrays with no name (ie., not a MemberValuePair) as nameless annotation-list
-				Node annotationList = detailsTab.createAnnotationList(null, (Element)evaluationContext.getElement());
-				evaluationContext.setElement(annotationList);
-			}
-			
-			@Override
-			public void emitEndArrayInitializer(EvaluationContext evaluationContext) {
-				// popup to the current context's element's parent.
-				Element element = (Element)evaluationContext.getElement();
-				element = (Element)element.getParentNode();
-				// not sure if this is right, we might need to get the parent context (witch might already have this parent element as its elemnt)
-				evaluationContext.setElement(element);
-			}
-			
-			@Override
-			public void emitAnnotation(Annotation annotation, EvaluationContext evaluationContext) {
-				String annotationName = annotation.getTypeName().getFullyQualifiedName();
-				ITypeBinding typeBinding= annotation.resolveTypeBinding();
-				if (typeBinding != null) {
-					annotationName = typeBinding.getQualifiedName();
-				}
-				if (evaluationContext.isTopLevelContext()) {
-					boolean initialized = isJavaclassInitialized(element);
-					if (!initialized) {
-						detailsTab.initialize(annotationName, element);
-						evaluationContext.setElement(element);
-					}
-					else if (!evaluationContext.isInitialized()){
-						Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, element);
-						evaluationContext.setElement(anntotationTypeNode);
-					}
-				}
-				else {
-					Element parent = (Element)evaluationContext.getElement();
-					Node anntotationTypeNode = detailsTab.createAnnotationType(annotationName, parent);
-					evaluationContext.setElement(anntotationTypeNode);
-				}
-			}
-		};
-		annotation.accept(new SnippetAnnotationVisitor(emitter, evaluationContext));
-	}
-	
-	private boolean isJavaclassInitialized(Element element) {
-		if (element.getAttribute(RulesetConstants.JAVA_CLASS_REFERENCES).isEmpty() && 
-				element.getElementsByTagName(RulesetConstants.JAVA_CLASS_LOCATION).getLength() == 0) {
-			return false;
-		}
-		return true;
-	}
-	
 	private Form topContainer;
 	private DetailsTab detailsTab;
 	
@@ -214,6 +134,11 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		detailsTab.update();
 		topContainer.layout(true, true);
 		//topContainer.reflow(true);
+	}
+	
+	@Override
+	protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
+		return true;
 	}
 	
 	@Override
@@ -240,7 +165,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 
 	@Override
 	public Object[] getChildren() {
-		return super.getChildren();
+		return new Object[] {};
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
@@ -258,12 +183,12 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		private ClassAttributeRow javaClassReferenceRow;
 		
-		public void initialize(String annotationName, Element parent) {
+		/*public void initialize(String annotationName, Element parent) {
 			javaClassReferenceRow.setText(annotationName);
 			locationContainer.createLocationWithAnnotationType(parent);
-		}
+		}*/
 		
-		private Node createAnnotationType(String pattern, Element parent) {
+	/*	private Node createAnnotationType(String pattern, Element parent) {
 			return annotationTypeContainer.createAnnotationTypeWithPattern(pattern, parent);
 		}
 		
@@ -277,7 +202,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		private Node createAnnotationList(String name, Element parent) {
 			return annotationListContainer.createAnnotationList(name, parent);
-		}
+		}*/
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
@@ -329,7 +254,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		
 		private void createAnnotationModelTree(Composite parent, Composite top) {
 			
-			Composite client = super.createSection(parent, 1, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX, "Annotation", 
+			Composite client = super.createSection(parent, 1, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE, "Annotation", 
 					RuleMessages.annotationDescription);
 			Section section = (Section)client.getParent();
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
@@ -377,6 +302,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 		
 		private void createToolbar(Composite parent) {
+			AnnotationService annotationService = new AnnotationService();
 			Button newLiteralButton = toolkit.createButton(parent, RuleMessages.javaclass_annotation_literal_sectionTitle, SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(newLiteralButton);
 			newLiteralButton.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_ADD));
@@ -384,6 +310,9 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			newLiteralButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
+					Element newElement = annotationService.createAnnotationLiteralWithValue(null, null, element);
+					annotationTree.expandToLevel(newElement, TreeViewer.ALL_LEVELS);
+					annotationTree.setSelection(new StructuredSelection(newElement), true);
 				}
 			});
 			
@@ -394,6 +323,9 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			newTypeButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
+					Element newElement = annotationService.createAnnotationTypeWithPattern(null, element);
+					annotationTree.expandToLevel(newElement, TreeViewer.ALL_LEVELS);
+					annotationTree.setSelection(new StructuredSelection(newElement), true);
 				}
 			});
 			
@@ -404,6 +336,9 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			newListButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
+					Element newElement = annotationService.createAnnotationList(null, element);
+					annotationTree.expandToLevel(newElement, TreeViewer.ALL_LEVELS);
+					annotationTree.setSelection(new StructuredSelection(newElement), true);
 				}
 			});
 		}
