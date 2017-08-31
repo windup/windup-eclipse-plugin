@@ -26,6 +26,9 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -60,14 +63,21 @@ import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -119,7 +129,13 @@ public class HintMessageTab extends ElementAttributesContainer {
 	public void createControls(Composite parent) {
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		
-		Composite messageClient = createMessageSection(parent);
+		CTabFolder folder = createMessagesSection(parent);
+		CTabItem sourceItem = createSourceTab(folder);
+		CTabItem previewItem = createPreviewTab(folder);
+		folder.setSelection(previewItem);
+		
+		updatePreview();
+		/*Composite messageClient = createMessageSection(parent);
 		((GridLayout)messageClient.getLayout()).marginBottom = 5;
 		createSourceViewer(messageClient);
 		
@@ -127,14 +143,48 @@ public class HintMessageTab extends ElementAttributesContainer {
 		((GridLayout)previewClient.getLayout()).marginBottom = 5;
 		createBrowser(previewClient);
 		
-		updatePreview();
+		updatePreview();*/
 	}
 	
-	public void initExpansion() {
-		if (!getElementMessage().trim().isEmpty()) {
-			sourceSection.setExpanded(true);
-			previewSection.setExpanded(true);
-		}
+	private CTabFolder createMessagesSection(Composite parent) {
+		ColorRegistry reg = JFaceResources.getColorRegistry();
+		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
+			  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
+		CTabFolder folder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.FLAT);
+		folder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
+		folder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
+		folder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		folder.setBorderVisible(true);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(folder);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		folder.setLayoutData(gd);
+		folder.setFont(parent.getFont());
+		return folder;
+	}
+	
+	private CTabItem createSourceTab(CTabFolder folder) {
+		CTabItem item = new CTabItem(folder, SWT.BORDER);
+		item.setText(Messages.RulesetEditor_messageSection);
+		item.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_MARKDOWN));
+		Composite client = toolkit.createComposite(folder);
+		GridLayoutFactory.fillDefaults().applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+		item.setControl(client);
+		createSourceViewer(client);
+		return item;
+	}
+	
+	private CTabItem createPreviewTab(CTabFolder folder) {
+		CTabItem item = new CTabItem(folder, SWT.BORDER);
+		item.setText(Messages.RulesetEditor_previewSection);
+		item.setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_REPORT));
+		Composite client = toolkit.createComposite(folder);
+		GridLayoutFactory.fillDefaults().applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(client);
+		item.setControl(client);
+		createBrowser(client);
+		return item;	
 	}
 	
 	private Composite createMessageSection(Composite parent) {
@@ -176,12 +226,12 @@ public class HintMessageTab extends ElementAttributesContainer {
 	
 	@Override
 	protected void bind() {
-		String message = getElementMessage();
+		/*String message = getElementMessage();
 		if (!Objects.equal(document.get(), message)) {
 			document.set(getElementMessage());
 		}
 		sourceViewer.invalidateTextPresentation();
-		updatePreview();
+		updatePreview();*/
 	}
 	
 	public Section getSourceEditorContainer() {

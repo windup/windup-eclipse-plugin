@@ -264,8 +264,6 @@ public class HintDelegate extends ElementUiDelegate {
 			
 			linksTab = createLinksSection(container);
 			
-			messageTab.initExpansion();
-			
 			if (tagsTreeViewer.getTree().getItemCount() > 0) {
 				tagsSection.setExpanded(true);
 			}
