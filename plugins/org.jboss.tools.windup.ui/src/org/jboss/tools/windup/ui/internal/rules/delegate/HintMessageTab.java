@@ -69,8 +69,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -147,6 +145,10 @@ public class HintMessageTab extends ElementAttributesContainer {
 	}
 	
 	private CTabFolder createMessagesSection(Composite parent) {
+		parent = toolkit.createComposite(parent);
+		GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 0, 5).applyTo(parent);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+
 		ColorRegistry reg = JFaceResources.getColorRegistry();
 		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
 			  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
@@ -244,7 +246,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 	
 	private void createBrowser(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(browser);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 150).applyTo(browser);
 		browser.addLocationListener(new LocationListener() {
 			public void changed(LocationEvent event) {
 				event.doit = false;

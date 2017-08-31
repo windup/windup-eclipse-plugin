@@ -144,7 +144,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
 				if (size.y > maxHeight) {
-					size.y = maxHeight;
+					//size.y = maxHeight;
 				}
 				return size;
 			};
