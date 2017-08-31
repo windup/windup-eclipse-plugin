@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -54,7 +53,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
@@ -126,41 +124,13 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		}
 	}
 	
-	private Form topContainer;
-	private DetailsTab detailsTab;
-	
-	@Override
-	public void update() {
-		detailsTab.update();
-		topContainer.layout(true, true);
-		//topContainer.reflow(true);
-	}
-	
 	@Override
 	protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
 		return true;
 	}
 	
-	@Override
-	public Control getControl() {
-		if (topContainer == null) {
-			//topContainer = toolkit.createScrolledForm(parent);
-			topContainer = toolkit.createForm(parent);
-			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getBody());
-			createTabs();
-		}
-		return topContainer;
-	}
-	
-	@Override
-	protected <T> TabWrapper addTab(Class<T> clazz) {
-		IEclipseContext child = createTabContext(topContainer.getBody());
-		T obj = create(clazz, child);
-		return new TabWrapper(obj, child, null);
-	}
-	
 	protected void createTabs() {
-		this.detailsTab = (DetailsTab)addTab(DetailsTab.class).getObject();
+		addTab(DetailsTab.class);
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
@@ -65,6 +66,8 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	@Inject @Optional protected IFile file;
 	@Inject @Optional protected RulesetElementUiDelegateFactory uiDelegateFactory;
 	
+	private List<TabWrapper> wrappers = Lists.newArrayList();
+	
 	protected MenuBuilder menuBuilder = new MenuBuilder();
 	protected TreeContentHelper contentHelper = new TreeContentHelper();
 	
@@ -91,10 +94,16 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Override
 	public void update() {
-		for (TabWrapper wrapper : tabs.values()) {
+		/*for (TabWrapper wrapper : tabs.values()) {
+			IElementDetailsContainer container = (IElementDetailsContainer)wrapper.getObject();
+			container.update();
+		}*/
+		for (TabWrapper wrapper : wrappers) {
 			IElementDetailsContainer container = (IElementDetailsContainer)wrapper.getObject();
 			container.update();
 		}
+		topContainer.reflow(true);
+		topContainer.layout(true, true);
 	}
 	
 	@Override
@@ -136,13 +145,13 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	//protected Control control;
 	
-	private Form topContainer;
+	private ScrolledForm topContainer;
 	
 	@Override
 	public Control getControl() {
 		if (topContainer == null) {
-			topContainer = toolkit.createForm(parent);
-			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getBody());
+			topContainer = toolkit.createScrolledForm(parent);
+			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getForm().getBody());
 			createTabs();
 		}
 		return topContainer;
@@ -150,12 +159,13 @@ public abstract class ElementUiDelegate extends BaseTabStack implements IElement
 	
 	@Override
 	protected <T> TabWrapper addTab(Class<T> clazz) {
-		Composite parent = toolkit.createComposite(topContainer.getBody());
+		Composite parent = toolkit.createComposite(topContainer.getForm().getBody());
 		GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		IEclipseContext child = createTabContext(parent);
 		T object = create(clazz, child);
 		TabWrapper wrapper = new TabWrapper(object, child, null);
+		wrappers.add(wrapper);
 		return wrapper;
 	}
 	

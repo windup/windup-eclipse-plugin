@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -39,14 +38,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
@@ -73,32 +70,6 @@ import com.google.common.collect.Sets;
 
 @SuppressWarnings("restriction")
 public class HintDelegate extends ElementUiDelegate {
-	
-	private ScrolledForm topContainer;
-	private DetailsTab detailsTab;
-	
-	@Override
-	public void update() {
-		detailsTab.update();
-		topContainer.reflow(true);
-	}
-	
-	@Override
-	public Control getControl() {
-		if (topContainer == null) {
-			topContainer = toolkit.createScrolledForm(parent);
-			GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(topContainer.getForm().getBody());
-			createTabs();
-		}
-		return topContainer;
-	}
-	
-	@Override
-	protected <T> TabWrapper addTab(Class<T> clazz) {
-		IEclipseContext child = createTabContext(topContainer.getBody());
-		T obj = create(clazz, child);
-		return new TabWrapper(obj, child, null);
-	}
 	
 	enum HINT_EFFORT {
 		
@@ -134,7 +105,7 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	@Override
 	protected void createTabs() {
-		this.detailsTab = (DetailsTab)addTab(DetailsTab.class).getObject();
+		addTab(DetailsTab.class);
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
