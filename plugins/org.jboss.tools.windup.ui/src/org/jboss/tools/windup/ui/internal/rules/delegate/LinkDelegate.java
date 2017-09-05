@@ -15,8 +15,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
@@ -53,7 +51,7 @@ public class LinkDelegate extends ElementUiDelegate {
 		for (CMAttributeDeclaration declaration : availableAttributeList) {
     			Node node = findNode(element, ed, declaration);
 		    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.LINK_HREF)) {
-		    		IProject project = context.get(IFile.class).getProject();
+		    		//IProject project = context.get(IFile.class).getProject();
 		    		ReferenceNodeRow row = new ReferenceNodeRow(element, declaration) {
 					@Override
 					protected void openReference() {

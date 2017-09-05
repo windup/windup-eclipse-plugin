@@ -147,32 +147,8 @@ public class JavaClassDelegate extends ElementUiDelegate {
 		private TreeViewer annotationTree;
 		
 		private JavaClassLocationContainer locationContainer;
-		private JavaClassAnnotationLiteralContainer annotationLiteralContainer;
-		private JavaClassAnnotationListContainer annotationListContainer;
-		private JavaClassAnnotationTypeContainer annotationTypeContainer;
 		
 		private ClassAttributeRow javaClassReferenceRow;
-		
-		/*public void initialize(String annotationName, Element parent) {
-			javaClassReferenceRow.setText(annotationName);
-			locationContainer.createLocationWithAnnotationType(parent);
-		}*/
-		
-	/*	private Node createAnnotationType(String pattern, Element parent) {
-			return annotationTypeContainer.createAnnotationTypeWithPattern(pattern, parent);
-		}
-		
-		private void createAnnotationLiteral(String value, Element parent) {
-			annotationLiteralContainer.createAnnotationLiteralWithValue(null, value, parent);
-		}
-		
-		private void createAnnotationLiteral(String name, String value, Element parent) {
-			annotationLiteralContainer.createAnnotationLiteralWithValue(name, value, parent);
-		}
-		
-		private Node createAnnotationList(String name, Element parent) {
-			return annotationListContainer.createAnnotationList(name, parent);
-		}*/
 		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
@@ -204,7 +180,6 @@ public class JavaClassDelegate extends ElementUiDelegate {
 				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 3));
 				    	}
 			    }
-			    //createSections(parent, section);
 			    createLocationSection(parent);
 			    createAnnotationModelTree(parent, section);
 			}
@@ -430,61 +405,11 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			}
 		}
 		
-		private void createSections(Composite parent, Composite top) {
-			
-			Composite container = toolkit.createComposite(parent);
-			GridLayout layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			container.setLayout(layout);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
-
-			locationContainer = new JavaClassLocationContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			locationContainer.createControls(container);
-			
-			container = toolkit.createComposite(parent);
-			layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginBottom = 0;
-			layout.marginWidth = 0;
-			container.setLayout(layout);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
-			
-			
-			annotationLiteralContainer = new JavaClassAnnotationLiteralContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			annotationLiteralContainer.createControls(container);
-			
-			container = toolkit.createComposite(parent);
-			layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginBottom = 0;
-			layout.marginWidth = 0;
-			container.setLayout(layout);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
-			
-			annotationListContainer = new JavaClassAnnotationListContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			annotationListContainer.createControls(container);
-			
-			container = toolkit.createComposite(parent);
-			layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginBottom = 0;
-			layout.marginWidth = 0;
-			container.setLayout(layout);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
-			
-			annotationTypeContainer = new JavaClassAnnotationTypeContainer(element, model, modelQuery, elementDeclaration, toolkit, uiDelegateFactory, context, contentHelper);
-			annotationTypeContainer.createControls(container);
-		}
-		
 		@Override
 		protected void bind() {
 			super.bind();
 			annotationTree.refresh(annotationModel, true);
 			locationContainer.bind();
-//			annotationLiteralContainer.bind();
-//			annotationListContainer.bind();
-//			annotationTypeContainer.bind();
 		}
 		
 		private class CellListener extends ColumnViewerEditorActivationListener implements ICellEditorListener {

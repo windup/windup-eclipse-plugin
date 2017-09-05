@@ -22,8 +22,6 @@ import javax.annotation.PostConstruct;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -55,7 +53,6 @@ import org.eclipse.mylyn.wikitext.parser.MarkupParser;
 import org.eclipse.mylyn.wikitext.parser.builder.HtmlDocumentBuilder;
 import org.eclipse.mylyn.wikitext.parser.markup.AbstractMarkupLanguage;
 import org.eclipse.mylyn.wikitext.ui.editor.MarkupSourceViewerConfiguration;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
@@ -71,7 +68,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -79,12 +75,10 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -128,20 +122,11 @@ public class HintMessageTab extends ElementAttributesContainer {
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		
 		CTabFolder folder = createMessagesSection(parent);
-		CTabItem sourceItem = createSourceTab(folder);
+		createSourceTab(folder);
 		CTabItem previewItem = createPreviewTab(folder);
 		folder.setSelection(previewItem);
 		
 		updatePreview();
-		/*Composite messageClient = createMessageSection(parent);
-		((GridLayout)messageClient.getLayout()).marginBottom = 5;
-		createSourceViewer(messageClient);
-		
-		Composite previewClient = createPreviewSection(parent);
-		((GridLayout)previewClient.getLayout()).marginBottom = 5;
-		createBrowser(previewClient);
-		
-		updatePreview();*/
 	}
 	
 	private CTabFolder createMessagesSection(Composite parent) {
@@ -189,51 +174,14 @@ public class HintMessageTab extends ElementAttributesContainer {
 		return item;	
 	}
 	
-	private Composite createMessageSection(Composite parent) {
-		Composite container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
-		
-		this.sourceSection = createSection(container, Messages.RulesetEditor_messageSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX,
-				NLS.bind(Messages.RulesetEditor_messageSectionDescription, RulesetConstants.HINT_NAME) + " " + NLS.bind(Messages.RulesetEditor_messageContentAssist, getBinding()));
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceSection);
-		return (Composite)sourceSection.getClient();
-	}
-	
-	private String getBinding() {
-	    final IBindingService bindingSvc= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-		TriggerSequence binding= bindingSvc.getBestActiveBindingFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		if (binding instanceof KeySequence) {
-			return binding.format();
-		}
-		return "";
-    }
-	
-	private Composite createPreviewSection(Composite parent) {
-		Composite container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
-		
-		this.previewSection = createSection(container, Messages.RulesetEditor_previewSection, ExpandableComposite.TITLE_BAR|Section.TWISTIE|Section.NO_TITLE_FOCUS_BOX, 
-				null);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(previewSection);
-		return (Composite)previewSection.getClient();
-	}
-	
 	@Override
 	protected void bind() {
-		/*String message = getElementMessage();
+		String message = getElementMessage();
 		if (!Objects.equal(document.get(), message)) {
 			document.set(getElementMessage());
 		}
 		sourceViewer.invalidateTextPresentation();
-		updatePreview();*/
+		updatePreview();
 	}
 	
 	public Section getSourceEditorContainer() {

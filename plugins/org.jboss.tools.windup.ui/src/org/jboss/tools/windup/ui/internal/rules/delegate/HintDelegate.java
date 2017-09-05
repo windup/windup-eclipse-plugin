@@ -438,7 +438,7 @@ public class HintDelegate extends ElementUiDelegate {
 	
 	@Override
 	public Object[] getChildren() {
-		/*Object[] result = super.getChildren();
+		Object[] result = super.getChildren();
 		if (result != null) {
 			result = Arrays.stream(result).filter(n -> {
 				if (n instanceof Node) {
@@ -449,7 +449,6 @@ public class HintDelegate extends ElementUiDelegate {
 				return true;
 			}).collect(Collectors.toList()).toArray();
 		}
-		return result;*/
-		return super.getChildren();
+		return result;
 	}
 }

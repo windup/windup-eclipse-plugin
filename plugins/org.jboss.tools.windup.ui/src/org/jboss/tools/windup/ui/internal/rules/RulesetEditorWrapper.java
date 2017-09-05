@@ -27,10 +27,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.IDesignViewer;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDependenciesPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetEditorDocumentationPage;
-import org.jboss.tools.windup.ui.internal.editor.RulesetEditorOverviewPage;
-import org.jboss.tools.windup.ui.internal.editor.RulesetExamplesPage;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,12 +53,13 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	@Override
 	protected void createPages() {
 		CTabFolder folder = (CTabFolder)super.getContainer();
-		RulesetEditorOverviewPage overviewPage = new RulesetEditorOverviewPage(getContainer());
-		int index = addPage(overviewPage.getControl());
-		setPageText(index, Messages.rulesOverview);
-		RulesetEditorDependenciesPage dependenciesPage = new RulesetEditorDependenciesPage(getContainer());
-		index = addPage(dependenciesPage.getControl());
-		setPageText(index, Messages.rulesEditor_dependencies);
+		//RulesetEditorOverviewPage overviewPage = new RulesetEditorOverviewPage(getContainer());
+		//int index = addPage(overviewPage.getControl());
+		//setPageText(index, Messages.rulesOverview);
+		//RulesetEditorDependenciesPage dependenciesPage = new RulesetEditorDependenciesPage(getContainer());
+		//index = addPage(dependenciesPage.getControl());
+		//setPageText(index, Messages.rulesEditor_dependencies);
+		int index = -1;
 		super.createPages();
 		folder.getItem(index+1).setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_RULES_FORM));
 		folder.getItem(index+2).setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_XML));
@@ -69,10 +67,11 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 		index = addPage(documentationPage.getControl());
 		setPageText(index, Messages.documentationTitle);
 		folder.getItem(index).setImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_REPORT));
-		RulesetExamplesPage examplesPage = new RulesetExamplesPage(getContainer());
-		index = addPage(examplesPage.getControl());
-		setPageText(index, Messages.examplesTitle);
-		setActivePage(2);
+		//RulesetExamplesPage examplesPage = new RulesetExamplesPage(getContainer());
+		//index = addPage(examplesPage.getControl());
+		//setPageText(index, Messages.examplesTitle);
+		//setActivePage(2);
+		setActivePage(0);
 	}
 	
 	@Override

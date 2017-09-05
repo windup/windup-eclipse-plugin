@@ -63,9 +63,6 @@ public class BaseTabStack {
 		gd.horizontalSpan = 2;
 		folder.setLayoutData(gd);
 		folder.setFont(parent.getFont());
-		//folder.setBackground(toolkit.getColors().getBackground());
-		//parent.setBackground(toolkit.getColors().getBackground());
-		//parent.getParent().setBackground(toolkit.getColors().getBackground());
 		folder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

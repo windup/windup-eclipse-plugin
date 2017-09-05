@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <windup.version>4.0.0.Beta2.1</windup.version>
+        <windup.version>4.0.0-SNAPSHOT</windup.version>
         <tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
         <!-- exclude variables that are allowed to have SNAPSHOT versions
         See https://github.com/jbosstools/jbosstools-devdoc/blob/master/source/build_checks.adoc#enforce-no-snapshots-final -->
