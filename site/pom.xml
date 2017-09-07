@@ -14,7 +14,7 @@
 
 	<properties>
 		<update.site.name>JBoss Tools - Windup</update.site.name>
-		<skipDeployToJBossOrg>true</skipDeployToJBossOrg>
+		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
 	</properties>
 
 	<profiles>
