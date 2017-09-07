@@ -36,13 +36,14 @@
 								<phase>deploy</phase>
 								<configuration>
 									<arguments>
-									<arg>-s</arg>
-									<arg>${project.build.directory}</arg>
-									<arg>-t</arg>
-									<arg>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</arg>
-									<arg>-i</arg>
-									<arg>repository.zip</arg>
+										<arg>-s</arg>
+										<arg>${project.build.directory}</arg>
+										<arg>-t</arg>
+										<arg>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</arg>
+										<arg>-i</arg>
+										<arg>repository.zip</arg>
 									</arguments>
+									<skip>${skipDeployToJBossOrg}</skip>
 								</configuration>
 							</execution>
 						</executions>
