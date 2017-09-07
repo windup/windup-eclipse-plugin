@@ -105,6 +105,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_TAG = "icons/rules/tag.gif"; //$NON-NLS-1$
     public static final String IMG_XML = "icons/xml.png"; //$NON-NLS-1$
     public static final String IMG_RULESET_EDITOR = "icons/rules/ruleset_editor.png"; //$NON-NLS-1$
+    public static final String IMG_CLASSIFICATION = "icons/rules/classification.png"; //$NON-NLS-1$
     
     public static final String IMG_NEW_ANNOTATION = "icons/rules/newannotation_wiz.gif"; //$NON-NLS-1$
 
@@ -277,6 +278,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_EXPRESSION, createImageDescriptor(IMG_EXPRESSION));
 		reg.put(IMG_CHARACTER, createImageDescriptor(IMG_CHARACTER));
 		reg.put(IMG_MARKDOWN, createImageDescriptor(IMG_MARKDOWN));
+		reg.put(IMG_CLASSIFICATION, createImageDescriptor(IMG_CLASSIFICATION));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

@@ -115,12 +115,15 @@ public class Messages extends NLS
     public static String RulesetEditor_tagsSectionAddDialogTitle;
     public static String RulesetEditor_tagsSectionAddDialog;
     
+    public static String RulesetEditor_previewSection;
+    
     public static String RulesetEditor_messageSection;
     public static String RulesetEditor_messageSectionDescription;
     public static String RulesetEditor_messageContentAssist;
     
-    public static String RulesetEditor_previewSection;
-    
+    public static String RulesetEditor_descriptionSection;
+    public static String RulesetEditor_descriptionPreviewSection;
+        
     public static String openRuleset;
     public static String errorOpeningRuleset;
     public static String rulesMenuNew;

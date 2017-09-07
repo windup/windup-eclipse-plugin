@@ -14,6 +14,7 @@ import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_HINT;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_CLASSIFICATION;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +60,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 	private static final Image XML_NODE;
 	private static final Image JAVA;
 	private static final Image HINT;
+	private static final Image CLASSIFICATION;
 
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -66,6 +68,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		XML_NODE = imageRegistry.get(IMG_XML_RULE);
 		JAVA = imageRegistry.get(IMG_JAVA);
 		HINT = imageRegistry.get(IMG_HINT);
+		CLASSIFICATION = imageRegistry.get(IMG_CLASSIFICATION);
 	}
 	
 	private RulesetElementUiDelegateRegistry elementUiRegistry = new RulesetElementUiDelegateRegistry(new RulesetElementUiDelegateFactory()); 
@@ -151,6 +154,10 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		return RulesetConstants.HINT_NAME.equals(element.getNodeName());
 	}
 	
+	private boolean isClassificationNode(Element element) {
+		return RulesetConstants.CLASSIFICATION.equals(element.getNodeName());
+	}
+	
 	@Override
 	public Image getImage(Object node) {
 		Image image = null;
@@ -164,6 +171,9 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 			}
 			else if (isHintNode(element)) {
 				return HINT;
+			}
+			else if (isClassificationNode(element)) {
+				return CLASSIFICATION;
 			}
 			else {
 				image = XML_NODE;

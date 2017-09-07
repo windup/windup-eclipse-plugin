@@ -451,19 +451,19 @@
             </xs:attribute>
             <!-- <xs:attribute name="severity" type="severity-type" use="optional" /> -->
             <xs:attribute name="category-id" type="severity-type" use="optional">
-            <xs:annotation>
-                 <xs:documentation>
-                 <![CDATA[
-                    <p>A reference to a category as defined in <code>RHAMT_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
-                    <p>The default categories are:</p>
-                    <ul>
-					    <li>mandatory</li>
-					    <li>optional</li>
-					    <li>potential</li>
-					</ul>
-                 ]]>
-                 </xs:documentation>
-            </xs:annotation>            
+	            <xs:annotation>
+	                 <xs:documentation>
+	                 <![CDATA[
+	                    <p>A reference to a category as defined in <code>RHAMT_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
+	                    <p>The default categories are:</p>
+	                    <ul>
+						    <li>mandatory</li>
+						    <li>optional</li>
+						    <li>potential</li>
+						</ul>
+	                 ]]>
+	                 </xs:documentation>
+	            </xs:annotation>            
             </xs:attribute>
             <xs:attribute name="in" type="xs:string" use="optional">
             <xs:annotation>
@@ -520,10 +520,50 @@
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
                 <xs:element ref="quickfix" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
-            <xs:attribute name="title" type="xs:string" use="required"/>
-            <xs:attribute name="effort" type="xs:byte" use="optional" />
-            <xs:attribute name="severity" type="severity-type" use="optional" />
-            <xs:attribute name="of" type="xs:string" use="optional" />
+            <xs:attribute name="title" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        <![CDATA[
+                            <p>The title given to this resource.</p>
+                        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="effort" type="xs:byte" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        <![CDATA[
+                            <p>Story points are used to express the level of effort needed to migrate particular application constructs,</p>
+                            <p>and the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
+                        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <!-- <xs:attribute name="severity" type="severity-type" use="optional" /> -->
+            <xs:attribute name="category-id" type="severity-type" use="optional">
+                <xs:annotation>
+                     <xs:documentation>
+                     <![CDATA[
+                        <p>A reference to a category as defined in <code>RHAMT_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
+                        <p>The default categories are:</p>
+                        <ul>
+                            <li>mandatory</li>
+                            <li>optional</li>
+                            <li>potential</li>
+                        </ul>
+                     ]]>
+                     </xs:documentation>
+                </xs:annotation>            
+            </xs:attribute>
+            <xs:attribute name="of" type="xs:string" use="optional">
+                <xs:annotation>
+                     <xs:documentation>
+                     <![CDATA[
+                        <p>Create a new classification for the given reference.</p>
+                     ]]>
+                     </xs:documentation>
+                </xs:annotation>  
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
 

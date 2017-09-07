@@ -76,6 +76,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorF
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
+import org.jboss.tools.windup.ui.internal.rules.delegate.ClassificationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.PresenterControlCreator;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
@@ -121,6 +122,10 @@ public class RulesetElementUiDelegateFactory {
 		static final String CATEGORY_ID = "category-id"; //$NON-NLS-1$
 		static final String MESSAGE = "message"; //$NON-NLS-1$
 		static final String CDATA = "#cdata-section"; //$NON-NLS-1$
+		
+		// classification
+		static final String CLASSIFICATION = "classification"; //$NON-NLS-1$
+		static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references"; //$NON-NLS-1$
@@ -176,6 +181,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.LINK_NAME: {
 				uiDelegate = createControls(LinkDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.CLASSIFICATION: {
+				uiDelegate = createControls(ClassificationDelegate.class, context);
 				break;
 			}
 			default: {
