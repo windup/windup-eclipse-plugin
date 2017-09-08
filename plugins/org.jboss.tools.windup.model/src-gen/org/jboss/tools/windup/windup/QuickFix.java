@@ -2,6 +2,7 @@
  */
 package org.jboss.tools.windup.windup;
 
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Quick Fix</b></em>'.

@@ -45,58 +45,12 @@ public class HintItemProvider extends IssueItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addTitlePropertyDescriptor(object);
-			addHintPropertyDescriptor(object);
 			addLineNumberPropertyDescriptor(object);
 			addColumnPropertyDescriptor(object);
 			addLengthPropertyDescriptor(object);
 			addSourceSnippetPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Title feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTitlePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Hint_title_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Hint_title_feature", "_UI_Hint_type"),
-				 WindupPackage.eINSTANCE.getHint_Title(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Hint feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addHintPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Hint_hint_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Hint_hint_feature", "_UI_Hint_type"),
-				 WindupPackage.eINSTANCE.getHint_Hint(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
 	}
 
 	/**
@@ -225,8 +179,6 @@ public class HintItemProvider extends IssueItemProvider {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Hint.class)) {
-			case WindupPackage.HINT__TITLE:
-			case WindupPackage.HINT__HINT:
 			case WindupPackage.HINT__LINE_NUMBER:
 			case WindupPackage.HINT__COLUMN:
 			case WindupPackage.HINT__LENGTH:

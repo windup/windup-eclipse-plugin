@@ -11,7 +11,6 @@
 package org.jboss.tools.windup.ui.internal.issues;
 
 import static org.jboss.tools.windup.model.domain.WindupMarker.EFFORT;
-import static org.jboss.tools.windup.model.domain.WindupMarker.HINT;
 import static org.jboss.tools.windup.model.domain.WindupMarker.RULE_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SOURCE_SNIPPET;
@@ -45,8 +44,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.browser.BrowserViewer;
+import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -199,14 +200,15 @@ public class IssueDetailsView {
 			StringBuilder builder = new StringBuilder();
 			builder.append("<h3>Title</h3>"); //$NON-NLS-1$
 			builder.append(marker.getAttribute(TITLE, noIssueDetails));
-			builder.append("<h3>Hint</h3>"); //$NON-NLS-1$
+			String header = issue instanceof Hint ? "<h3>Message</h3>" : "<h3>Description</h3>"; //$NON-NLS-1$ //$NON-NLS-2$
+			builder.append(header); //$NON-NLS-1$
 			Markdown4jProcessor markdownProcessor = new Markdown4jProcessor();
 			try {
-				builder.append(markdownProcessor.process(marker.getAttribute(HINT, noIssueDetails)));
+				builder.append(markdownProcessor.process(marker.getAttribute(WindupMarker.DESCRIPTION, noIssueDetails)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			builder.append("<h3>Severity</h3>");
+			builder.append("<h3>Category ID</h3>");
 			builder.append(marker.getAttribute(SEVERITY, noIssueDetails));
 			builder.append("<h3>Effort</h3>");
 			builder.append(marker.getAttribute(EFFORT, noIssueDetails));

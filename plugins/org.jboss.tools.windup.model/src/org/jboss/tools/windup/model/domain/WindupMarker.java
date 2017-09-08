@@ -30,14 +30,12 @@ public interface WindupMarker {
 	static final String ELEMENT_ID = "ELEMENT_ID"; //$NON-NLS-1$
 	
 	static final String TITLE = "TITLE_ID";//$NON-NLS-1$
-	static final String HINT = "HINT_ID"; //$NON-NLS-1$
 	static final String SEVERITY = "SEVERITY_ID"; //$NON-NLS-1$
 	static final String EFFORT = "EFFORT_ID"; //$NON-NLS-1$
 	static final String RULE_ID = "RULE_ID"; //$NON-NLS-1$
 	static final String SOURCE_SNIPPET = "SOURCE_ID"; //$NON-NLS-1$
 	static final String LENGTH = "LENGTH_ID";//$NON-NLS-1$
 	 
-	static final String CLASSIFICATION = "CLASSIFICATION_ID"; //$NON-NLS-1$
 	static final String DESCRIPTION = "DESCRIPTION_ID"; //$NON-NLS-1$
 	
 }

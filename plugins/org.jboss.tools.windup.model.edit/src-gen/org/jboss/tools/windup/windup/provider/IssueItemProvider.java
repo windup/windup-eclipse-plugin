@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
@@ -25,8 +26,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class IssueItemProvider 
-	extends MarkerElementItemProvider {
+public class IssueItemProvider extends MarkerElementItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -57,6 +57,8 @@ public class IssueItemProvider
 			addGeneratedReportLocationPropertyDescriptor(object);
 			addOriginalLineSourcePropertyDescriptor(object);
 			addStalePropertyDescriptor(object);
+			addTitlePropertyDescriptor(object);
+			addMessageOrDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -260,6 +262,50 @@ public class IssueItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Title feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTitlePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_title_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_title_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_Title(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Message Or Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addMessageOrDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_messageOrDescription_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_messageOrDescription_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_MessageOrDescription(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -337,6 +383,8 @@ public class IssueItemProvider
 			case WindupPackage.ISSUE__GENERATED_REPORT_LOCATION:
 			case WindupPackage.ISSUE__ORIGINAL_LINE_SOURCE:
 			case WindupPackage.ISSUE__STALE:
+			case WindupPackage.ISSUE__TITLE:
+			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.ISSUE__LINKS:

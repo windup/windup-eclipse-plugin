@@ -12,8 +12,6 @@ package org.jboss.tools.windup.windup;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.jboss.tools.windup.windup.Hint#getTitle <em>Title</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.Hint#getHint <em>Hint</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Hint#getLineNumber <em>Line Number</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Hint#getColumn <em>Column</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Hint#getLength <em>Length</em>}</li>
@@ -25,58 +23,6 @@ package org.jboss.tools.windup.windup;
  * @generated
  */
 public interface Hint extends Issue {
-	/**
-	 * Returns the value of the '<em><b>Title</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Title</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Title</em>' attribute.
-	 * @see #setTitle(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getHint_Title()
-	 * @model
-	 * @generated
-	 */
-	String getTitle();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Hint#getTitle <em>Title</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Title</em>' attribute.
-	 * @see #getTitle()
-	 * @generated
-	 */
-	void setTitle(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Hint</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Hint</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Hint</em>' attribute.
-	 * @see #setHint(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getHint_Hint()
-	 * @model
-	 * @generated
-	 */
-	String getHint();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Hint#getHint <em>Hint</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Hint</em>' attribute.
-	 * @see #getHint()
-	 * @generated
-	 */
-	void setHint(String value);
-
 	/**
 	 * Returns the value of the '<em><b>Line Number</b></em>' attribute.
 	 * <!-- begin-user-doc -->

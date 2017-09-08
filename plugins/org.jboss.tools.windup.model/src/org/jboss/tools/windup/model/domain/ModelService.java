@@ -66,6 +66,7 @@ import org.jboss.tools.windup.windup.WindupModel;
 import org.jboss.tools.windup.windup.WindupResult;
 import org.jboss.windup.bootstrap.help.Help;
 import org.jboss.windup.tooling.ExecutionResults;
+import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Link;
 import org.jboss.windup.tooling.data.Quickfix;
@@ -451,59 +452,116 @@ public class ModelService {
         configuration.setTimestamp(createTimestamp());
         configuration.setReportDirectory(reportDirectory.toString());
         for (Hint wHint : results.getHints()) {
-        	String path = wHint.getFile().getAbsolutePath();
-        	IFile resource = WorkspaceResourceUtils.getResource(path);
-			if (resource == null) {
-				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
-				continue;
-			}
-			
-        	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
-        	result.getIssues().add(hint);
-        	
-        	String line = DocumentUtils.getLine(resource, wHint.getLineNumber()-1);
-        	hint.setOriginalLineSource(line);
-
-        	for (Quickfix fix : wHint.getQuickfixes()) {
-    			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
-        		quickFix.setQuickFixType(fix.getType().toString());
-        		quickFix.setSearchString(fix.getSearch());
-        		quickFix.setReplacementString(fix.getReplacement());
-        		quickFix.setNewLine(fix.getNewline());
-        		quickFix.setTransformationId(fix.getTransformationID());
-        		quickFix.setName(fix.getName());
-        		if (fix.getFile() != null) {
-        			quickFix.setFile(fix.getFile().getAbsolutePath());
-        		}
-        		else {
-        			// Fallback for quickfixes not assigned to file. Assume quickfix applies to file associated with the hint.
-        			quickFix.setFile(path);
-        		}
-        		hint.getQuickFixes().add(quickFix);
-        	}
-
-        	// TODO: I think we might want to change this to project relative for portability.
-        	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
-        	hint.setSeverity(wHint.getIssueCategory().getCategoryID().toUpperCase());
-        	hint.setRuleId(wHint.getRuleID());
-        	hint.setEffort(wHint.getEffort());
-        	
-        	hint.setTitle(wHint.getTitle());
-        	hint.setHint(wHint.getHint());
-        	hint.setLineNumber(wHint.getLineNumber());
-        	hint.setColumn(wHint.getColumn());
-        	hint.setLength(wHint.getLength());
-        	hint.setSourceSnippet(wHint.getSourceSnippit());
-        	
-        	for (Link wLink : wHint.getLinks()) {
-        		org.jboss.tools.windup.windup.Link link = WindupFactory.eINSTANCE.createLink();
-        		link.setDescription(wLink.getDescription());
-        		link.setUrl(wLink.getUrl());
-        		hint.getLinks().add(link);
-        	}
+	        	String path = wHint.getFile().getAbsolutePath();
+	        	IFile resource = WorkspaceResourceUtils.getResource(path);
+				if (resource == null) {
+					Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
+					continue;
+				}
+				
+	        	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
+	        	result.getIssues().add(hint);
+	        	
+	        	String line = DocumentUtils.getLine(resource, wHint.getLineNumber()-1);
+	        	hint.setOriginalLineSource(line);
+	
+	        	for (Quickfix fix : wHint.getQuickfixes()) {
+	    			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
+	        		quickFix.setQuickFixType(fix.getType().toString());
+	        		quickFix.setSearchString(fix.getSearch());
+	        		quickFix.setReplacementString(fix.getReplacement());
+	        		quickFix.setNewLine(fix.getNewline());
+	        		quickFix.setTransformationId(fix.getTransformationID());
+	        		quickFix.setName(fix.getName());
+	        		if (fix.getFile() != null) {
+	        			quickFix.setFile(fix.getFile().getAbsolutePath());
+	        		}
+	        		else {
+	        			// Fallback for quickfixes not assigned to file. Assume quickfix applies to file associated with the hint.
+	        			quickFix.setFile(path);
+	        		}
+	        		hint.getQuickFixes().add(quickFix);
+	        	}
+	
+	        	// TODO: I think we might want to change this to project relative for portability.
+	        	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
+	        	hint.setSeverity(wHint.getIssueCategory().getCategoryID().toUpperCase());
+	        	hint.setRuleId(wHint.getRuleID());
+	        	hint.setEffort(wHint.getEffort());
+	        	
+	        	hint.setTitle(wHint.getTitle());
+	        	hint.setMessageOrDescription(wHint.getHint());
+	        	hint.setLineNumber(wHint.getLineNumber());
+	        	hint.setColumn(wHint.getColumn());
+	        	hint.setLength(wHint.getLength());
+	        	hint.setSourceSnippet(wHint.getSourceSnippit());
+	        	
+	        	for (Link wLink : wHint.getLinks()) {
+	        		org.jboss.tools.windup.windup.Link link = WindupFactory.eINSTANCE.createLink();
+	        		link.setDescription(wLink.getDescription());
+	        		link.setUrl(wLink.getUrl());
+	        		hint.getLinks().add(link);
+	        	}
         }
         
         // TODO: Classifications
+        
+        for (Classification wClassification : results.getClassifications()) {
+	        	String path = wClassification.getFile().getAbsolutePath();
+	        	IFile resource = WorkspaceResourceUtils.getResource(path);
+				if (resource == null) {
+					Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
+					continue;
+				}
+				
+	        	org.jboss.tools.windup.windup.Classification classification = WindupFactory.eINSTANCE.createClassification();
+	        	result.getIssues().add(classification);
+	        	
+	        //	String line = DocumentUtils.getLine(resource, wClassification.getLineNumber()-1);
+	        	// hint.setOriginalLineSource(line);
+	
+	        	for (Quickfix fix : wClassification.getQuickfixes()) {
+	    			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
+	        		quickFix.setQuickFixType(fix.getType().toString());
+	        		quickFix.setSearchString(fix.getSearch());
+	        		quickFix.setReplacementString(fix.getReplacement());
+	        		quickFix.setNewLine(fix.getNewline());
+	        		quickFix.setTransformationId(fix.getTransformationID());
+	        		quickFix.setName(fix.getName());
+	        		if (fix.getFile() != null) {
+	        			quickFix.setFile(fix.getFile().getAbsolutePath());
+	        		}
+	        		else {
+	        			// Fallback for quickfixes not assigned to file. Assume quickfix applies to file associated with the hint.
+	        			quickFix.setFile(path);
+	        		}
+	        		classification.getQuickFixes().add(quickFix);
+	        	}
+	
+	        	// TODO: I think we might want to change this to project relative for portability.
+	        	classification.setFileAbsolutePath(wClassification.getFile().getAbsolutePath());
+	        	classification.setSeverity(wClassification.getIssueCategory().getCategoryID().toUpperCase());
+	        	classification.setRuleId(wClassification.getRuleID());
+	        	classification.setEffort(wClassification.getEffort());
+	        	classification.setTitle(wClassification.getClassification());
+	        	classification.setMessageOrDescription(wClassification.getDescription());
+
+	        	
+	        //classification.setHint(wClassification.getHint());
+	        //classification.setLineNumber(wClassification.getLineNumber());
+	        //classification.setColumn(wClassification.getColumn());
+	        	//classification.setLength(wClassification.getLength());
+	        //classification.setSourceSnippet(wClassification.getSourceSnippit());
+	        	
+	        	for (Link wLink : wClassification.getLinks()) {
+	        		org.jboss.tools.windup.windup.Link link = WindupFactory.eINSTANCE.createLink();
+	        		link.setDescription(wLink.getDescription());
+	        		link.setUrl(wLink.getUrl());
+	        		classification.getLinks().add(link);
+	        	}
+        }
+        
+        //
         linkReports(results, result.getIssues());
 	}
 	

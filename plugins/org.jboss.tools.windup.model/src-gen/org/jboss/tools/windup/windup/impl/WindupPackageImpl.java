@@ -614,6 +614,24 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getIssue_Title() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIssue_MessageOrDescription() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getHint() {
 		return hintEClass;
 	}
@@ -623,7 +641,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getHint_Title() {
+	public EAttribute getHint_LineNumber() {
 		return (EAttribute)hintEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -632,7 +650,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getHint_Hint() {
+	public EAttribute getHint_Column() {
 		return (EAttribute)hintEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -641,7 +659,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getHint_LineNumber() {
+	public EAttribute getHint_Length() {
 		return (EAttribute)hintEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -650,26 +668,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getHint_Column() {
-		return (EAttribute)hintEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getHint_Length() {
-		return (EAttribute)hintEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getHint_SourceSnippet() {
-		return (EAttribute)hintEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)hintEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -679,24 +679,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EClass getClassification() {
 		return classificationEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getClassification_Classification() {
-		return (EAttribute)classificationEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getClassification_Description() {
-		return (EAttribute)classificationEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1018,18 +1000,16 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEReference(issueEClass, ISSUE__QUICK_FIXES);
 		createEAttribute(issueEClass, ISSUE__ORIGINAL_LINE_SOURCE);
 		createEAttribute(issueEClass, ISSUE__STALE);
+		createEAttribute(issueEClass, ISSUE__TITLE);
+		createEAttribute(issueEClass, ISSUE__MESSAGE_OR_DESCRIPTION);
 
 		hintEClass = createEClass(HINT);
-		createEAttribute(hintEClass, HINT__TITLE);
-		createEAttribute(hintEClass, HINT__HINT);
 		createEAttribute(hintEClass, HINT__LINE_NUMBER);
 		createEAttribute(hintEClass, HINT__COLUMN);
 		createEAttribute(hintEClass, HINT__LENGTH);
 		createEAttribute(hintEClass, HINT__SOURCE_SNIPPET);
 
 		classificationEClass = createEClass(CLASSIFICATION);
-		createEAttribute(classificationEClass, CLASSIFICATION__CLASSIFICATION);
-		createEAttribute(classificationEClass, CLASSIFICATION__DESCRIPTION);
 
 		linkEClass = createEClass(LINK);
 		createEAttribute(linkEClass, LINK__DESCRIPTION);
@@ -1164,18 +1144,16 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEReference(getIssue_QuickFixes(), this.getQuickFix(), null, "quickFixes", null, 0, -1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_OriginalLineSource(), ecorePackage.getEString(), "originalLineSource", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_Stale(), ecorePackage.getEBoolean(), "stale", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_Title(), ecorePackage.getEString(), "title", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_MessageOrDescription(), ecorePackage.getEString(), "messageOrDescription", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(hintEClass, Hint.class, "Hint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getHint_Title(), ecorePackage.getEString(), "title", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getHint_Hint(), ecorePackage.getEString(), "hint", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_LineNumber(), ecorePackage.getEInt(), "lineNumber", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_Column(), ecorePackage.getEInt(), "column", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_Length(), ecorePackage.getEInt(), "length", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getHint_SourceSnippet(), ecorePackage.getEString(), "sourceSnippet", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(classificationEClass, Classification.class, "Classification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getClassification_Classification(), ecorePackage.getEString(), "classification", null, 0, 1, Classification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getClassification_Description(), ecorePackage.getEString(), "description", null, 0, 1, Classification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(linkEClass, Link.class, "Link", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLink_Description(), ecorePackage.getEString(), "description", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

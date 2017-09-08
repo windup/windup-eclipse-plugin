@@ -130,45 +130,46 @@ public class WindupService
                 execBuilder.setOutput(outputPath.toFile().toPath().toString());
                 execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
                 execBuilder.setOption(SourceModeOption.NAME, true);
-            	execBuilder.setOption(SkipReportsRenderingOption.NAME, !configuration.isGenerateReport());
-            	execBuilder.ignore("\\.class$");
+                execBuilder.setOption(SkipReportsRenderingOption.NAME, !configuration.isGenerateReport());
+            		execBuilder.ignore("\\.class$");
 
                 MigrationPath path = configuration.getMigrationPath();
                 execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
                 if (path.getSource() != null) {
-                	execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
+                		execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
                 }
                 if (!configuration.getPackages().isEmpty()) {
-                	execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
+                		execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
                 }
                 modelService.cleanCustomRuleRepositories(configuration);
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
 					// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
-                	File file = new File(configuration.getUserRulesDirectories().get(0));
-                	execBuilder.setOption(UserRulesDirectoryOption.NAME, file);
+	                	File file = new File(configuration.getUserRulesDirectories().get(0));
+	                //	execBuilder.setOption(UserRulesDirectoryOption.NAME, Lists.newArrayList(file));
+	                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
                 }
                 
                 OptionsFacadeManager facadeMgr = modelService.getOptionFacadeManager();
                 
                 Multimap<String, String> optionMap = ArrayListMultimap.create();
                 for (Pair pair : configuration.getOptions()) {
-                	String name = pair.getKey();
-                	String value = pair.getValue();
-                	optionMap.put(name, value);
+	                	String name = pair.getKey();
+	                	String value = pair.getValue();
+	                	optionMap.put(name, value);
                 }
                 
                 for (String name : optionMap.keySet()) {
-                	List<String> values = (List<String>)optionMap.get(name);
-                	OptionDescription option = facadeMgr.findOptionDescription(name);
-                	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
-                	if (OptionFacades.isSingleValued(option)) {
-                		Object optionValue = typeFacade.newInstance(values.get(0));
-                		execBuilder.setOption(name, optionValue);
-                	}
-                	else {
-                		List<?> optionValues = typeFacade.newInstance(values);
-                		execBuilder.setOption(name, optionValues);
-                	}
+	                	List<String> values = (List<String>)optionMap.get(name);
+	                	OptionDescription option = facadeMgr.findOptionDescription(name);
+	                	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
+	                	if (OptionFacades.isSingleValued(option)) {
+	                		Object optionValue = typeFacade.newInstance(values.get(0));
+	                		execBuilder.setOption(name, optionValue);
+	                	}
+	                	else {
+	                		List<?> optionValues = typeFacade.newInstance(values);
+	                		execBuilder.setOption(name, optionValues);
+	                	}
                 }
                 
                 WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$

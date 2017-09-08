@@ -1,11 +1,9 @@
 package org.jboss.tools.windup.ui.internal.services;
 
-import static org.jboss.tools.windup.model.domain.WindupMarker.CLASSIFICATION;
 import static org.jboss.tools.windup.model.domain.WindupMarker.CONFIGURATION_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.DESCRIPTION;
 import static org.jboss.tools.windup.model.domain.WindupMarker.EFFORT;
 import static org.jboss.tools.windup.model.domain.WindupMarker.ELEMENT_ID;
-import static org.jboss.tools.windup.model.domain.WindupMarker.HINT;
 import static org.jboss.tools.windup.model.domain.WindupMarker.RULE_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SEVERITY;
 import static org.jboss.tools.windup.model.domain.WindupMarker.SOURCE_SNIPPET;
@@ -290,23 +288,14 @@ public class MarkerService {
 		
 		if (issue instanceof Hint) {
 			Hint hint = (Hint)issue;
-			
-			marker.setAttribute(IMarker.MESSAGE, hint.getTitle());
 			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
-			
-			marker.setAttribute(TITLE, hint.getTitle());
-			marker.setAttribute(HINT, hint.getHint());
 			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
 			//marker.setAttribute(IMarker.CHAR_START, hint.getColumn());
 			//marker.setAttribute(IMarker.CHAR_END, hint.getLength());
 			marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
 		}
 		else {
-			Classification classification = (Classification)issue;
-			marker.setAttribute(IMarker.MESSAGE, classification.getClassification());
-			marker.setAttribute(CLASSIFICATION, classification.getClassification());
-			marker.setAttribute(DESCRIPTION, classification.getDescription());
-			
+			//Classification classification = (Classification)issue;
 			marker.setAttribute(IMarker.LINE_NUMBER, 1);
 			marker.setAttribute(IMarker.CHAR_START, 0);
 			marker.setAttribute(IMarker.CHAR_END, 0);
@@ -316,6 +305,11 @@ public class MarkerService {
 		if (element != null) {
 			marker.setAttribute(ELEMENT_ID, element.getHandleIdentifier());
 		}
+		
+		marker.setAttribute(DESCRIPTION, issue.getMessageOrDescription());
+		
+		marker.setAttribute(IMarker.MESSAGE, issue.getTitle());
+		marker.setAttribute(TITLE, issue.getTitle());
 		
 		marker.setAttribute(URI_ID, EcoreUtil.getURI(issue).toString());
 		marker.setAttribute(CONFIGURATION_ID, configuration.getName());
@@ -370,6 +364,10 @@ public class MarkerService {
 					if (issue instanceof Hint) {
 						Hint hint = (Hint)issue;
 						count += hint.getQuickFixes().size();
+					}
+					else if (issue instanceof Classification) {
+						Classification classification = (Classification)issue;
+						count += classification.getQuickFixes().size();
 					}
 				}
 			}

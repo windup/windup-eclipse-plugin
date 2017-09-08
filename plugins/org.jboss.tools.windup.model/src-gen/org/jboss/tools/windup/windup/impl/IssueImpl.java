@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -40,6 +41,8 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getQuickFixes <em>Quick Fixes</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getOriginalLineSource <em>Original Line Source</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isStale <em>Stale</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getTitle <em>Title</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getMessageOrDescription <em>Message Or Description</em>}</li>
  * </ul>
  *
  * @generated
@@ -244,6 +247,46 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 	 * @ordered
 	 */
 	protected boolean stale = STALE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTitle() <em>Title</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTitle()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TITLE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTitle() <em>Title</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTitle()
+	 * @generated
+	 * @ordered
+	 */
+	protected String title = TITLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getMessageOrDescription() <em>Message Or Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMessageOrDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String MESSAGE_OR_DESCRIPTION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getMessageOrDescription() <em>Message Or Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMessageOrDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected String messageOrDescription = MESSAGE_OR_DESCRIPTION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -482,6 +525,48 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTitle(String newTitle) {
+		String oldTitle = title;
+		title = newTitle;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__TITLE, oldTitle, title));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getMessageOrDescription() {
+		return messageOrDescription;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMessageOrDescription(String newMessageOrDescription) {
+		String oldMessageOrDescription = messageOrDescription;
+		messageOrDescription = newMessageOrDescription;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION, oldMessageOrDescription, messageOrDescription));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -523,6 +608,10 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 				return getOriginalLineSource();
 			case WindupPackage.ISSUE__STALE:
 				return isStale();
+			case WindupPackage.ISSUE__TITLE:
+				return getTitle();
+			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
+				return getMessageOrDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -571,6 +660,12 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 			case WindupPackage.ISSUE__STALE:
 				setStale((Boolean)newValue);
 				return;
+			case WindupPackage.ISSUE__TITLE:
+				setTitle((String)newValue);
+				return;
+			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
+				setMessageOrDescription((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -616,6 +711,12 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 			case WindupPackage.ISSUE__STALE:
 				setStale(STALE_EDEFAULT);
 				return;
+			case WindupPackage.ISSUE__TITLE:
+				setTitle(TITLE_EDEFAULT);
+				return;
+			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
+				setMessageOrDescription(MESSAGE_OR_DESCRIPTION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -650,6 +751,10 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 				return ORIGINAL_LINE_SOURCE_EDEFAULT == null ? originalLineSource != null : !ORIGINAL_LINE_SOURCE_EDEFAULT.equals(originalLineSource);
 			case WindupPackage.ISSUE__STALE:
 				return stale != STALE_EDEFAULT;
+			case WindupPackage.ISSUE__TITLE:
+				return TITLE_EDEFAULT == null ? title != null : !TITLE_EDEFAULT.equals(title);
+			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
+				return MESSAGE_OR_DESCRIPTION_EDEFAULT == null ? messageOrDescription != null : !MESSAGE_OR_DESCRIPTION_EDEFAULT.equals(messageOrDescription);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -682,6 +787,10 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 		result.append(originalLineSource);
 		result.append(", stale: ");
 		result.append(stale);
+		result.append(", title: ");
+		result.append(title);
+		result.append(", messageOrDescription: ");
+		result.append(messageOrDescription);
 		result.append(')');
 		return result.toString();
 	}

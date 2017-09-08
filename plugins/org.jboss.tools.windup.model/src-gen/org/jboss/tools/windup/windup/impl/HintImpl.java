@@ -19,8 +19,6 @@ import org.jboss.tools.windup.windup.WindupPackage;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getTitle <em>Title</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getHint <em>Hint</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getLineNumber <em>Line Number</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getColumn <em>Column</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.HintImpl#getLength <em>Length</em>}</li>
@@ -30,46 +28,6 @@ import org.jboss.tools.windup.windup.WindupPackage;
  * @generated
  */
 public class HintImpl extends IssueImpl implements Hint {
-	/**
-	 * The default value of the '{@link #getTitle() <em>Title</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTitle()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TITLE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTitle() <em>Title</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTitle()
-	 * @generated
-	 * @ordered
-	 */
-	protected String title = TITLE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getHint() <em>Hint</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getHint()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String HINT_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getHint() <em>Hint</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getHint()
-	 * @generated
-	 * @ordered
-	 */
-	protected String hint = HINT_EDEFAULT;
-
 	/**
 	 * The default value of the '{@link #getLineNumber() <em>Line Number</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -174,48 +132,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getTitle() {
-		return title;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTitle(String newTitle) {
-		String oldTitle = title;
-		title = newTitle;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.HINT__TITLE, oldTitle, title));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getHint() {
-		return hint;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setHint(String newHint) {
-		String oldHint = hint;
-		hint = newHint;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.HINT__HINT, oldHint, hint));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public int getLineNumber() {
 		return lineNumber;
 	}
@@ -303,10 +219,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case WindupPackage.HINT__TITLE:
-				return getTitle();
-			case WindupPackage.HINT__HINT:
-				return getHint();
 			case WindupPackage.HINT__LINE_NUMBER:
 				return getLineNumber();
 			case WindupPackage.HINT__COLUMN:
@@ -327,12 +239,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case WindupPackage.HINT__TITLE:
-				setTitle((String)newValue);
-				return;
-			case WindupPackage.HINT__HINT:
-				setHint((String)newValue);
-				return;
 			case WindupPackage.HINT__LINE_NUMBER:
 				setLineNumber((Integer)newValue);
 				return;
@@ -357,12 +263,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case WindupPackage.HINT__TITLE:
-				setTitle(TITLE_EDEFAULT);
-				return;
-			case WindupPackage.HINT__HINT:
-				setHint(HINT_EDEFAULT);
-				return;
 			case WindupPackage.HINT__LINE_NUMBER:
 				setLineNumber(LINE_NUMBER_EDEFAULT);
 				return;
@@ -387,10 +287,6 @@ public class HintImpl extends IssueImpl implements Hint {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case WindupPackage.HINT__TITLE:
-				return TITLE_EDEFAULT == null ? title != null : !TITLE_EDEFAULT.equals(title);
-			case WindupPackage.HINT__HINT:
-				return HINT_EDEFAULT == null ? hint != null : !HINT_EDEFAULT.equals(hint);
 			case WindupPackage.HINT__LINE_NUMBER:
 				return lineNumber != LINE_NUMBER_EDEFAULT;
 			case WindupPackage.HINT__COLUMN:
@@ -413,11 +309,7 @@ public class HintImpl extends IssueImpl implements Hint {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (title: ");
-		result.append(title);
-		result.append(", hint: ");
-		result.append(hint);
-		result.append(", lineNumber: ");
+		result.append(" (lineNumber: ");
 		result.append(lineNumber);
 		result.append(", column: ");
 		result.append(column);

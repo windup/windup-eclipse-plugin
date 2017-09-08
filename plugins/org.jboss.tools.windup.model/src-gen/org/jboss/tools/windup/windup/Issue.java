@@ -24,6 +24,8 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getQuickFixes <em>Quick Fixes</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getOriginalLineSource <em>Original Line Source</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#isStale <em>Stale</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getTitle <em>Title</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getMessageOrDescription <em>Message Or Description</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
@@ -296,5 +298,57 @@ public interface Issue extends MarkerElement {
 	 * @generated
 	 */
 	void setStale(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Title</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Title</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Title</em>' attribute.
+	 * @see #setTitle(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_Title()
+	 * @model
+	 * @generated
+	 */
+	String getTitle();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getTitle <em>Title</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Title</em>' attribute.
+	 * @see #getTitle()
+	 * @generated
+	 */
+	void setTitle(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Message Or Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Message Or Description</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Message Or Description</em>' attribute.
+	 * @see #setMessageOrDescription(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_MessageOrDescription()
+	 * @model
+	 * @generated
+	 */
+	String getMessageOrDescription();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getMessageOrDescription <em>Message Or Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Message Or Description</em>' attribute.
+	 * @see #getMessageOrDescription()
+	 * @generated
+	 */
+	void setMessageOrDescription(String value);
 
 } // Issue

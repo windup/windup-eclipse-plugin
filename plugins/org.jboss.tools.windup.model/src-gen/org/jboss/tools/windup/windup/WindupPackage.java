@@ -534,96 +534,6 @@ public interface WindupPackage extends EPackage {
 	int WINDUP_RESULT_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.IssueImpl <em>Issue</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.IssueImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getIssue()
-	 * @generated
-	 */
-	int ISSUE = 7;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.HintImpl <em>Hint</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.HintImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getHint()
-	 * @generated
-	 */
-	int HINT = 8;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.ClassificationImpl <em>Classification</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.ClassificationImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getClassification()
-	 * @generated
-	 */
-	int CLASSIFICATION = 9;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.LinkImpl <em>Link</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.LinkImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getLink()
-	 * @generated
-	 */
-	int LINK = 10;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.QuickFixImpl <em>Quick Fix</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.QuickFixImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getQuickFix()
-	 * @generated
-	 */
-	int QUICK_FIX = 11;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MigrationPathImpl <em>Migration Path</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.MigrationPathImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getMigrationPath()
-	 * @generated
-	 */
-	int MIGRATION_PATH = 12;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.TechnologyImpl <em>Technology</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.TechnologyImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getTechnology()
-	 * @generated
-	 */
-	int TECHNOLOGY = 13;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.PairImpl <em>Pair</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.PairImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getPair()
-	 * @generated
-	 */
-	int PAIR = 14;
-
-	/**
-	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl <em>Custom Rule Provider</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl
-	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getCustomRuleProvider()
-	 * @generated
-	 */
-	int CUSTOM_RULE_PROVIDER = 15;
-
-	/**
 	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MarkerElementImpl <em>Marker Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -677,6 +587,16 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int MARKER_ELEMENT_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.IssueImpl <em>Issue</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.IssueImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getIssue()
+	 * @generated
+	 */
+	int ISSUE = 7;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -796,13 +716,31 @@ public interface WindupPackage extends EPackage {
 	int ISSUE__STALE = MARKER_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
+	 * The feature id for the '<em><b>Title</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__TITLE = MARKER_ELEMENT_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Message Or Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__MESSAGE_OR_DESCRIPTION = MARKER_ELEMENT_FEATURE_COUNT + 12;
+
+	/**
 	 * The number of structural features of the '<em>Issue</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ISSUE_FEATURE_COUNT = MARKER_ELEMENT_FEATURE_COUNT + 11;
+	int ISSUE_FEATURE_COUNT = MARKER_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -821,6 +759,16 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int ISSUE_OPERATION_COUNT = MARKER_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.HintImpl <em>Hint</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.HintImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getHint()
+	 * @generated
+	 */
+	int HINT = 8;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -946,16 +894,16 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HINT__TITLE = ISSUE_FEATURE_COUNT + 0;
+	int HINT__TITLE = ISSUE__TITLE;
 
 	/**
-	 * The feature id for the '<em><b>Hint</b></em>' attribute.
+	 * The feature id for the '<em><b>Message Or Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HINT__HINT = ISSUE_FEATURE_COUNT + 1;
+	int HINT__MESSAGE_OR_DESCRIPTION = ISSUE__MESSAGE_OR_DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Line Number</b></em>' attribute.
@@ -964,7 +912,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HINT__LINE_NUMBER = ISSUE_FEATURE_COUNT + 2;
+	int HINT__LINE_NUMBER = ISSUE_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Column</b></em>' attribute.
@@ -973,7 +921,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HINT__COLUMN = ISSUE_FEATURE_COUNT + 3;
+	int HINT__COLUMN = ISSUE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Length</b></em>' attribute.
@@ -982,7 +930,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HINT__LENGTH = ISSUE_FEATURE_COUNT + 4;
+	int HINT__LENGTH = ISSUE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Source Snippet</b></em>' attribute.
@@ -991,7 +939,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HINT__SOURCE_SNIPPET = ISSUE_FEATURE_COUNT + 5;
+	int HINT__SOURCE_SNIPPET = ISSUE_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Hint</em>' class.
@@ -1000,7 +948,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HINT_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 6;
+	int HINT_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 4;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1019,6 +967,16 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int HINT_OPERATION_COUNT = ISSUE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.ClassificationImpl <em>Classification</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.ClassificationImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getClassification()
+	 * @generated
+	 */
+	int CLASSIFICATION = 9;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1138,22 +1096,22 @@ public interface WindupPackage extends EPackage {
 	int CLASSIFICATION__STALE = ISSUE__STALE;
 
 	/**
-	 * The feature id for the '<em><b>Classification</b></em>' attribute.
+	 * The feature id for the '<em><b>Title</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CLASSIFICATION__CLASSIFICATION = ISSUE_FEATURE_COUNT + 0;
+	int CLASSIFICATION__TITLE = ISSUE__TITLE;
 
 	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * The feature id for the '<em><b>Message Or Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CLASSIFICATION__DESCRIPTION = ISSUE_FEATURE_COUNT + 1;
+	int CLASSIFICATION__MESSAGE_OR_DESCRIPTION = ISSUE__MESSAGE_OR_DESCRIPTION;
 
 	/**
 	 * The number of structural features of the '<em>Classification</em>' class.
@@ -1162,7 +1120,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CLASSIFICATION_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 2;
+	int CLASSIFICATION_FEATURE_COUNT = ISSUE_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1181,6 +1139,16 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION_OPERATION_COUNT = ISSUE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.LinkImpl <em>Link</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.LinkImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getLink()
+	 * @generated
+	 */
+	int LINK = 10;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -1217,6 +1185,16 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int LINK_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.QuickFixImpl <em>Quick Fix</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.QuickFixImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getQuickFix()
+	 * @generated
+	 */
+	int QUICK_FIX = 11;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1327,6 +1305,16 @@ public interface WindupPackage extends EPackage {
 	int QUICK_FIX_OPERATION_COUNT = MARKER_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.MigrationPathImpl <em>Migration Path</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.MigrationPathImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getMigrationPath()
+	 * @generated
+	 */
+	int MIGRATION_PATH = 12;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1390,6 +1378,16 @@ public interface WindupPackage extends EPackage {
 	int MIGRATION_PATH_OPERATION_COUNT = NAMED_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.TechnologyImpl <em>Technology</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.TechnologyImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getTechnology()
+	 * @generated
+	 */
+	int TECHNOLOGY = 13;
+
+	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1426,6 +1424,16 @@ public interface WindupPackage extends EPackage {
 	int TECHNOLOGY_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.PairImpl <em>Pair</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.PairImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getPair()
+	 * @generated
+	 */
+	int PAIR = 14;
+
+	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1460,6 +1468,16 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int PAIR_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl <em>Custom Rule Provider</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.CustomRuleProviderImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getCustomRuleProvider()
+	 * @generated
+	 */
+	int CUSTOM_RULE_PROVIDER = 15;
 
 	/**
 	 * The feature id for the '<em><b>Location URI</b></em>' attribute.
@@ -1951,6 +1969,28 @@ public interface WindupPackage extends EPackage {
 	EAttribute getIssue_Stale();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getTitle <em>Title</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Title</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#getTitle()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_Title();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getMessageOrDescription <em>Message Or Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Message Or Description</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#getMessageOrDescription()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_MessageOrDescription();
+
+	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1959,28 +1999,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getHint();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Hint#getTitle <em>Title</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Title</em>'.
-	 * @see org.jboss.tools.windup.windup.Hint#getTitle()
-	 * @see #getHint()
-	 * @generated
-	 */
-	EAttribute getHint_Title();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Hint#getHint <em>Hint</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Hint</em>'.
-	 * @see org.jboss.tools.windup.windup.Hint#getHint()
-	 * @see #getHint()
-	 * @generated
-	 */
-	EAttribute getHint_Hint();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Hint#getLineNumber <em>Line Number</em>}'.
@@ -2035,28 +2053,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getClassification();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Classification#getClassification <em>Classification</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Classification</em>'.
-	 * @see org.jboss.tools.windup.windup.Classification#getClassification()
-	 * @see #getClassification()
-	 * @generated
-	 */
-	EAttribute getClassification_Classification();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Classification#getDescription <em>Description</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.jboss.tools.windup.windup.Classification#getDescription()
-	 * @see #getClassification()
-	 * @generated
-	 */
-	EAttribute getClassification_Description();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Link <em>Link</em>}'.

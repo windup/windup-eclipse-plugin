@@ -53,6 +53,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RuleGroupNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.SeverityNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
+import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 
@@ -263,7 +264,25 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 				style.append(" [" + markerNode.getFileName() + " " + hint.getLineNumber() + "]", 
 						StyledString.DECORATIONS_STYLER); 
 			}
-
+			
+			else if (issue instanceof Classification) {
+				Classification classification = (Classification)issue;
+				if (issue.isFixed()) {
+					style.append(classification.getName(), new Styler() {
+						@Override
+						public void applyStyles(TextStyle textStyle) {
+							textStyle.foreground = GREEN;
+							textStyle.strikeout = true; 
+						}
+					});
+				}
+				else {
+					style.append(classification.getTitle());
+				}
+				style.append(" [" + markerNode.getFileName() + "]", 
+						StyledString.DECORATIONS_STYLER); 
+			}
+			
 			else {
 				style.append(markerNode.getFileName());
 			}
