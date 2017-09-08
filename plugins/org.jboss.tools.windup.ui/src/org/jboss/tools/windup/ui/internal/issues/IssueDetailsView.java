@@ -210,7 +210,7 @@ public class IssueDetailsView {
 			}
 			builder.append("<h3>Category ID</h3>");
 			builder.append(marker.getAttribute(SEVERITY, noIssueDetails));
-			builder.append("<h3>Effort</h3>");
+			builder.append("<h3>Level of Effort</h3>");
 			builder.append(marker.getAttribute(EFFORT, noIssueDetails));
 			builder.append("<h3>Rule ID</h3>");
 			builder.append(marker.getAttribute(RULE_ID, noIssueDetails));
@@ -224,8 +224,10 @@ public class IssueDetailsView {
 				builder.append("<a href=\"" + link.getUrl() + "\"" + ">" + link.getUrl() + "</a>");
 				builder.append("</ul></li></p>");
 			}
-			builder.append("<h3>Source</h3>");
-			builder.append(marker.getAttribute(SOURCE_SNIPPET, noIssueDetails));
+			if (issue instanceof Hint) {
+				builder.append("<h3>Source</h3>");
+				builder.append(marker.getAttribute(SOURCE_SNIPPET, noIssueDetails));
+			}
 			return builder.toString();
 		}
 	}

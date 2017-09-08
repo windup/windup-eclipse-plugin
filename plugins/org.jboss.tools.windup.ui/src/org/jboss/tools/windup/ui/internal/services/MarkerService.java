@@ -307,7 +307,6 @@ public class MarkerService {
 		}
 		
 		marker.setAttribute(DESCRIPTION, issue.getMessageOrDescription());
-		
 		marker.setAttribute(IMarker.MESSAGE, issue.getTitle());
 		marker.setAttribute(TITLE, issue.getTitle());
 		
@@ -316,7 +315,7 @@ public class MarkerService {
 		marker.setAttribute(IMarker.SEVERITY, MarkerUtil.convertSeverity(issue.getSeverity()));
 		marker.setAttribute(SEVERITY, issue.getSeverity());
         marker.setAttribute(RULE_ID, issue.getRuleId());
-        marker.setAttribute(EFFORT, issue.getEffort());
+        marker.setAttribute(EFFORT, String.valueOf(issue.getEffort()));
         marker.setAttribute(IMarker.USER_EDITABLE, false);
         
         createQuickfixMarkers(issue);
