@@ -69,9 +69,9 @@ public class QuickfixesDelegate extends ElementAttributesContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CMElementDeclaration linkCmNode = getLinkCmNode();
+				CMElementDeclaration quickfixCmNode = getQuickfixCmNode();
 				AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
-						model, element, linkCmNode, element.getChildNodes().getLength(), null, null);
+						model, element, quickfixCmNode, element.getChildNodes().getLength(), null, null);
 				action.run();
 			}
 		});
@@ -85,7 +85,7 @@ public class QuickfixesDelegate extends ElementAttributesContainer {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getLinkCmNode() {
+	private CMElementDeclaration getQuickfixCmNode() {
 		List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
 				ModelQuery.VALIDITY_STRICT);
 		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {

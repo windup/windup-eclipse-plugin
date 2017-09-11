@@ -29,13 +29,16 @@ import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
-import org.jboss.windup.tooling.data.QuickfixType;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;
 
 @SuppressWarnings("restriction")
 public class QuickfixDelegate extends ElementUiDelegate {
+	
+	enum QUICKFIX_TYPE {
+		REPLACE, DELETE_LINE, INSERT_LINE;
+	}
 	
 	@Override
 	protected boolean shouldFilterElementInsertAction(ModelQueryAction action) {
@@ -47,11 +50,11 @@ public class QuickfixDelegate extends ElementUiDelegate {
 		addTab(DetailsTab.class);
 	}
 	
-	private ChoiceAttributeRow createTypeRow(CMNode cmNode) {
+	private ChoiceAttributeRow createTypeRow(CMNode cmNode, Element element) {
 		return new ChoiceAttributeRow(element, cmNode, true) {
 			@Override
 			protected List<String> getOptions() {
-				return Arrays.stream(QuickfixType.values()).map(e -> computeUiValue(e)).
+				return Arrays.stream(QUICKFIX_TYPE.values()).map(e -> computeUiValue(e)).
 						collect(Collectors.toList());
 			}
 			@Override
@@ -60,7 +63,7 @@ public class QuickfixDelegate extends ElementUiDelegate {
 					return "";
 				}
 				
-				Optional<QuickfixType> type = Arrays.stream(QuickfixType.values()).filter(e -> {
+				Optional<QUICKFIX_TYPE> type = Arrays.stream(QUICKFIX_TYPE.values()).filter(e -> {
 					return Objects.equal(e.name(), modelValue);
 				}).findFirst();
 				
@@ -77,7 +80,7 @@ public class QuickfixDelegate extends ElementUiDelegate {
 					return "";
 				}
 				
-				Optional<QuickfixType> type = Arrays.stream(QuickfixType.values()).filter(e -> {
+				Optional<QUICKFIX_TYPE> type = Arrays.stream(QUICKFIX_TYPE.values()).filter(e -> {
 					return Objects.equal(uiValue, computeUiValue(e));
 				}).findFirst(); 
 				
@@ -87,7 +90,7 @@ public class QuickfixDelegate extends ElementUiDelegate {
 				return "";
 			}
 			
-			private String computeUiValue(QuickfixType type) {
+			private String computeUiValue(QUICKFIX_TYPE type) {
 				return type.name();
 			}
 		};
@@ -98,7 +101,7 @@ public class QuickfixDelegate extends ElementUiDelegate {
 		List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 		for (CMAttributeDeclaration declaration : availableAttributeList) {
 		    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.QUICKFIX_TYPE)) {
-		    		ChoiceAttributeRow row = createTypeRow(declaration);
+		    		ChoiceAttributeRow row = createTypeRow(declaration, element);
 		    		rows.add(row);
 		    		row.createContents(parent, toolkit, 2);
 		    	}
