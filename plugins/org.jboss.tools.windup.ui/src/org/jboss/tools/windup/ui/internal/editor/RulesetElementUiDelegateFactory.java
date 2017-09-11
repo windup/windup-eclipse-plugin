@@ -87,6 +87,7 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationType
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.QuickfixDelegate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -126,6 +127,10 @@ public class RulesetElementUiDelegateFactory {
 		// classification
 		static final String CLASSIFICATION = "classification"; //$NON-NLS-1$
 		static final String DESCRIPTION = "description"; //$NON-NLS-1$
+		
+		// quickfix
+		static final String QUICKFIX = "quickfix"; //$NON-NLS-1$
+		static final String QUICKFIX_TYPE = "quickfix-type"; //$NON-NLS-1$
 		
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references"; //$NON-NLS-1$
@@ -185,6 +190,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.CLASSIFICATION: {
 				uiDelegate = createControls(ClassificationDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.QUICKFIX: {
+				uiDelegate = createControls(QuickfixDelegate.class, context);
 				break;
 			}
 			default: {

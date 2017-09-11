@@ -114,6 +114,7 @@ public class HintDelegate extends ElementUiDelegate {
 		
 		private HintMessageTab messageTab;
 		private HintLinksTab linksTab;
+		private QuickfixesDelegate quickfixTab;
 		
 		private CheckboxTreeViewer tagsTreeViewer;
 		
@@ -235,17 +236,26 @@ public class HintDelegate extends ElementUiDelegate {
 			
 			linksTab = createLinksSection(container);
 			
+			quickfixTab = createQuickfixSection(container);
+			
 			if (tagsTreeViewer.getTree().getItemCount() > 0) {
 				tagsSection.setExpanded(true);
 			}
 			
 			linksTab.initExpansion();
+			quickfixTab.initExpansion();
 		}
 		
 		private HintLinksTab createLinksSection(Composite parent) {
 			IEclipseContext child = context.createChild();
 			child.set(Composite.class, parent);
 			return ContextInjectionFactory.make(HintLinksTab.class, child);
+		}
+		
+		private QuickfixesDelegate createQuickfixSection(Composite parent) {
+			IEclipseContext child = context.createChild();
+			child.set(Composite.class, parent);
+			return ContextInjectionFactory.make(QuickfixesDelegate.class, child);
 		}
 		
 		private Section createTagsSection(Composite parent) {
@@ -426,6 +436,7 @@ public class HintDelegate extends ElementUiDelegate {
 		public void update() {
 			super.update();
 			linksTab.update();
+			quickfixTab.update();
 			messageTab.update();
 		}
 	}

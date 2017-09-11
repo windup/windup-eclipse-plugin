@@ -83,6 +83,7 @@ public class ClassificationDelegate extends ElementUiDelegate {
 		
 		private ClassificationDescriptionTab descriptionTab;
 		private HintLinksTab linksTab;
+		private QuickfixesDelegate quickfixTab;
 		
 		private CheckboxTreeViewer tagsTreeViewer;
 		
@@ -204,6 +205,8 @@ public class ClassificationDelegate extends ElementUiDelegate {
 			
 			linksTab = createLinksSection(container);
 			
+			quickfixTab = createQuickfixSection(container);
+			
 			if (tagsTreeViewer.getTree().getItemCount() > 0) {
 				tagsSection.setExpanded(true);
 			}
@@ -215,6 +218,12 @@ public class ClassificationDelegate extends ElementUiDelegate {
 			IEclipseContext child = context.createChild();
 			child.set(Composite.class, parent);
 			return ContextInjectionFactory.make(HintLinksTab.class, child);
+		}
+		
+		private QuickfixesDelegate createQuickfixSection(Composite parent) {
+			IEclipseContext child = context.createChild();
+			child.set(Composite.class, parent);
+			return ContextInjectionFactory.make(QuickfixesDelegate.class, child);
 		}
 		
 		private Section createTagsSection(Composite parent) {
@@ -395,6 +404,7 @@ public class ClassificationDelegate extends ElementUiDelegate {
 		public void update() {
 			super.update();
 			linksTab.update();
+			quickfixTab.update();
 			descriptionTab.update();
 		}
 	}
@@ -403,21 +413,5 @@ public class ClassificationDelegate extends ElementUiDelegate {
 		TextNodeRow row = new TextNodeRow(parentNode, cmNode);
 		row.createContents(parent, toolkit, columns);
 		return row;
-	}
-	
-	@Override
-	public Object[] getChildren() {
-		Object[] result = super.getChildren();
-		if (result != null) {
-			result = Arrays.stream(result).filter(n -> {
-				if (n instanceof Node) {
-					return !Objects.equal(((Node)n).getNodeName(), RulesetConstants.TAG_NAME) &&
-								!Objects.equal(((Node)n).getNodeName(), RulesetConstants.LINK_NAME) &&
-								 	!Objects.equal(((Node)n).getNodeName(), RulesetConstants.DESCRIPTION);
-				}
-				return true;
-			}).collect(Collectors.toList()).toArray();
-		}
-		return result;
 	}
 }

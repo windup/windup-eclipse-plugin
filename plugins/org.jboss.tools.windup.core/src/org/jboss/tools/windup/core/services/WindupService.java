@@ -145,7 +145,7 @@ public class WindupService
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
 					// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
 	                	File file = new File(configuration.getUserRulesDirectories().get(0));
-	                //	execBuilder.setOption(UserRulesDirectoryOption.NAME, Lists.newArrayList(file));
+	                	execBuilder.setOption(UserRulesDirectoryOption.NAME, Lists.newArrayList(file));
 	                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
                 }
                 

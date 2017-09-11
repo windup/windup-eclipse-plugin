@@ -49,4 +49,7 @@ public class RuleMessages extends NLS {
     public static String annotationDescription;
     
     public static String ruleGenerationOpenEditor;
+    
+    public static String quickfix_title;
+    public static String quickfix_description;
 }
