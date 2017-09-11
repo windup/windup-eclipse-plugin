@@ -414,4 +414,9 @@ public class ClassificationDelegate extends ElementUiDelegate {
 		row.createContents(parent, toolkit, columns);
 		return row;
 	}
+	
+	@Override
+	public Object[] getChildren() {
+		return new Object[] {};
+	}
 }
