@@ -583,7 +583,7 @@ public class RulesetElementUiDelegateFactory {
 		
 		protected ComboPart combo;
 		private Control label;
-		private boolean readOnly; 
+		private boolean readOnly;
 
 		public ChoiceAttributeRow(Node parentNode, CMNode cmNode, boolean readOnly) {
 			super(parentNode, cmNode);

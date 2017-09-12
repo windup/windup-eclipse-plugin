@@ -93,7 +93,7 @@ public class QuickfixService {
 			markerService.clear(quickfixResource);
 		}
 	}
-	
+
 	public IResource getQuickFixedResource(QuickFix quickFix, IMarker marker) {
 		Hint hint = (Hint)quickFix.eContainer();
 		IResource original = marker.getResource();
@@ -150,9 +150,9 @@ public class QuickfixService {
 		return null;
 	}
 	
-	public void previewQuickFix(Hint hint, IMarker marker) {
+	public void previewQuickFix(Issue issue, IMarker marker) {
 		Shell shell = Display.getCurrent().getActiveShell();
-		QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, hint, this);
+		QuickFixDiffDialog dialog = new QuickFixDiffDialog(shell, issue, this);
 		if (dialog.open() == IssueConstants.APPLY_FIX) {
 			for (QuickFix quickfix : dialog.getQuickfixes()) {
 				applyQuickFix(quickfix);

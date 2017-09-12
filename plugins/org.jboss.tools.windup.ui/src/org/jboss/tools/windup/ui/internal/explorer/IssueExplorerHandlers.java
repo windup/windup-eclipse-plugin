@@ -202,8 +202,7 @@ public class IssueExplorerHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
-			Hint hint = (Hint)node.getIssue();
-			quickfixService.previewQuickFix(hint, node.getMarker());
+			quickfixService.previewQuickFix(node.getIssue(), node.getMarker());
 			return null;
 		}
 	}

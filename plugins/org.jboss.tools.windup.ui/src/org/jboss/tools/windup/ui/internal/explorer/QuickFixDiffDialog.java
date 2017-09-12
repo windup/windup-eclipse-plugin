@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.QuickFix;
 
 /**
@@ -38,7 +38,7 @@ import org.jboss.tools.windup.windup.QuickFix;
 public class QuickFixDiffDialog extends DiffDialog {
 	
 	private TableViewer table;
-	private Hint hint;
+	private Issue issue;
 	private QuickFix quickfix;
 	
 	private QuickfixService quickfixService;
@@ -46,10 +46,10 @@ public class QuickFixDiffDialog extends DiffDialog {
 	private IResource left;
 	private IMarker marker;
 	
-	public QuickFixDiffDialog(Shell shell, Hint hint, QuickfixService quickfixService) {
+	public QuickFixDiffDialog(Shell shell, Issue issue, QuickfixService quickfixService) {
 		super(shell);
-		this.quickfix =  hint.getQuickFixes().get(0);
-		this.hint = hint;
+		this.quickfix =  issue.getQuickFixes().get(0);
+		this.issue = issue;
 		this.quickfixService = quickfixService;
 	}
 	
@@ -73,7 +73,7 @@ public class QuickFixDiffDialog extends DiffDialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		if (hint.getQuickFixes().size() == 1) {
+		if (issue.getQuickFixes().size() == 1) {
 			return super.createDialogArea(parent);
 		}
 		Composite container = new Composite(parent, SWT.NONE);
@@ -84,7 +84,7 @@ public class QuickFixDiffDialog extends DiffDialog {
 		table.getTable().setHeaderVisible(true);
 		table.getTable().setLinesVisible(true);
 		table.setContentProvider(ArrayContentProvider.getInstance());
-		table.setInput(hint.getQuickFixes());
+		table.setInput(issue.getQuickFixes());
 		GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 100).applyTo(table.getTable());
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
@@ -96,12 +96,12 @@ public class QuickFixDiffDialog extends DiffDialog {
 			}
 		});
 		Control control = super.doCreateDialogArea(container);
-		table.setSelection(new StructuredSelection(hint.getQuickFixes().get(0)));			
+		table.setSelection(new StructuredSelection(issue.getQuickFixes().get(0)));			
 		return control;
 	}
 	
 	public List<QuickFix> getQuickfixes() {
-		return hint.getQuickFixes();
+		return issue.getQuickFixes();
 	}
 	
 	private void buildColumns() {
