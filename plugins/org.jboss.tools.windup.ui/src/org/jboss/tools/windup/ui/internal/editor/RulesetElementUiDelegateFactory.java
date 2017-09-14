@@ -131,6 +131,9 @@ public class RulesetElementUiDelegateFactory {
 		// quickfix
 		static final String QUICKFIX = "quickfix"; //$NON-NLS-1$
 		static final String QUICKFIX_TYPE = "type"; //$NON-NLS-1$
+		static final String SEARCH = "search"; //$NON-NLS-1$
+		static final String REPLACEMENT = "replacement"; //$NON-NLS-1$
+		static final String NEWLINE = "newline"; //$NON-NLS-1$
 		
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references"; //$NON-NLS-1$

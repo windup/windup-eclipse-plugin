@@ -123,6 +123,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     public static final String IMG_CHARACTER = "icons/rules/annotation/character.gif"; //$NON-NLS-1$
 
     public static final String IMG_MARKDOWN = "icons/rules/markdown.gif"; //$NON-NLS-1$
+    
+    public static final String IMG_CLEAR = "icons/clear_highlighted.gif"; //$NON-NLS-1$
 
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -279,6 +281,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_CHARACTER, createImageDescriptor(IMG_CHARACTER));
 		reg.put(IMG_MARKDOWN, createImageDescriptor(IMG_MARKDOWN));
 		reg.put(IMG_CLASSIFICATION, createImageDescriptor(IMG_CLASSIFICATION));
+		reg.put(IMG_CLEAR, createImageDescriptor(IMG_CLEAR));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {

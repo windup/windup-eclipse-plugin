@@ -110,22 +110,6 @@ public class JavaClassLocationContainer {
 		return links;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getLocationCmNode() {
-		List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
-				ModelQuery.VALIDITY_STRICT);
-		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
-			if (candidate instanceof CMElementDeclaration) {
-				return RulesetConstants.JAVA_CLASS_LOCATION.equals(((CMElementDeclaration)candidate).getElementName());
-			}
-			return false;
-		}).findFirst();
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
-	}
-	
 	public Section createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent,RuleMessages.javaclass_locationSectionTitle, RuleMessages.javaclass_locationDescription,
 				ExpandableComposite.TITLE_BAR | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE,

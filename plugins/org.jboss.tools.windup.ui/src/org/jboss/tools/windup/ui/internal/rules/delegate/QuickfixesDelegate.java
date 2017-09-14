@@ -52,8 +52,8 @@ public class QuickfixesDelegate extends ElementAttributesContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.listContainer =  new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
-		listContainer.createControls(client, collectLinks());
+		this.listContainer = new QuickfixList(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		listContainer.createControls(client, collectQuickfixes());
 		ConfigurationBlock.addToolbarListener(client);
 		createSectionToolbar(section);
 	}
@@ -103,20 +103,21 @@ public class QuickfixesDelegate extends ElementAttributesContainer {
 	@Override
 	protected void bind() {
 		super.bind();
-		loadLinks();
+		List<Element> quickfixElements = collectQuickfixes();
+		loadLinks(quickfixElements);
 		scroll.setMinHeight(listContainer.computeHeight());
 		StringBuffer buff = new StringBuffer();
 		buff.append(RuleMessages.quickfix_title);
-		buff.append(" (" + listContainer.getItemCount() + ")");
+		buff.append(" (" + quickfixElements.size() + ")");
 		((Section)scroll.getParent()).setText(buff.toString());
 	}
 	
-	private void loadLinks() {
-		listContainer.createControls(parentControl, collectLinks());
+	private void loadLinks(List<Element> quickfixElements) {
+		listContainer.createControls(parentControl, quickfixElements);
 		listContainer.bind();
 	}
 	
-	private List<Element> collectLinks() {
+	private List<Element> collectQuickfixes() {
 		List<Element> links = Lists.newArrayList();
 		NodeList list = element.getElementsByTagName(RulesetConstants.QUICKFIX);
 		for (int i = 0; i < list.getLength(); i++) {

@@ -25,11 +25,15 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
+import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 
@@ -72,6 +76,27 @@ public class QuickfixDelegate extends ElementUiDelegate {
 				}
 
 				return "";
+			}
+			
+			@Override
+			protected void comboSelectionChanged() {
+				try {
+					model.aboutToChangeModel();
+					String newValue = displayToModelValue(combo.getSelection());
+					if (Objects.equal(newValue, QUICKFIX_TYPE.DELETE_LINE.name())) {
+						NodeList children = element.getChildNodes();
+						for (int i = 0; i < children.getLength(); i++) {
+							Node child = children.item(i);
+							if (!Objects.equal(child.getNodeName(), RulesetElementUiDelegateFactory.RulesetConstants.SEARCH)) {
+								element.removeChild(child);
+							}
+						}
+					}
+					super.comboSelectionChanged();
+				}
+				finally {
+					model.changedModel();
+				}
 			}
 			
 			@Override

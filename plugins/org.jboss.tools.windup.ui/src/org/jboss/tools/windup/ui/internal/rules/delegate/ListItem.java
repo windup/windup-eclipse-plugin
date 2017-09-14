@@ -187,7 +187,7 @@ public class ListItem extends Composite {
 		return null;
 	}
 	
-	private List<Element> collectChildElements() {
+	protected List<Element> collectChildElements() {
 		Object[] elementChildren = contentHelper.getChildren(itemElement);
 		return Arrays.stream(elementChildren).filter(o -> o instanceof Element).map
 				(o -> (Element)o).collect(Collectors.toList());

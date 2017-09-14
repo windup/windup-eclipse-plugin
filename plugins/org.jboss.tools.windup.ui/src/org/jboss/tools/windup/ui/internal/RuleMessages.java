@@ -52,4 +52,6 @@ public class RuleMessages extends NLS {
     
     public static String quickfix_title;
     public static String quickfix_description;
+    
+    public static String clearText;
 }
