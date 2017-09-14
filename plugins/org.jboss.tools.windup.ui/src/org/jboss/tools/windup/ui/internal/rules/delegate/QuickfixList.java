@@ -171,11 +171,11 @@ public class QuickfixList extends ListContainer {
 				model.aboutToChangeModel();
 				Element searchElement = findSearchElement();
 	    			if (searchElement != null) {
-	    				contentHelper.setNodeValue(searchElement, ""); //$NON-NLS-1$
+	    				getQuickfixElement().removeChild(searchElement);
 	    			}
 				Element textElement = findTextElement();
 				if (textElement != null) {
-					contentHelper.setNodeValue(textElement, ""); //$NON-NLS-1$
+					getQuickfixElement().removeChild(textElement);
 				}
 			}
 			finally {
