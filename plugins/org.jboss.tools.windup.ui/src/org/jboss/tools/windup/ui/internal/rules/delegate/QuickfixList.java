@@ -140,7 +140,6 @@ public class QuickfixList extends ListContainer {
 		@Override
 		public void bind() {
 			blockNotification = true;
-			super.bind();
 			if (searchItem != null) {
 				searchItem.bind();
 			}
@@ -296,7 +295,7 @@ public class QuickfixList extends ListContainer {
 				Element textElement = findTextElement();
 				String result = ""; //$NON-NLS-1$
 				if (textElement != null) {
-					result = contentHelper.getNodeValue(textElement);
+					result = textElement.getTextContent();
 				}
 				return result != null ? result : ""; //$NON-NLS-1$
 			}
@@ -330,9 +329,10 @@ public class QuickfixList extends ListContainer {
 										getQuickfixElement().appendChild(textElement);
 									}
 								}
+								
 								if (textElement != null) {
-									validChildren.add(textElement);
 									contentHelper.setNodeValue(textElement, text.getText());
+									validChildren.add(textElement);
 									if (theSearchElement != null) {
 										validChildren.add(theSearchElement);
 										getQuickfixElement().insertBefore(textElement, theSearchElement);
