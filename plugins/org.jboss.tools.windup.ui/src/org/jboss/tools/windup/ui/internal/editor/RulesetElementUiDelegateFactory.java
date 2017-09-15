@@ -28,6 +28,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
@@ -73,6 +74,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.DefaultTextViewerContentProposalProvider.ITextViewerContentProviderDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ClassificationDelegate;
@@ -420,7 +422,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 	}
 	
-	public static class TextNodeRow extends NodeRow {
+	public static class TextNodeRow extends NodeRow implements ITextViewerContentProviderDelegate {
 		
 		private static String KEY_PRESS = "Ctrl+Space";
 		
@@ -445,37 +447,30 @@ public class RulesetElementUiDelegateFactory {
 				}
 			});
 			
-			setupAutoCompletion(text);
+			new TextViewer(text, this);
 		}
 		
-		private void setupAutoCompletion(Text text) {
-			try {
-				ContentProposalAdapter adapter = null;
-				String[] proposals = collectProposals();
-				SimpleContentProposalProvider scp = new SimpleContentProposalProvider(proposals);
-				scp.setProposals(proposals);
-				//scp.setFiltering(true);
-				KeyStroke ks = KeyStroke.getInstance(KEY_PRESS);
-				adapter = new ContentProposalAdapter(text, new TextContentAdapter(), scp, ks, new char[] {'{'});
-				adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_INSERT);
-				adapter.setLabelProvider(new TextViewer.TextViewerLabelProvider());
-			}
-			catch (Exception e) {
-				WindupUIPlugin.log(e);
-			}
+		@Override
+		public char getActivationChar() {
+			return '{'; //$NON-NLS-1$
 		}
 		
-		public String[] collectProposals() {
+		@Override
+		public List<String> getProposals(String prefix) {
+			return collectProposals(prefix);
+		}
+		
+		public List<String> collectProposals(String prefix) {
 			Element rule = findRuleParent();
 			List<Element> whereChildren = findWhereChildren(rule);
 			List<String> names = Lists.newArrayList();
 			for (Element child : whereChildren) {
 				String name = XMLRulesetModelUtil.getWhereParam(child);
-				if (name != null) {
+				if (name != null && (name.contains(prefix) || prefix.isEmpty())) {
 					names.add(name);
 				}
 			}
-			return names.toArray(new String[] {});
+			return names;
 		}
 		
 		private Element findRuleParent() {
@@ -620,7 +615,7 @@ public class RulesetElementUiDelegateFactory {
 		}
 
 		protected void openReference() {
-			String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.');
+			String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.'); //$NON-NLS-1$ //$NON-NLS-2$
 			if (!name.isEmpty()) {
 				openClass(name);
 			}
