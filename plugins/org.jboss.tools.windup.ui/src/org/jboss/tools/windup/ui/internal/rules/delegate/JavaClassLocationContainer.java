@@ -11,7 +11,6 @@
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;

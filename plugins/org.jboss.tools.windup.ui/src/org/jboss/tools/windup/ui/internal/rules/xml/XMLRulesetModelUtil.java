@@ -40,6 +40,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.explorer.TempProject;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
@@ -152,6 +153,30 @@ public class XMLRulesetModelUtil {
 			ruleId = ((Attr) ruleIdNode).getValue();
 		}
 		return ruleId;
+	}
+	
+	public static String getWhereParam(Element where) {
+		String param = where.getAttribute(RulesetElementUiDelegateFactory.RulesetConstants.PARAM);
+		return (param != "" && !param.isEmpty()) ? param : null; //$NON-NLS-1$
+	}
+	
+	public static String getWherePattern(Element where) {
+		Element matches = findChildWithName(where, RulesetElementUiDelegateFactory.RulesetConstants.MATCHES);
+		if (matches != null) {
+			String pattern = matches.getAttribute(RulesetElementUiDelegateFactory.RulesetConstants.PATTERN);
+			return (pattern != "" && !pattern.isEmpty()) ? pattern : null; //$NON-NLS-1$
+		}
+		return null;
+	}
+	
+	public static final Element findChildWithName(Element parent, String name) {
+		NodeList children = parent.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			if (Objects.equal(children.item(i).getNodeName(), name)) {
+				return (Element)children.item(i);
+			}
+		}
+		return null;
 	}
 	
 	public static IDOMModel getModel(IFile file, boolean edit) {

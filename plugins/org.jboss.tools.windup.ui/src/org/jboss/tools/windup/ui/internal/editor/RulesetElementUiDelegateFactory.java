@@ -10,15 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
-import java.io.File;
-import java.net.URL;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -28,31 +25,32 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
@@ -75,10 +73,10 @@ import org.eclipse.wst.xml.ui.internal.tabletree.TreeContentHelper;
 import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorFactory;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ClassificationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport;
-import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport.PresenterControlCreator;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationListDelegate;
@@ -88,13 +86,13 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.QuickfixDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.WhereDelegate;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.markdown4j.Markdown4jProcessor;
-import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -134,6 +132,11 @@ public class RulesetElementUiDelegateFactory {
 		static final String SEARCH = "search"; //$NON-NLS-1$
 		static final String REPLACEMENT = "replacement"; //$NON-NLS-1$
 		static final String NEWLINE = "newline"; //$NON-NLS-1$
+		
+		static final String WHERE = "where"; //$NON-NLS-1$ 
+		static final String PARAM = "param"; //$NON-NLS-1$
+		static final String MATCHES = "matches"; //$NON-NLS-1$
+		static final String PATTERN = "pattern"; //$NON-NLS-1$
 		
 		// javaclass
 		static final String JAVA_CLASS_REFERENCES = "references"; //$NON-NLS-1$
@@ -197,6 +200,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.QUICKFIX: {
 				uiDelegate = createControls(QuickfixDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.WHERE: {
+				uiDelegate = createControls(WhereDelegate.class, context);
 				break;
 			}
 			default: {
@@ -415,6 +422,8 @@ public class RulesetElementUiDelegateFactory {
 	
 	public static class TextNodeRow extends NodeRow {
 		
+		private static String KEY_PRESS = "Ctrl+Space";
+		
 		protected Text text;
 		protected Control label;
 
@@ -435,6 +444,68 @@ public class RulesetElementUiDelegateFactory {
 					}
 				}
 			});
+			
+			setupAutoCompletion(text);
+		}
+		
+		private void setupAutoCompletion(Text text) {
+			try {
+				ContentProposalAdapter adapter = null;
+				String[] proposals = collectProposals();
+				SimpleContentProposalProvider scp = new SimpleContentProposalProvider(proposals);
+				scp.setProposals(proposals);
+				//scp.setFiltering(true);
+				KeyStroke ks = KeyStroke.getInstance(KEY_PRESS);
+				adapter = new ContentProposalAdapter(text, new TextContentAdapter(), scp, ks, new char[] {'{'});
+				adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_INSERT);
+				adapter.setLabelProvider(new TextViewer.TextViewerLabelProvider());
+			}
+			catch (Exception e) {
+				WindupUIPlugin.log(e);
+			}
+		}
+		
+		public String[] collectProposals() {
+			Element rule = findRuleParent();
+			List<Element> whereChildren = findWhereChildren(rule);
+			List<String> names = Lists.newArrayList();
+			for (Element child : whereChildren) {
+				String name = XMLRulesetModelUtil.getWhereParam(child);
+				if (name != null) {
+					names.add(name);
+				}
+			}
+			return names.toArray(new String[] {});
+		}
+		
+		private Element findRuleParent() {
+			Element parent = (Element)super.parent;
+			while (parent != null) {
+				if (isRuleNode(parent)) {
+					return parent;
+				}
+				parent = (Element)parent.getParentNode();
+			}
+			return null;
+		}
+		
+		private boolean isRuleNode(Element element) {
+			return RulesetConstants.RULE_NAME.equals(element.getNodeName());
+		}
+		
+		private List<Element> findWhereChildren(Element rule) {
+			List<Element> whereChildren = Lists.newArrayList();
+			NodeList children = rule.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				if (children.item(i) instanceof Element && isWhereNode((Element)children.item(i))) {
+					whereChildren.add((Element)children.item(i));
+				}
+			}
+			return whereChildren;
+		}
+		
+		private boolean isWhereNode(Element element) {
+			return RulesetConstants.WHERE.equals(element.getNodeName());
 		}
 
 		protected GridData createGridData(int span) {
@@ -467,6 +538,17 @@ public class RulesetElementUiDelegateFactory {
 		@Override
 		public void setFocus() {
 			text.setFocus();
+		}
+	}
+	
+	private static class ProposalProvider extends SimpleContentProposalProvider {
+		public ProposalProvider() {
+			super(null);
+		}
+		
+		@Override
+		public IContentProposal[] getProposals(String contents, int position) {
+			return super.getProposals(contents, position);
 		}
 	}
 	

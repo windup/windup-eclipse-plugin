@@ -10,13 +10,16 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor;
 
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_CLASSIFICATION;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_HINT;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_PARAM;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_CLASSIFICATION;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,6 +64,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 	private static final Image JAVA;
 	private static final Image HINT;
 	private static final Image CLASSIFICATION;
+	private static final Image VARIABLE;
 
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -69,6 +73,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		JAVA = imageRegistry.get(IMG_JAVA);
 		HINT = imageRegistry.get(IMG_HINT);
 		CLASSIFICATION = imageRegistry.get(IMG_CLASSIFICATION);
+		VARIABLE = imageRegistry.get(IMG_PARAM);
 	}
 	
 	private RulesetElementUiDelegateRegistry elementUiRegistry = new RulesetElementUiDelegateRegistry(new RulesetElementUiDelegateFactory()); 
@@ -91,6 +96,30 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 			List<Node> rules = Lists.newArrayList();
 			XMLRulesetModelUtil.collectRuleNodes(document, rules);
 			return rules.toArray();
+		}
+		
+		else if (element instanceof Element && isRuleNode((Element)element)) {
+			Object[] children = getDelegate((Element)element).getChildren();
+			List<Object> sorted = Arrays.stream(children).filter(o -> o instanceof Element).collect(Collectors.toList());
+			Collections.sort(sorted, new Comparator<Object>() {
+				@Override
+				public int compare(Object o1, Object o2) {
+					if (o1 instanceof Element && o2 instanceof Element) {
+						Element e1 = (Element)o1;
+						Element e2 = (Element)o2;
+						boolean isWhereNode1 = isWhereNode(e1);
+						boolean isWhereNode2 = isWhereNode(e2);
+						if (isWhereNode1 && isWhereNode2) {
+							return 0;
+						}
+						else if (isWhereNode1) {
+							return -1;
+						}
+					}
+					return 0;
+				}
+			});
+			return sorted.toArray(new Object[] {});
 		}
 		
 		Object[] children = getDelegate((Element)element).getChildren();
@@ -119,6 +148,19 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 			Element element = (Element)node; 
 			if (isRuleNode(element)) {
 				text = XMLRulesetModelUtil.getRuleId((Node)element);
+			}
+			else if (isWhereNode(element)) {
+				String param = XMLRulesetModelUtil.getWhereParam(element);
+				String pattern = XMLRulesetModelUtil.getWherePattern(element);
+				if (param == null && pattern == null) {
+					return "(?) = ?"; //$NON-NLS-1$
+				}
+				else if (param != null) {
+					return "("+param+") = ?"; //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				else {
+					return "(?) = " + pattern; //$NON-NLS-1$
+				}
 			}
 			else {
 				text = doGetText(node);
@@ -158,6 +200,10 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		return RulesetConstants.CLASSIFICATION.equals(element.getNodeName());
 	}
 	
+	private boolean isWhereNode(Element element) {
+		return RulesetConstants.WHERE.equals(element.getNodeName());
+	}
+	
 	@Override
 	public Image getImage(Object node) {
 		Image image = null;
@@ -175,6 +221,9 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 			else if (isClassificationNode(element)) {
 				return CLASSIFICATION;
 			}
+			else if (isWhereNode(element)) {
+				return VARIABLE;
+			}
 			else {
 				image = XML_NODE;
 			}
@@ -183,10 +232,17 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 	}
 
 	@Override
-	public StyledString getStyledText(Object element) {
+	public StyledString getStyledText(Object obj) {
 		String text = filterText.getText();
-		StyledString style = new StyledString(getText(element));
-		if (element instanceof Element && !text.isEmpty()) {
+		StyledString style = new StyledString();
+		if (obj instanceof Element && isWhereNode((Element)obj)) {
+			Element element = (Element)obj;
+			styleWhereElement(element, style);
+		}
+		else {
+			style.append(getText(obj));
+		}
+		if (obj instanceof Element && !text.isEmpty()) {
 			StringMatcher matcher = IssueExplorer.getFilterMatcher(text);
 			String label = style.getString();
 			Position position = matcher.find(label, 0, label.length());
@@ -199,7 +255,27 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 				});
 			}
 		}
+		
 		return style;
+	}
+	
+	private void styleWhereElement(Element element, StyledString style) {
+		String param = XMLRulesetModelUtil.getWhereParam(element);
+		String pattern = XMLRulesetModelUtil.getWherePattern(element);
+		//style.append("(", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+		if (param != null) {
+			style.append(param); 
+		}
+		else {
+			style.append("(?)", StyledString.DECORATIONS_STYLER);  //$NON-NLS-1$
+		}
+		style.append(" = ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+		if (pattern != null) {
+			style.append(pattern, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+		}
+		else {
+			style.append("?", StyledString.DECORATIONS_STYLER);  //$NON-NLS-1$
+		}
 	}
 	
 	@Override
