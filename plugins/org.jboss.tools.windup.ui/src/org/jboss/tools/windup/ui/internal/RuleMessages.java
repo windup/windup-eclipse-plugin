@@ -57,4 +57,7 @@ public class RuleMessages extends NLS {
     
     public static String whereTitle;
     public static String whereDescription;
+    
+    public static String namespaceTitle;
+    public static String namespaceDescription;
 }

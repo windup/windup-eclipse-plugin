@@ -87,8 +87,10 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassAnnotationType
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.NamespaceDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.QuickfixDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.WhereDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.XmlFileUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -154,14 +156,18 @@ public class RulesetElementUiDelegateFactory {
 		static final String TAG_NAME = "tag"; //$NON-NLS-1$
 		
 		// annotation-literal
-		static final String LITERAL_NAME = "name";
-		static final String LITERAL_PATTERN = "pattern";
+		static final String LITERAL_NAME = "name"; //$NON-NLS-1$
+		static final String LITERAL_PATTERN = "pattern"; //$NON-NLS-1$
 		
 		// annotation-type
-		static final String TYPE_PATTERN = "pattern";
+		static final String TYPE_PATTERN = "pattern"; //$NON-NLS-1$
 		
 		// annotation-list
-		static final String LIST_NAME = "name";
+		static final String LIST_NAME = "name"; //$NON-NLS-1$
+		
+		static final String XMLFILE = "xmlfile"; //$NON-NLS-1$
+		static final String URI = "uri"; //$NON-NLS-1$
+		static final String NAMESPACE = "namespace"; //$NON-NLS-1$ 
 	}
 
 	public IElementUiDelegate createElementUiDelegate(Element element, IEclipseContext context) {
@@ -206,6 +212,14 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.WHERE: {
 				uiDelegate = createControls(WhereDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.XMLFILE: {
+				uiDelegate = createControls(XmlFileUiDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.NAMESPACE: {
+				uiDelegate = createControls(NamespaceDelegate.class, context);
 				break;
 			}
 			default: {
