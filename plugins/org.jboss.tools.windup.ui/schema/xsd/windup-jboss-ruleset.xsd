@@ -279,22 +279,95 @@
             <xs:sequence>
                 <xs:element ref="namespace" minOccurs="0" maxOccurs="unbounded" />
             </xs:sequence>
-            <xs:attribute type="xs:string" name="as" use="optional" />
-            <xs:attribute type="xs:string" name="xpathResultMatch" use="optional" />
-            <xs:attribute type="xs:string" name="matches" use="optional" />
-            <xs:attribute type="xs:string" name="public-id" use="optional" />
+            <xs:attribute type="xs:string" name="as" use="optional">
+                <xs:annotation>
+	                <xs:documentation>
+	                    <![CDATA[
+                            <p>A variable name assigned to the rule so that it can be used as a reference in later processing.</p>
+                            <p>See the from attribute.</p>
+	                    ]]>
+	                </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="xpathResultMatch" use="optional">
+                <xs:annotation>
+	                <xs:documentation>
+	                    <![CDATA[
+	                        <p>Return results that match the given regex.</p>
+	                    ]]>
+	                 </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="matches" use="optional">
+                <xs:annotation>
+		            <xs:documentation>
+		                <![CDATA[
+                            <p>An XPATH - Match on an XML file condition.</p>
+		                ]]>
+		            </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="public-id" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        <![CDATA[
+                             <p>The DTD public-id regex.</p>
+                        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
             <xs:attribute type="xs:string" name="system-id" use="optional" />
-            <xs:attribute type="xs:string" name="in" use="optional" />
-            <xs:attribute type="xs:string" name="from" use="optional" />
+            <xs:attribute type="xs:string" name="in" use="optional">
+	            <xs:annotation>
+	                <xs:documentation>
+	                    <![CDATA[
+                            <p>Used to filter input files matching this regular expression naming pattern.</p>
+	                        <p>Wildcard characters can be used.</p>
+	                    ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute type="xs:string" name="from" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+	                    <![CDATA[
+					         <p>Begin the search query with the filtered result from a previous search identified by its as VARIABLE_NAME.</p>
+					    ]]>
+				    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="namespace">
+        <xs:annotation>
+            <xs:documentation>
+                <![CDATA[
+                    <p>The namespace referenced in XML files. This element contains two optional attributes: The prefix and the uri.</p>
+                ]]>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
-                    <xs:attribute type="xs:string" name="prefix" use="optional" />
-                    <xs:attribute type="xs:anyURI" name="uri" use="optional" />
+                    <xs:attribute type="xs:string" name="prefix" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <![CDATA[
+                                    <p>The prefix of the namespace referenced in XML files.</p>
+                                ]]>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute type="xs:anyURI" name="uri" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <![CDATA[
+                                    <p>The uri of the namespace referenced in XML files.</p>
+                                ]]>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
