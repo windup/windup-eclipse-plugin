@@ -30,6 +30,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.MouseEvent;
@@ -52,6 +54,7 @@ import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocument;
 import org.eclipse.wst.sse.ui.internal.editor.EditorModelUtil;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
+import org.eclipse.wst.xml.xpath.core.util.XSLTXPathHelper;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.NewRuleFromSelectionWizard;
@@ -61,6 +64,8 @@ import org.jboss.tools.windup.ui.internal.services.ContextMenuService.WindupActi
 import org.jboss.tools.windup.ui.internal.views.TaskListView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.google.common.collect.Lists;
 
 @SuppressWarnings("restriction")
 public class CreateMigrationIssueService implements MouseListener, IMenuListener {
@@ -135,8 +140,12 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
-		manager.add(CREATE_MIGRATION_TASK);
+		//manager.add(CREATE_MIGRATION_TASK);
 		WindupAction action = createRuleFromSelectionAction(editor);
+		if (action != null) {
+			manager.add(action);
+		}
+		action = createRuleFromXPathAction(editor);
 		if (action != null) {
 			manager.add(action);
 		}
@@ -194,8 +203,8 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 												EditorModelUtil.addFactoriesTo(model);
 												
 												document = ((IDOMModel) model).getDocument();
-												
-												createRule(wizard.openEditor(), document, javaSelection, ruleset);
+												List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+												createRule(wizard.openEditor(), document, elements, ruleset);
 												provider.disconnect(input);
 											}
 											catch (Exception e) {
@@ -203,7 +212,8 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 											}
 										}
 										else {
-											createRule(wizard.openEditor(), document, javaSelection, ruleset);
+											List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+											createRule(wizard.openEditor(), document, elements, ruleset);
 										}
 										if (!dirty) {
 											try {
@@ -225,9 +235,84 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		return action;
 	}
 	
-	private void createRule(boolean openEditor, Document document, JavaTextSelection javaSelection, IFile ruleset) {
+	private WindupAction createRuleFromXPathAction(ITextEditor theEditor) {
+		WindupAction action = null;
+		
+		ISelection selection = theEditor.getSelectionProvider().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			Object obj = ((IStructuredSelection)selection).getFirstElement();
+			if (obj != null && obj instanceof IDOMNode) {
+				IDOMNode node = (IDOMNode) obj;
+				String location = XSLTXPathHelper.calculateXPathToNode(node);
+				action = doCreateRuleFromXPathAction(location);
+			}
+		}
+		return action;
+	}
+	
+	private WindupAction doCreateRuleFromXPathAction(String xpath) {
+		WindupAction action = new WindupAction(Messages.createRuleFromXPath,
+				WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
+					IEclipseContext context = WindupUIPlugin.getDefault().getContext();
+					NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
+					WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
+						public Point getInitialSize() {
+							return new Point(575, 220);
+						}
+					};
+					if (wizardDialog.open() == Window.OK) {
+						IFile ruleset = wizard.getRuleset();
+						if (ruleset != null && ruleset.exists()) {
+							Document document = getDocument(ruleset);
+							if (document != null) {
+								IStructuredModel model = ((IDOMNode) document).getModel();
+								IStructuredDocument doc = model.getStructuredDocument();
+								boolean dirty = model.isDirty();
+								if (doc == null) {
+									FileEditorInput input = new FileEditorInput(ruleset);
+									TextFileDocumentProvider provider = new TextFileDocumentProvider();
+									
+									try {
+										provider.connect(input);
+										
+										IDocument iDoc = provider.getDocument(input);
+										model = StructuredModelManager.getModelManager().getModelForEdit((IStructuredDocument) iDoc);
+										EditorModelUtil.addFactoriesTo(model);
+										
+										document = ((IDOMModel) model).getDocument();
+										
+										Element xpathElement = creationService.createRuleFromXPath(document, xpath);
+										createRule(wizard.openEditor(), document, Lists.newArrayList(xpathElement), ruleset);
+										provider.disconnect(input);
+									}
+									catch (Exception e) {
+										WindupUIPlugin.log(e);
+									}
+								}
+								else {
+									Element xpathElement = creationService.createRuleFromXPath(document, xpath);
+									createRule(wizard.openEditor(), document, Lists.newArrayList(xpathElement), ruleset);
+								}
+								if (!dirty) {
+									try {
+										model.save();
+									}
+									catch (Exception e) {
+										WindupUIPlugin.log(e);
+									}
+								}
+							}
+							else {
+								WindupUIPlugin.logErrorMessage("Unable to obtain Document for rule generation." ); //$NON-NLS-1$
+							}
+						}
+					}
+				});
+		return action;
+	}
+	
+	private void createRule(boolean openEditor, Document document, List<Element> elements, IFile ruleset) {
 		try {
-			List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
 			if (elements != null && !elements.isEmpty()) {
 				if (!openEditor) {
 					IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(new FileEditorInput(ruleset));

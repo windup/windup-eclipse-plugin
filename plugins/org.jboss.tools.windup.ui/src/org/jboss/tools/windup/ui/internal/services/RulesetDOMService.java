@@ -106,6 +106,11 @@ public class RulesetDOMService {
 		return locationElement;
 	}
 	
+	public Element createXMLFileElement(Document document) {
+		Element xmlfileElement = document.createElement(RulesetConstants.XMLFILE);
+		return xmlfileElement;
+	}
+	
 	public ITypeRoot getEditorInput(JavaEditor editor) {
 		return JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
 	}

@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Document;
@@ -47,6 +48,21 @@ import com.google.common.collect.Lists;
 public class RulesetSelectionCreationService {
 
 	@Inject private RulesetDOMService domService;
+	
+	public Element createRuleFromXPath(Document document, String xpath) {
+		Element rulesetElement = domService.findOrCreateRulesetElement(document);
+		Element rulesElement = domService.findOrCreateRulesElement(rulesetElement);
+		Element ruleElement = domService.createRuleElement(rulesElement);
+		Element whenElement = domService.createWhenElement(document);
+		ruleElement.appendChild(whenElement);
+		Element xmlfileElement = domService.createXMLFileElement(document);
+		whenElement.appendChild(xmlfileElement);
+		xmlfileElement.setAttribute(RulesetConstants.XPATH, xpath);
+		Element performElement = domService.createPerformElement(ruleElement);
+		Element hintElement = domService.createHintElement(performElement);
+		domService.populateDefaultHintElement(hintElement);
+		return xmlfileElement;
+	}
 
 	public List<Element> createRulesFromEditorSelection(Document document, JavaTextSelection javaSelection/*, RulesetEditorWrapper wrapper */) {
 		return createRuleFromJavaEditorSelection(document, javaSelection/*, wrapper*/);

@@ -153,6 +153,8 @@ public class Messages extends NLS
     
     public static String createMigrationIssue;
     public static String createRuleFromSelection;
+
+    public static String createRuleFromXPath;
     
     public static String showWindupGettingStarted;
 

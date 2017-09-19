@@ -166,6 +166,8 @@ public class RulesetElementUiDelegateFactory {
 		static final String LIST_NAME = "name"; //$NON-NLS-1$
 		
 		static final String XMLFILE = "xmlfile"; //$NON-NLS-1$
+		static final String XPATH = "matches"; //$NON-NLS-1$
+		
 		static final String URI = "uri"; //$NON-NLS-1$
 		static final String NAMESPACE = "namespace"; //$NON-NLS-1$ 
 	}

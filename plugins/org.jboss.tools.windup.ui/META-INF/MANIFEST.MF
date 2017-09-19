@@ -91,7 +91,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.mylyn.wikitext.tracwiki.ui,
  org.eclipse.mylyn.wikitext.twiki,
  org.eclipse.mylyn.wikitext.twiki.ui,
- org.eclipse.mylyn.wikitext.ui
+ org.eclipse.mylyn.wikitext.ui,
+ org.eclipse.wst.xml.xpath.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,
