@@ -139,6 +139,7 @@ public class QuickfixList extends ListContainer {
 		
 		@Override
 		public void bind() {
+			super.bind();
 			blockNotification = true;
 			if (searchItem != null) {
 				searchItem.bind();
