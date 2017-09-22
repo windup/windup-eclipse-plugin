@@ -12,18 +12,25 @@ package org.jboss.tools.windup.ui.tests;
 
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.swt.widgets.Tree;
-import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.junit.Test;
 
 public class RulesetEditorTests extends WindupUiTest {
 
 	@Test
-	public void testIssueExplorerPopulated() {
-		ConfigurationElement configuration = super.createRunConfiguration();
-		super.runWindup(configuration);
-		issueExplorer.getCommonViewer().expandAll();
-		Tree tree = issueExplorer.getCommonViewer().getTree();
-		assertTrue(tree.getItems().length > 0);
+	public void testOpenRulesetEditor() throws PartInitException {
+		RulesetEditorWrapper editor = openRulesetEditor();
+		assertTrue(editor != null);
+	}
+	
+	private RulesetEditorWrapper openRulesetEditor() throws PartInitException {
+		IFile demo = ResourcesPlugin.getWorkspace().getRoot().getProject("demo").getFile("demo/custom.rules.rhamt.xml");
+		return (RulesetEditorWrapper)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(demo), RulesetEditor.ID);
 	}
 }
