@@ -16,13 +16,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.junit.Test;
 
-/**
- * Tests surrounding the Issue Explorer.
- */
-public class IssueExplorerTests extends WindupUiTest {
-	/**
-	 * Issue Explorer should contain migration issues after Windup execution.
-	 */
+public class RulesetEditorTests extends WindupUiTest {
+
 	@Test
 	public void testIssueExplorerPopulated() {
 		ConfigurationElement configuration = super.createRunConfiguration();

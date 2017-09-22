@@ -101,7 +101,7 @@ public class WindupUiTest extends WindupTest {
 	}
 	
 	protected void openWindupPerspective() {
-		workbenchBot.perspectiveById(WindupPerspective.ID).activate();;
+		workbenchBot.perspectiveById(WindupPerspective.ID).activate();
 	}
 	
 	protected void runWindup(ConfigurationElement configuration) {
