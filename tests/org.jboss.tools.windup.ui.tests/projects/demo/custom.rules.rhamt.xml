@@ -16,33 +16,5 @@
 		<tag>reviewed-2016-04-27</tag>
 	</metadata>
 	<rules>
-		<!-- next rule -->
-		<rule id="tester-1">
-			<when>
-				<xmlfile
-					matches="//*[local-name() = 'url' and text() = 'localhost:8080/db']">
-				</xmlfile>
-			</when>
-			<perform>
-				<hint title="Security Role Replacement" effort="3" category-id="mandatory">
-					<message><![CDATA[security-role-assignment needs replacement!]]></message>
-					<quickfix name="localhost replacement quickfix" type="REPLACE">
-
-						<replacement>http://www.redhat.com/db</replacement>
-						<search>localhost:8080/db</search>
-					</quickfix>
-				</hint>
-			</perform>
-		</rule>
-		<rule id="tester-1">
-			<when>
-				<xmlfile matches="/ui/database/url"></xmlfile>
-			</when>
-			<perform>
-				<hint title="" effort="1" category-id="mandatory">
-					<message></message>
-				</hint>
-			</perform>
-		</rule>
 	</rules>
 </ruleset>

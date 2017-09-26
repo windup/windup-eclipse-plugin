@@ -34,6 +34,8 @@ import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
+import org.jboss.tools.windup.ui.internal.services.RulesetSelectionCreationService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.tests.swtbot.WorkbenchBot;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
@@ -71,6 +73,9 @@ public class WindupUiTest extends WindupTest {
 	@Inject protected MarkerService markerService;
 	@Inject protected QuickfixService quickfixService;
 	@Inject protected ViewService viewService;
+	
+	@Inject protected RulesetDOMService domService;
+	@Inject protected RulesetSelectionCreationService ruleCreationService;
 	
 	protected IssueExplorer issueExplorer;
 	

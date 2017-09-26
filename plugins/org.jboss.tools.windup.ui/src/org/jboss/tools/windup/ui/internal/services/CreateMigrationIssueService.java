@@ -97,7 +97,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		}
 	}
 	
-	private ITextEditor getTextEditor(MPart part) {
+	public ITextEditor getTextEditor(MPart part) {
 		ITextEditor theEditor = null;
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
@@ -162,6 +162,18 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 	}
 	
 	private WindupAction createRuleFromSelectionAction(ITextEditor theEditor) {
+		if (theEditor instanceof JavaEditor) {
+			JavaEditor editor = (JavaEditor)theEditor;
+			if (SelectionConverter.getInputAsCompilationUnit(editor) != null) {
+				ITextSelection textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
+				JavaTextSelection javaSelection= new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
+				return createRuleFromSelectionAction(javaSelection);
+			}
+		}
+		return null;
+	}
+	
+	public WindupAction createRuleFromSelectionAction(JavaTextSelection javaSelection) {
 		WindupAction action = null;
 		/*
 		 * TODO: I'm pretty sure we can create a JavaTextSelection without requiring the selection to come from within a JavaEditor.
@@ -169,69 +181,62 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		 * We did something similar when we had an embedded java editor in the javaclass UI delegate. Could we re-use this functionality
 		 * and set it up in the background, and make it re-usable?
 		 */
-		if (theEditor instanceof JavaEditor) {
-			JavaEditor editor = (JavaEditor)theEditor;
-			if (SelectionConverter.getInputAsCompilationUnit(editor) != null) {
-				ITextSelection textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
-				JavaTextSelection javaSelection= new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
-				action = new WindupAction(Messages.createRuleFromSelection,
-					WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
-						IEclipseContext context = WindupUIPlugin.getDefault().getContext();
-						NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
-						WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
-							public Point getInitialSize() {
-								return new Point(575, 220);
-							}
-						};
-						if (wizardDialog.open() == Window.OK) {
-							IFile ruleset = wizard.getRuleset();
-							if (ruleset != null && ruleset.exists()) {
-									Document document = getDocument(ruleset);
-									if (document != null) {
-										IStructuredModel model = ((IDOMNode) document).getModel();
-										IStructuredDocument doc = model.getStructuredDocument();
-										boolean dirty = model.isDirty();
-										if (doc == null) {
-											FileEditorInput input = new FileEditorInput(ruleset);
-											TextFileDocumentProvider provider = new TextFileDocumentProvider();
-											
-											try {
-												provider.connect(input);
-												
-												IDocument iDoc = provider.getDocument(input);
-												model = StructuredModelManager.getModelManager().getModelForEdit((IStructuredDocument) iDoc);
-												EditorModelUtil.addFactoriesTo(model);
-												
-												document = ((IDOMModel) model).getDocument();
-												List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
-												createRule(wizard.openEditor(), document, elements, ruleset);
-												provider.disconnect(input);
-											}
-											catch (Exception e) {
-												WindupUIPlugin.log(e);
-											}
-										}
-										else {
-											List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
-											createRule(wizard.openEditor(), document, elements, ruleset);
-										}
-										if (!dirty) {
-											try {
-												model.save();
-											}
-											catch (Exception e) {
-												WindupUIPlugin.log(e);
-											}
-										}
+		action = new WindupAction(Messages.createRuleFromSelection,
+			WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_WINDUP), () -> {
+				IEclipseContext context = WindupUIPlugin.getDefault().getContext();
+				NewRuleFromSelectionWizard wizard = ContextInjectionFactory.make(NewRuleFromSelectionWizard.class, context);
+				WizardDialog wizardDialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard) {
+					public Point getInitialSize() {
+						return new Point(575, 220);
+					}
+				};
+				if (wizardDialog.open() == Window.OK) {
+					IFile ruleset = wizard.getRuleset();
+					if (ruleset != null && ruleset.exists()) {
+							Document document = getDocument(ruleset);
+							if (document != null) {
+								IStructuredModel model = ((IDOMNode) document).getModel();
+								IStructuredDocument doc = model.getStructuredDocument();
+								boolean dirty = model.isDirty();
+								if (doc == null) {
+									FileEditorInput input = new FileEditorInput(ruleset);
+									TextFileDocumentProvider provider = new TextFileDocumentProvider();
+									
+									try {
+										provider.connect(input);
+										
+										IDocument iDoc = provider.getDocument(input);
+										model = StructuredModelManager.getModelManager().getModelForEdit((IStructuredDocument) iDoc);
+										EditorModelUtil.addFactoriesTo(model);
+										
+										document = ((IDOMModel) model).getDocument();
+										List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+										createRule(wizard.openEditor(), document, elements, ruleset);
+										provider.disconnect(input);
 									}
-									else {
-										WindupUIPlugin.logErrorMessage("Unable to obtain Document for rule generation." ); //$NON-NLS-1$
+									catch (Exception e) {
+										WindupUIPlugin.log(e);
 									}
+								}
+								else {
+									List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+									createRule(wizard.openEditor(), document, elements, ruleset);
+								}
+								if (!dirty) {
+									try {
+										model.save();
+									}
+									catch (Exception e) {
+										WindupUIPlugin.log(e);
+									}
+								}
 							}
-						}
-					});
-			}
-		}
+							else {
+								WindupUIPlugin.logErrorMessage("Unable to obtain Document for rule generation." ); //$NON-NLS-1$
+							}
+					}
+				}
+			});
 		return action;
 	}
 	
