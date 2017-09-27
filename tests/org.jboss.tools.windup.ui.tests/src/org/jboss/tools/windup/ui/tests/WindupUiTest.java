@@ -33,6 +33,7 @@ import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
+import org.jboss.tools.windup.ui.internal.services.CreateMigrationIssueService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
 import org.jboss.tools.windup.ui.internal.services.RulesetSelectionCreationService;
@@ -76,6 +77,7 @@ public class WindupUiTest extends WindupTest {
 	
 	@Inject protected RulesetDOMService domService;
 	@Inject protected RulesetSelectionCreationService ruleCreationService;
+	@Inject protected CreateMigrationIssueService issueService;
 	
 	protected IssueExplorer issueExplorer;
 	

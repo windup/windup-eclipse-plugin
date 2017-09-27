@@ -37,7 +37,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.wst.xml.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.jdt.ui,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.eclipse.wst.sse.core,
+ org.eclipse.wst.xml.core
 Bundle-Vendor: %plugin.vendor
 Bundle-Activator: org.jboss.tools.windup.ui.tests.Activator
 Import-Package: org.eclipse.ui.texteditor

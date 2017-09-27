@@ -18,10 +18,12 @@ import javax.inject.Named;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
@@ -68,6 +70,7 @@ import org.w3c.dom.Element;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("restriction")
+@Creatable
 public class CreateMigrationIssueService implements MouseListener, IMenuListener {
 
 	@Inject private EPartService partService;
@@ -167,13 +170,13 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 			if (SelectionConverter.getInputAsCompilationUnit(editor) != null) {
 				ITextSelection textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
 				JavaTextSelection javaSelection= new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
-				return createRuleFromSelectionAction(javaSelection);
+				return createRuleFromSelectionAction(javaSelection.resolveSelectedNodes());
 			}
 		}
 		return null;
 	}
 	
-	public WindupAction createRuleFromSelectionAction(JavaTextSelection javaSelection) {
+	public WindupAction createRuleFromSelectionAction(ASTNode[] nodes) {
 		WindupAction action = null;
 		/*
 		 * TODO: I'm pretty sure we can create a JavaTextSelection without requiring the selection to come from within a JavaEditor.
@@ -210,8 +213,8 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 										EditorModelUtil.addFactoriesTo(model);
 										
 										document = ((IDOMModel) model).getDocument();
-										List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, javaSelection.resolveSelectedNodes());
-										createRule(wizard.openEditor(), document, elements, ruleset);
+										List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, nodes);
+										openEditor(wizard.openEditor(), document, elements, ruleset);
 										provider.disconnect(input);
 									}
 									catch (Exception e) {
@@ -219,8 +222,8 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 									}
 								}
 								else {
-									List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, javaSelection.resolveSelectedNodes());
-									createRule(wizard.openEditor(), document, elements, ruleset);
+									List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, nodes);
+									openEditor(wizard.openEditor(), document, elements, ruleset);
 								}
 								if (!dirty) {
 									try {
@@ -287,7 +290,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 										document = ((IDOMModel) model).getDocument();
 										
 										Element xpathElement = creationService.createRuleFromXPath(document, xpath);
-										createRule(wizard.openEditor(), document, Lists.newArrayList(xpathElement), ruleset);
+										openEditor(wizard.openEditor(), document, Lists.newArrayList(xpathElement), ruleset);
 										provider.disconnect(input);
 									}
 									catch (Exception e) {
@@ -296,7 +299,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 								}
 								else {
 									Element xpathElement = creationService.createRuleFromXPath(document, xpath);
-									createRule(wizard.openEditor(), document, Lists.newArrayList(xpathElement), ruleset);
+									openEditor(wizard.openEditor(), document, Lists.newArrayList(xpathElement), ruleset);
 								}
 								if (!dirty) {
 									try {
@@ -316,7 +319,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 		return action;
 	}
 	
-	private void createRule(boolean openEditor, Document document, List<Element> elements, IFile ruleset) {
+	private void openEditor(boolean openEditor, Document document, List<Element> elements, IFile ruleset) {
 		try {
 			if (elements != null && !elements.isEmpty()) {
 				if (!openEditor) {

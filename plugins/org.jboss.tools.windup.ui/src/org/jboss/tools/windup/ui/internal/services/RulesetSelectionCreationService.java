@@ -197,10 +197,7 @@ public class RulesetSelectionCreationService {
 			XMLUtilities.setText(locationElement, location);
 		}
 				
-		//IStructuredModel model = ((IDOMNode) document).getModel();
-		//ModelQuery modelQuery = ModelQueryUtil.getModelQuery(model);
 		AnnotationService annotationService = new AnnotationService();
-		//CMElementDeclaration elementDeclaration = modelQuery.getCMElementDeclaration(javaClassElement);
 		
 		Element performElement = domService.createPerformElement(ruleElement);
 		Element hintElement = domService.createHintElement(performElement);
