@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.ui.PartInitException;
@@ -27,6 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -48,13 +51,7 @@ public class RulesetEditorTests extends WindupUiTest {
 		assertTrue(editor != null);
 		
 		Document document = editor.getDocument();
-		assertTrue(document != null);
-		
-		NodeList ruleset = document.getElementsByTagName(RulesetConstants.RULESET_NAME);
-		assertTrue(ruleset.getLength() == 1);
-		
-		NodeList rules = document.getElementsByTagName(RulesetConstants.RULE_NAME);
-		assertTrue(rules.getLength() == 0);
+		assertEmptyRuleset(document);
 		
 		CompilationUnit cu = getTestCompilationUnit();
 		assertTrue(cu != null);
@@ -71,8 +68,46 @@ public class RulesetEditorTests extends WindupUiTest {
 		assertTrue(!nodes.isEmpty());
 		
 		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});
-		rules = document.getElementsByTagName(RulesetConstants.RULE_NAME);
-		assertTrue(rules.getLength() == 1);
+		assertTrue(document.getElementsByTagName(RulesetConstants.RULE_NAME).getLength() == 1);
+	}
+	
+	private void assertEmptyRuleset(Document document) {
+		assertTrue(document != null);
+		
+		NodeList ruleset = document.getElementsByTagName(RulesetConstants.RULESET_NAME);
+		assertTrue(ruleset.getLength() == 1);
+		
+		NodeList rules = document.getElementsByTagName(RulesetConstants.RULE_NAME);
+		assertTrue(rules.getLength() == 0);
+	}
+	
+	@Test
+	public void testCreateJavaRuleFromSelectedInterface() throws Exception {
+		RulesetEditorWrapper editor = openRulesetEditor();
+		assertTrue(editor != null);
+		
+		Document document = editor.getDocument();
+		assertEmptyRuleset(document);
+		
+		CompilationUnit cu = getTestCompilationUnit();
+		assertTrue(cu != null);
+		
+		List<ASTNode> nodes = Lists.newArrayList();
+		
+		ASTNode ast = SharedASTProvider.getAST(cu, SharedASTProvider.WAIT_YES, null);
+		ast.accept(new ASTVisitor() {
+			public boolean visit(SimpleType node) {
+				if (node.getParent() != null && node.getParent() instanceof TypeDeclaration && 
+						((TypeDeclaration)node.getParent()).superInterfaceTypes().contains(node)) {
+					nodes.add(node);
+				}
+				return false;
+			}
+		});
+		assertTrue(!nodes.isEmpty());
+		
+		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});
+		assertTrue(document.getElementsByTagName(RulesetConstants.RULE_NAME).getLength() == 1);
 	}
 		
 	private RulesetEditorWrapper openRulesetEditor() throws PartInitException {
