@@ -96,6 +96,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,
+ org.jboss.tools.windup.ui.internal.editor,
  org.jboss.tools.windup.ui.internal.explorer,
  org.jboss.tools.windup.ui.internal.rules,
  org.jboss.tools.windup.ui.internal.rules.delegate,

@@ -16,19 +16,34 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.internal.core.CompilationUnit;
+import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
+import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.google.common.collect.Lists;
 
 @SuppressWarnings({ "restriction" })
 public class RulesetEditorTests extends WindupUiTest {
@@ -40,30 +55,50 @@ public class RulesetEditorTests extends WindupUiTest {
 	}
 	
 	@Test
-	public void testCreateJavaRuleFromSelectedImplementInterface() throws PartInitException {
+	public void testCreateJavaRuleFromSelectedImport() throws PartInitException {
 		RulesetEditorWrapper editor = openRulesetEditor();
 		assertTrue(editor != null);
 		
 		Document document = editor.getDocument();
 		assertTrue(document != null);
 		
+		NodeList rules = document.getElementsByTagName(RulesetConstants.RULE_NAME);
+		assertTrue(rules.getLength() == 0);
+		
 		JavaEditor javaEditor = openJavaEditor();
 		assertTrue(javaEditor != null);
 		
-		int offset = 0;
-		int length = 38;
+		List<ASTNode> nodes = Lists.newArrayList();
+
+		CompilationUnit root = (CompilationUnit)domService.getEditorInput(javaEditor);
 		
-		JavaTextSelection javaSelection = new JavaTextSelection(domService.getEditorInput(javaEditor), domService.getDocument(javaEditor), offset, length);
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		parser.setSource(root);
+		parser.setResolveBindings(true);
+		ASTNode node = parser.createAST(new NullProgressMonitor());
 		
-		ASTNode[] nodes = javaSelection.resolveSelectedNodes();
-		assertTrue(nodes.length == 1);
+		node.accept(new ASTVisitor() {
+			@Override
+			public boolean visit(TypeDeclaration node) {
+				return true;
+			}
+			@Override
+			public boolean visit(AnnotationTypeDeclaration node) {
+				// TODO Auto-generated method stub
+				return super.visit(node);
+			}
+			@Override
+			public boolean visit(AnnotationTypeMemberDeclaration node) {
+				// TODO Auto-generated method stub
+				return super.visit(node);
+			}
+		});
+		assertTrue(!nodes.isEmpty());
 		
-		ASTNode node = nodes[0];
-		assertTrue(node.getParent() instanceof TypeDeclaration && ((TypeDeclaration)node.getParent()).superInterfaceTypes().contains(node));
+		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});
 		
-		List<Element> elements = ruleCreationService.createRulesFromEditorSelection(document, javaSelection);
-		
-		assertTrue(elements.size() == 1); 
+		rules = document.getElementsByTagName(RulesetConstants.RULE_NAME);
+		assertTrue(rules.getLength() == 1);
 	}
 		
 	private RulesetEditorWrapper openRulesetEditor() throws PartInitException {
@@ -76,7 +111,11 @@ public class RulesetEditorTests extends WindupUiTest {
 	}
 	
 	private JavaEditor openJavaEditor() throws PartInitException {
-		IFile javaFile = ResourcesPlugin.getWorkspace().getRoot().getProject("demo").getFile("demo/src/org/windup/examples/migration.SampleService.java");
+		IFile javaFile = ResourcesPlugin.getWorkspace().getRoot().getProject("demo").getFile("demo/src/org/windup/examples/migration/SampleService.java");
+		
+		IJavaElement element = JavaCore.create(javaFile);
+		CompilationUnit unit = (CompilationUnit)element;
+
 		return (JavaEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(javaFile), "org.eclipse.jdt.ui.CompilationUnitEditor");
 	}
 }

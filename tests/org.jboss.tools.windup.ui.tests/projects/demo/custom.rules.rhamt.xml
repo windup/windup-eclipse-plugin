@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <ruleset id="tester" xmlns="http://windup.jboss.org/schema/jboss-ruleset"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
-	<metadata>
-		<description>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
             This is a description of rules. This is a template for new rulesets. Change this.
         </description>
-		<dependencies>
-			<addon id="org.jboss.windup.rules,windup-rules-javaee,2.3.0.Final" />
-			<addon id="org.jboss.windup.rules,windup-rules-java,2.3.0.Final" />
-		</dependencies>
-		<sourceTechnology id="hibernate" versionRange="[,3.9)" />
-		<targetTechnology id="hibernate" versionRange="[4,)" />
-		<targetTechnology id="eap" versionRange="[6,7)" />
-		<tag>reviewed-2016-04-27</tag>
-	</metadata>
-	<rules>
-	</rules>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.3.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.3.0.Final" />
+        </dependencies>
+        <sourceTechnology id="hibernate" versionRange="[,3.9)" />
+        <targetTechnology id="hibernate" versionRange="[4,)" />
+        <targetTechnology id="eap" versionRange="[6,7)" />
+        <tag>reviewed-2016-04-27</tag>
+    </metadata>
+    <rules>
+    </rules>
 </ruleset>

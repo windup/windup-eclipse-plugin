@@ -210,7 +210,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 										EditorModelUtil.addFactoriesTo(model);
 										
 										document = ((IDOMModel) model).getDocument();
-										List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+										List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, javaSelection.resolveSelectedNodes());
 										createRule(wizard.openEditor(), document, elements, ruleset);
 										provider.disconnect(input);
 									}
@@ -219,7 +219,7 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 									}
 								}
 								else {
-									List<Element> elements = creationService.createRulesFromEditorSelection(document, javaSelection);
+									List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, javaSelection.resolveSelectedNodes());
 									createRule(wizard.openEditor(), document, elements, ruleset);
 								}
 								if (!dirty) {

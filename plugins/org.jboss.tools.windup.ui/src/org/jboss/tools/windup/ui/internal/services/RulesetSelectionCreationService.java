@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
 import org.jboss.tools.common.xml.XMLUtilities;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
@@ -64,14 +63,8 @@ public class RulesetSelectionCreationService {
 		return xmlfileElement;
 	}
 
-	public List<Element> createRulesFromEditorSelection(Document document, JavaTextSelection javaSelection/*, RulesetEditorWrapper wrapper */) {
-		return createRuleFromJavaEditorSelection(document, javaSelection/*, wrapper*/);
-	}
-	
-	private List<Element> createRuleFromJavaEditorSelection(Document document, JavaTextSelection javaSelection /*RulesetEditorWrapper wrapper*/) {
+	public List<Element> createRuleFromJavaEditorSelection(Document document, ASTNode[] nodes) {
 		try {
-			ASTNode[] nodes = javaSelection.resolveSelectedNodes();
-			
 			List<Element> javaClassElements = Arrays.stream(nodes).filter(node -> {
 				if (node instanceof Annotation || (node instanceof Name && node.getParent() instanceof Annotation)) {
 					return true;
