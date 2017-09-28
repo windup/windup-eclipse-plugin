@@ -25,11 +25,9 @@ import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -64,7 +62,7 @@ public class RulesetEditorTests extends WindupUiTest {
 				nodes.add(node);
 				return false;
 			}
-		});
+		}); 
 		assertTrue(!nodes.isEmpty());
 		
 		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});
@@ -114,10 +112,6 @@ public class RulesetEditorTests extends WindupUiTest {
 		IFile demo = projectProvider.getProject().getFile("custom.rules.rhamt.xml");
 		assertTrue(demo.exists());
 		return (RulesetEditorWrapper)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(demo), RulesetEditor.ID);
-	}
-	
-	private ITextEditor getTextEditor(RulesetEditorWrapper wrapper) {
-		return (ITextEditor) wrapper.getAdapter(ITextEditor.class);
 	}
 	
 	private CompilationUnit getTestCompilationUnit() throws PartInitException {

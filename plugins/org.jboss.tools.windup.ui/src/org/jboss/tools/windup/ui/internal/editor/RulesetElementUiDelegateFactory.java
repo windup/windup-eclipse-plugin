@@ -11,7 +11,10 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -52,6 +55,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
@@ -75,6 +79,7 @@ import org.eclipse.wst.xml.ui.internal.tabletree.XMLTableTreePropertyDescriptorF
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.DefaultTextViewerContentProposalProvider.ITextViewerContentProviderDelegate;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ClassificationDelegate;
@@ -104,6 +109,10 @@ import com.google.common.collect.Lists;
 @Creatable
 @SuppressWarnings({"unused", "restriction"})
 public class RulesetElementUiDelegateFactory {
+	
+	enum CATEGORY {
+		MANDATORY, OPTIONAL, POTENTIAL
+	}
 		
 	public static interface RulesetConstants {
 		static final String ID = "id"; //$NON-NLS-1$
@@ -709,8 +718,15 @@ public class RulesetElementUiDelegateFactory {
 				combo.add(option);
 			}
 			GridData gd = new GridData(span == 2 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL);
-			gd.widthHint = 20;
-			gd.horizontalSpan = span - 1;
+			if (!readOnly) {
+				gd.widthHint = 20;
+				gd.horizontalIndent = 3;
+				gd.horizontalSpan = span - 1;
+			}
+			else {
+				gd.widthHint = 20;
+				gd.horizontalSpan = span - 1;				
+			}
 			//gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 			combo.getControl().setLayoutData(gd);
 			combo.addSelectionListener(new SelectionAdapter() {
@@ -754,5 +770,14 @@ public class RulesetElementUiDelegateFactory {
 		public void setFocus() {
 			combo.getControl().setFocus();
 		}
+	}
+	
+	public static ChoiceAttributeRow createCategoryRow(Element element, CMNode cmNode) {
+		return new ChoiceAttributeRow(element, cmNode, false) {
+			@Override
+			protected List<String> getOptions() {
+				return Arrays.stream(CATEGORY.values()).map(c -> c.toString().toLowerCase()).collect(Collectors.toList());
+			}
+		};
 	}
 }

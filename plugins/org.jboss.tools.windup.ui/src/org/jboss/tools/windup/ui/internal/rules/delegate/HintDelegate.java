@@ -56,6 +56,7 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.DeleteNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.ChoiceAttributeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.TextNodeRow;
@@ -200,6 +201,11 @@ public class HintDelegate extends ElementUiDelegate {
 			    for (CMAttributeDeclaration declaration : availableAttributeList) {
 				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.EFFORT)) {
 				    		ChoiceAttributeRow row = createEffortRow(declaration);
+				    		rows.add(row);
+				    		row.createContents(client, toolkit, 2);
+				    	}
+				    	else if (Objects.equal(declaration.getAttrName(), RulesetConstants.CATEGORY_ID)) {
+				    		ChoiceAttributeRow row = RulesetElementUiDelegateFactory.createCategoryRow(element, declaration);
 				    		rows.add(row);
 				    		row.createContents(client, toolkit, 2);
 				    	}
