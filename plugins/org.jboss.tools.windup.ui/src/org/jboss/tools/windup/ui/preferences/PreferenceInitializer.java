@@ -25,5 +25,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 		defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, windupHome);
 		defaultPreferences.put(IPreferenceConstants.RMI_PORT, String.valueOf(IPreferenceConstants.DEFAULT_RMI_PORT));
+		
+		defaultPreferences.put(IPreferenceConstants.START_TIMEOUT, String.valueOf(IPreferenceConstants.DEFAULT_WINDUP_START_DURATION_TIMEOUT));
+		defaultPreferences.put(IPreferenceConstants.STOP_TIMEOUT, String.valueOf(IPreferenceConstants.DEFAULT_WINDUP_STOP_DURATION_TIMEOUT));
 	}
 }

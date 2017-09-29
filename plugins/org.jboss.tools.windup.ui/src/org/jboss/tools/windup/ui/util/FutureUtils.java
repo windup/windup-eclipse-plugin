@@ -102,7 +102,6 @@ public class FutureUtils {
 
 		public AbstractDelegatingMonitorJob(String name) {
 			super(name);
-			
 			this.delegatingMonitor = new DelegatingProgressMonitor();
 		}
 
@@ -121,6 +120,5 @@ public class FutureUtils {
 		public boolean isTimeouted(IStatus status){
 			return status.getCode() == TIMEOUTED;
 		}
-		
 	}
 }

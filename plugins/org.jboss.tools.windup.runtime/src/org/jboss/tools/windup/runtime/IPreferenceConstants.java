@@ -15,4 +15,10 @@ public interface IPreferenceConstants {
 	static final String WINDUP_HOME = "WINDUP_HOME";
 	static final String RMI_PORT = "RMI_PORT";
 	static final int DEFAULT_RMI_PORT = 1100;
+	
+	static final String START_TIMEOUT = "WINDUP_START_TIMEOUT";
+	static final String STOP_TIMEOUT = "WINDUP_STOP_TIMEOUT";
+	
+	static final int DEFAULT_WINDUP_START_DURATION_TIMEOUT = 45000;
+	static final int DEFAULT_WINDUP_STOP_DURATION_TIMEOUT = 35000;
 }

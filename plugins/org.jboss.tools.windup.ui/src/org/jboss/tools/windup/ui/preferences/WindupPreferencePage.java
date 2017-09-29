@@ -39,6 +39,9 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	private FileFieldEditor homeEditor;
 	private IntegerFieldEditor portEditor;
 	
+	private IntegerFieldEditor startTimeoutDurationEditor;
+	private IntegerFieldEditor stopTimeoutDurationEditor;
+	
 	public WindupPreferencePage() {
 		super(GRID);
 		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, WindupRuntimePlugin.PLUGIN_ID));
@@ -67,6 +70,20 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 				getFieldEditorParent());
 		portEditor.setEmptyStringAllowed(false);
 		addField(portEditor);
+		
+		startTimeoutDurationEditor = new IntegerFieldEditor(
+				IPreferenceConstants.START_TIMEOUT, 
+				Messages.WindupPreferenceStartTimeoutDuration, 
+				getFieldEditorParent());
+		startTimeoutDurationEditor.setEmptyStringAllowed(false);
+		addField(startTimeoutDurationEditor);
+		
+		stopTimeoutDurationEditor = new IntegerFieldEditor(
+				IPreferenceConstants.STOP_TIMEOUT, 
+				Messages.WindupPreferenceStopTimeoutDuration, 
+				getFieldEditorParent());
+		stopTimeoutDurationEditor.setEmptyStringAllowed(false);
+		addField(stopTimeoutDurationEditor);
 	}
 	
 	@Override
@@ -74,6 +91,8 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 		boolean result = super.performOk();
 		preferences.put(IPreferenceConstants.WINDUP_HOME, homeEditor.getStringValue());
 		preferences.put(IPreferenceConstants.RMI_PORT, portEditor.getStringValue());
+		preferences.put(IPreferenceConstants.START_TIMEOUT, startTimeoutDurationEditor.getStringValue());
+		preferences.put(IPreferenceConstants.STOP_TIMEOUT, stopTimeoutDurationEditor.getStringValue());
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
@@ -84,7 +103,7 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	
 	@Override
 	protected Point doComputeSize() {
-		return new Point(500, 400);
+		return new Point(300, 400);
 	}
 	
 	@Override

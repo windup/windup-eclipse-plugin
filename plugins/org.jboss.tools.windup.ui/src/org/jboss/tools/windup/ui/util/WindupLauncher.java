@@ -27,10 +27,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.jboss.tools.windup.runtime.IPreferenceConstants;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.util.FutureUtils.AbstractDelegatingMonitorJob;
@@ -43,11 +47,9 @@ public class WindupLauncher {
 	
 	private static Logger logger = LoggerFactory.getLogger(WindupLauncher.class);
 	
-	// TODO: Move to preference item.
-	public static final long WINDUP_START_DURATION_TIMEOUT = 45000;
-	public static final long WINDUP_STOP_DURATION_TIMEOUT = 35000;
-
 	@Inject private WindupRmiClient windupClient;
+	
+	private ScopedPreferenceStore preferences = new ScopedPreferenceStore(InstanceScope.INSTANCE, WindupRuntimePlugin.PLUGIN_ID);
 	
 	public void shutdown(WinupServerCallback callback) {
 		Display.getDefault().syncExec(() -> {
@@ -86,7 +88,8 @@ public class WindupLauncher {
 		windupClient.shutdownWindup();
 		monitor.worked(1);
 		Future<IStatus> future = WindupLauncher.getTerminateWindupFuture(windupClient);
-		FutureUtils.waitForFuture(WINDUP_STOP_DURATION_TIMEOUT, future, monitor);
+		int duration = preferences.getInt(IPreferenceConstants.STOP_TIMEOUT);
+		FutureUtils.waitForFuture(duration, future, monitor);
 		monitor.worked(1);
 	}
 	
@@ -129,7 +132,8 @@ public class WindupLauncher {
 				return;
 			}
 			Job job = createStartWindupJob();
-			IStatus status = FutureUtils.runWithProgress(job, WINDUP_START_DURATION_TIMEOUT, 5, callback.getShell(),
+			int duration = preferences.getInt(IPreferenceConstants.START_TIMEOUT);
+			IStatus status = FutureUtils.runWithProgress(job, duration, 5, callback.getShell(),
 					Messages.WindupStartingDetail);
 			callback.serverStart(status);
 		});
@@ -167,7 +171,8 @@ public class WindupLauncher {
 				try {
 					monitor.subTask(Messages.WindupRunStartScipt);
 					windupClient.startWindup(monitor);
-					FutureUtils.waitForFuture(WINDUP_START_DURATION_TIMEOUT, future, monitor);
+					int duration = preferences.getInt(IPreferenceConstants.START_TIMEOUT);
+					FutureUtils.waitForFuture(duration, future, monitor);
 				} catch (ExecutionException | TimeoutException | InterruptedException e) {
 					WindupUIPlugin.log(e);
 				} finally {
