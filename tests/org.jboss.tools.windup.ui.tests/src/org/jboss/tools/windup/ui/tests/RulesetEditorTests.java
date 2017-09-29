@@ -62,7 +62,7 @@ public class RulesetEditorTests extends WindupUiTest {
 				nodes.add(node);
 				return false;
 			}
-		}); 
+		});
 		assertTrue(!nodes.isEmpty());
 		
 		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});

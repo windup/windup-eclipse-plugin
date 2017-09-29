@@ -84,16 +84,11 @@ public class XMLRulesetModelUtil {
 		return rulesetId;
 	}
 	
-	public static IFile getExternallyLinkedRuleProvider(RuleProvider ruleProvider) {
-		String name = new File(ruleProvider.getOrigin()).getName();
-		return new TempProject().createTmpProject().getFile(name);
-	}
-
 	public static List<Node> getExternalRules(String locationURI) {
 		Shell shell = Display.getDefault().getActiveShell();
 		
 		IProject project = new TempProject().createTmpProject();
-		IPath path = project.getFullPath().append(new File(locationURI).getName());
+		IPath path = project.getFullPath().append(new File(locationURI).getAbsolutePath());
 		IFile newFileHandle = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFile(path);
 		
 		path = Path.fromOSString(locationURI);
@@ -234,6 +229,11 @@ public class XMLRulesetModelUtil {
 						Messages.errorOpeningRuleset);
 			}
 		}
+	}
+	
+	public static IFile getExternallyLinkedRuleProvider(RuleProvider ruleProvider) {
+		String name = ruleProvider.getOrigin();
+		return new TempProject().createTmpProject().getFile(name);
 	}
 	
 	public static Pair<Object, Node> findRuleProvider(String ruleId, RuleProviderRegistry ruleProviderRegistry, ModelService modelService) {
