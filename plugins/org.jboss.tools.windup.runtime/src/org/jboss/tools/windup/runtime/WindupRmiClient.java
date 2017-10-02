@@ -17,6 +17,7 @@ import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -165,6 +166,7 @@ public class WindupRmiClient {
 	        executionBuilder.clear();
 	        logInfo("ExecutionBuilder retrieved from registry."); //$NON-NLS-1$
 	        return executionBuilder;
+		} catch (ConnectException e) {
 		} catch (RemoteException e) {
 			logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
 		} catch (NotBoundException e) {
