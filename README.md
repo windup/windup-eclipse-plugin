@@ -13,7 +13,7 @@ Before you can install the Windup plugin, you'll need to have [JBoss Tools](http
 
 Building the project generates a zip archive containing an Eclipse update site under site/target/. You can install the features into Eclipse from the archive via "Help > Install New Software > Add... > Archive...".
 
-Also, a [nightly build](http://download.jboss.org/jbosstools/neon/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
+Also, a [nightly build](http://download.jboss.org/jbosstools/oxygen/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
 
 ## Get the code
 
@@ -40,7 +40,7 @@ Setup your local environment with Maven 3.2.x+. See the [Maven local settings.xm
 ## Building
 
 This project depends on [jbosstools-base](https://github.com/jbosstools/jbosstools-base) and [jbosstools-forge](https://github.com/jbosstools/jbosstools-forge). The build will also pull in a snapshot build of [Windup](https://github.com/windup/windup). To avoid needing to build the jbosstools projects before building windup-eclipse-plugin,
-be sure you have added the JBoss repositories to your Maven settings as shown [here](https://github.com/d-s/scripts-windup/blob/b6ff9e572b25f6750eaf91057fef21bab390b4bb/windup-eclipse-plugin-mvn-settings.xml).
+be sure you have added the JBoss repositories to your Maven settings as shown [here](https://raw.githubusercontent.com/windup/windup/master/build/settings.xml).
 
 This command will then run the build:
 
