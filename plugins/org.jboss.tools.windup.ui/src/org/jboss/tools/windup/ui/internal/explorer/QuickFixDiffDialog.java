@@ -66,7 +66,7 @@ public class QuickFixDiffDialog extends DiffDialog {
 	@Override
 	protected IResource computeRight() {
 		if (left != null) {
-			return quickfixService.getQuickFixedResource(quickfix, marker);
+			return quickfixService.getQuickFixedResource(null, quickfix, marker);
 		}
 		return null;
 	}

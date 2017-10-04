@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.jboss.tools.windup.model.Activator;
 
@@ -38,7 +39,7 @@ public class DocumentUtils {
 	public static String getLine(IResource resource, int lineNumber) {
 		try {
 			String contents = FileUtils.readFileToString(resource.getLocation().toFile());
-			Document document = new Document(contents);
+			IDocument document = new Document(contents);
 			IRegion region = document.getLineInformation(lineNumber);
 			return document.get(region.getOffset(), region.getLength());
 		} catch (IOException | BadLocationException e) {
@@ -71,10 +72,10 @@ public class DocumentUtils {
 	 * Replaces the chunk of text represented as <code>searchString</code> with the specified <code>replacement</code>
 	 * text at the given line number in the specified resource. 
 	 */
-	public static Document replace(IResource resource, int lineNumber, String searchString, String replacement) {
+	public static IDocument replace(IResource resource, int lineNumber, String searchString, String replacement) {
 		try {
 			String contents = FileUtils.readFileToString(resource.getLocation().toFile());
-			Document document = new Document(contents);
+			IDocument document = new Document(contents);
 			IRegion info = document.getLineInformation(lineNumber);
 			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(document);
 			IRegion search = adapter.find(info.getOffset(), searchString, true, true, false/*true*/, false);
@@ -88,13 +89,26 @@ public class DocumentUtils {
 		return null;
 	}
 	
+	public static void replace(IDocument document, int lineNumber, String searchString, String replacement) {
+		try {
+			IRegion info = document.getLineInformation(lineNumber);
+			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(document);
+			IRegion search = adapter.find(info.getOffset(), searchString, true, true, false/*true*/, false);
+			if (search != null) {
+				document.replace(search.getOffset(), search.getLength(), replacement);
+			}
+		} catch (BadLocationException e) {
+			Activator.log(e);
+		}
+	}
+	
 	/**
 	 * Deletes the line of text in the specified resource at the specified line number.
 	 */
-	public static Document deleteLine(IResource resource, int lineNumber) {
+	public static IDocument deleteLine(IResource resource, int lineNumber) {
 		try {
 			String contents = FileUtils.readFileToString(resource.getLocation().toFile());
-			Document document = new Document(contents);
+			IDocument document = new Document(contents);
 			IRegion info = document.getLineInformation(lineNumber);
 			document.replace(info.getOffset(), info.getLength()+1, null);
 			return document;
@@ -108,7 +122,7 @@ public class DocumentUtils {
 	 * Inserts the provided chunk of text represented as <code>newLine</code> in the given
 	 * resource at the specified line.
 	 */
-	public static Document insertLine(IResource resource, int lineNumber, String newLine) {
+	public static IDocument insertLine(IResource resource, int lineNumber, String newLine) {
 		try {
 			String contents = FileUtils.readFileToString(resource.getLocation().toFile());
 			Document document = new Document(contents);

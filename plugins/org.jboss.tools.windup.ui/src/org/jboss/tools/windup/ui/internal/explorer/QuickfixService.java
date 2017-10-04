@@ -29,6 +29,10 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.formatter.XMLFormatterFormatProcessor;
@@ -64,11 +68,15 @@ public class QuickfixService {
 	
 	public void applyQuickFix(QuickFix quickfix) {
 		IMarker quickfixMarker =(IMarker)quickfix.getMarker();
-		IResource newResource = getQuickFixedResource(quickfix, quickfixMarker);
-		DocumentUtils.replace(quickfixMarker.getResource(), newResource);
-		markerService.delete(quickfixMarker, quickfix);
-		
 		IResource quickfixResource = quickfixMarker.getResource();
+		IDocument document = findDocument(quickfixResource);
+		IResource newResource = getQuickFixedResource(document, quickfix, quickfixMarker);
+		
+		if (document == null) {
+			DocumentUtils.replace(quickfixMarker.getResource(), newResource);
+		}
+		
+		markerService.delete(quickfixMarker, quickfix);
 		
 		Hint hint = (Hint)quickfix.eContainer();
 		IMarker hintMarker = (IMarker)hint.getMarker();
@@ -93,8 +101,20 @@ public class QuickfixService {
 			markerService.clear(quickfixResource);
 		}
 	}
+	
+	private IDocument findDocument(IResource resource) {
+		FileEditorInput input = new FileEditorInput((IFile)resource);
+		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(input);
+		if (editor != null) {
+			ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
+			if (textEditor != null) {
+				return textEditor.getDocumentProvider().getDocument(input);
+			}
+		}
+		return null;
+	}
 
-	public IResource getQuickFixedResource(QuickFix quickFix, IMarker marker) {
+	public IResource getQuickFixedResource(IDocument document, QuickFix quickFix, IMarker marker) {
 		Hint hint = (Hint)quickFix.eContainer();
 		IResource original = marker.getResource();
 		TempProject project = new TempProject();
@@ -102,20 +122,38 @@ public class QuickfixService {
 			int lineNumber = hint.getLineNumber()-1;
 			String searchString = quickFix.getSearchString();
 			String replacement = quickFix.getReplacementString();
-			Document document = DocumentUtils.replace(original, lineNumber, searchString, replacement);
-			return project.createResource(document.get());
+			if (document != null) {
+				DocumentUtils.replace(document, lineNumber, searchString, replacement);
+				return marker.getResource();
+			}
+			else {
+				document = DocumentUtils.replace(original, lineNumber, searchString, replacement);
+				return project.createResource(document.get());
+			}
 		}
 		else if (QuickfixType.DELETE_LINE.toString().equals(quickFix.getQuickFixType())) {
 			int lineNumber = hint.getLineNumber()-1;
-			Document document = DocumentUtils.deleteLine(original, lineNumber);
-			return project.createResource(document.get());
+			if (document != null) {
+				DocumentUtils.deleteLine(original, lineNumber);
+				return marker.getResource();
+			}
+			else {
+				document = DocumentUtils.deleteLine(original, lineNumber);
+				return project.createResource(document.get());
+			}
 		}
 		else if (QuickfixType.INSERT_LINE.toString().equals(quickFix.getQuickFixType())) {
 			int lineNumber = hint.getLineNumber();
 			lineNumber = lineNumber > 1 ? lineNumber - 2 : lineNumber-1;
 			String newLine = quickFix.getReplacementString();
-			Document document = DocumentUtils.insertLine(original, lineNumber, newLine);
-			return project.createResource(document.get());
+			if (document != null) {
+				DocumentUtils.insertLine(original, lineNumber, newLine);
+				return marker.getResource();
+			}
+			else {
+				document = DocumentUtils.insertLine(original, lineNumber, newLine);
+				return project.createResource(document.get());
+			}
 		}
 		else if (QuickfixType.TRANSFORMATION.toString().equals(quickFix.getQuickFixType())) {
 			
@@ -136,14 +174,14 @@ public class QuickfixService {
 	        		column,
 	        		length);
 	        try {
-	        	if (windupClient.isWindupServerRunning()) {
-	        		ExecutionBuilder builder = windupClient.getExecutionBuilder();
-		        	String preview = builder.transform(quickFix.getTransformationId(), locationDTO);
-		        	preview = format(marker.getResource(), preview);
-		        	return project.createResource(preview);
-	        	}
+		        	if (windupClient.isWindupServerRunning()) {
+		        		ExecutionBuilder builder = windupClient.getExecutionBuilder();
+			        	String preview = builder.transform(quickFix.getTransformationId(), locationDTO);
+			        	preview = format(marker.getResource(), preview);
+			        	return project.createResource(preview);
+		        	}
 	        } catch (RemoteException e) {
-	        	WindupUIPlugin.log(e);
+	        		WindupUIPlugin.log(e);
 	        }
 	        
 		}
