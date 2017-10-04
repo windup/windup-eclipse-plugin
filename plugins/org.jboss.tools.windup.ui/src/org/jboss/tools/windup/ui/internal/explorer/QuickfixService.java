@@ -123,6 +123,7 @@ public class QuickfixService {
 			String searchString = quickFix.getSearchString();
 			String replacement = quickFix.getReplacementString();
 			if (document != null) {
+				replacement = replacement != null ? replacement : "";
 				DocumentUtils.replace(document, lineNumber, searchString, replacement);
 				return marker.getResource();
 			}

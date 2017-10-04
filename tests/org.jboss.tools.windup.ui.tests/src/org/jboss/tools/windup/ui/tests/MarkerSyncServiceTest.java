@@ -49,7 +49,7 @@ public class MarkerSyncServiceTest extends WindupUiTest {
 		QuickFix quickFix = hint.getQuickFixes().get(0);
 		IMarker marker = (IMarker)hint.getMarker();
 		IResource original = marker.getResource();
-		IResource newResource = quickfixService.getQuickFixedResource(quickFix, marker);
+		IResource newResource = quickfixService.getQuickFixedResource(null, quickFix, marker);
 		DocumentUtils.replace(original, newResource);
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
