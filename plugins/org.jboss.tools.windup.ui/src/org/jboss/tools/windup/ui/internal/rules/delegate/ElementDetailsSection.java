@@ -16,15 +16,21 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Form;
@@ -152,6 +158,7 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		scroll.setExpandHorizontal(true);
 		scroll.setExpandVertical(true);
 		section.setClient(scroll);
+		addScrollListener(scroll);
 		
 		Composite client = toolkit.createComposite(scroll, SWT.NONE);
 		client.setLayout(new FormLayout());
@@ -161,6 +168,39 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 		toolkit.paintBordersFor(client);
 		
 		return Tuples.create(section, client);
+	}
+	
+	public static void addScrollListener(final Scrollable textWidget) {
+		textWidget.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseScrolled(MouseEvent event) {
+				ScrolledComposite form = getScrolledComposite(textWidget);
+				if (form != null) {
+					ScrollBar verticalBar = textWidget.getVerticalBar();
+					if (event.count < 0) {
+						// scroll form down
+						if (verticalBar == null || verticalBar.getSelection() + verticalBar.getThumb() == verticalBar.getMaximum()) {
+							EditorUtil.scroll(form, 0, form.getVerticalBar().getIncrement());
+						}
+					} else {
+						// scroll form up
+						if (verticalBar == null || verticalBar.getSelection() == verticalBar.getMinimum()) {
+							EditorUtil.scroll(form, 0, -form.getVerticalBar().getIncrement());
+						}
+					}
+				}
+			}
+		});
+	}
+	
+	public static ScrolledComposite getScrolledComposite(Control c) {
+		Composite parent = c.getParent();
+		while (parent != null) {
+			if (parent instanceof ScrolledComposite) {
+				return (ScrolledComposite) parent;
+			}
+			parent = parent.getParent();
+		}
+		return null;
 	}
 	
 	protected Section createSection(Composite parent, String title, int style, String description) {

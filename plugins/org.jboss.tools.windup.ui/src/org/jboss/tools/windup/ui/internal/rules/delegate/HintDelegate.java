@@ -275,6 +275,7 @@ public class HintDelegate extends ElementUiDelegate {
 			((GridLayout)client.getLayout()).marginBottom = 5;
 			
 			tagsTreeViewer = new CheckboxTreeViewer(toolkit.createTree(client, SWT.CHECK|SWT.SINGLE));
+			ElementDetailsSection.addScrollListener(tagsTreeViewer.getTree());
 			tagsTreeViewer.setContentProvider(new TreeContentProvider());
 			tagsTreeViewer.setLabelProvider(new LabelProvider() {
 				@Override
