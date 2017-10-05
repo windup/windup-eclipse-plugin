@@ -30,6 +30,7 @@ import org.jboss.tools.windup.ui.internal.rules.RulesetEditor;
 import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
@@ -67,16 +68,25 @@ public class RulesetEditorTests extends WindupUiTest {
 		
 		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});
 		assertTrue(document.getElementsByTagName(RulesetConstants.RULE_NAME).getLength() == 1);
+		assertTrue(document.getElementsByTagName(RulesetConstants.HINT_NAME).getLength() == 1);
 	}
 	
 	private void assertEmptyRuleset(Document document) {
 		assertTrue(document != null);
 		
-		NodeList ruleset = document.getElementsByTagName(RulesetConstants.RULESET_NAME);
-		assertTrue(ruleset.getLength() == 1);
+		NodeList rulesets = document.getElementsByTagName(RulesetConstants.RULESET_NAME);
+		assertTrue(rulesets.getLength() == 1);
 		
-		NodeList rules = document.getElementsByTagName(RulesetConstants.RULE_NAME);
-		assertTrue(rules.getLength() == 0);
+		NodeList rulesElements = document.getElementsByTagName(RulesetConstants.RULES_NAME);
+		Element rules = (Element)rulesElements.item(0);
+		
+		NodeList children = rules.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			rules.removeChild(children.item(i));
+		}
+		
+		NodeList ruleElements = document.getElementsByTagName(RulesetConstants.RULE_NAME);
+		assertTrue(ruleElements.getLength() == 0);
 	}
 	
 	@Test
@@ -106,8 +116,9 @@ public class RulesetEditorTests extends WindupUiTest {
 		
 		ruleCreationService.createRuleFromJavaEditorSelection(document, new ASTNode[] {nodes.get(0)});
 		assertTrue(document.getElementsByTagName(RulesetConstants.RULE_NAME).getLength() == 1);
+		assertTrue(document.getElementsByTagName(RulesetConstants.HINT_NAME).getLength() == 1);
 	}
-		
+	
 	private RulesetEditorWrapper openRulesetEditor() throws PartInitException {
 		IFile demo = projectProvider.getProject().getFile("custom.rules.rhamt.xml");
 		assertTrue(demo.exists());
