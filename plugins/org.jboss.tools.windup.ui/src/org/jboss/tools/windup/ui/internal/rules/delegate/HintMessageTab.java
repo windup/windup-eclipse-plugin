@@ -331,6 +331,7 @@ public class HintMessageTab extends ElementAttributesContainer {
 		IOverviewRuler overviewRuler = new OverviewRuler(new DefaultMarkerAnnotationAccess(), VERTICAL_RULER_WIDTH, colors);
 		
 		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true, styles);
+		ElementDetailsSection.addScrollListener(sourceViewer.getTextWidget());
 		
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(sourceViewer.getControl());
 		

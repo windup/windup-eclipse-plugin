@@ -212,6 +212,7 @@ public class JavaClassDelegate extends ElementUiDelegate {
 			GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 0, 5).applyTo(left);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(left);
 			annotationTree = new TreeViewer(left);
+			ElementDetailsSection.addScrollListener(annotationTree.getTree());
 			
 			Composite right = toolkit.createComposite(client);
 			GridLayoutFactory.fillDefaults().applyTo(right);

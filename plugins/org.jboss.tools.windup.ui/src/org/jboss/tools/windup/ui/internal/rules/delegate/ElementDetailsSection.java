@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -31,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Form;
@@ -44,8 +44,8 @@ import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
-import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateRegistry;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
+import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateRegistry;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate.IElementDetailsContainer;
 import org.w3c.dom.Element;
 
@@ -179,12 +179,17 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 					if (event.count < 0) {
 						// scroll form down
 						if (verticalBar == null || verticalBar.getSelection() + verticalBar.getThumb() == verticalBar.getMaximum()) {
-							EditorUtil.scroll(form, 0, form.getVerticalBar().getIncrement());
+							scroll(form, 0, form.getVerticalBar().getIncrement());
+						}
+						
+						// TODO: temporary hack to work with tree viewers.
+						else if (verticalBar == null || (textWidget instanceof Tree && verticalBar.getSelection() == 0 && verticalBar.getThumb() == 10 && verticalBar.getMaximum() == 100)) {
+							scroll(form, 0, form.getVerticalBar().getIncrement());
 						}
 					} else {
 						// scroll form up
 						if (verticalBar == null || verticalBar.getSelection() == verticalBar.getMinimum()) {
-							EditorUtil.scroll(form, 0, -form.getVerticalBar().getIncrement());
+							scroll(form, 0, -form.getVerticalBar().getIncrement());
 						}
 					}
 				}
@@ -201,6 +206,18 @@ public abstract class ElementDetailsSection implements IElementDetailsContainer 
 			parent = parent.getParent();
 		}
 		return null;
+	}
+	
+	public static void scroll(ScrolledComposite scomp, int xoffset, int yoffset) {
+		Point origin = scomp.getOrigin();
+		Point contentSize = scomp.getContent().getSize();
+		int xorigin = origin.x + xoffset;
+		int yorigin = origin.y + yoffset;
+		xorigin = Math.max(xorigin, 0);
+		xorigin = Math.min(xorigin, contentSize.x - 1);
+		yorigin = Math.max(yorigin, 0);
+		yorigin = Math.min(yorigin, contentSize.y - 1);
+		scomp.setOrigin(xorigin, yorigin);
 	}
 	
 	protected Section createSection(Composite parent, String title, int style, String description) {
