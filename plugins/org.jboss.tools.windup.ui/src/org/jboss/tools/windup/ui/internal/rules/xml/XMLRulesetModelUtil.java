@@ -42,13 +42,13 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory;
 import org.jboss.tools.windup.ui.internal.explorer.TempProject;
-import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
+import org.jboss.tools.windup.ui.internal.rules.RulesetEditorWrapper;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.windup.tooling.rules.Rule;
 import org.jboss.windup.tooling.rules.RuleProvider;
-import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.jboss.windup.tooling.rules.RuleProvider.RuleProviderType;
+import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,9 +65,6 @@ public class XMLRulesetModelUtil {
 	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
 		IFile file = WorkspaceResourceUtils.getFile(locationURI);
-		if (file == null && new File(locationURI).exists()) {
-			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(locationURI);
-		}
 		if (file != null) {
 			IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 			if (model != null) {
@@ -87,7 +84,7 @@ public class XMLRulesetModelUtil {
 		return rulesetId;
 	}
 	
-	public static List<Node> getExternalRules(String locationURI) {
+	public IFile createLinkedResource(String locationURI) {
 		Shell shell = Display.getDefault().getActiveShell();
 		
 		IProject project = new TempProject().createTmpProject();
@@ -109,13 +106,13 @@ public class XMLRulesetModelUtil {
 			new WorkspaceOperationRunner().run(true, true, op);
 		} catch (Exception e) {
 			WindupUIPlugin.log(e);
-			return Lists.newArrayList();
 		}
-
-		return XMLRulesetModelUtil.getRules(newFileHandle);
+		
+		return newFileHandle;
 	}
 	
-	public static List<Node> getRules(IFile file) {
+	public static List<Node> getRules(String locationURI) {
+		IFile file = WorkspaceResourceUtils.getFile(locationURI);
 		List<Node> rules = Lists.newArrayList();
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		if (model != null) {
@@ -203,7 +200,7 @@ public class XMLRulesetModelUtil {
 		}
 		else if (provider instanceof RuleProvider) {
 			String location = ((RuleProvider)provider).getOrigin();
-			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(location);
+			file = WorkspaceResourceUtils.getFile(location);
 		}
 		if (file != null && file.exists()) {
 			try {
@@ -235,16 +232,12 @@ public class XMLRulesetModelUtil {
 		}
 	}
 	
-	public static IFile getExternallyLinkedRuleProvider(String location) {
-		return new TempProject().createTmpProject().getFile(location);
-	}
-	
 	public static Pair<Object, Node> findRuleProvider(String ruleId, RuleProviderRegistry ruleProviderRegistry, ModelService modelService) {
 		List<RuleProvider> systemRuleProviders = XMLRulesetModelUtil.readSystemRuleProviders(ruleProviderRegistry);
 		for (RuleProvider ruleProvider : systemRuleProviders) {
 			for (Rule rule : ruleProvider.getRules()) {
 				if (Objects.equal(ruleId, rule.getRuleID())) {
-					List<Node> ruleNodes = XMLRulesetModelUtil.getExternalRules(ruleProvider.getOrigin());
+					List<Node> ruleNodes = XMLRulesetModelUtil.getRules(ruleProvider.getOrigin());
 					for (Node ruleNode : ruleNodes) {
 						String ruleNodeId = XMLRulesetModelUtil.getRuleId(ruleNode);
 						if (Objects.equal(ruleId, ruleNodeId)) {
@@ -257,8 +250,7 @@ public class XMLRulesetModelUtil {
 		for (CustomRuleProvider ruleProvider : modelService.getModel().getCustomRuleRepositories()) {
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(ruleProvider, new File(ruleProvider.getLocationURI()), RuleProviderType.XML));
-			IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
-			for (Node ruleNode : XMLRulesetModelUtil.getRules(file)) {
+			for (Node ruleNode : XMLRulesetModelUtil.getRules(ruleProvider.getLocationURI())) {
 				String ruleNodeId = XMLRulesetModelUtil.getRuleId(ruleNode);
 				if (Objects.equal(ruleId, ruleNodeId)) {
 					return Tuples.create(ruleProvider, ruleNode);

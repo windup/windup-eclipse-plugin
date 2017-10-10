@@ -12,7 +12,6 @@ package org.jboss.tools.windup.ui.internal.rules.xml;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
@@ -45,8 +44,7 @@ public class XMLRulesetFileOrchestrator {
 	}
 	
 	public List<Node> getRules() {
-		IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
-		return XMLRulesetModelUtil.getRules(file);
+		return XMLRulesetModelUtil.getRules(ruleProvider.getLocationURI());
 	}
 	
 	public String getRulesetId() {

@@ -98,7 +98,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			RuleProvider provider = (RuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(provider, new File(provider.getOrigin()), provider.getRuleProviderType()));
-			List<Node> ruleNodes = XMLRulesetModelUtil.getExternalRules(provider.getOrigin());
+			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getOrigin());
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
 			listen(provider);
@@ -108,26 +108,13 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(provider, new File(provider.getLocationURI()), RuleProviderType.XML));
-			List<Node> ruleNodes = getRuleNodes(provider);
+			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getLocationURI());
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
 			listen(provider);
 			return children.stream().toArray(Object[]::new);
 		}
 		return new Object[0];
-	}
-	
-	private List<Node> getRuleNodes(CustomRuleProvider provider) {
-		if (provider.isExternal()) {
-			return XMLRulesetModelUtil.getExternalRules(provider.getLocationURI());
-		}
-		else {
-			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
-			if (file != null) {
-				return XMLRulesetModelUtil.getRules(file);
-			}
-		}
-		return Lists.newArrayList();
 	}
 	
 	public Object getProvider(Node node) {
@@ -139,14 +126,10 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		if (ruleProvider instanceof CustomRuleProvider) {
 			String locationUri = ((CustomRuleProvider)ruleProvider).getLocationURI();
 			file = WorkspaceResourceUtils.getFile(locationUri);
-			if (file == null && new File(locationUri).exists()) {
-				String location = ((CustomRuleProvider)ruleProvider).getLocationURI();
-				file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(location);
-			}
 		}
 		else if (ruleProvider instanceof RuleProvider) {
 			String location = ((RuleProvider)ruleProvider).getOrigin();
-			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(location);
+			file = WorkspaceResourceUtils.getFile(location);
 		}
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		IModelStateListener listener = listenerMap.get(ruleProvider);

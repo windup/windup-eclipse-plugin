@@ -19,7 +19,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -62,7 +61,6 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
@@ -130,8 +128,7 @@ public class RulesetEditorRulesSection {
 	}
 	
 	public void init(CustomRuleProvider ruleProvider) {
-		IFile file = WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI());
-		List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);
+		List<Node> ruleNodes = XMLRulesetModelUtil.getRules(ruleProvider.getLocationURI());
 		treeViewer.setInput(ruleNodes.toArray(new Node[ruleNodes.size()]));
 	}
 	
