@@ -136,6 +136,8 @@ public class Messages extends NLS
 
     public static String tagsTab;
     public static String messageTab;
+    
+    public static String taskRule;
 
     public static String report_has_no_information_on_resource;
 

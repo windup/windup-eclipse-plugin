@@ -108,14 +108,26 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(provider, new File(provider.getLocationURI()), RuleProviderType.XML));
-			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
-			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(file);
+			List<Node> ruleNodes = getRuleNodes(provider);
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
 			listen(provider);
 			return children.stream().toArray(Object[]::new);
 		}
 		return new Object[0];
+	}
+	
+	private List<Node> getRuleNodes(CustomRuleProvider provider) {
+		if (provider.isExternal()) {
+			return XMLRulesetModelUtil.getExternalRules(provider.getLocationURI());
+		}
+		else {
+			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+			if (file != null) {
+				return XMLRulesetModelUtil.getRules(file);
+			}
+		}
+		return Lists.newArrayList();
 	}
 	
 	public Object getProvider(Node node) {
@@ -127,9 +139,14 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		if (ruleProvider instanceof CustomRuleProvider) {
 			String locationUri = ((CustomRuleProvider)ruleProvider).getLocationURI();
 			file = WorkspaceResourceUtils.getFile(locationUri);
+			if (file == null && new File(locationUri).exists()) {
+				String location = ((CustomRuleProvider)ruleProvider).getLocationURI();
+				file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(location);
+			}
 		}
 		else if (ruleProvider instanceof RuleProvider) {
-			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)ruleProvider);
+			String location = ((RuleProvider)ruleProvider).getOrigin();
+			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(location);
 		}
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		IModelStateListener listener = listenerMap.get(ruleProvider);

@@ -65,6 +65,9 @@ public class XMLRulesetModelUtil {
 	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
 		IFile file = WorkspaceResourceUtils.getFile(locationURI);
+		if (file == null && new File(locationURI).exists()) {
+			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(locationURI);
+		}
 		if (file != null) {
 			IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 			if (model != null) {
@@ -199,7 +202,8 @@ public class XMLRulesetModelUtil {
 			file = WorkspaceResourceUtils.getFile(locationUri);
 		}
 		else if (provider instanceof RuleProvider) {
-			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider((RuleProvider)provider);
+			String location = ((RuleProvider)provider).getOrigin();
+			file = XMLRulesetModelUtil.getExternallyLinkedRuleProvider(location);
 		}
 		if (file != null && file.exists()) {
 			try {
@@ -231,9 +235,8 @@ public class XMLRulesetModelUtil {
 		}
 	}
 	
-	public static IFile getExternallyLinkedRuleProvider(RuleProvider ruleProvider) {
-		String name = ruleProvider.getOrigin();
-		return new TempProject().createTmpProject().getFile(name);
+	public static IFile getExternallyLinkedRuleProvider(String location) {
+		return new TempProject().createTmpProject().getFile(location);
 	}
 	
 	public static Pair<Object, Node> findRuleProvider(String ruleId, RuleProviderRegistry ruleProviderRegistry, ModelService modelService) {

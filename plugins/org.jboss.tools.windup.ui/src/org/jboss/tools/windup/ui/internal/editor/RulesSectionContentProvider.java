@@ -16,6 +16,7 @@ import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_PARAM;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_TASK;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,6 +66,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 	private static final Image HINT;
 	private static final Image CLASSIFICATION;
 	private static final Image VARIABLE;
+	private static final Image TASK;
 
 	static {
 		ImageRegistry imageRegistry = WindupUIPlugin.getDefault().getImageRegistry();
@@ -74,6 +76,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		HINT = imageRegistry.get(IMG_HINT);
 		CLASSIFICATION = imageRegistry.get(IMG_CLASSIFICATION);
 		VARIABLE = imageRegistry.get(IMG_PARAM);
+		TASK = imageRegistry.get(IMG_TASK);
 	}
 	
 	private RulesetElementUiDelegateRegistry elementUiRegistry = new RulesetElementUiDelegateRegistry(new RulesetElementUiDelegateFactory()); 
@@ -204,6 +207,10 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		return RulesetConstants.WHERE.equals(element.getNodeName());
 	}
 	
+	private boolean isTaskNode(Element element) {
+		return RulesetConstants.TASK.equals(element.getNodeName());
+	}
+	
 	@Override
 	public Image getImage(Object node) {
 		Image image = null;
@@ -223,6 +230,9 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 			}
 			else if (isWhereNode(element)) {
 				return VARIABLE;
+			}
+			else if (isTaskNode(element)) {
+				return TASK;
 			}
 			else {
 				image = XML_NODE;

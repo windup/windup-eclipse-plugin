@@ -94,6 +94,7 @@ import org.jboss.tools.windup.ui.internal.rules.delegate.JavaClassLocationDelega
 import org.jboss.tools.windup.ui.internal.rules.delegate.LinkDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.NamespaceDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.QuickfixDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.RuleDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.WhereDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.XmlFileUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
@@ -178,7 +179,10 @@ public class RulesetElementUiDelegateFactory {
 		static final String XPATH = "matches"; //$NON-NLS-1$
 		
 		static final String URI = "uri"; //$NON-NLS-1$
-		static final String NAMESPACE = "namespace"; //$NON-NLS-1$ 
+		static final String NAMESPACE = "namespace"; //$NON-NLS-1$
+		
+		static final String TASK = "task"; //$NON-NLS-1$ 
+		static final String IS_TASK = "isTask"; // $NON-NLS-1$
 	}
 
 	public IElementUiDelegate createElementUiDelegate(Element element, IEclipseContext context) {
@@ -231,6 +235,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.NAMESPACE: {
 				uiDelegate = createControls(NamespaceDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.RULE_NAME: {
+				uiDelegate = createControls(RuleDelegate.class, context);
 				break;
 			}
 			default: {

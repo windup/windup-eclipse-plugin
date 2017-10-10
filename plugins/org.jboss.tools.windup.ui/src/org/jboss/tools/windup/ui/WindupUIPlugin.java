@@ -126,6 +126,8 @@ public class WindupUIPlugin extends AbstractUIPlugin
     
     public static final String IMG_CLEAR = "icons/clear_highlighted.gif"; //$NON-NLS-1$
     public static final String IMG_PARAM = "icons/variable.gif"; //$NON-NLS-1$
+    
+    public static final String IMG_TASK = "icons/rules/task.gif"; //$NON-NLS-1$
 
     // The shared instance
     private static WindupUIPlugin plugin;
@@ -284,6 +286,7 @@ public class WindupUIPlugin extends AbstractUIPlugin
 		reg.put(IMG_CLASSIFICATION, createImageDescriptor(IMG_CLASSIFICATION));
 		reg.put(IMG_CLEAR, createImageDescriptor(IMG_CLEAR));
 		reg.put(IMG_PARAM, createImageDescriptor(IMG_PARAM));
+		reg.put(IMG_TASK, createImageDescriptor(IMG_TASK));
 	}
     
     private ImageDescriptor createImageDescriptor(String path) {
