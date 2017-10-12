@@ -190,13 +190,15 @@ public class RuleRepositoryView extends ViewPart {
 		}	
 		
 		private void addRulesets(String[] rulesetLocations, boolean isLocal) {
-			List<CustomRuleProvider> providers = Lists.newArrayList();
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 				@Override
 				public void execute(IProgressMonitor monitor) {
 					for (String rulesetLocation : rulesetLocations) {
-						CustomRuleProvider provider = modelService.addRulesetRepository(rulesetLocation, true); //$NON-NLS-1$
-						providers.add(provider);
+						IFile resource = XMLRulesetModelUtil.getRuleset(rulesetLocation);
+						if (resource == null) {
+							resource = XMLRulesetModelUtil.createLinkedResource(rulesetLocation);
+						}
+						modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString(), true); //$NON-NLS-1$
 					}
 				}
 			};

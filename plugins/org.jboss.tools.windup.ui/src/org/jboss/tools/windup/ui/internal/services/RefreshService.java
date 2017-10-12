@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.WindupModel;
 
@@ -70,7 +70,7 @@ public class RefreshService implements IResourceChangeListener {
 				}
 			}
 			
-			IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+			IFile file = XMLRulesetModelUtil.getRuleset(provider);
 			if (file == null || !file.exists()) {
 				providersToDelete.add(provider);
 			}

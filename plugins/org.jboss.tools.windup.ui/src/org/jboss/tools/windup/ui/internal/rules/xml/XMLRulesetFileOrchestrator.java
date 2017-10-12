@@ -12,11 +12,11 @@ package org.jboss.tools.windup.ui.internal.rules.xml;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.w3c.dom.Node;
 
@@ -39,7 +39,8 @@ public class XMLRulesetFileOrchestrator {
 		if (this.model != null) {
 			model.removeModelStateListener(modelListener);
 		}
-		model = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(ruleProvider.getLocationURI()), false);
+		IFile ruleset = XMLRulesetModelUtil.getRuleset(ruleProvider);
+		model = XMLRulesetModelUtil.getModel(ruleset, false);
 		model.addModelStateListener(modelListener);
 	}
 	

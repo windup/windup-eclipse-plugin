@@ -11,6 +11,7 @@
 package org.jboss.tools.windup.ui.internal.explorer;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,12 +28,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 
 /**
  * A temporary project for working with temporary resources.
  */
+@SuppressWarnings("restriction")
 public class TempProject {
 	
 	public static final String TMP_PROJECT_NAME = ".org.jboss.toos.windup.compare.tmp"; //$NON-NLS-1$
@@ -51,8 +54,11 @@ public class TempProject {
 	private final static String TMP_FOLDER_NAME = "tmpFolder"; //$NON-NLS-1$
 	private final static String TMP_FILE_NAME = "tmpFile"; //$NON-NLS-1$
 	
-	public IProject createTmpProject() {
-		IProject project = getTmpProject();
+	private TempProject() {
+	}
+	
+	public static IProject getTmpProject() {
+		IProject project = findTmpProject();
 		if (!project.isAccessible()) {
 			try {
 				IPath stateLocation = WindupUIPlugin.getDefault().getStateLocation();
@@ -94,21 +100,27 @@ public class TempProject {
 		return project;
 	}
 	
-	private IProject getTmpProject() {
+	private static IProject findTmpProject() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(TMP_PROJECT_NAME);
 	}
 	
-	private IFolder getTmpFolder(IProject project) throws CoreException {
+	public static IFile getFile(String location) {
+		IProject project = TempProject.getTmpProject();
+		IPath path = project.getFullPath().append(new File(location).getAbsolutePath());
+		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFile(path);
+	}
+	
+	private static IFolder getTmpFolder(IProject project) throws CoreException {
 		IFolder folder = project.getFolder(TMP_FOLDER_NAME);
 		if (!folder.exists())
 			folder.create(IResource.NONE, true, null);
 		return folder;
 	}
 	
-	public IResource createResource(String contents) {
+	public static IResource createResource(String contents) {
 		try {
-			IProject project = createTmpProject();
-			IFolder folder = getTmpFolder(project);
+			IProject project = TempProject.getTmpProject();
+			IFolder folder = TempProject.getTmpFolder(project);
 			IResource resource = folder.getFile(TMP_FILE_NAME);
 			InputStream input = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
 			if (!resource.exists()) {

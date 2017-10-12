@@ -38,10 +38,10 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 
 public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard {
@@ -160,11 +160,11 @@ public class NewRuleFromSelectionWizard extends Wizard implements IImportWizard 
 		
 		private void selectRuleset(String rulesetFile) {
 			List<String> locations = modelService.getModel().getCustomRuleRepositories().stream().map(provider -> {
-				IFile file = WorkspaceResourceUtils.getFile(provider.getLocationURI());
+				IFile file = XMLRulesetModelUtil.getRuleset(provider);
 				return file.getFullPath().toString();
 			}).collect(Collectors.toList());
 			rulesetCombo.setItems(locations.toArray(new String[locations.size()]));
-			IFile rulesetIFile = WorkspaceResourceUtils.getFile(rulesetFile);
+			IFile rulesetIFile = XMLRulesetModelUtil.getRuleset(rulesetFile);
 			if (rulesetIFile != null && rulesetIFile.exists()) {
 				rulesetFile = rulesetIFile.getFullPath().toString();
 				int index = locations.indexOf(rulesetFile);

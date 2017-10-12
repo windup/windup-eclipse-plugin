@@ -63,7 +63,6 @@ import org.eclipse.wst.xml.core.internal.provisional.contenttype.ContentTypeIdFo
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.core.internal.provisional.format.FormatProcessorXML;
 import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.TempProject;
@@ -106,14 +105,14 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		SourceViewer sourceViewer = xmlPage.getTemplatePreviewer();
 		IDocument document = sourceViewer.getDocument();
-		TempProject project = new TempProject();
-		IFile file = (IFile)project.createResource(document.get());
+		IFile file = (IFile)TempProject.createResource(document.get());
 		IStructuredModel scratchModel;
 		try {
 			scratchModel = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(file);
 			IDOMModel model = (IDOMModel)scratchModel;
 			
-			IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(provider.getLocationURI()), true);
+			IFile ruleset = XMLRulesetModelUtil.getRuleset(provider);
+			IDOMModel rulesetModel = XMLRulesetModelUtil.getModel(ruleset, true);
 			
 			// for selection
 			Node firstNode = null; 
@@ -143,7 +142,7 @@ public class NewXMLRuleWizard extends Wizard implements IImportWizard {
 					}
 				}
 				
-				FileEditorInput input = new FileEditorInput(WorkspaceResourceUtils.getFile(provider.getLocationURI()));
+				FileEditorInput input = new FileEditorInput(ruleset);
 				IEditorPart sharedEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(input);
 				
 				if (rulesetModel.isDirty() && sharedEditor == null) {

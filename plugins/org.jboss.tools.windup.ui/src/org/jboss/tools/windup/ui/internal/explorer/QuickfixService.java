@@ -117,7 +117,6 @@ public class QuickfixService {
 	public IResource getQuickFixedResource(IDocument document, QuickFix quickFix, IMarker marker) {
 		Hint hint = (Hint)quickFix.eContainer();
 		IResource original = marker.getResource();
-		TempProject project = new TempProject();
 		if (QuickfixType.REPLACE.toString().equals(quickFix.getQuickFixType())) {
 			int lineNumber = hint.getLineNumber()-1;
 			String searchString = quickFix.getSearchString();
@@ -129,7 +128,7 @@ public class QuickfixService {
 			}
 			else {
 				document = DocumentUtils.replace(original, lineNumber, searchString, replacement);
-				return project.createResource(document.get());
+				return TempProject.createResource(document.get());
 			}
 		}
 		else if (QuickfixType.DELETE_LINE.toString().equals(quickFix.getQuickFixType())) {
@@ -140,7 +139,7 @@ public class QuickfixService {
 			}
 			else {
 				document = DocumentUtils.deleteLine(original, lineNumber);
-				return project.createResource(document.get());
+				return TempProject.createResource(document.get());
 			}
 		}
 		else if (QuickfixType.INSERT_LINE.toString().equals(quickFix.getQuickFixType())) {
@@ -153,7 +152,7 @@ public class QuickfixService {
 			}
 			else {
 				document = DocumentUtils.insertLine(original, lineNumber, newLine);
-				return project.createResource(document.get());
+				return TempProject.createResource(document.get());
 			}
 		}
 		else if (QuickfixType.TRANSFORMATION.toString().equals(quickFix.getQuickFixType())) {
@@ -179,7 +178,7 @@ public class QuickfixService {
 		        		ExecutionBuilder builder = windupClient.getExecutionBuilder();
 			        	String preview = builder.transform(quickFix.getTransformationId(), locationDTO);
 			        	preview = format(marker.getResource(), preview);
-			        	return project.createResource(preview);
+			        	return TempProject.createResource(preview);
 		        	}
 	        } catch (RemoteException e) {
 	        		WindupUIPlugin.log(e);
@@ -213,12 +212,12 @@ public class QuickfixService {
 		/*
 		 * XML Formatting
 		 */
+		
 		IDOMModel xmlModel = XMLRulesetModelUtil.getModel(WorkspaceResourceUtils.getFile(resource.getLocation().toString()), true);
 		if (xmlModel != null) {
 			XMLFormatterFormatProcessor formatProcessor = new XMLFormatterFormatProcessor();
 			try {
-				TempProject project = new TempProject();
-				IFile file = (IFile)project.createResource(contents);
+				IFile file = (IFile)TempProject.createResource(contents);
 				IStructuredModel model = StructuredModelManager.getModelManager().createUnManagedStructuredModelFor(file);
 				formatProcessor.formatModel(model);
 				StructuredModelManager.getModelManager().saveStructuredDocument(model.getStructuredDocument(), file);

@@ -33,7 +33,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
@@ -98,6 +97,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			RuleProvider provider = (RuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(provider, new File(provider.getOrigin()), provider.getRuleProviderType()));
+			XMLRulesetModelUtil.createLinkedResource(provider.getOrigin());
 			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getOrigin());
 			ruleNodes.forEach(node -> nodeMap.put(node, provider));
 			children.addAll(ruleNodes);
@@ -122,15 +122,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	}
 	
 	private void listen(Object ruleProvider) {
-		IFile file = null;
-		if (ruleProvider instanceof CustomRuleProvider) {
-			String locationUri = ((CustomRuleProvider)ruleProvider).getLocationURI();
-			file = WorkspaceResourceUtils.getFile(locationUri);
-		}
-		else if (ruleProvider instanceof RuleProvider) {
-			String location = ((RuleProvider)ruleProvider).getOrigin();
-			file = WorkspaceResourceUtils.getFile(location);
-		}
+		IFile file = XMLRulesetModelUtil.getRuleset(ruleProvider);
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		IModelStateListener listener = listenerMap.get(ruleProvider);
 		if (listener == null) {

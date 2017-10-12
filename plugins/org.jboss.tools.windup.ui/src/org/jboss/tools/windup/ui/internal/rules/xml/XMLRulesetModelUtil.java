@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -28,7 +27,6 @@ import org.eclipse.ui.ide.undo.CreateFileOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
@@ -64,7 +62,7 @@ public class XMLRulesetModelUtil {
 
 	public static String getRulesetId(String locationURI) {
 		String rulesetId = null;
-		IFile file = WorkspaceResourceUtils.getFile(locationURI);
+		IFile file = XMLRulesetModelUtil.getRuleset(locationURI);
 		if (file != null) {
 			IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 			if (model != null) {
@@ -84,14 +82,12 @@ public class XMLRulesetModelUtil {
 		return rulesetId;
 	}
 	
-	public IFile createLinkedResource(String locationURI) {
+	public static IFile createLinkedResource(String location) {
 		Shell shell = Display.getDefault().getActiveShell();
 		
-		IProject project = new TempProject().createTmpProject();
-		IPath path = project.getFullPath().append(new File(locationURI).getAbsolutePath());
-		IFile newFileHandle = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFile(path);
+		IFile newFileHandle = TempProject.getFile(location);
 		
-		path = Path.fromOSString(locationURI);
+		IPath path = Path.fromOSString(location);
 		URI uri = URIUtil.toURI(path);
 		
 		IRunnableWithProgress op = monitor -> {
@@ -111,8 +107,32 @@ public class XMLRulesetModelUtil {
 		return newFileHandle;
 	}
 	
+	private static String getRulesetLocation(Object ruleset) {
+		if (ruleset instanceof CustomRuleProvider) {
+			CustomRuleProvider ruleProvider = (CustomRuleProvider)ruleset;
+			return ruleProvider.getLocationURI();
+		}
+		else {
+			RuleProvider ruleProvider = (RuleProvider)ruleset;
+			return ruleProvider.getOrigin();
+		}
+	}
+	
+	public static IFile getRuleset(Object ruleProvider) {
+		String location = getRulesetLocation(ruleProvider);
+		return getRuleset(location);
+	}
+	
+	public static IFile getRuleset(String location) {
+		IFile ruleset = WorkspaceResourceUtils.getFile(location);
+		if (ruleset == null) {
+			ruleset = TempProject.getFile(location);
+		}
+		return ruleset;
+	}
+	
 	public static List<Node> getRules(String locationURI) {
-		IFile file = WorkspaceResourceUtils.getFile(locationURI);
+		IFile file = XMLRulesetModelUtil.getRuleset(locationURI);
 		List<Node> rules = Lists.newArrayList();
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		if (model != null) {
@@ -193,15 +213,7 @@ public class XMLRulesetModelUtil {
 	}
 	
 	public static void openRuleInEditor(Object provider, Node ruleNode) {
-		IFile file = null;
-		if (provider instanceof CustomRuleProvider) {
-			String locationUri = ((CustomRuleProvider)provider).getLocationURI();
-			file = WorkspaceResourceUtils.getFile(locationUri);
-		}
-		else if (provider instanceof RuleProvider) {
-			String location = ((RuleProvider)provider).getOrigin();
-			file = WorkspaceResourceUtils.getFile(location);
-		}
+		IFile file = XMLRulesetModelUtil.getRuleset(provider);
 		if (file != null && file.exists()) {
 			try {
 				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

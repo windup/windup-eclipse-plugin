@@ -14,6 +14,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,7 +35,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 
 public class ImportExistingRulesetWizard extends Wizard implements IImportWizard{
 
@@ -59,8 +62,12 @@ public class ImportExistingRulesetWizard extends Wizard implements IImportWizard
 
 	@Override
 	public boolean performFinish() {
-		modelService.addRulesetRepository(
-				xmlPage.getRulesetFileLocation(), true);
+		String location = xmlPage.getRulesetFileLocation();
+		IFile ruleset = WorkspaceResourceUtils.getFile(location);
+		if (ruleset == null) {
+			ruleset = XMLRulesetModelUtil.createLinkedResource(location);
+		}
+		modelService.addRulesetRepository(location, ruleset.getFullPath().toString(), true);
 		return true;
 	}
 

@@ -35,7 +35,7 @@ import org.jboss.tools.windup.model.Activator;
  * Utility for working with the Eclipse workspace resources.
  */
 public class WorkspaceResourceUtils {
-
+	
 	/**
 	 * Returns a list of {@link IProject}s associated with the given selection.
 	 */

@@ -60,7 +60,6 @@ import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.jboss.tools.windup.ui.internal.explorer.TempProject;
 
 @SuppressWarnings("restriction")
 public class JavaEmbeddedEditor {
@@ -114,15 +113,11 @@ public class JavaEmbeddedEditor {
 	private static final String DS_KEY_HISTORY_ENTRY_PREFIX= "conditionHistoryEntry_"; //$NON-NLS-1$
 	private static final Pattern NEWLINE_PATTERN= Pattern.compile("\r\n|\r|\n"); //$NON-NLS-1$;
 	
-	private TempProject project;
-
-
 	public JavaEmbeddedEditor(Composite parent) {
 		fConditionHistoryDialogSettings = DialogSettings.getOrCreateSection(JDIDebugUIPlugin.getDefault().getDialogSettings(), DS_SECTION_CONDITION_HISTORY);
 		createControls(parent);
 		load();
 		setEnabled(true, true);
-		project = new TempProject();
 	}
 	
 	public void setInput(Object input) {
