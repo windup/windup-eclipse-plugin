@@ -414,7 +414,7 @@ public class RulesetElementUiDelegateFactory {
 			}
 		}
 		
-		protected String getValue() {
+		public String getValue() {
 			String result = ""; //$NON-NLS-1$
 			Node node = getNode();
 			if (node != null) {
