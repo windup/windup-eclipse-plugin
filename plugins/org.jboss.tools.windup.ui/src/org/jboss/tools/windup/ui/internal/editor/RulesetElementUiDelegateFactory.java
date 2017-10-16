@@ -183,6 +183,7 @@ public class RulesetElementUiDelegateFactory {
 		
 		static final String TASK = "task"; //$NON-NLS-1$ 
 		static final String IS_TASK = "isTask"; // $NON-NLS-1$
+		static final String COMMENT = "comment"; //$NON_NLS-1$
 	}
 
 	public IElementUiDelegate createElementUiDelegate(Element element, IEclipseContext context) {

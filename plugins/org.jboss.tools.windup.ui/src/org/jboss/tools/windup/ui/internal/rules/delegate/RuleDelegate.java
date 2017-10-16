@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -97,6 +99,8 @@ public class RuleDelegate extends ElementUiDelegate {
 		private Composite taskParent;
 		private Composite placeholder;
 		
+		private TaskRuleComments commentsSection;
+		
 		@PostConstruct
 		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent) {
@@ -135,7 +139,6 @@ public class RuleDelegate extends ElementUiDelegate {
 			
 			createStack(parent);
 			createTaskDetails(taskParent);
-
 		}
 		
 		private boolean isTaskType() {
@@ -161,6 +164,13 @@ public class RuleDelegate extends ElementUiDelegate {
 		}
 		
 		private void createTaskDetails(Composite parent) {
+			commentsSection = createCommentsArea(parent);
+		}
+		
+		private TaskRuleComments createCommentsArea(Composite parent) {
+			IEclipseContext child = context.createChild();
+			child.set(Composite.class, parent);
+			return ContextInjectionFactory.make(TaskRuleComments.class, child);
 		}
 		
 		private void updateStack() {
@@ -176,12 +186,7 @@ public class RuleDelegate extends ElementUiDelegate {
 		protected void bind() {
 			super.bind();
 			updateStack();
-		}
-		
-		
-		@Override
-		public void update() {
-			super.update();
+			commentsSection.update();
 		}
 	}
 	
