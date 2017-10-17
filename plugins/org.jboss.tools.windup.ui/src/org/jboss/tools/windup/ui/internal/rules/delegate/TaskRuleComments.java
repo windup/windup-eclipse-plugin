@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.util.List;
@@ -25,6 +35,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings({"restriction"})
@@ -54,7 +65,7 @@ public class TaskRuleComments extends ElementAttributesContainer {
 		addItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CMElementDeclaration linkCmNode = getLinkCmNode();
+				CMElementDeclaration linkCmNode = getCommentCmNode();
 				AddNodeAction action = (AddNodeAction)ElementUiDelegate.createAddElementAction(
 						model, element, linkCmNode, element.getChildNodes().getLength(), null, null);
 				action.run();
@@ -64,7 +75,7 @@ public class TaskRuleComments extends ElementAttributesContainer {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CMElementDeclaration getLinkCmNode() {
+	private CMElementDeclaration getCommentCmNode() {
 		List candidates = modelQuery.getAvailableContent(element, elementDeclaration, 
 				ModelQuery.VALIDITY_STRICT);
 		Optional<CMElementDeclaration> found = candidates.stream().filter(candidate -> {
@@ -85,7 +96,7 @@ public class TaskRuleComments extends ElementAttributesContainer {
 		loadComments();
 		scroll.setMinHeight(listContainer.computeHeight());
 		StringBuffer buff = new StringBuffer();
-		buff.append(RuleMessages.link_title);
+		buff.append(RuleMessages.commentTitle);
 		buff.append(" (" + listContainer.getItemCount() + ")");
 		((Section)scroll.getParent()).setText(buff.toString());
 	}
@@ -97,10 +108,16 @@ public class TaskRuleComments extends ElementAttributesContainer {
 	
 	private List<Element> collectComments() {
 		List<Element> links = Lists.newArrayList();
-		NodeList list = element.getElementsByTagName(RulesetConstants.COMMENT);
-		for (int i = 0; i < list.getLength(); i++) {
-			links.add((Element)list.item(i));
+		if (element != null) {
+			NodeList list = element.getElementsByTagName(RulesetConstants.COMMENT);
+			for (int i = 0; i < list.getLength(); i++) {
+				links.add((Element)list.item(i));
+			}
 		}
 		return links;
+	}
+	
+	public boolean isContainerFor(Element element) {
+		return Objects.equal(this.element, element);
 	}
 }

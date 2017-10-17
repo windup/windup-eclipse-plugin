@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -39,7 +38,9 @@ import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.base.Objects;
 
@@ -62,6 +63,9 @@ public class RuleDelegate extends ElementUiDelegate {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!blockNotification) {
+						if (button.getSelection()) {
+							// TODO: RuleDelegate.this.fin
+						}
 						BooleanAttributeRow.this.setValue(String.valueOf(button.getSelection()));
 					}
 				}
@@ -138,7 +142,6 @@ public class RuleDelegate extends ElementUiDelegate {
 			((Section)client.getParent()).setExpanded(true);
 			
 			createStack(parent);
-			createTaskDetails(taskParent);
 		}
 		
 		private boolean isTaskType() {
@@ -157,26 +160,58 @@ public class RuleDelegate extends ElementUiDelegate {
 			placeholder = toolkit.createComposite(stackComposite);
 			GridLayoutFactory.fillDefaults().applyTo(placeholder);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(placeholder);
-
+		}
+		
+		private void createTaskDetails() {
 			taskParent = toolkit.createComposite(stackComposite);
 			GridLayoutFactory.fillDefaults().applyTo(taskParent);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(taskParent);
-		}
-		
-		private void createTaskDetails(Composite parent) {
-			commentsSection = createCommentsArea(parent);
+			commentsSection = createCommentsArea(taskParent);
 		}
 		
 		private TaskRuleComments createCommentsArea(Composite parent) {
-			IEclipseContext child = context.createChild();
-			child.set(Composite.class, parent);
-			return ContextInjectionFactory.make(TaskRuleComments.class, child);
+			Element task = findTaskElement();
+			CMElementDeclaration dec = modelQuery.getCMElementDeclaration(task);
+			IEclipseContext commentContext = context.createChild();
+			commentContext.set(Composite.class, parent);
+			commentContext.set(Element.class, task);
+			commentContext.set(CMElementDeclaration.class, dec);
+			return ContextInjectionFactory.make(TaskRuleComments.class, commentContext);
+		}
+		
+		private Element findTaskElement() {
+			NodeList list = element.getElementsByTagName(RulesetConstants.TASK);
+			if (list.getLength() > 0) {
+				return (Element)list.item(0);
+			}
+			return null;
+		}
+		
+		private void createTaskElement() {
+			Element task = element.getOwnerDocument().createElement(RulesetConstants.TASK);
+			element.appendChild(task);
 		}
 		
 		private void updateStack() {
 			Composite top = placeholder;
 			if (isTaskType()) {
+				Element taskElement = findTaskElement();
+				if (taskElement != null && commentsSection != null && !commentsSection.isContainerFor(taskElement)) {
+					taskParent.dispose();
+					commentsSection = null;
+				}
+				if (taskElement == null) {
+					createTaskElement();
+				}
+				if (commentsSection == null) {
+					createTaskDetails();
+				}
+				commentsSection.update();
 				top = taskParent;
+			}
+			else if (commentsSection != null){
+				taskParent.dispose();
+				commentsSection = null;
 			}
 			((StackLayout)stackComposite.getLayout()).topControl = top;
 			stackComposite.layout(true, true);	
@@ -186,7 +221,6 @@ public class RuleDelegate extends ElementUiDelegate {
 		protected void bind() {
 			super.bind();
 			updateStack();
-			commentsSection.update();
 		}
 	}
 	
