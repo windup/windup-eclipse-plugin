@@ -48,7 +48,7 @@ public class TaskRuleComments extends ElementAttributesContainer {
 	@PostConstruct
 	private void createControls(Composite parent) {
 		Pair<Section, Composite> result = ElementDetailsSection.createScrolledSection(toolkit, parent, RuleMessages.commentTitle, "",
-				ExpandableComposite.TITLE_BAR | Section.NO_TITLE_FOCUS_BOX | Section.TWISTIE, ElementDetailsSection.DEFAULT_SCROLL_SECTION_MAX_HEGHT);
+				ExpandableComposite.TITLE_BAR | Section.NO_TITLE_FOCUS_BOX, ElementDetailsSection.DEFAULT_SCROLL_SECTION_MAX_HEGHT);
 		Section section = result.getFirst();
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();

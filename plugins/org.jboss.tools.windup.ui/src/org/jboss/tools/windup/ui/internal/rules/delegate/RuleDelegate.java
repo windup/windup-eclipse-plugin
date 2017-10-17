@@ -35,6 +35,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.NodeRow;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
@@ -63,15 +64,15 @@ public class RuleDelegate extends ElementUiDelegate {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!blockNotification) {
-						if (button.getSelection()) {
-							// TODO: RuleDelegate.this.fin
-						}
-						BooleanAttributeRow.this.setValue(String.valueOf(button.getSelection()));
+						setValue(button.getSelection());
 					}
 				}
 			});
 		}
-
+		
+		protected void setValue(boolean value) {
+		}
+		
 		@Override
 		protected void update() {
 			boolean selected = false;
@@ -130,7 +131,36 @@ public class RuleDelegate extends ElementUiDelegate {
 				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
 			    for (CMAttributeDeclaration declaration : availableAttributeList) {
 				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.IS_TASK)) {
-				    		typeRow = new BooleanAttributeRow(element, declaration);
+				    		typeRow = new BooleanAttributeRow(element, declaration) {
+				    			@Override
+				    			protected void setValue(boolean value) {
+			    					try {
+			    						model.aboutToChangeModel();
+			    						Node node = getNode();
+			    						if (node != null) {
+			    							contentHelper.setNodeValue(node, String.valueOf(value));
+			    						}
+			    						else {
+			    							AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, parent, parent.getChildNodes().getLength());
+			    							newNodeAction.runWithoutTransaction();
+			    							if (!newNodeAction.getResult().isEmpty()) {
+			    								node = (Node)newNodeAction.getResult().get(0);
+			    								contentHelper.setNodeValue(node, String.valueOf(value));
+			    							}
+			    						}
+			    						Element task = findTaskElement();
+				    					if (task != null) {
+					    					element.removeChild(task);
+					    				}
+					    				else if (value) {
+					    					createTaskElement();
+					    				}
+			    					}
+			    					finally {
+			    						model.changedModel();
+			    					}
+				    			}
+				    		};
 				    		rows.add(typeRow);
 				    		typeRow.createContents(client, toolkit, 2);
 				    	}
@@ -194,14 +224,11 @@ public class RuleDelegate extends ElementUiDelegate {
 		
 		private void updateStack() {
 			Composite top = placeholder;
-			if (isTaskType()) {
-				Element taskElement = findTaskElement();
-				if (taskElement != null && commentsSection != null && !commentsSection.isContainerFor(taskElement)) {
+			Element taskElement = findTaskElement();
+			if (isTaskType() && taskElement != null) {
+				if (commentsSection != null && !commentsSection.isContainerFor(taskElement)) {
 					taskParent.dispose();
 					commentsSection = null;
-				}
-				if (taskElement == null) {
-					createTaskElement();
 				}
 				if (commentsSection == null) {
 					createTaskDetails();
