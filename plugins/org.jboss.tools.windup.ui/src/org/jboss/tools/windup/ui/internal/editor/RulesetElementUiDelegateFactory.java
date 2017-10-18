@@ -83,6 +83,7 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ClassificationDelegate;
+import org.jboss.tools.windup.ui.internal.rules.delegate.CommentDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ControlInformationSupport;
 import org.jboss.tools.windup.ui.internal.rules.delegate.ElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.rules.delegate.HintDelegate;
@@ -240,6 +241,10 @@ public class RulesetElementUiDelegateFactory {
 			}
 			case RulesetConstants.RULE_NAME: {
 				uiDelegate = createControls(RuleDelegate.class, context);
+				break;
+			}
+			case RulesetConstants.COMMENT: {
+				uiDelegate = createControls(CommentDelegate.class, context);
 				break;
 			}
 			default: {
