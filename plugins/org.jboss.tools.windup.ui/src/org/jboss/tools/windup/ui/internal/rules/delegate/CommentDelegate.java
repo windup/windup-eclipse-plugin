@@ -24,6 +24,8 @@ import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.common.base.Objects;
+
 @SuppressWarnings({"restriction"})
 public class CommentDelegate extends ElementUiDelegate {
 	
@@ -41,6 +43,16 @@ public class CommentDelegate extends ElementUiDelegate {
 		TextNodeRow row = new TextNodeRow(element, null) {
 			protected Node getNode() {
 				return element;
+			}
+			@Override
+			public String getDocumentation() {
+				return "";
+			}
+			@Override
+			protected void update() {
+				if (!Objects.equal(text.getText(), getNode().getTextContent())) {
+					text.setText(getNode().getTextContent());
+				}
 			}
 		};
 		row.createContents(parent, toolkit, 2);
