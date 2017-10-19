@@ -152,7 +152,7 @@ public class RuleDelegate extends ElementUiDelegate {
 				    					if (task != null) {
 					    					element.removeChild(task);
 					    				}
-					    				else if (value) {
+					    				if (value) {
 					    					createTaskElement();
 					    				}
 			    					}
@@ -175,9 +175,11 @@ public class RuleDelegate extends ElementUiDelegate {
 		}
 		
 		private boolean isTaskType() {
-			String value = typeRow.getValue();
-			if (value != null && !value.isEmpty()) {
-				return Boolean.valueOf(value);
+			if (typeRow != null) {
+				String value = typeRow.getValue();
+				if (value != null && !value.isEmpty()) {
+					return Boolean.valueOf(value);
+				}
 			}
 			return false;
 		}
