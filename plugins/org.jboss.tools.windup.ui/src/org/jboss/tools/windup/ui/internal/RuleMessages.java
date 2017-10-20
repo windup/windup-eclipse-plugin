@@ -62,4 +62,10 @@ public class RuleMessages extends NLS {
     
     public static String namespaceTitle;
     public static String namespaceDescription;
+    
+    public static String TaskPlanning_Status;
+    public static String TaskPlanning_Incomplete;
+    public static String TaskPlanning_Complete;
+    public static String TaskPlanning_Created;
+    public static String TaskPlanning_Completed;
 }

@@ -11,6 +11,7 @@ package org.jboss.tools.windup.ui.internal.rules.delegate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -103,7 +104,8 @@ public class RuleDelegate extends ElementUiDelegate {
 		
 		private Composite taskParent;
 		private Composite placeholder;
-		
+
+		private RuleStatusSection statusSection;
 		private TaskRuleComments commentsSection;
 		
 		@PostConstruct
@@ -128,50 +130,66 @@ public class RuleDelegate extends ElementUiDelegate {
 			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
 			if (ed != null) {
-				List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
-			    for (CMAttributeDeclaration declaration : availableAttributeList) {
-				    	if (Objects.equal(declaration.getAttrName(), RulesetConstants.IS_TASK)) {
-				    		typeRow = new BooleanAttributeRow(element, declaration) {
-				    			@Override
-				    			protected void setValue(boolean value) {
-			    					try {
-			    						model.aboutToChangeModel();
-			    						Node node = getNode();
-			    						if (node != null) {
-			    							contentHelper.setNodeValue(node, String.valueOf(value));
-			    						}
-			    						else {
-			    							AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, parent, parent.getChildNodes().getLength());
-			    							newNodeAction.runWithoutTransaction();
-			    							if (!newNodeAction.getResult().isEmpty()) {
-			    								node = (Node)newNodeAction.getResult().get(0);
-			    								contentHelper.setNodeValue(node, String.valueOf(value));
-			    							}
-			    						}
-			    						Element task = findTaskElement();
-				    					if (task != null) {
-					    					element.removeChild(task);
-					    				}
-					    				if (value) {
-					    					createTaskElement();
-					    				}
-			    					}
-			    					finally {
-			    						model.changedModel();
-			    					}
-				    			}
-				    		};
-				    		rows.add(typeRow);
-				    		typeRow.createContents(client, toolkit, 2);
-				    	}
-				    	else {
-				    		rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 2));
-				    	}
-			    }
+				CMAttributeDeclaration declaration = findDeclaration(RulesetConstants.ID);
+				rows.add(ElementAttributesContainer.createTextAttributeRow(element, toolkit, declaration, client, 2));
 			}
 			((Section)client.getParent()).setExpanded(true);
 			
+			createTaskArea(client);
 			createStack(parent);
+		}
+		
+		@SuppressWarnings("unchecked")
+		private CMAttributeDeclaration findDeclaration(String name) {
+			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
+			List<CMAttributeDeclaration> availableAttributeList = modelQuery.getAvailableContent(element, ed, ModelQuery.INCLUDE_ATTRIBUTES);
+			Optional<CMAttributeDeclaration> option = availableAttributeList.stream().filter(e -> Objects.equal(e.getAttrName(), name)).findFirst();
+			if (option.isPresent()) {
+				return option.get();
+			}
+			return null;
+		}
+		
+		private void createTaskArea(Composite parent) {
+			CMAttributeDeclaration declaration = findDeclaration(RulesetConstants.IS_TASK);
+	    		typeRow = new BooleanAttributeRow(element, declaration) {
+	    			@Override
+	    			protected void setValue(boolean value) {
+    					try {
+    						model.aboutToChangeModel();
+    						Node node = getNode();
+    						if (node != null) {
+    							contentHelper.setNodeValue(node, String.valueOf(value));
+    						}
+    						else {
+    							AddNodeAction newNodeAction = new AddNodeAction(model, cmNode, parent, parent.getChildNodes().getLength());
+    							newNodeAction.runWithoutTransaction();
+    							if (!newNodeAction.getResult().isEmpty()) {
+    								node = (Node)newNodeAction.getResult().get(0);
+    								contentHelper.setNodeValue(node, String.valueOf(value));
+    							}
+    						}
+    						Element task = findTaskElement();
+	    					if (task != null) {
+		    					element.removeChild(task);
+		    				}
+		    				if (value) {
+		    					createTaskElement();
+		    				}
+    					}
+    					finally {
+    						model.changedModel();
+    					}
+	    			}
+	    		};
+	    		rows.add(typeRow);
+	    		typeRow.createContents(parent, toolkit, 2);
+		}
+		
+		private void createStatusArea(Composite parent) {
+			IEclipseContext ctx = context.createChild();
+			ctx.set(Composite.class, parent);
+			statusSection = ContextInjectionFactory.make(RuleStatusSection.class, ctx);
 		}
 		
 		private boolean isTaskType() {
@@ -188,7 +206,6 @@ public class RuleDelegate extends ElementUiDelegate {
 			this.stackComposite = toolkit.createComposite(parent);
 			stackComposite.setLayout(new StackLayout());
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(stackComposite);
-			
 			placeholder = toolkit.createComposite(stackComposite);
 			GridLayoutFactory.fillDefaults().applyTo(placeholder);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(placeholder);
@@ -196,6 +213,7 @@ public class RuleDelegate extends ElementUiDelegate {
 		
 		private void createTaskDetails() {
 			taskParent = toolkit.createComposite(stackComposite);
+			createStatusArea(taskParent);
 			GridLayoutFactory.fillDefaults().applyTo(taskParent);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(taskParent);
 			commentsSection = createCommentsArea(taskParent);
@@ -227,7 +245,8 @@ public class RuleDelegate extends ElementUiDelegate {
 		private void updateStack() {
 			Composite top = placeholder;
 			Element taskElement = findTaskElement();
-			if (isTaskType() && taskElement != null) {
+			boolean isTaskType = isTaskType();
+			if (isTaskType && taskElement != null) {
 				if (commentsSection != null && !commentsSection.isContainerFor(taskElement)) {
 					taskParent.dispose();
 					commentsSection = null;
@@ -235,6 +254,7 @@ public class RuleDelegate extends ElementUiDelegate {
 				if (commentsSection == null) {
 					createTaskDetails();
 				}
+				statusSection.update();
 				commentsSection.update();
 				top = taskParent;
 			}
