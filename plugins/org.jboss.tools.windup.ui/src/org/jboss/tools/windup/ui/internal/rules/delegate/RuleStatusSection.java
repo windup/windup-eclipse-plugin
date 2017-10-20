@@ -10,11 +10,15 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
+import java.util.Calendar;
+
 import javax.annotation.PostConstruct;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.mylyn.commons.workbench.forms.DatePicker;
 import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
+import org.eclipse.mylyn.internal.tasks.ui.editors.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -24,6 +28,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
@@ -33,16 +38,27 @@ import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 
 @SuppressWarnings({"restriction"})
 public class RuleStatusSection extends ElementAttributesContainer {
+	
+	private static final int CONTROL_WIDTH = 120;
 
 	private Button statusCompleteButton;
 	private Button statusIncompleteButton;
 	private Text creationDateText;
 	private Text completionDateText;
 	
+	private DatePicker createdDate;
+	private DatePicker dueDate;
+	private DatePicker completedDate;
+	
 	private Composite container;
 	
 	public void setEnabled(boolean enabled) {
 		container.setEnabled(enabled);
+	}
+	
+	@Override
+	protected void bind() {
+		
 	}
 	
 	@PostConstruct
@@ -76,17 +92,33 @@ public class RuleStatusSection extends ElementAttributesContainer {
 			}
 		});
 
-		createLabel(container, toolkit, RuleMessages.TaskPlanning_Created, EditorUtil.HEADER_COLUMN_MARGIN);
+		//createLabel(container, toolkit, RuleMessages.TaskPlanning_Created, EditorUtil.HEADER_COLUMN_MARGIN);
 		// do not use toolkit.createText() to avoid border on Windows
-		creationDateText = new Text(container, SWT.FLAT | SWT.READ_ONLY);
-		toolkit.adapt(creationDateText, false, false);
-		creationDateText.setData(FormToolkit.KEY_DRAW_BORDER, Boolean.FALSE);
+		createdDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Created);
+		createdDate.addPickerSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//markDirty();
+			}
+		});
 
-		createLabel(container, toolkit, RuleMessages.TaskPlanning_Completed, EditorUtil.HEADER_COLUMN_MARGIN);
+		//createLabel(container, toolkit, RuleMessages.TaskPlanning_Completed, EditorUtil.HEADER_COLUMN_MARGIN);
 		// do not use toolkit.createText() to avoid border on Windows
-		completionDateText = new Text(container, SWT.FLAT | SWT.READ_ONLY);
-		toolkit.adapt(completionDateText, false, false);
-		completionDateText.setData(FormToolkit.KEY_DRAW_BORDER, Boolean.FALSE);
+		dueDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Due);
+		dueDate.addPickerSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//markDirty();
+			}
+		});
+		
+		completedDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Completed);
+		completedDate.addPickerSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//markDirty();
+			}
+		});
 
 		// ensure layout does not wrap
 		layout.numColumns = container.getChildren().length;
@@ -98,6 +130,34 @@ public class RuleStatusSection extends ElementAttributesContainer {
 		labelControl.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		GridDataFactory.defaultsFor(labelControl).indent(indent, 0).applyTo(labelControl);
 		return labelControl;
+	}
+	
+	private static DatePicker createDatePicker(FormToolkit toolkit, Composite parent, String textLabel) {
+		Label label = toolkit.createLabel(parent, textLabel);
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+
+		Composite composite = createComposite(parent, 1, toolkit);
+
+		DatePicker datePicker = new DatePicker(composite, SWT.FLAT, DatePicker.LABEL_CHOOSE, true, 0);
+		GridDataFactory.fillDefaults().hint(CONTROL_WIDTH, SWT.DEFAULT).applyTo(datePicker);
+		datePicker.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		datePicker.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+		/*if (getTask().getDueDate() != null) {
+			Calendar calendar = TaskActivityUtil.getCalendar();
+			calendar.setTime(getTask().getDueDate());
+			createdDate.setDate(calendar);
+		}*/
+		toolkit.adapt(datePicker, false, false);
+		toolkit.paintBordersFor(composite);
+		return datePicker;
+	}
+	
+	private static Composite createComposite(Composite parent, int col, FormToolkit toolkit) {
+		Composite nameValueComp = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = 3;
+		nameValueComp.setLayout(layout);
+		return nameValueComp;
 	}
 	
 	private static Composite createBorder(Composite composite, final FormToolkit toolkit, boolean paintBorder) {

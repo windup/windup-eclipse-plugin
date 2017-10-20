@@ -109,7 +109,6 @@ public class RuleDelegate extends ElementUiDelegate {
 		private TaskRuleComments commentsSection;
 		
 		@PostConstruct
-		@SuppressWarnings("unchecked")
 		public void createControls(Composite parent) {
 			Composite mainDetailsContainer = toolkit.createComposite(parent);
 			
