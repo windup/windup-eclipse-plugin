@@ -10,15 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
-import java.util.Calendar;
-
 import javax.annotation.PostConstruct;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.mylyn.commons.workbench.forms.DatePicker;
 import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
-import org.eclipse.mylyn.internal.tasks.ui.editors.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -43,8 +40,6 @@ public class RuleStatusSection extends ElementAttributesContainer {
 
 	private Button statusCompleteButton;
 	private Button statusIncompleteButton;
-	private Text creationDateText;
-	private Text completionDateText;
 	
 	private DatePicker createdDate;
 	private DatePicker dueDate;
@@ -77,7 +72,6 @@ public class RuleStatusSection extends ElementAttributesContainer {
 			public void widgetSelected(SelectionEvent e) {
 				if (statusIncompleteButton.getSelection()) {
 					statusCompleteButton.setSelection(false);
-					//markDirty(statusCompleteButton);
 				}
 			}
 		});
@@ -87,28 +81,21 @@ public class RuleStatusSection extends ElementAttributesContainer {
 			public void widgetSelected(SelectionEvent e) {
 				if (statusCompleteButton.getSelection()) {
 					statusIncompleteButton.setSelection(false);
-					//markDirty(statusCompleteButton);
 				}
 			}
 		});
 
-		//createLabel(container, toolkit, RuleMessages.TaskPlanning_Created, EditorUtil.HEADER_COLUMN_MARGIN);
-		// do not use toolkit.createText() to avoid border on Windows
 		createdDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Created);
 		createdDate.addPickerSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				//markDirty();
 			}
 		});
 
-		//createLabel(container, toolkit, RuleMessages.TaskPlanning_Completed, EditorUtil.HEADER_COLUMN_MARGIN);
-		// do not use toolkit.createText() to avoid border on Windows
 		dueDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Due);
 		dueDate.addPickerSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				//markDirty();
 			}
 		});
 		
@@ -116,11 +103,9 @@ public class RuleStatusSection extends ElementAttributesContainer {
 		completedDate.addPickerSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				//markDirty();
 			}
 		});
 
-		// ensure layout does not wrap
 		layout.numColumns = container.getChildren().length;
 		toolkit.paintBordersFor(container);
 	}

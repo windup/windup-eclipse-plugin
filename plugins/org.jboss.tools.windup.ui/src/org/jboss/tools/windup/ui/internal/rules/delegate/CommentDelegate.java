@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
@@ -40,23 +42,37 @@ public class CommentDelegate extends ElementUiDelegate {
 	}
 	
 	public void createControls(Composite parent, Element element, CMElementDeclaration ed, List<NodeRow> rows) {
-		TextNodeRow row = new TextNodeRow(element, null) {
-			protected Node getNode() {
-				return element;
-			}
-			@Override
-			public String getDocumentation() {
-				return "";
-			}
-			@Override
-			protected void update() {
-				if (!Objects.equal(text.getText(), getNode().getTextContent())) {
-					text.setText(getNode().getTextContent());
-				}
-			}
-		};
-		row.createContents(parent, toolkit, 2);
-		rows.add(row);
+		
+		CommentEditor commentEditor = createCommentEditor(parent, element, ed);
+		
+//		TextNodeRow row = new TextNodeRow(element, null) {
+//			protected Node getNode() {
+//				return element;
+//			}
+//			@Override
+//			public String getDocumentation() {
+//				return "";
+//			}
+//			@Override
+//			protected void update() {
+//				if (!Objects.equal(text.getText(), getNode().getTextContent())) {
+//					text.setText(getNode().getTextContent());
+//				}
+//			}
+//		};
+//		row.createContents(parent, toolkit, 2);
+//		rows.add(row);
+	}
+	
+	private CommentEditor createCommentEditor(Composite parent, Element element, CMElementDeclaration dec) {
+		Element task = super.element;
+//		Element task = findTaskElement();
+//		CMElementDeclaration dec = modelQuery.getCMElementDeclaration(task);
+		IEclipseContext commentContext = context.createChild();
+		commentContext.set(Composite.class, parent);
+		commentContext.set(Element.class, task);
+		commentContext.set(CMElementDeclaration.class, dec);
+		return ContextInjectionFactory.make(CommentEditor.class, commentContext);
 	}
 	
 	public static class DetailsTab extends ElementAttributesContainer {
