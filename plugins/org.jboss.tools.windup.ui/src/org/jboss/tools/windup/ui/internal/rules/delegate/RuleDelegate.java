@@ -22,9 +22,9 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -100,31 +100,44 @@ public class RuleDelegate extends ElementUiDelegate {
 		
 		private BooleanAttributeRow typeRow;
 		
-		private Composite stackComposite;
-		
-		private Composite taskParent;
-		private Composite placeholder;
+		private Composite statusParent;
+		private Composite commentsParent;
 
 		private RuleStatusSection statusSection;
 		private TaskRuleComments commentsSection;
 		
+		private Composite parent;
+		private Composite mainDetailsContainer;
+		
 		@PostConstruct
 		public void createControls(Composite parent) {
-			Composite mainDetailsContainer = toolkit.createComposite(parent);
+			this.parent = parent;
+			this.mainDetailsContainer = toolkit.createComposite(parent);
 			
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
+			layout.numColumns = 2;
+			layout.makeColumnsEqualWidth = true;
 			mainDetailsContainer.setLayout(layout);
 		
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(mainDetailsContainer);
 			
-			Composite client = super.createSection(mainDetailsContainer, 2, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX, 
+			Composite detailsContainer = toolkit.createComposite(mainDetailsContainer);
+			
+			GridLayout detailsContainerLayout = new GridLayout();
+			detailsContainerLayout.marginHeight = 0;
+			detailsContainerLayout.marginWidth = 0;
+			detailsContainer.setLayout(detailsContainerLayout);
+		
+			GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(detailsContainer);
+			
+			Composite client = super.createSection(detailsContainer, 2, toolkit, element, ExpandableComposite.TITLE_BAR |Section.NO_TITLE_FOCUS_BOX, 
 					null, null);
 			
 			GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, 2);
 			glayout.marginTop = 0;
-			glayout.marginBottom = 5;
+			glayout.marginBottom = 0;
 			client.setLayout(glayout);
 			
 			CMElementDeclaration ed = modelQuery.getCMElementDeclaration(element);
@@ -135,7 +148,7 @@ public class RuleDelegate extends ElementUiDelegate {
 			((Section)client.getParent()).setExpanded(true);
 			
 			createTaskArea(client);
-			createStack(parent);
+			//createStack(mainDetailsContainer);
 		}
 		
 		@SuppressWarnings("unchecked")
@@ -201,21 +214,27 @@ public class RuleDelegate extends ElementUiDelegate {
 			return false;
 		}
 		
-		private void createStack(Composite parent) {
-			this.stackComposite = toolkit.createComposite(parent);
-			stackComposite.setLayout(new StackLayout());
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(stackComposite);
-			placeholder = toolkit.createComposite(stackComposite);
-			GridLayoutFactory.fillDefaults().applyTo(placeholder);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(placeholder);
-		}
+//		private void createStack(Composite parent) {
+//			this.stackComposite = toolkit.createComposite(parent);
+//			stackComposite.setLayout(new StackLayout());
+//			GridDataFactory.fillDefaults().grab(true, true).applyTo(stackComposite);
+//			placeholder = toolkit.createComposite(stackComposite);
+//			GridLayoutFactory.fillDefaults().applyTo(placeholder);
+//			GridDataFactory.fillDefaults().grab(true, true).applyTo(placeholder);
+//		}
 		
 		private void createTaskDetails() {
-			taskParent = toolkit.createComposite(stackComposite);
-			createStatusArea(taskParent);
-			GridLayoutFactory.fillDefaults().applyTo(taskParent);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(taskParent);
-			commentsSection = createCommentsArea(taskParent);
+			statusParent = toolkit.createComposite(mainDetailsContainer);
+			GridLayoutFactory.fillDefaults().applyTo(statusParent);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(statusParent);
+			
+			createStatusArea(statusParent);
+			
+			commentsParent = toolkit.createComposite(this.parent);
+			GridLayoutFactory.fillDefaults().applyTo(commentsParent);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(commentsParent);
+			
+			commentsSection = createCommentsArea(commentsParent);
 		}
 		
 		private TaskRuleComments createCommentsArea(Composite parent) {
@@ -242,12 +261,13 @@ public class RuleDelegate extends ElementUiDelegate {
 		}
 		
 		private void updateStack() {
-			Composite top = placeholder;
+			GridData layoutData = (GridData)mainDetailsContainer.getChildren()[0].getLayoutData();
 			Element taskElement = findTaskElement();
 			boolean isTaskType = isTaskType();
 			if (isTaskType && taskElement != null) {
 				if (commentsSection != null && !commentsSection.isContainerFor(taskElement)) {
-					taskParent.dispose();
+					statusParent.dispose();
+					commentsParent.dispose();
 					commentsSection = null;
 				}
 				if (commentsSection == null) {
@@ -255,14 +275,15 @@ public class RuleDelegate extends ElementUiDelegate {
 				}
 				statusSection.update();
 				commentsSection.update();
-				top = taskParent;
+				layoutData.horizontalSpan = 1;
 			}
 			else if (commentsSection != null){
-				taskParent.dispose();
+				statusParent.dispose();
+				commentsParent.dispose();
 				commentsSection = null;
+				layoutData.horizontalSpan = 2;
 			}
-			((StackLayout)stackComposite.getLayout()).topControl = top;
-			stackComposite.layout(true, true);	
+			parent.layout(true, true);	
 		}
 		
 		@Override

@@ -27,9 +27,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 
@@ -45,12 +46,6 @@ public class RuleStatusSection extends ElementAttributesContainer {
 	private DatePicker dueDate;
 	private DatePicker completedDate;
 	
-	private Composite container;
-	
-	public void setEnabled(boolean enabled) {
-		container.setEnabled(enabled);
-	}
-	
 	@Override
 	protected void bind() {
 		
@@ -58,15 +53,13 @@ public class RuleStatusSection extends ElementAttributesContainer {
 	
 	@PostConstruct
 	private void createControls(Composite parent) {
-		this.container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-
+		Composite container = super.createSection(parent, 2, toolkit, element, ExpandableComposite.TITLE_BAR|Section.EXPANDED, RuleMessages.TaskPlanning_TaskDetails, "");
+		
 		createLabel(container, toolkit, RuleMessages.TaskPlanning_Status, 0);
-		statusIncompleteButton = toolkit.createButton(container, RuleMessages.TaskPlanning_Incomplete,
-				SWT.RADIO);
+		Composite statusDetails = toolkit.createComposite(container);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(statusDetails);		
+		
+		statusIncompleteButton = toolkit.createButton(statusDetails, RuleMessages.TaskPlanning_Incomplete, SWT.RADIO);
 		statusIncompleteButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -75,7 +68,7 @@ public class RuleStatusSection extends ElementAttributesContainer {
 				}
 			}
 		});
-		statusCompleteButton = toolkit.createButton(container, RuleMessages.TaskPlanning_Complete, SWT.RADIO);
+		statusCompleteButton = toolkit.createButton(statusDetails, RuleMessages.TaskPlanning_Complete, SWT.RADIO);
 		statusCompleteButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -106,7 +99,6 @@ public class RuleStatusSection extends ElementAttributesContainer {
 			}
 		});
 
-		layout.numColumns = container.getChildren().length;
 		toolkit.paintBordersFor(container);
 	}
 	
