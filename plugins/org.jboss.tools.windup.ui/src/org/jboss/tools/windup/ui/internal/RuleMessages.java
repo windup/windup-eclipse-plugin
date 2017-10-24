@@ -71,4 +71,7 @@ public class RuleMessages extends NLS {
     public static String TaskPlanning_Due;
     
     public static String TaskPlanning_TaskDetails;
+    public static String TaskPlanning_CommentAuthor;
+    
+    public static String TaskPlanning_AssgnedTo;
 }

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -51,9 +52,13 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -66,6 +71,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMNode;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.RuleMessages;
 import org.jboss.tools.windup.ui.internal.editor.AddNodeAction;
 import org.jboss.tools.windup.ui.internal.editor.ElementAttributesContainer;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
@@ -96,6 +102,21 @@ public class CommentEditor extends ElementAttributesContainer {
 		
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		createSourceViewer(parent);
+		createAuthorArea(parent);
+	}
+	
+	private void createAuthorArea(Composite parent) {
+		Composite container = toolkit.createComposite(parent);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(container);
+		Label label = toolkit.createLabel(container, RuleMessages.TaskPlanning_CommentAuthor);
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		
+		Text authorText = new Text(container, SWT.FLAT | SWT.BORDER);
+		authorText.setText("josteele@redhat.com");
+		toolkit.adapt(authorText, false, false);
+		authorText.setData(FormToolkit.KEY_DRAW_BORDER, Boolean.FALSE);
+		GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(authorText);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -205,7 +226,7 @@ public class CommentEditor extends ElementAttributesContainer {
 		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true, styles);
 		ElementDetailsSection.addScrollListener(sourceViewer.getTextWidget());
 		
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).applyTo(sourceViewer.getControl());
+		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).hint(SWT.DEFAULT, 100).applyTo(sourceViewer.getControl());
 		
 		try {
 			MarkupDocumentProvider documentProvider = new MarkupDocumentProvider();

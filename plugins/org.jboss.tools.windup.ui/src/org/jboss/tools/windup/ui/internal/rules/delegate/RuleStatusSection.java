@@ -17,6 +17,8 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.mylyn.commons.workbench.forms.DatePicker;
 import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,6 +29,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -45,6 +48,7 @@ public class RuleStatusSection extends ElementAttributesContainer {
 	private DatePicker createdDate;
 	private DatePicker dueDate;
 	private DatePicker completedDate;
+	private Text assignedTo;
 	
 	@Override
 	protected void bind() {
@@ -96,6 +100,16 @@ public class RuleStatusSection extends ElementAttributesContainer {
 		completedDate.addPickerSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+			}
+		});
+		
+		Label label = toolkit.createLabel(container, RuleMessages.TaskPlanning_AssgnedTo);
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		assignedTo = toolkit.createText(container, "");
+		GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(assignedTo);
+		assignedTo.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
 			}
 		});
 

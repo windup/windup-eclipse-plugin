@@ -53,7 +53,11 @@ public class TaskRuleComments extends ElementAttributesContainer {
 		Composite client = result.getSecond();
 		this.scroll = (ScrolledComposite)section.getClient();
 		this.parentControl = client;
-		this.listContainer =  new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context);
+		this.listContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context) {
+			protected ListItem createListItem(Composite parent, Element element) {
+				return new CommentListItem(parent, toolkit, element, contentHelper, modelQuery, model, uiDelegateFactory, context);
+			}
+		};
 		listContainer.createControls(client, collectComments());
 		createSectionToolbar(section);
 	}
