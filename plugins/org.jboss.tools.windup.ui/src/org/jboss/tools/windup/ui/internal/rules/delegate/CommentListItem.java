@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
@@ -42,26 +43,27 @@ public class CommentListItem extends ListItem {
 
 	@Override
 	protected Pair<Composite, Composite> createListItemContainers(Composite parent) {
-		Composite group = createBorder(parent, toolkit, true);
-		group.setBackground(toolkit.getColors().getBackground());
-		group.setForeground(toolkit.getColors().getBackground());
+		Composite group = createBorder(parent, toolkit, false);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(group);
 		FormLayout layout = new FormLayout();
-		layout.marginWidth = 4;
-		layout.marginHeight = 6;
+//		layout.marginWidth = 4;
+//		layout.marginHeight = 6;
+		layout.marginBottom = 5;
 		group.setLayout(layout);
 		
 		Composite left = new Composite(group, SWT.NONE);
+		left.setBackground(toolkit.getColors().getBackground());
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(left);
 		FormData leftData = new FormData();
 		leftData.left = new FormAttachment(0);
 		left.setLayoutData(leftData);
 		
 		Composite right = new Composite(group, SWT.NONE);
+		right.setBackground(toolkit.getColors().getBackground());
 		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(right);
 		FormData rightData = new FormData();
 		rightData.right = new FormAttachment(100);
-		rightData.bottom = new FormAttachment(73);
+		rightData.bottom = new FormAttachment(40);
 		right.setLayoutData(rightData);
 		
 		leftData.right = new FormAttachment(right);
@@ -69,9 +71,16 @@ public class CommentListItem extends ListItem {
 		return Tuples.create(left, right);
 	}
 	
+	@Override
+	protected Control createToolbar(Composite parent, ListItem thisItem) {
+		Control toolbar = super.createToolbar(parent, thisItem);
+		return toolbar;
+	}
+	
 	private static Composite createBorder(Composite composite, final FormToolkit toolkit, boolean paintBorder) {
 		// create composite to hold rounded border
 		final Composite roundedBorder = toolkit.createComposite(composite);
+		roundedBorder.setBackground(toolkit.getColors().getBackground());
 		if (paintBorder) {
 			roundedBorder.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {

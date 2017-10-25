@@ -55,7 +55,8 @@ public class TaskRuleComments extends ElementAttributesContainer {
 		this.parentControl = client;
 		this.listContainer = new ListContainer(toolkit, contentHelper, modelQuery, model, uiDelegateFactory, context) {
 			protected ListItem createListItem(Composite parent, Element element) {
-				return new CommentListItem(parent, toolkit, element, contentHelper, modelQuery, model, uiDelegateFactory, context);
+				CommentListItem item = new CommentListItem(parent, toolkit, element, contentHelper, modelQuery, model, uiDelegateFactory, context);
+				return item;
 			}
 		};
 		listContainer.createControls(client, collectComments());

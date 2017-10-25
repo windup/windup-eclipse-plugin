@@ -58,6 +58,8 @@ public class RuleStatusSection extends ElementAttributesContainer {
 	@PostConstruct
 	private void createControls(Composite parent) {
 		Composite container = super.createSection(parent, 2, toolkit, element, ExpandableComposite.TITLE_BAR|Section.EXPANDED, RuleMessages.TaskPlanning_TaskDetails, "");
+		GridLayout glayout = (GridLayout)container.getLayout();
+		glayout.marginBottom = 0;
 		
 		createLabel(container, toolkit, RuleMessages.TaskPlanning_Status, 0);
 		Composite statusDetails = toolkit.createComposite(container);
@@ -103,17 +105,20 @@ public class RuleStatusSection extends ElementAttributesContainer {
 			}
 		});
 		
+		container = toolkit.createComposite(container);
+		GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 5).applyTo(container);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(container);
+		
 		Label label = toolkit.createLabel(container, RuleMessages.TaskPlanning_AssgnedTo);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		assignedTo = toolkit.createText(container, "");
-		GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(assignedTo);
+		GridDataFactory.fillDefaults().hint(164, SWT.DEFAULT).applyTo(assignedTo);
 		assignedTo.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 			}
 		});
 
-		toolkit.paintBordersFor(container);
 	}
 	
 	private Label createLabel(Composite composite, FormToolkit toolkit, String label, int indent) {

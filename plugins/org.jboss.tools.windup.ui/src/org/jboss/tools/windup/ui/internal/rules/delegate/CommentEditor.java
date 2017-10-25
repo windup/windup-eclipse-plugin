@@ -29,12 +29,8 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.AnnotationModel;
-import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
-import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.mylyn.internal.wikitext.ui.WikiTextUiPlugin;
 import org.eclipse.mylyn.internal.wikitext.ui.editor.MarkupProjectionViewer;
@@ -61,7 +57,6 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -103,6 +98,7 @@ public class CommentEditor extends ElementAttributesContainer {
 		handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		createSourceViewer(parent);
 		createAuthorArea(parent);
+		ElementDetailsSection.addScrollListener(sourceViewer.getTextWidget());
 	}
 	
 	private void createAuthorArea(Composite parent) {
@@ -117,6 +113,8 @@ public class CommentEditor extends ElementAttributesContainer {
 		toolkit.adapt(authorText, false, false);
 		authorText.setData(FormToolkit.KEY_DRAW_BORDER, Boolean.FALSE);
 		GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(authorText);
+		
+		toolkit.createLabel(container, "----");
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -218,12 +216,14 @@ public class CommentEditor extends ElementAttributesContainer {
 		String string = getElementMessage();
 		IStorage storage = new StringInput.StringStorage(string);
 		IEditorInput editorInput = new StringInput(storage);
-		CompositeRuler ruler = new CompositeRuler();
-		ISharedTextColors colors = EditorsPlugin.getDefault().getSharedTextColors();
+		//CompositeRuler ruler = new CompositeRuler();
+		//ISharedTextColors colors = EditorsPlugin.getDefault().getSharedTextColors();
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.WRAP;
-		IOverviewRuler overviewRuler = new OverviewRuler(new DefaultMarkerAnnotationAccess(), VERTICAL_RULER_WIDTH, colors);
+		//IOverviewRuler overviewRuler = new OverviewRuler(new DefaultMarkerAnnotationAccess(), VERTICAL_RULER_WIDTH, colors);
 		
-		this.sourceViewer = new MarkupProjectionViewer(parent, ruler, overviewRuler, true, styles);
+		this.sourceViewer = new MarkupProjectionViewer(parent, null, null, true, styles);
+		
+		// TODO: This is not working.
 		ElementDetailsSection.addScrollListener(sourceViewer.getTextWidget());
 		
 		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).hint(SWT.DEFAULT, 100).applyTo(sourceViewer.getControl());
