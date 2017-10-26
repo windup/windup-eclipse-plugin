@@ -41,6 +41,7 @@ public class Messages extends NLS
 	
 	public static String WindupPreferenceHome;
 	public static String WindupPreferenceRmiPort;
+	public static String WindupPreferenceJRE;
 	
 	public static String WindupPreferenceStartTimeoutDuration;
 	public static String WindupPreferenceStopTimeoutDuration;

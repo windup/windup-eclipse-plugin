@@ -109,12 +109,13 @@ public class CommentEditor extends ElementAttributesContainer {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		Text authorText = new Text(container, SWT.FLAT | SWT.BORDER);
-		authorText.setText("josteele@redhat.com");
 		toolkit.adapt(authorText, false, false);
 		authorText.setData(FormToolkit.KEY_DRAW_BORDER, Boolean.FALSE);
 		GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(authorText);
 		
 		toolkit.createLabel(container, "----");
+		
+		
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -13,6 +13,8 @@ package org.jboss.tools.windup.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -41,6 +43,8 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	
 	private IntegerFieldEditor startTimeoutDurationEditor;
 	private IntegerFieldEditor stopTimeoutDurationEditor;
+	
+	private FileFieldEditor jreEditor;
 	
 	public WindupPreferencePage() {
 		super(GRID);
@@ -84,6 +88,23 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 				getFieldEditorParent());
 		stopTimeoutDurationEditor.setEmptyStringAllowed(false);
 		addField(stopTimeoutDurationEditor);
+		
+		jreEditor = new FileFieldEditor(
+				IPreferenceConstants.WINDUP_JRE_HOME, 
+				Messages.WindupPreferenceJRE, 
+				true, 
+				StringFieldEditor.VALIDATE_ON_KEY_STROKE, 
+				getFieldEditorParent()) {
+			@Override
+			public void createControl(Composite parent) {
+				super.createControl(parent);
+				Label label = (Label)getLabelControl();
+				//label.setImage(JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY));
+				label.setText("JRE");
+			}
+		};
+		jreEditor.setEmptyStringAllowed(false);
+		addField(jreEditor);
 	}
 	
 	@Override
