@@ -11,8 +11,16 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.preferences;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -20,13 +28,21 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.jboss.tools.windup.runtime.IPreferenceConstants;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
@@ -93,18 +109,96 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 				IPreferenceConstants.WINDUP_JRE_HOME, 
 				Messages.WindupPreferenceJRE, 
 				true, 
-				StringFieldEditor.VALIDATE_ON_KEY_STROKE, 
+				StringFieldEditor.VALIDATE_ON_KEY_STROKE,
 				getFieldEditorParent()) {
+			
 			@Override
-			public void createControl(Composite parent) {
-				super.createControl(parent);
-				Label label = (Label)getLabelControl();
-				//label.setImage(JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY));
-				label.setText("JRE");
+			protected boolean checkState() {
+		        String msg = null;
+		        String path = getTextControl().getText();
+        			clearErrorMessage();
+		        if (path != null) {
+					path = path.trim();
+				} else {
+					path = "";//$NON-NLS-1$
+				}
+		        if (path.length() == 0) {
+		        		return true; 
+		        } else {
+		            File file = new File(path);
+		            if (file.isDirectory()) {
+		                if (!file.isAbsolute()) {
+							msg = Messages.JRENotAbsolute;
+						}
+		            } else {
+		                msg = Messages.InvalidJRELocation;
+		            }
+		        }
+		        if (msg != null) { // error
+		            showErrorMessage(msg);
+		            return false;
+		        }
+		        return true;
 			}
+			
+			@Override
+			protected String changePressed() {
+		        File f = new File(getTextControl().getText());
+		        if (!f.exists()) {
+					f = null;
+				}
+		        
+		        File d = handleAdd();
+		        if (d == null) {
+					return null;
+				}
+
+		        return d.getAbsolutePath();
+		    }
 		};
 		jreEditor.setEmptyStringAllowed(false);
 		addField(jreEditor);
+	}
+	
+	private File handleAdd() {
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(Display.getDefault().getActiveShell(), new LabelProvider() {
+			public Image getImage(Object element) {
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
+			}
+			@Override
+			public String getText(Object element) {
+				IVMInstall install = (IVMInstall)element;
+				return install.getName();
+			}
+		});
+		dialog.setElements(getEnvironments());
+		dialog.setAllowDuplicates(false);
+		dialog.setMultipleSelection(true);
+		dialog.setTitle(PDEUIMessages.RequiredExecutionEnvironmentSection_dialog_title);
+		dialog.setMessage(PDEUIMessages.RequiredExecutionEnvironmentSection_dialogMessage);
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXECUTION_ENVIRONMENT_SELECTION);
+		if (dialog.open() == Window.OK && dialog.getResult() != null && dialog.getResult().length == 1) {
+			IVMInstall install = (IVMInstall)dialog.getResult()[0];
+			return install.getInstallLocation();
+			//addExecutionEnvironments(dialog.getResult());
+		}
+		return null;
+	}
+	
+	private Object[] getEnvironments() {
+		// fill with JREs
+		List<VMStandin> standins = new ArrayList<>();
+		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+		for (int i = 0; i < types.length; i++) {
+			IVMInstallType type = types[i];
+			IVMInstall[] installs = type.getVMInstalls();
+			for (int j = 0; j < installs.length; j++) {
+				IVMInstall install = installs[j];
+				standins.add(new VMStandin(install));
+			}
+		}
+		return standins.toArray(new IVMInstall[standins.size()]);
 	}
 	
 	@Override

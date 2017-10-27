@@ -297,6 +297,9 @@ public class Messages extends NLS
     public static String ComparePreviewer_quickFixText;
     public static String ComparePreviewer_quickFixNoText;
     
+    public static String InvalidJRELocation;
+    public static String JRENotAbsolute;
+    
     static
     {
         // initialize resource bundle
