@@ -15,19 +15,26 @@ import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logError;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -38,9 +45,13 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.jboss.windup.tooling.ExecutionBuilder;
 
+import com.google.common.collect.Maps;
+
 @Singleton
 @Creatable
 public class WindupRmiClient {
+	
+	public static final String JAVA_HOME = "JAVA_HOME";
 	
 	/**
 	 * Server status
@@ -83,7 +94,7 @@ public class WindupRmiClient {
 		if (location == null) {
 			IVMInstall jre = JavaRuntime.getDefaultVMInstall();
 			if (jre != null) {
-				location = jre.getInstallLocation().getAbsolutePath(); 
+				location = jre.getInstallLocation().getAbsolutePath();
 			}
 		}
 		return location;
@@ -93,53 +104,48 @@ public class WindupRmiClient {
 		logInfo("Begin start RHAMT."); //$NON-NLS-1$
 		monitor.worked(1);
 		
-		CommandLine cmdLine;
-		
+		CommandLine cmdLine = CommandLine.parse(getWindupHome().toString());
 		String jre = computeJRELocation();
+		Map<String, String> env = Maps.newHashMap();
 		if (jre != null && !jre.trim().isEmpty()) {
-			cmdLine = CommandLine.parse(jre);
-			cmdLine.addArguments(getWindupHome().toString());
+			env.put(JAVA_HOME, jre);
+			logInfo("Using " + JAVA_HOME + " - " + jre);
 		}
-		else {
-			cmdLine = CommandLine.parse(getWindupHome().toString());
-		}
-		 
+		
 		cmdLine.addArgument("--startServer"); //$NON-NLS-1$
 		cmdLine.addArgument(String.valueOf(getRmiPort()));
-		System.out.println("Executable: " + cmdLine.getExecutable());
-		System.out.println("String: " + cmdLine.toString());
-//		watchdog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
-//		ExecuteResultHandler handler = new ExecuteResultHandler() {
-//			@Override
-//			public void onProcessFailed(ExecuteException e) {
-//				logInfo("onProcessFailed"); //$NON-NLS-1$
-//				executionBuilder = null;
-//				notifyServerChanged();
-//			}
-//			@Override
-//			public void onProcessComplete(int exitValue) {
-//				logInfo("onProcessComplete"); //$NON-NLS-1$
-//				executionBuilder = null;
-//				notifyServerChanged();
-//			}
-//		};
-//		DefaultExecutor executor = new DefaultExecutor();
-//		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
-//			@Override
-//			protected void processLine(String line, int logLevel) {
-//				logInfo("Message from RHAMT executor: " + line); //$NON-NLS-1$
-//				monitor.worked(1);
-//			}
-//		}));
-//		executor.setWatchdog(watchdog);
-//		executor.setExitValue(1);
-//		monitor.worked(1);
-//		try {
-//			logInfo("Starting RHAMT in server mode..."); //$NON-NLS-1$
-//			executor.execute(cmdLine, null, handler);
-//		} catch (IOException e) {
-//			WindupRuntimePlugin.log(e);
-//		}
+		watchdog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
+		ExecuteResultHandler handler = new ExecuteResultHandler() {
+			@Override
+			public void onProcessFailed(ExecuteException e) {
+				logInfo("onProcessFailed"); //$NON-NLS-1$
+				executionBuilder = null;
+				notifyServerChanged();
+			}
+			@Override
+			public void onProcessComplete(int exitValue) {
+				logInfo("onProcessComplete"); //$NON-NLS-1$
+				executionBuilder = null;
+				notifyServerChanged();
+			}
+		};
+		DefaultExecutor executor = new DefaultExecutor();
+		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
+			@Override
+			protected void processLine(String line, int logLevel) {
+				logInfo("Message from RHAMT executor: " + line); //$NON-NLS-1$
+				monitor.worked(1);
+			}
+		}));
+		executor.setWatchdog(watchdog);
+		executor.setExitValue(1);
+		monitor.worked(1);
+		try {
+			logInfo("Starting RHAMT in server mode..."); //$NON-NLS-1$
+			executor.execute(cmdLine, env, handler);
+		} catch (IOException e) {
+			WindupRuntimePlugin.log(e);
+		}
 	}
 	
 	public boolean isWindupServerRunning() {
