@@ -307,6 +307,7 @@ public class IssueExplorer extends CommonNavigator {
 											builder.append(Messages.WindupNotStartedMessage);
 											builder.append(status.getMessage());
 											builder.append(System.lineSeparator());
+											builder.append(System.lineSeparator());
 											builder.append(Messages.WindupNotStartedDebugInfo);
 											builder.append(System.lineSeparator());
 											builder.append(Messages.WindupStartNotStartingSolution1);
