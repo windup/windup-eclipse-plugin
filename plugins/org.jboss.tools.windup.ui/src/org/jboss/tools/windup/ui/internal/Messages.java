@@ -28,6 +28,14 @@ public class Messages extends NLS
 	public static String WindupStartingError;
 	public static String WindupServerError;
 	
+	public static String WindupNotStartedMessage;
+	public static String WindupNotStartedDebugInfo;
+	public static String WindupStartNotStartingSolution1;
+	public static String WindupStartNotStartingSolution2;
+	public static String WindupStartNotStartingSolution3;
+	public static String WindupStartNotStartingSolution4;
+	public static String WindupStartNotStartingSolution5;
+	
 	public static String WindupShuttingDownError;
 	
 	public static String WindupShutdowCheck;

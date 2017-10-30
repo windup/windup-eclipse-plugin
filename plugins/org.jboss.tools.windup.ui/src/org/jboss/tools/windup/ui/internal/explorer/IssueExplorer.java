@@ -302,10 +302,25 @@ public class IssueExplorer extends CommonNavigator {
 									}
 									@Override
 									public void serverStart(IStatus status) {
-										if (status.getSeverity() == IStatus.ERROR) {
+										if (status.getSeverity() == IStatus.ERROR || !windupClient.isWindupServerRunning()) {
+											StringBuilder builder = new StringBuilder();
+											builder.append(Messages.WindupNotStartedMessage);
+											builder.append(status.getMessage());
+											builder.append(System.lineSeparator());
+											builder.append(Messages.WindupNotStartedDebugInfo);
+											builder.append(System.lineSeparator());
+											builder.append(Messages.WindupStartNotStartingSolution1);
+											builder.append(System.lineSeparator());
+											builder.append(Messages.WindupStartNotStartingSolution2);
+											builder.append(System.lineSeparator());
+											builder.append(Messages.WindupStartNotStartingSolution3);
+											builder.append(System.lineSeparator());
+											builder.append(Messages.WindupStartNotStartingSolution4);
+											builder.append(System.lineSeparator());
+											builder.append(Messages.WindupStartNotStartingSolution5);
 											MessageDialog.openError(parent.getShell(), 
 													Messages.WindupStartingError, 
-													status.getMessage());
+													builder.toString());
 										}
 										updateServerGroup();
 									}
