@@ -20,28 +20,10 @@ class XmlTemplate {
                 <description>
                     This is a description of rules. This is a template for new rulesets. Change this.
                 </description>
-                <dependencies>
-                    <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
-                    <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
-                </dependencies>
                 <!-- version ranges applied to from and to technologies -->
-                <sourceTechnology id="sourceTechnology" versionRange="[1,3)" />
-                <targetTechnology id="targetTechnology" versionRange="[4,)" />
-                <tag>reviewed-2016-04-27</tag>
             </metadata>
             <rules>
-                <rule id="ruleset-unique-id-00001">
-                    <!-- rule condition, when it could be fired -->
-                    <when>
-                    
-                    </when>
-                    <!-- rule operation, what to do if it is fired -->
-                    <perform>
-                    
-                    </perform>
-                </rule>
-                <!-- next rule -->
-                <rule id="ruleset-unique-id-00002">
+                <rule id="«rulesetId»-00001">
                     <!-- rule condition, when it could be fired -->
                     <when>
                     
