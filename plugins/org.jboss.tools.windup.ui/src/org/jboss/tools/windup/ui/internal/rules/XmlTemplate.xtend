@@ -45,7 +45,16 @@ class XmlTemplate {
         <?xml version="1.0"?>
         <ruleset id="«rulesetId»" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
-            
+            <metadata>
+                <description>
+                    This is a description of rules. This is a template for new rulesets. Change this.
+                </description>
+                <!-- version ranges applied to from and to technologies -->
+                <dependencies>
+                </dependencies>
+            </metadata>
+            <rules>
+            </rules>
         </ruleset>
         '''
     }
