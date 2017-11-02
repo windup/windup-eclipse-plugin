@@ -21,6 +21,8 @@ class XmlTemplate {
                     This is a description of rules. This is a template for new rulesets. Change this.
                 </description>
                 <!-- version ranges applied to from and to technologies -->
+                <dependencies>
+                </dependencies>
             </metadata>
             <rules>
                 <rule id="«rulesetId»-00001">

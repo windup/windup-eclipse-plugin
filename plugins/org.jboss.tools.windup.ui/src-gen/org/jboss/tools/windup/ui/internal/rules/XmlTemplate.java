@@ -40,6 +40,12 @@ public class XmlTemplate {
     _builder.append("        ");
     _builder.append("<!-- version ranges applied to from and to technologies -->");
     _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<dependencies>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("</dependencies>");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("</metadata>");
     _builder.newLine();
