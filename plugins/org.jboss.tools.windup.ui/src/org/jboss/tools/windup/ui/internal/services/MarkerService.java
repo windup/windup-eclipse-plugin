@@ -12,6 +12,7 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.URI_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_QUICKFIX_ID;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_MARKER;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -317,6 +318,7 @@ public class MarkerService {
         marker.setAttribute(RULE_ID, issue.getRuleId());
         marker.setAttribute(EFFORT, String.valueOf(issue.getEffort()));
         marker.setAttribute(IMarker.USER_EDITABLE, false);
+        marker.setAttribute(WINDUP_MARKER, true);
         
         createQuickfixMarkers(issue);
 	}

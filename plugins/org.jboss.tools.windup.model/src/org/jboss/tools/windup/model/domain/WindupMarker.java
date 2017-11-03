@@ -24,6 +24,8 @@ public interface WindupMarker {
 	static final String WINDUP_HINT_MARKER_ID = "org.jboss.tools.windup.core.hintMarker"; //$NON-NLS-1$
 	
 	static final String WINDUP_QUICKFIX_ID = "org.jboss.tools.windup.core.quickfixMarker"; //$NON-NLS-1$
+	
+	static final String WINDUP_MARKER = "WINDUP_MARKER";
 
 	static final String CONFIGURATION_ID = "CONFIGURATION_ID"; //$NON-NLS-1$
 	static final String URI_ID = "URI_ID"; //$NON-NLS-1$

@@ -25,11 +25,19 @@ import java.util.Map;
 
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
@@ -41,12 +49,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.internal.misc.StringMatcher.Position;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.RootReportNode;
@@ -99,6 +110,8 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 	private WorkbenchLabelProvider workbenchProvider = new WorkbenchLabelProvider();
 	
 	private IssueExplorer issueExplorer;
+	
+	private ResourceManager resourceManager;
 	
 	@Override
 	public Image getImage(Object element) {
@@ -156,9 +169,81 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 			TreeNode node = (TreeNode)element;
 			element = node.getSegment();
 		}
-		return workbenchProvider.getImage(element);
-	}
+		
+		IWorkbenchAdapter adapter = getAdapter(element);
+        if (adapter == null) {
+            return null;
+        }
+        ImageDescriptor descriptor = adapter.getImageDescriptor(element);
+        if (descriptor == null) {
+            return null;
+        }
 
+        //add any annotations to the image descriptor
+        descriptor = decorateImage(descriptor, element);
+
+		return (Image) getResourceManager().get(descriptor);
+		
+		//return workbenchProvider.getImage(element);
+	}
+	
+	private ResourceManager getResourceManager() {
+		if (resourceManager == null) {
+			resourceManager = new LocalResourceManager(JFaceResources
+					.getResources());
+		}
+		return resourceManager;
+	}
+	
+
+	private ImageDescriptor decorateImage(ImageDescriptor input, Object element) {
+		ImageDescriptor descriptor = input;
+		IResource resource = Adapters.adapt(element, IResource.class);
+		if (resource != null && (resource.getType() != IResource.PROJECT || ((IProject) resource).isOpen())) {
+			ImageDescriptor overlay = null;
+			switch (getHighestProblemSeverity(resource)) {
+				case IMarker.SEVERITY_ERROR: {
+					overlay = PlatformUI.getWorkbench().getSharedImages()
+								.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+					break;
+				}
+				case IMarker.SEVERITY_WARNING: {
+					overlay = PlatformUI.getWorkbench().getSharedImages()
+								.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+					break;
+				}
+				case IMarker.SEVERITY_INFO: {
+					overlay = PlatformUI.getWorkbench().getSharedImages()
+								.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK);
+					break;
+				}
+			}
+			if (overlay != null) {
+				descriptor = new DecorationOverlayIcon(descriptor, overlay, IDecoration.BOTTOM_LEFT);
+			}
+		}
+		return descriptor;
+	}
+	
+	 protected final IWorkbenchAdapter getAdapter(Object o) {
+	        return Adapters.adapt(o, IWorkbenchAdapter.class);
+	   }
+
+	private int getHighestProblemSeverity(IResource resource) {
+		int problemSeverity = -1;
+		try {
+			for (IMarker marker : resource.findMarkers(null, true, IResource.DEPTH_INFINITE)) {
+				boolean isWindupMarker = marker.getAttribute(WindupMarker.WINDUP_MARKER, false);
+				if (isWindupMarker) {
+					problemSeverity = Math.max(problemSeverity, marker.getAttribute(IMarker.SEVERITY, -1));
+				}
+			}
+		} catch (CoreException e) {
+			// Mute error to prevent pop-up in case of concurrent modification of markers.
+		}
+		return problemSeverity;
+	}
+	
 	@Override
 	public String getText(Object element) {
 		if (element instanceof TreeNode) {
