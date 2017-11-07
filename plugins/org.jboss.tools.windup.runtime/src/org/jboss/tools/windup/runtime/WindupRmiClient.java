@@ -142,6 +142,7 @@ public class WindupRmiClient {
 		monitor.worked(1);
 		try {
 			logInfo("Starting RHAMT in server mode..."); //$NON-NLS-1$
+			logInfo("Command-line: " + cmdLine); //$NON-NLS-1$
 			executor.execute(cmdLine, env, handler);
 		} catch (IOException e) {
 			WindupRuntimePlugin.log(e);
