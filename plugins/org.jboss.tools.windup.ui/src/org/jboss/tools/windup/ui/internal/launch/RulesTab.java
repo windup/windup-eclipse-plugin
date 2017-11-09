@@ -250,7 +250,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 	private void initializeConfiguration(ILaunchConfiguration launchConfig) {
 		this.configuration = modelService.findConfiguration(launchConfig.getName());
 		if (configuration == null) {
-			this.configuration = modelService.createConfiguration(launchConfig.getName());
+			this.configuration = LaunchUtils.createConfiguration(launchConfig.getName(), modelService);
 		}
 		reload();
 	}

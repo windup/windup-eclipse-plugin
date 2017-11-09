@@ -186,7 +186,7 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 		return null;
 	}
 	
-	private Object[] getEnvironments() {
+	public static Object[] getEnvironments() {
 		// fill with JREs
 		List<VMStandin> standins = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();

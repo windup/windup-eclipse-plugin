@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
@@ -62,7 +63,38 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		else {
 			markerService.clear();
-			if (!windupClient.isWindupServerRunning()) {
+			
+			String jreHome = configuration.getJreHome();
+			if (jreHome == null || jreHome.trim().isEmpty()) {
+				jreHome = WindupRuntimePlugin.computeJRELocation();
+			}
+			
+			boolean emptyConfigJre = jreHome.trim().isEmpty();
+			boolean emptyCurrentJre = windupClient.getCurrentJre().trim().isEmpty();
+			
+			if (windupClient.isWindupServerRunning() && !(emptyConfigJre && emptyCurrentJre) && !windupClient.isJreRunning(jreHome)) {
+				StringBuilder message = new StringBuilder();
+				message.append(Messages.windupServiceJreCurrentHome);
+				message.append(System.lineSeparator());
+				message.append(NLS.bind(Messages.windupServerJreDifferMsg1, windupClient.getCurrentJre()));
+				message.append(System.lineSeparator());
+				message.append(NLS.bind(Messages.windupServerJreDifferMsg2, jreHome));
+				final String home = jreHome;
+				Display.getDefault().asyncExec(() -> {
+					boolean restart = MessageDialog.openQuestion(shell, Messages.windupServierJreDifferTitle, message.toString());
+					if (restart) {
+						restartAndRun(configuration, home);
+					}
+					else {
+						runWindup(configuration);
+					}
+				});
+			}
+				
+			else if (!windupClient.isWindupServerRunning()) {
+				if (jreHome == null || jreHome.trim().isEmpty()) {
+					jreHome = WindupRuntimePlugin.computeJRELocation();
+				}
 				launcher.start(new WindupServerCallbackAdapter(shell) {
 					@Override
 					public void windupNotExecutable() {
@@ -83,12 +115,67 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 					}
 					@Override
 					public void serverShutdown(IStatus status) {}
-				});
+				}, jreHome);
 			}
 			else {
 				runWindup(configuration);
 			}
 		}
+	}
+	
+	private void restartAndRun(ConfigurationElement configuration, String jreHome) {
+		launcher.shutdown(new WindupServerCallbackAdapter(shell) {
+			@Override
+			public void serverShutdown(IStatus status) {
+				Boolean shutdown;
+				if (status.isOK()) {
+					shutdown = Boolean.TRUE;
+				}
+				else {
+					shutdown = Boolean.FALSE;
+					MessageDialog.openError(shell, 
+							Messages.WindupShuttingDownError, 
+							status.getMessage());
+				}
+				if (shutdown) {
+					launcher.start(new WindupServerCallbackAdapter(shell) {
+						@Override
+						public void windupNotExecutable() {
+							MessageDialog.openError(shell, 
+									Messages.WindupNotExecutableTitle, 
+									Messages.WindupNotExecutableInfo);
+						}
+						@Override
+						public void serverStart(IStatus status) {
+							if (status.getSeverity() == IStatus.ERROR || !windupClient.isWindupServerRunning()) {
+								StringBuilder builder = new StringBuilder();
+								builder.append(Messages.WindupNotStartedMessage);
+								builder.append(status.getMessage());
+								builder.append(System.lineSeparator());
+								builder.append(System.lineSeparator());
+								builder.append(Messages.WindupNotStartedDebugInfo);
+								builder.append(System.lineSeparator());
+								builder.append(Messages.WindupStartNotStartingSolution1);
+								builder.append(System.lineSeparator());
+								builder.append(Messages.WindupStartNotStartingSolution2);
+								builder.append(System.lineSeparator());
+								builder.append(Messages.WindupStartNotStartingSolution3);
+								builder.append(System.lineSeparator());
+								builder.append(Messages.WindupStartNotStartingSolution4);
+								builder.append(System.lineSeparator());
+								builder.append(Messages.WindupStartNotStartingSolution5);
+								MessageDialog.openError(shell, 
+										Messages.WindupStartingError, 
+										builder.toString());
+							}
+							if(windupClient.isWindupServerRunning()) {
+								runWindup(configuration);
+							}
+						}
+					}, jreHome);
+				}
+			}
+		});
 	}
 	
 	private void runWindup(ConfigurationElement configuration) {

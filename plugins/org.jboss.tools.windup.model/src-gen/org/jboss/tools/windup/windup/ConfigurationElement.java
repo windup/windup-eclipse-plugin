@@ -24,6 +24,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getOptions <em>Options</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -276,5 +277,31 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setReportDirectory(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Jre Home</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Jre Home</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Jre Home</em>' attribute.
+	 * @see #setJreHome(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_JreHome()
+	 * @model
+	 * @generated
+	 */
+	String getJreHome();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Jre Home</em>' attribute.
+	 * @see #getJreHome()
+	 * @generated
+	 */
+	void setJreHome(String value);
 
 } // ConfigurationElement

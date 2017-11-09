@@ -121,7 +121,7 @@ public class WindupLauncher {
 		};
 	}
 	
-	public void start(WinupServerCallback callback) {
+	public void start(WinupServerCallback callback, String jreHome) {
 		Display.getDefault().syncExec(() -> {
 			logger.info("Start Windup Server."); //$NON-NLS-1$
 			String windupHome = windupClient.getWindupHome().toString();
@@ -131,7 +131,7 @@ public class WindupLauncher {
 				callback.windupNotExecutable();
 				return;
 			}
-			Job job = createStartWindupJob();
+			Job job = createStartWindupJob(jreHome);
 			int duration = preferences.getInt(IPreferenceConstants.START_TIMEOUT);
 			IStatus status = FutureUtils.runWithProgress(job, duration, 5, callback.getShell(),
 					Messages.WindupStartingDetail);
@@ -139,7 +139,7 @@ public class WindupLauncher {
 		});
 	}
 	
-	public Job createStartWindupJob() {
+	public Job createStartWindupJob(String jreHome) {
 		Job job = new AbstractDelegatingMonitorJob(Messages.WindupStartingTitle) {
 			@Override
 			protected IStatus doRun(IProgressMonitor monitor) {
@@ -170,7 +170,7 @@ public class WindupLauncher {
 				};
 				try {
 					monitor.subTask(Messages.WindupRunStartScipt);
-					windupClient.startWindup(monitor);
+					windupClient.startWindup(monitor, jreHome);
 					int duration = preferences.getInt(IPreferenceConstants.START_TIMEOUT);
 					FutureUtils.waitForFuture(duration, future, monitor);
 				} catch (ExecutionException | TimeoutException | InterruptedException e) {

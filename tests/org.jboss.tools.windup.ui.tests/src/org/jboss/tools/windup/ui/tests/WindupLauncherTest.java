@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.runtime.IPreferenceConstants;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.util.FutureUtils;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class WindupLauncherTest extends WindupUiTest {
 
 	@Test
 	public void testWindupServerStarted() {
-		Job job = windupLauncher.createStartWindupJob();
+		Job job = windupLauncher.createStartWindupJob(WindupRuntimePlugin.computeJRELocation());
 		IStatus status = FutureUtils.runWithProgress(job, IPreferenceConstants.DEFAULT_WINDUP_START_DURATION_TIMEOUT, 5, Display.getDefault().getActiveShell(),
 				"Starting Windup");
 		assertTrue("Windup did not start successfully: " + status.getMessage(), status.isOK());

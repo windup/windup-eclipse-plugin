@@ -22,6 +22,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.jboss.tools.common.xml.IMemento;
 import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.windup.bootstrap.help.Help;
@@ -127,6 +130,17 @@ public class WindupRuntimePlugin extends Plugin
 		return result;
 	}
     
+	public static String computeJRELocation() {
+		String location = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID).get(IPreferenceConstants.WINDUP_JRE_HOME, null);
+		if (location == null) {
+			IVMInstall jre = JavaRuntime.getDefaultVMInstall();
+			if (jre != null) {
+				location = jre.getInstallLocation().getAbsolutePath();
+			}
+		}
+		return location != null ? location : "";
+	}
+	
     /**
      * @return singleton instance of the plugin
      */

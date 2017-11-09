@@ -27,6 +27,7 @@ import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.launch.LaunchUtils;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
 import com.google.common.base.Objects;
@@ -52,7 +53,7 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration launchConfig) {
 		if (isWindupConfig(launchConfig) && modelService.findConfiguration(launchConfig.getName()) == null) {
-			modelService.createConfiguration(launchConfig.getName());
+			LaunchUtils.createConfiguration(launchConfig.getName(), modelService);
 		}
 	}
 

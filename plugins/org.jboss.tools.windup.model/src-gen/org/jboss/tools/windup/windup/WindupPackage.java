@@ -287,13 +287,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__REPORT_DIRECTORY = PARAMETERIZED_FEATURE_COUNT + 10;
 
 	/**
+	 * The feature id for the '<em><b>Jre Home</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__JRE_HOME = PARAMETERIZED_FEATURE_COUNT + 11;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 11;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 12;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1687,6 +1696,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getConfigurationElement_ReportDirectory();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Jre Home</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getJreHome()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_JreHome();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.

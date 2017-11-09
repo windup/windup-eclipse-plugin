@@ -41,8 +41,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.jboss.windup.tooling.ExecutionBuilder;
 
 import com.google.common.collect.Maps;
@@ -63,6 +61,8 @@ public class WindupRmiClient {
 	private ExecutionBuilder executionBuilder;
 	
 	@Inject private IEventBroker eventBroker;
+	
+	private String currentJreHome = "";
 
 	private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
@@ -89,28 +89,31 @@ public class WindupRmiClient {
 		return port; 
 	}
 	
-	private String computeJRELocation() {
-		String location = preferences.get(IPreferenceConstants.WINDUP_JRE_HOME, null);
-		if (location == null) {
-			IVMInstall jre = JavaRuntime.getDefaultVMInstall();
-			if (jre != null) {
-				location = jre.getInstallLocation().getAbsolutePath();
-			}
+	public boolean isJreRunning(String jreHome) {
+		if (isWindupServerRunning()) {
+			return this.currentJreHome.equals(jreHome);
 		}
-		return location;
+		return false;
 	}
-
-	public void startWindup(final IProgressMonitor monitor) {
+	
+	public String getCurrentJre() {
+		return this.currentJreHome;
+	}
+	
+	public void startWindup(final IProgressMonitor monitor, String jreHome) {
 		logInfo("Begin start RHAMT."); //$NON-NLS-1$
 		monitor.worked(1);
 		
+		this.currentJreHome = jreHome;
+		
 		CommandLine cmdLine = CommandLine.parse(getWindupHome().toString());
-		String jre = computeJRELocation();
 		Map<String, String> env = Maps.newHashMap();
-		if (jre != null && !jre.trim().isEmpty()) {
-			env.put(JAVA_HOME, jre);
-			logInfo("Using " + JAVA_HOME + " - " + jre);
+		if (!jreHome.trim().isEmpty()) {
+			env.put(JAVA_HOME, jreHome);
+			logInfo("Using " + JAVA_HOME + " - " + jreHome);
 		}
+		
+		logInfo("Using " + JAVA_HOME + " - " + jreHome);
 		
 		cmdLine.addArgument("--startServer"); //$NON-NLS-1$
 		cmdLine.addArgument(String.valueOf(getRmiPort()));

@@ -11,9 +11,9 @@
 package org.jboss.tools.windup.ui.internal.launch;
 
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.getProjectsFromSelection;
 import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
 import static org.jboss.tools.windup.model.domain.WindupConstants.LAUNCH_TYPE;
+import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.getProjectsFromSelection;
 import static org.jboss.tools.windup.ui.internal.Messages.errorConfiguringWindup;
 import static org.jboss.tools.windup.ui.internal.Messages.selectExistinConfiguration;
 import static org.jboss.tools.windup.ui.internal.Messages.selectLaunchConfiguration;
@@ -39,6 +39,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -134,7 +135,7 @@ public class LaunchUtils {
 		wc.setAttribute(ATTR_PROJECT_NAME, config.project.getName());
 		ConfigurationElement configuration = modelService.findConfiguration(name);
 		if (configuration == null) {
-			configuration = modelService.createConfiguration(config.project.getName());
+			configuration = LaunchUtils.createConfiguration(config.project.getName(), modelService);
 		}
 		
 		boolean exists = configuration.getInputs().stream().filter(i -> { 
@@ -146,6 +147,12 @@ public class LaunchUtils {
 		}
 		
 		return wc.doSave();
+	}
+	
+	public static ConfigurationElement createConfiguration(String name, ModelService modelService) {
+		ConfigurationElement configuration = modelService.createConfiguration(name);
+		configuration.setJreHome(WindupRuntimePlugin.computeJRELocation());
+		return configuration;
 	}
 	
 	private static class LaunchConfig {

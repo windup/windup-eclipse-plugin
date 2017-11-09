@@ -73,6 +73,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.ReportNode;
@@ -325,7 +326,7 @@ public class IssueExplorer extends CommonNavigator {
 										}
 										updateServerGroup();
 									}
-								});
+								}, WindupRuntimePlugin.computeJRELocation());
 							}
 						}
 					});

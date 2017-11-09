@@ -43,6 +43,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getOptions <em>Options</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getReportDirectory <em>Report Directory</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getJreHome <em>Jre Home</em>}</li>
  * </ul>
  *
  * @generated
@@ -217,6 +218,26 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected String reportDirectory = REPORT_DIRECTORY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getJreHome() <em>Jre Home</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getJreHome()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String JRE_HOME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getJreHome() <em>Jre Home</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getJreHome()
+	 * @generated
+	 * @ordered
+	 */
+	protected String jreHome = JRE_HOME_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -454,6 +475,27 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getJreHome() {
+		return jreHome;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setJreHome(String newJreHome) {
+		String oldJreHome = jreHome;
+		jreHome = newJreHome;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME, oldJreHome, jreHome));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -496,6 +538,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getOptions();
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
 				return getReportDirectory();
+			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
+				return getJreHome();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -546,6 +590,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
 				setReportDirectory((String)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
+				setJreHome((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -591,6 +638,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
 				setReportDirectory(REPORT_DIRECTORY_EDEFAULT);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
+				setJreHome(JRE_HOME_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -625,6 +675,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return options != null && !options.isEmpty();
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
 				return REPORT_DIRECTORY_EDEFAULT == null ? reportDirectory != null : !REPORT_DIRECTORY_EDEFAULT.equals(reportDirectory);
+			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
+				return JRE_HOME_EDEFAULT == null ? jreHome != null : !JRE_HOME_EDEFAULT.equals(jreHome);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -655,6 +707,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(userRulesDirectories);
 		result.append(", reportDirectory: ");
 		result.append(reportDirectory);
+		result.append(", jreHome: ");
+		result.append(jreHome);
 		result.append(')');
 		return result.toString();
 	}

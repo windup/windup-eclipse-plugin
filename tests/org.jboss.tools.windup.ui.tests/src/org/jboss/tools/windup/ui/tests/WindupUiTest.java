@@ -30,9 +30,11 @@ import org.jboss.tools.windup.core.test.WindupTest;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.util.NameUtil;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.ui.WindupPerspective;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.explorer.QuickfixService;
+import org.jboss.tools.windup.ui.internal.launch.LaunchUtils;
 import org.jboss.tools.windup.ui.internal.services.CreateMigrationIssueService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
@@ -99,7 +101,7 @@ public class WindupUiTest extends WindupTest {
 					System.out.println("@Before::init:: RHAMT server failed to start.");
 				}
 			}
-		});
+		}, WindupRuntimePlugin.computeJRELocation());
 	}
 	
 	@After
@@ -137,14 +139,14 @@ public class WindupUiTest extends WindupTest {
 		            	markerService.generateMarkersForConfiguration(configuration);
 					}
 				}
-			});
+			}, WindupRuntimePlugin.computeJRELocation());
 		}
 	}
 	
 	protected ConfigurationElement createRunConfiguration() {
 		// TODO: We should do this through SWTBot and the Run Configuration dialog.
-		ConfigurationElement configuration = modelService.createConfiguration(
-				NameUtil.generateUniqueConfigurationElementName(modelService.getModel()));
+		ConfigurationElement configuration = LaunchUtils.createConfiguration(
+				NameUtil.generateUniqueConfigurationElementName(modelService.getModel()), modelService);
 		IProject project = projectProvider.getProject();
 		modelService.createInput(configuration, Lists.newArrayList(project));
 		return configuration;
