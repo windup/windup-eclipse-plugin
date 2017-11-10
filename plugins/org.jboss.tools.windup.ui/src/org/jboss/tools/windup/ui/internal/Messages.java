@@ -308,6 +308,8 @@ public class Messages extends NLS
     public static String InvalidJRELocation;
     public static String JRENotAbsolute;
     
+    public static String currentJavaHome;
+    
     static
     {
         // initialize resource bundle

@@ -752,7 +752,7 @@
     <extension
           point="org.eclipse.ui.preferencePages">
        <page
-             class="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
+             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
              id="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
              name="RHAMT">
        </page>
