@@ -103,27 +103,32 @@ public class WindupRuntimePlugin extends Plugin
 		try {
 		  	URL url = cacheFile.toURI().toURL();
 			InputStream input = url.openStream();
-        	XMLMemento root = XMLMemento.createReadRoot(input);
-            for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
-            	String name = element.getString("name"); //$NON-NLS-1$
-            	XMLMemento descriptionChild = (XMLMemento)element.getChild("description"); //$NON-NLS-1$
-            	String description = descriptionChild.getTextData();
-            	XMLMemento typeChild = (XMLMemento)element.getChild("type"); //$NON-NLS-1$
-            	String type = typeChild.getTextData();
-            	XMLMemento uiTypeChild = (XMLMemento)element.getChild("ui-type"); //$NON-NLS-1$
-            	String uiType = uiTypeChild.getTextData();
-            	List<String> availableOptions = Lists.newArrayList();
-            	XMLMemento availableOptionsElement = (XMLMemento)element.getChild("available-options"); //$NON-NLS-1$
-            	if (availableOptionsElement != null) {
-            		for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
-            			XMLMemento optionMemento = (XMLMemento)optionElement;
-            			String availableOption = optionMemento.getTextData();
-            			availableOptions.add(availableOption);
-            		}
-            	}
-            	OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions);
+        		XMLMemento root = XMLMemento.createReadRoot(input);
+			for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
+				String name = element.getString("name"); //$NON-NLS-1$
+				XMLMemento descriptionChild = (XMLMemento) element.getChild("description"); //$NON-NLS-1$
+				String description = descriptionChild.getTextData();
+				XMLMemento typeChild = (XMLMemento) element.getChild("type"); //$NON-NLS-1$
+				String type = typeChild.getTextData();
+				XMLMemento uiTypeChild = (XMLMemento) element.getChild("ui-type"); //$NON-NLS-1$
+				String uiType = uiTypeChild.getTextData();
+				List<String> availableOptions = Lists.newArrayList();
+				XMLMemento availableOptionsElement = (XMLMemento) element.getChild("available-options"); //$NON-NLS-1$
+				if (availableOptionsElement != null) {
+					for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
+						XMLMemento optionMemento = (XMLMemento) optionElement;
+						String availableOption = optionMemento.getTextData();
+						availableOptions.add(availableOption);
+					}
+				}
+				boolean required = false;
+				XMLMemento requiredElement = (XMLMemento)element.getChild("require");
+				if (requiredElement != null) {
+					required = Boolean.valueOf(requiredElement.getTextData());
+				}
+				OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions, required);
 				result.getOptions().add(option);
-            }
+			}
         } catch (Exception e) {
 			WindupRuntimePlugin.log(e);
 		}
