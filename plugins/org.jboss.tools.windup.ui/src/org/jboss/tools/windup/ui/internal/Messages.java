@@ -162,12 +162,6 @@ public class Messages extends NLS
     public static String VALUE;
     public static String Rules;
     
-    public static String windupServierJreDifferTitle;
-    public static String windupServiceJreCurrentHome;
-    
-    public static String windupServerJreDifferMsg1;
-    public static String windupServerJreDifferMsg2;
-    
     public static String showInIssueExplorer;
     public static String showIssueDetails;
     

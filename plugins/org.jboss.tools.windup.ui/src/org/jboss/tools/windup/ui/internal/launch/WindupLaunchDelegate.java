@@ -69,26 +69,14 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 				jreHome = WindupRuntimePlugin.computeJRELocation();
 			}
 			
-			boolean emptyConfigJre = jreHome.trim().isEmpty();
-			boolean emptyCurrentJre = windupClient.getCurrentJre().trim().isEmpty();
-			
-			if (windupClient.isWindupServerRunning() && !(emptyConfigJre && emptyCurrentJre) && !windupClient.isJreRunning(jreHome)) {
-				StringBuilder message = new StringBuilder();
-				message.append(Messages.windupServiceJreCurrentHome);
-				message.append(System.lineSeparator());
-				message.append(NLS.bind(Messages.windupServerJreDifferMsg1, windupClient.getCurrentJre()));
-				message.append(System.lineSeparator());
-				message.append(NLS.bind(Messages.windupServerJreDifferMsg2, jreHome));
-				final String home = jreHome;
-				Display.getDefault().asyncExec(() -> {
-					boolean restart = MessageDialog.openQuestion(shell, Messages.windupServierJreDifferTitle, message.toString());
-					if (restart) {
-						restartAndRun(configuration, home);
-					}
-					else {
-						runWindup(configuration);
-					}
-				});
+			if (windupClient.isWindupServerRunning() && !windupClient.isJreRunning(jreHome)) {
+				StringBuilder buff = new StringBuilder();
+				buff.append("Current JAVA_HOME: " + windupClient.getJavaHome()); //$NON-NLS-1$
+				buff.append(System.lineSeparator());
+				buff.append("Restarting using JAVA_HOME: " + jreHome); //$NON-NLS-1$
+				WindupRuntimePlugin.getDefault().getLog().log(
+	                    new Status(IStatus.INFO, WindupRuntimePlugin.PLUGIN_ID, buff.toString()));
+				restartAndRun(configuration, jreHome);
 			}
 				
 			else if (!windupClient.isWindupServerRunning()) {

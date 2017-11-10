@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -62,8 +63,6 @@ public class WindupRmiClient {
 	
 	@Inject private IEventBroker eventBroker;
 	
-	private String currentJreHome = "";
-
 	private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
@@ -91,26 +90,37 @@ public class WindupRmiClient {
 	
 	public boolean isJreRunning(String jreHome) {
 		if (isWindupServerRunning()) {
-			return this.currentJreHome.equals(jreHome);
+			String currentJreHome = doGetJavaHome();
+			return Objects.equals(jreHome, currentJreHome);
 		}
 		return false;
 	}
 	
-	public String getCurrentJre() {
-		return this.currentJreHome;
+	public String getJavaHome() {
+		if (isWindupServerRunning()) {
+			return doGetJavaHome();
+		}
+		return "";
+	}
+	
+	private String doGetJavaHome() {
+		try {
+			String javaHome = executionBuilder.getEnv(JAVA_HOME);
+			return javaHome != null ? javaHome : "";
+		} catch (RemoteException e) {
+			WindupRuntimePlugin.log(e);
+		}
+		return "";
 	}
 	
 	public void startWindup(final IProgressMonitor monitor, String jreHome) {
 		logInfo("Begin start RHAMT."); //$NON-NLS-1$
 		monitor.worked(1);
 		
-		this.currentJreHome = jreHome;
-		
 		CommandLine cmdLine = CommandLine.parse(getWindupHome().toString());
 		Map<String, String> env = Maps.newHashMap();
 		if (!jreHome.trim().isEmpty()) {
 			env.put(JAVA_HOME, jreHome);
-			logInfo("Using " + JAVA_HOME + " - " + jreHome);
 		}
 		
 		logInfo("Using " + JAVA_HOME + " - " + jreHome);
