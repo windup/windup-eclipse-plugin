@@ -148,7 +148,6 @@ public class OptionsTab extends AbstractLaunchConfigurationTab {
 			
 			@Override
 			protected void doStore() {
-				System.out.println("doStore: " + getTextControl().getText().trim());
 				configuration.setJreHome(getTextControl().getText().trim());
 			}
 			
