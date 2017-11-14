@@ -82,6 +82,7 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.SeverityNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
+import org.jboss.tools.windup.ui.internal.launch.RHAMTStartupFailedDialog;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
@@ -320,9 +321,8 @@ public class IssueExplorer extends CommonNavigator {
 											builder.append(Messages.WindupStartNotStartingSolution4);
 											builder.append(System.lineSeparator());
 											builder.append(Messages.WindupStartNotStartingSolution5);
-											MessageDialog.openError(parent.getShell(), 
-													Messages.WindupStartingError, 
-													builder.toString());
+											RHAMTStartupFailedDialog dialog = new RHAMTStartupFailedDialog(Display.getDefault().getActiveShell());
+											dialog.open();
 										}
 										updateServerGroup();
 									}

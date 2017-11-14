@@ -152,9 +152,8 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 								builder.append(Messages.WindupStartNotStartingSolution4);
 								builder.append(System.lineSeparator());
 								builder.append(Messages.WindupStartNotStartingSolution5);
-								MessageDialog.openError(shell, 
-										Messages.WindupStartingError, 
-										builder.toString());
+								RHAMTStartupFailedDialog dialog = new RHAMTStartupFailedDialog(Display.getDefault().getActiveShell());
+								dialog.open();
 							}
 							if(windupClient.isWindupServerRunning()) {
 								runWindup(configuration);
