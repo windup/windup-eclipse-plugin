@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.jboss.tools.common.util.PlatformUtil;
 import org.jboss.tools.common.xml.IMemento;
 import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.windup.bootstrap.help.Help;
@@ -63,7 +64,11 @@ public class WindupRuntimePlugin extends Plugin
     private static WindupRuntimePlugin plugin;
     
     public static String getDefaultWindupHome() {
-		return WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("rhamt-cli").toString();
+		String location = WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("rhamt-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		if (PlatformUtil.isWindows()) {
+			location = location + ".bat"; //$NON-NLS-1$
+		}
+		return location;
 	}
 
     /**
