@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.core;singleton:=true
-Bundle-Version: 4.1.0.qualifier
+Bundle-Version: 4.0.0.Beta4.1
 Bundle-ClassPath: .
 Bundle-Activator: org.jboss.tools.windup.core.WindupCorePlugin
 Bundle-Vendor: %plugin.vendor
