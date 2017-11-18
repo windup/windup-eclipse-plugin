@@ -224,7 +224,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			result = XMLRulesetModelUtil.getRuleId((Node)element);
 		}
 		result = TextProcessor.process(result);
-		return result != null ? result : ""; //$NON-NLS-1$
+		return result;
 	}
 	
 	@SuppressWarnings("incomplete-switch")
@@ -269,7 +269,9 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 	
 	@Override
 	public StyledString getStyledText(Object element) {
-		StyledString style = new StyledString(getText(element));
+		String text = getText(element);
+		text = text != null ? text : "";
+		StyledString style = new StyledString(text);
 		if (element instanceof SystemRulesNode && ((SystemRulesNode)element).getChildren().length == 0) {
 			style.append(" [" + "Start RHAMT to view the system rules" + "]", StyledString.DECORATIONS_STYLER);
 		}

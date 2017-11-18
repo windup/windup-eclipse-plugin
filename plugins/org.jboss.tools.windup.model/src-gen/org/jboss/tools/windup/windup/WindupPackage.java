@@ -1507,13 +1507,22 @@ public interface WindupPackage extends EPackage {
 	int CUSTOM_RULE_PROVIDER__EXTERNAL = 1;
 
 	/**
+	 * The feature id for the '<em><b>Workspace Resource Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CUSTOM_RULE_PROVIDER__WORKSPACE_RESOURCE_LOCATION = 2;
+
+	/**
 	 * The number of structural features of the '<em>Custom Rule Provider</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOM_RULE_PROVIDER_FEATURE_COUNT = 2;
+	int CUSTOM_RULE_PROVIDER_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Custom Rule Provider</em>' class.
@@ -2331,6 +2340,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCustomRuleProvider_External();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.CustomRuleProvider#getWorkspaceResourceLocation <em>Workspace Resource Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Workspace Resource Location</em>'.
+	 * @see org.jboss.tools.windup.windup.CustomRuleProvider#getWorkspaceResourceLocation()
+	 * @see #getCustomRuleProvider()
+	 * @generated
+	 */
+	EAttribute getCustomRuleProvider_WorkspaceResourceLocation();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.MarkerElement <em>Marker Element</em>}'.

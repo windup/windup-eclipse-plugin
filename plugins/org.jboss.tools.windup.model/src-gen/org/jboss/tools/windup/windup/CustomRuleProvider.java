@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#getLocationURI <em>Location URI</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#isExternal <em>External</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#getWorkspaceResourceLocation <em>Workspace Resource Location</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getCustomRuleProvider()
@@ -73,5 +74,31 @@ public interface CustomRuleProvider extends EObject {
 	 * @generated
 	 */
 	void setExternal(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Workspace Resource Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Workspace Resource Location</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Workspace Resource Location</em>' attribute.
+	 * @see #setWorkspaceResourceLocation(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getCustomRuleProvider_WorkspaceResourceLocation()
+	 * @model
+	 * @generated
+	 */
+	String getWorkspaceResourceLocation();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.CustomRuleProvider#getWorkspaceResourceLocation <em>Workspace Resource Location</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Workspace Resource Location</em>' attribute.
+	 * @see #getWorkspaceResourceLocation()
+	 * @generated
+	 */
+	void setWorkspaceResourceLocation(String value);
 
 } // CustomRuleProvider

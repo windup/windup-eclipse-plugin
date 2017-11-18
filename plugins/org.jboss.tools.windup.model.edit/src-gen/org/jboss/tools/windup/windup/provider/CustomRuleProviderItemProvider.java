@@ -62,6 +62,7 @@ public class CustomRuleProviderItemProvider
 
 			addLocationURIPropertyDescriptor(object);
 			addExternalPropertyDescriptor(object);
+			addWorkspaceResourceLocationPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -111,6 +112,28 @@ public class CustomRuleProviderItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Workspace Resource Location feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addWorkspaceResourceLocationPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_CustomRuleProvider_workspaceResourceLocation_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_CustomRuleProvider_workspaceResourceLocation_feature", "_UI_CustomRuleProvider_type"),
+				 WindupPackage.eINSTANCE.getCustomRuleProvider_WorkspaceResourceLocation(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns CustomRuleProvider.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -150,6 +173,7 @@ public class CustomRuleProviderItemProvider
 		switch (notification.getFeatureID(CustomRuleProvider.class)) {
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
 			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
+			case WindupPackage.CUSTOM_RULE_PROVIDER__WORKSPACE_RESOURCE_LOCATION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

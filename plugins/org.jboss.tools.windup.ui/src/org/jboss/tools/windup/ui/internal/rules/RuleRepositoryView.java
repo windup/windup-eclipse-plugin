@@ -64,6 +64,7 @@ import org.jboss.tools.windup.model.domain.WindupDomainListener.RulesetChange;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.explorer.TempProject;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.RulesetFileNode;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
@@ -195,10 +196,24 @@ public class RuleRepositoryView extends ViewPart {
 				public void execute(IProgressMonitor monitor) {
 					for (String rulesetLocation : rulesetLocations) {
 						IFile resource = XMLRulesetModelUtil.getRuleset(rulesetLocation);
-						if (resource == null) {
+						if (resource == null || (resource != null && !resource.exists())) {
 							resource = XMLRulesetModelUtil.createLinkedResource(rulesetLocation);
+							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString(), isLocal);
 						}
-						modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString(), true); //$NON-NLS-1$
+						else if (resource != null && resource.exists()){
+							// Does the resource exist, but not the model
+        						boolean exists = modelService.ruleProviderExists(resource.getLocation().toString());
+        						if (!exists) {
+        							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString(), isLocal);
+        							String msg = "A ruleset with the location " + //$NON-NLS-1$ 
+        									rulesetLocation + 
+        									" has already been linked to " + //$NON-NLS-1$
+        									resource.getLocation().toString() + 
+        									"."; //$NON-NLS-1$
+        							 WindupUIPlugin.getDefault().getLog().log(
+        					                    new Status(IStatus.INFO, WindupUIPlugin.PLUGIN_ID, msg));
+        						}
+						}
 					}
 				}
 			};

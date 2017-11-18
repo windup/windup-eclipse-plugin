@@ -348,6 +348,7 @@ public class ModelService {
 			CustomRuleProvider repo = WindupFactory.eINSTANCE.createCustomRuleProvider();
 			repo.setLocationURI(location);
 			repo.setExternal(isExternal);
+			repo.setWorkspaceResourceLocation(workspaceResourceLocation);
 			model.getCustomRuleRepositories().add(repo);
 			return repo;
 		});
@@ -618,8 +619,18 @@ public class ModelService {
 		for (Iterator<CustomRuleProvider> iter = getModel().getCustomRuleRepositories().iterator(); iter.hasNext();) {
 			CustomRuleProvider provider = iter.next();
 			if (!(new File(provider.getLocationURI()).exists())) {
+				// delete from temp project too (if it's in the temp project)?
 				write(() -> iter.remove());
 			}
 		}
+	}
+	
+	public boolean ruleProviderExists(String workspaceLocation) {
+		for (CustomRuleProvider provider : getModel().getCustomRuleRepositories()) {
+			if (Objects.equal(workspaceLocation, provider.getWorkspaceResourceLocation())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
