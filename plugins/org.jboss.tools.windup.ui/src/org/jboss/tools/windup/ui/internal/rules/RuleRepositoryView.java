@@ -213,6 +213,7 @@ public class RuleRepositoryView extends ViewPart {
         							 WindupUIPlugin.getDefault().getLog().log(
         					                    new Status(IStatus.INFO, WindupUIPlugin.PLUGIN_ID, msg));
         						}
+        						// Should we update the content of the already/previously imported file?
 						}
 					}
 				}
