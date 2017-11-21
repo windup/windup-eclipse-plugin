@@ -1498,22 +1498,13 @@ public interface WindupPackage extends EPackage {
 	int CUSTOM_RULE_PROVIDER__LOCATION_URI = 0;
 
 	/**
-	 * The feature id for the '<em><b>External</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CUSTOM_RULE_PROVIDER__EXTERNAL = 1;
-
-	/**
 	 * The feature id for the '<em><b>Workspace Resource Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOM_RULE_PROVIDER__WORKSPACE_RESOURCE_LOCATION = 2;
+	int CUSTOM_RULE_PROVIDER__WORKSPACE_RESOURCE_LOCATION = 1;
 
 	/**
 	 * The number of structural features of the '<em>Custom Rule Provider</em>' class.
@@ -1522,7 +1513,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOM_RULE_PROVIDER_FEATURE_COUNT = 3;
+	int CUSTOM_RULE_PROVIDER_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Custom Rule Provider</em>' class.
@@ -2329,17 +2320,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCustomRuleProvider_LocationURI();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.CustomRuleProvider#isExternal <em>External</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>External</em>'.
-	 * @see org.jboss.tools.windup.windup.CustomRuleProvider#isExternal()
-	 * @see #getCustomRuleProvider()
-	 * @generated
-	 */
-	EAttribute getCustomRuleProvider_External();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.CustomRuleProvider#getWorkspaceResourceLocation <em>Workspace Resource Location</em>}'.

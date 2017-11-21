@@ -61,7 +61,6 @@ public class CustomRuleProviderItemProvider
 			super.getPropertyDescriptors(object);
 
 			addLocationURIPropertyDescriptor(object);
-			addExternalPropertyDescriptor(object);
 			addWorkspaceResourceLocationPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -85,28 +84,6 @@ public class CustomRuleProviderItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the External feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addExternalPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_CustomRuleProvider_external_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_CustomRuleProvider_external_feature", "_UI_CustomRuleProvider_type"),
-				 WindupPackage.eINSTANCE.getCustomRuleProvider_External(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -172,7 +149,6 @@ public class CustomRuleProviderItemProvider
 
 		switch (notification.getFeatureID(CustomRuleProvider.class)) {
 			case WindupPackage.CUSTOM_RULE_PROVIDER__LOCATION_URI:
-			case WindupPackage.CUSTOM_RULE_PROVIDER__EXTERNAL:
 			case WindupPackage.CUSTOM_RULE_PROVIDER__WORKSPACE_RESOURCE_LOCATION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;

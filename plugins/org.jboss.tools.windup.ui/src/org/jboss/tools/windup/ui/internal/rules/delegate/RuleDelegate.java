@@ -147,7 +147,7 @@ public class RuleDelegate extends ElementUiDelegate {
 			}
 			((Section)client.getParent()).setExpanded(true);
 			
-			createTaskArea(client);
+			//createTaskArea(client); until 4.1.0
 			//createStack(mainDetailsContainer);
 		}
 		

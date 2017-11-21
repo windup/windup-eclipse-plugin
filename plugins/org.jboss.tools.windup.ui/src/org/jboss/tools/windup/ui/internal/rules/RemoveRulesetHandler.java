@@ -58,11 +58,9 @@ public class RemoveRulesetHandler extends Action {
 		});
 		List<IResource> toDelete = Lists.newArrayList();
 		for (CustomRuleProvider provider : providers) {
-			if (provider.isExternal()) {
-				IResource resource = WorkspaceResourceUtils.getResource(provider.getWorkspaceResourceLocation());
-				if (resource != null) {
-					toDelete.add(resource);
-				}
+			IResource resource = WorkspaceResourceUtils.getResource(provider.getWorkspaceResourceLocation());
+			if (resource != null && resource.exists() && resource.isLinked()) {
+				toDelete.add(resource);
 			}
 		}
 		

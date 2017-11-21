@@ -91,7 +91,7 @@ public class XMLRulesetModelUtil {
 		URI uri = URIUtil.toURI(path);
 		
 		IRunnableWithProgress op = monitor -> {
-			CreateFileOperation op1 = new CreateFileOperation(newFileHandle,uri, null, IDEWorkbenchMessages.WizardNewFileCreationPage_title);
+			CreateFileOperation op1 = new CreateFileOperation(newFileHandle, uri, null, IDEWorkbenchMessages.WizardNewFileCreationPage_title);
 			try {
 				op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shell));
 			} catch (final ExecutionException e) {

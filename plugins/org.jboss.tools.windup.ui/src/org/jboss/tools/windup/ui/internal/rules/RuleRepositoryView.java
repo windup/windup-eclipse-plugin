@@ -73,6 +73,7 @@ import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.w3c.dom.Node;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
@@ -184,46 +185,57 @@ public class RuleRepositoryView extends ViewPart {
 		placeholder.getParent().layout(true);
 	}
 	
+	public void addRulesets(String[] rulesetLocations) {
+		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			@Override
+			public void execute(IProgressMonitor monitor) {
+				for (String rulesetLocation : rulesetLocations) {
+					IFile resource = XMLRulesetModelUtil.getRuleset(rulesetLocation);
+					if (resource == null || (resource != null && !resource.exists())) {
+						resource = XMLRulesetModelUtil.createLinkedResource(rulesetLocation);
+						modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString());
+					}
+					else if (resource != null && resource.exists()){
+    						if (resource.isLinked() && Objects.equal(resource.getProject(), TempProject.getTmpProject())) {
+    							String msg = "A ruleset with the location " + //$NON-NLS-1$ 
+    									rulesetLocation + 
+    									" has already been linked to " + //$NON-NLS-1$
+    									resource.getLocation().toString() + 
+    									". Deleting the linked resource and re-creating another."; //$NON-NLS-1$
+    							 WindupUIPlugin.getDefault().getLog().log(
+    					                    new Status(IStatus.INFO, WindupUIPlugin.PLUGIN_ID, msg));
+    							 try {
+    								 resource.delete(true, monitor);
+    								 resource = XMLRulesetModelUtil.createLinkedResource(rulesetLocation);
+    							 }
+    							 catch (Exception e) {
+    								 WindupUIPlugin.log(e);
+    							 }
+						}
+    						boolean exists = modelService.ruleProviderExists(resource.getFullPath().toString());
+    						if (!exists) {
+							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString());
+    						}
+					}
+				}
+			}
+		};
+		try {
+			new ProgressMonitorDialog(getSite().getShell()).run(false, false, operation);
+		}
+		catch (Exception e) {
+			WindupUIPlugin.log(e);
+		}
+	}
+	
 	private class RulesetDropListener extends ViewerDropAdapter {
 
 		protected RulesetDropListener(Viewer viewer) {
 			super(viewer);
 		}	
 		
-		private void addRulesets(String[] rulesetLocations, boolean isLocal) {
-			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-				@Override
-				public void execute(IProgressMonitor monitor) {
-					for (String rulesetLocation : rulesetLocations) {
-						IFile resource = XMLRulesetModelUtil.getRuleset(rulesetLocation);
-						if (resource == null || (resource != null && !resource.exists())) {
-							resource = XMLRulesetModelUtil.createLinkedResource(rulesetLocation);
-							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString(), isLocal);
-						}
-						else if (resource != null && resource.exists()){
-							// Does the resource exist, but not the model
-        						boolean exists = modelService.ruleProviderExists(resource.getLocation().toString());
-        						if (!exists) {
-        							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString(), isLocal);
-        							String msg = "A ruleset with the location " + //$NON-NLS-1$ 
-        									rulesetLocation + 
-        									" has already been linked to " + //$NON-NLS-1$
-        									resource.getLocation().toString() + 
-        									"."; //$NON-NLS-1$
-        							 WindupUIPlugin.getDefault().getLog().log(
-        					                    new Status(IStatus.INFO, WindupUIPlugin.PLUGIN_ID, msg));
-        						}
-        						// Should we update the content of the already/previously imported file?
-						}
-					}
-				}
-			};
-			try {
-				new ProgressMonitorDialog(getSite().getShell()).run(false, false, operation);
-			}
-			catch (Exception e) {
-				WindupUIPlugin.log(e);
-			}
+		private void addRulesets(String[] rulesetLocations) {
+			RuleRepositoryView.this.addRulesets(rulesetLocations);
 		}
 		
 		@Override
@@ -243,7 +255,7 @@ public class RuleRepositoryView extends ViewPart {
             			}
             		}
             		if (!locations.isEmpty()) {
-            			addRulesets(locations.stream().toArray(String[]::new), true);
+            			addRulesets(locations.stream().toArray(String[]::new));
             		}
             	}
             	else if (FileTransfer.getInstance().isSupportedType(transferType)) {
@@ -260,7 +272,7 @@ public class RuleRepositoryView extends ViewPart {
             				}
             			}
             			if (!locations.isEmpty()) {
-	            			addRulesets(locations.stream().toArray(String[]::new), false);
+	            			addRulesets(locations.stream().toArray(String[]::new));
 	            			return true;
             			}
             		}

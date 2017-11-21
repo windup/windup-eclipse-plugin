@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,17 +58,6 @@ public class RefreshService implements IResourceChangeListener {
 		WindupModel model = modelService.getModel();
 		for (Iterator<CustomRuleProvider> iter = model.getCustomRuleRepositories().iterator(); iter.hasNext();) {
 			CustomRuleProvider provider = iter.next();
-			
-			if (provider.isExternal()) {
-				if (!new File(provider.getLocationURI()).exists()) {
-					providersToDelete.add(provider);
-					continue;
-				}
-				else {
-					continue;
-				}
-			}
-			
 			IFile file = XMLRulesetModelUtil.getRuleset(provider);
 			if (file == null || !file.exists()) {
 				providersToDelete.add(provider);

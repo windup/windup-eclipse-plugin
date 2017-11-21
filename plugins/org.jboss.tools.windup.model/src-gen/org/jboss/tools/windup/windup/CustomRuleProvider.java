@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#getLocationURI <em>Location URI</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#isExternal <em>External</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.CustomRuleProvider#getWorkspaceResourceLocation <em>Workspace Resource Location</em>}</li>
  * </ul>
  *
@@ -48,32 +47,6 @@ public interface CustomRuleProvider extends EObject {
 	 * @generated
 	 */
 	void setLocationURI(String value);
-
-	/**
-	 * Returns the value of the '<em><b>External</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>External</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>External</em>' attribute.
-	 * @see #setExternal(boolean)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getCustomRuleProvider_External()
-	 * @model
-	 * @generated
-	 */
-	boolean isExternal();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.CustomRuleProvider#isExternal <em>External</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>External</em>' attribute.
-	 * @see #isExternal()
-	 * @generated
-	 */
-	void setExternal(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Workspace Resource Location</b></em>' attribute.

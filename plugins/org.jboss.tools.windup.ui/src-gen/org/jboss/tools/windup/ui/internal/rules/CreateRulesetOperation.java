@@ -32,6 +32,6 @@ public class CreateRulesetOperation extends WorkspaceModifyOperation {
   
   @Override
   protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-    this.modelService.addRulesetRepository(this.locationURI, this.locationURI, false);
+    this.modelService.addRulesetRepository(this.locationURI, this.locationURI);
   }
 }

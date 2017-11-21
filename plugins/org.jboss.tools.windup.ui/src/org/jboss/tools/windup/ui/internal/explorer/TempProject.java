@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 
@@ -107,7 +106,7 @@ public class TempProject {
 	public static IFile getFile(String location) {
 		IProject project = TempProject.getTmpProject();
 		IPath path = project.getFullPath().append(new File(location).getAbsolutePath());
-		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFile(path);
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 	}
 	
 	private static IFolder getTmpFolder(IProject project) throws CoreException {

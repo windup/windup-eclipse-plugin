@@ -14,7 +14,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,14 +34,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 
+@SuppressWarnings("restriction")
 public class ImportExistingRulesetWizard extends Wizard implements IImportWizard{
 
-	@Inject private ModelService modelService;
+	@Inject protected EPartService partService;
 	
 	private ImportXMLRulesetWizardPage xmlPage;
 	
@@ -63,11 +63,9 @@ public class ImportExistingRulesetWizard extends Wizard implements IImportWizard
 	@Override
 	public boolean performFinish() {
 		String location = xmlPage.getRulesetFileLocation();
-		IFile ruleset = WorkspaceResourceUtils.getFile(location);
-		if (ruleset == null) {
-			ruleset = XMLRulesetModelUtil.createLinkedResource(location);
-		}
-		modelService.addRulesetRepository(location, ruleset.getFullPath().toString(), true);
+		RuleRepositoryView view = (RuleRepositoryView)PlatformUI.getWorkbench().
+				getActiveWorkbenchWindow().getActivePage().findView(RuleRepositoryView.VIEW_ID);
+		view.addRulesets(new String[] {location});
 		return true;
 	}
 

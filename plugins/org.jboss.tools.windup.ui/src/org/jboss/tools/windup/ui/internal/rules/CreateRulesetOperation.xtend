@@ -30,6 +30,6 @@ class CreateRulesetOperation extends WorkspaceModifyOperation {
     
     override protected execute(IProgressMonitor monitor) throws CoreException, 
             InvocationTargetException, InterruptedException {
-        modelService.addRulesetRepository(locationURI, locationURI, false)
+        modelService.addRulesetRepository(locationURI, locationURI)
     }
 }

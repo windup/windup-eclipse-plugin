@@ -902,17 +902,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getCustomRuleProvider_External() {
-		return (EAttribute)customRuleProviderEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getCustomRuleProvider_WorkspaceResourceLocation() {
-		return (EAttribute)customRuleProviderEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)customRuleProviderEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1058,7 +1049,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		customRuleProviderEClass = createEClass(CUSTOM_RULE_PROVIDER);
 		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__LOCATION_URI);
-		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__EXTERNAL);
 		createEAttribute(customRuleProviderEClass, CUSTOM_RULE_PROVIDER__WORKSPACE_RESOURCE_LOCATION);
 
 		markerElementEClass = createEClass(MARKER_ELEMENT);
@@ -1204,7 +1194,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 
 		initEClass(customRuleProviderEClass, CustomRuleProvider.class, "CustomRuleProvider", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCustomRuleProvider_LocationURI(), ecorePackage.getEString(), "locationURI", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCustomRuleProvider_External(), ecorePackage.getEBoolean(), "external", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCustomRuleProvider_WorkspaceResourceLocation(), ecorePackage.getEString(), "workspaceResourceLocation", null, 0, 1, CustomRuleProvider.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(markerElementEClass, MarkerElement.class, "MarkerElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
