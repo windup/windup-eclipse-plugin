@@ -15,6 +15,20 @@ Building the project generates a zip archive containing an Eclipse update site u
 
 Also, a [nightly build](http://download.jboss.org/jbosstools/oxygen/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
 
+### Offline
+
+#### Bring your own Eclipse
+
+* Download a distribution of the [Eclipse Oxygen.1a (4.7.1a)](https://www.eclipse.org/downloads/).
+* Download the latest release of the Red Hat Developer Studio [update-site 11.1.0.GA](http://tools.jboss.org/downloads/devstudio/oxygen/11.1.0.GA.html#zips).
+* Download the latest release of the RHAMT plugins [update-site 4.0.0-Beta5](http://download.jboss.org/jbosstools/oxygen/development/updates/rhamt/4.0.0.Beta5/).
+
+#### Red Hat Developer Studio
+
+* Download and install Red Hat Developer Studio [installer 11.1.0.GA](http://tools.jboss.org/downloads/devstudio/oxygen/11.1.0.GA.html#direct_download)
+* Download the latest release of the RHAMT plugins [update-site 4.0.0-Beta5](http://download.jboss.org/jbosstools/oxygen/development/updates/rhamt/4.0.0.Beta5/).
+
+
 ## Get the code
 
 The easiest way to get started with the code is to [create your own fork](http://help.github.com/forking/), 
