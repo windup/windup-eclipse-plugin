@@ -32,11 +32,14 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -48,6 +51,9 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.m2e.core.internal.MavenPluginActivator;
+import org.eclipse.m2e.core.internal.project.registry.ProjectRegistryManager;
+import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.jboss.tools.common.xml.IMemento;
 import org.jboss.tools.common.xml.XMLMemento;
 import org.jboss.tools.windup.model.Activator;
@@ -448,12 +454,17 @@ public class ModelService {
         configuration.setTimestamp(createTimestamp());
         configuration.setReportDirectory(reportDirectory.toString());
         for (Hint wHint : results.getHints()) {
+        	
 	        	String path = wHint.getFile().getAbsolutePath();
 	        	IFile resource = WorkspaceResourceUtils.getResource(path);
-				if (resource == null) {
-					Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
-					continue;
-				}
+			if (resource == null) {
+				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
+				continue;
+			}
+			
+			if (isMavenBuildFile(resource)) {
+				continue;
+			}
 				
 	        	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
 	        	result.getIssues().add(hint);
@@ -559,6 +570,22 @@ public class ModelService {
         
         //
         linkReports(results, result.getIssues());
+	}
+	
+	private boolean isMavenBuildFile(IResource resource) {
+		ProjectRegistryManager mavenProjectManager = MavenPluginActivator.getDefault().getMavenProjectManagerImpl();
+		IMavenProjectFacade mavenFacade = mavenProjectManager.create(resource.getProject(), new NullProgressMonitor());
+		if (mavenFacade != null) {
+			IPath outputLocation = mavenFacade.getOutputLocation();
+			if (outputLocation != null) {
+				IResource container = ResourcesPlugin.getWorkspace().getRoot().findMember(outputLocation);
+				if (container != null && container instanceof IContainer) {
+					IResource found = ((IContainer)container).findMember(resource.getFullPath());
+					return found != null && found.exists();
+				}
+			}
+		}
+		return false;
 	}
 	
 	private void linkReports(ExecutionResults results, List<Issue> issues) {
