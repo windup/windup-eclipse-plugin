@@ -11,10 +11,11 @@ import static org.jboss.tools.windup.model.domain.WindupMarker.TITLE;
 import static org.jboss.tools.windup.model.domain.WindupMarker.URI_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_CLASSIFICATION_MARKER_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_HINT_MARKER_ID;
-import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_QUICKFIX_ID;
 import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_MARKER;
+import static org.jboss.tools.windup.model.domain.WindupMarker.WINDUP_QUICKFIX_ID;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -140,7 +141,7 @@ public class MarkerService {
 		}
 	}
 	
-	private void notifyDeleted(IMarker marker, EObject element) {
+	private void notifyDeleted(EObject element) {
 		if (element instanceof Issue) {
 			IssueExplorer explorer = getExplorer();
 			if (explorer != null) {
@@ -149,7 +150,37 @@ public class MarkerService {
 		}
 	}
 	
+	public boolean cleanZombieMarker(Issue issue) {
+		
+		IMarker marker = (IMarker)issue.getMarker();
+		
+		if (marker == null || !marker.exists()) {
+			modelService.deleteIssue(issue);
+			elementToMarkerMap.remove(issue);
+			if (marker != null && marker.getResource() != null) {
+				resourceElementsMap.remove(marker.getResource(), issue);
+			}
+			notifyDeleted(issue);
+			return true;
+		}
+		
+		else {
+			IResource resource = marker.getResource();
+			if (resource == null || !resource.exists()) {
+				modelService.deleteIssue(issue);
+				elementToMarkerMap.remove(issue);
+				resourceElementsMap.remove(marker.getResource(), issue);
+				notifyDeleted(issue);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void setFixed(Issue issue) {
+		if (cleanZombieMarker(issue)) {
+			return;
+		}
 		issue.setFixed(true);
 		IMarker oldMarker = (IMarker)issue.getMarker();
 		IMarker fixedMarker = createMarker(issue, oldMarker.getResource());
@@ -164,6 +195,9 @@ public class MarkerService {
 	}
 	
 	public void setStale(Issue issue) {
+		if (cleanZombieMarker(issue)) {
+			return;
+		}
 		issue.setStale(true);
 		IMarker oldMarker = (IMarker)issue.getMarker();
 		IMarker fixedMarker = createMarker(issue, oldMarker.getResource());
@@ -204,7 +238,7 @@ public class MarkerService {
 		elementToMarkerMap.remove(element);
 		resourceElementsMap.remove(marker.getResource(), element);
 		deleteMarker(marker);
-		notifyDeleted(marker, element);
+		notifyDeleted(element);
 	}
 	
 	public void clear() {
@@ -266,10 +300,12 @@ public class MarkerService {
 		int count = 0;
 		for (Input input : configuration.getInputs()) {
 			if (input.getWindupResult() != null) {
-				for (Issue issue : input.getWindupResult().getIssues()) {
+				for (Iterator<Issue> iter = input.getWindupResult().getIssues().iterator(); iter.hasNext();) {
+					Issue issue = iter.next();
 					IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
-					if (resource == null) {
+					if (resource == null || !resource.exists()) {
 						WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
+						iter.remove();
 						continue;
 					}
 					createWindupMarker(issue, configuration, resource);
@@ -283,7 +319,7 @@ public class MarkerService {
 	 * Helper method that actually creates the marker on the specified resource for the specified Windup migration issue.
 	 */
 	private void createWindupMarker(Issue issue, ConfigurationElement configuration, IResource resource) throws CoreException {
-	
+		
 		IMarker marker = createMarker(issue, resource);
 		issue.setMarker(marker);
 		
@@ -332,7 +368,7 @@ public class MarkerService {
 		}
 	}
 	
-	public IMarker createMarker(MarkerElement element, IResource resource) {
+	private IMarker createMarker(MarkerElement element, IResource resource) {
 		String type = "";
 		if (element instanceof Hint) {
 			type = WINDUP_HINT_MARKER_ID;

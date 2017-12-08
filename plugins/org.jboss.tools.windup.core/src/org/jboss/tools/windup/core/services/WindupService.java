@@ -107,17 +107,17 @@ public class WindupService
     
     public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
     	
-    	progress.subTask(Messages.startingWindup);
-    	modelService.synch(configuration);
-    	IPath basePath = modelService.getGeneratedReportsBaseLocation(configuration);
-    	File baseOutputDir = basePath.toFile();
-
-    	progress.subTask(Messages.removing_old_report);
-        FileUtils.delete(baseOutputDir, true);
-        IStatus status = null;
+	    	progress.subTask(Messages.startingWindup);
+	    	modelService.synch(configuration);
+	    	IPath basePath = modelService.getGeneratedReportsBaseLocation(configuration);
+	    	File baseOutputDir = basePath.toFile();
+	
+	    	progress.subTask(Messages.removing_old_report);
+	    FileUtils.delete(baseOutputDir, true);
+	    IStatus status = null;
 
         try {
-        	for (Input input : configuration.getInputs()) {
+	        	for (Input input : configuration.getInputs()) {
                 ExecutionBuilder execBuilder = windupClient.getExecutionBuilder();
                 execBuilder.clear();
             	
@@ -173,18 +173,22 @@ public class WindupService
                 }
                 
                 WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
+                WindupCorePlugin.logInfo("Using input: " + projectPath.toString()); //$NON-NLS-1$
+                WindupCorePlugin.logInfo("Using output: " + outputPath.toFile().toPath().toString()); //$NON-NLS-1$
                 ExecutionResults results = execBuilder.execute();
                 WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
                 modelService.populateConfiguration(configuration, input, outputPath, results);
-        	}
-        	modelService.save();
-            status = Status.OK_STATUS;
+	        	}
+	        	
+	        	modelService.save();
+	        status = Status.OK_STATUS;
         }
         catch (Exception e)
         {
-        	WindupCorePlugin.log(e);
+        		WindupCorePlugin.log(e);
             throw new RuntimeException(e);
         }
+        
         finally
         {
             // mark the monitor as complete

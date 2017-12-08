@@ -599,10 +599,10 @@ public class IssueExplorer extends CommonNavigator {
 			if (ss.size() == 1) {
 				Object node = ss.getFirstElement();
 				if (node instanceof MarkerNode) {
-					MarkerNode issue = (MarkerNode)node;
+					MarkerNode markerNode = (MarkerNode)node;
                     try {
 						IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								issue.getMarker(), true);
+								markerNode.getMarker(), true);
 					} catch (PartInitException e) {
 						WindupUIPlugin.log(e);
 					}

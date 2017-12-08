@@ -88,6 +88,7 @@ import com.google.common.base.Objects;
  * TODO: Initially I wanted to design our domain so that it's transactional; however, 
  * I haven't enforced wrapping writes in a transaction, and we may want to.
  */
+@SuppressWarnings("restriction")
 @Singleton
 @Creatable
 public class ModelService {
@@ -448,21 +449,28 @@ public class ModelService {
 	 * Populates the configuration element with the execution results.
 	 */
 	public void populateConfiguration(ConfigurationElement configuration, Input input, IPath reportDirectory, ExecutionResults results) {
-    	WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
+    		WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
         configuration.setReportDirectory(reportDirectory.toString());
-        for (Hint wHint : results.getHints()) {
+        
+        for (Iterator<Hint> iter = results.getHints().iterator(); iter.hasNext();) {
+        		
+        		Hint wHint = iter.next();
         	
 	        	String path = wHint.getFile().getAbsolutePath();
 	        	IFile resource = WorkspaceResourceUtils.getResource(path);
-			if (resource == null) {
-				Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
+	        	
+			if (resource == null || !resource.exists()) {
+				Activator.logErrorMessage("ModelService::hint No workspace resource associated with file: " + path); //$NON-NLS-1$
+				Activator.logErrorMessage("Rule ID: " + wHint.getRuleID() + " Hint: " + wHint.getHint()); //$NON-NLS-1$ //$NON-NLS-2$
+				iter.remove();
 				continue;
 			}
 			
 			if (isMavenBuildFile(resource)) {
+				iter.remove();
 				continue;
 			}
 				
@@ -516,10 +524,16 @@ public class ModelService {
         for (Classification wClassification : results.getClassifications()) {
 	        	String path = wClassification.getFile().getAbsolutePath();
 	        	IFile resource = WorkspaceResourceUtils.getResource(path);
-				if (resource == null) {
-					Activator.logErrorMessage("ModelService:: No workspace resource associated with file: " + path); //$NON-NLS-1$
-					continue;
-				}
+	        	
+			if (resource == null || !resource.exists()) {
+				Activator.logErrorMessage("ModelService::classification No workspace resource associated with file: " + path); //$NON-NLS-1$
+				Activator.logErrorMessage("Rule ID: " + wClassification.getRuleID() + " Classification: " + wClassification.getClassification()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				continue;
+			}
+			
+			if (isMavenBuildFile(resource)) {
+				continue;
+			}
 				
 	        	org.jboss.tools.windup.windup.Classification classification = WindupFactory.eINSTANCE.createClassification();
 	        	result.getIssues().add(classification);
@@ -553,7 +567,6 @@ public class ModelService {
 	        	classification.setTitle(wClassification.getClassification());
 	        	classification.setMessageOrDescription(wClassification.getDescription());
 
-	        	
 	        //classification.setHint(wClassification.getHint());
 	        //classification.setLineNumber(wClassification.getLineNumber());
 	        //classification.setColumn(wClassification.getColumn());
@@ -591,8 +604,8 @@ public class ModelService {
 	private void linkReports(ExecutionResults results, List<Issue> issues) {
 		for (Issue issue : issues) {
 			IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
-			if (resource == null) {
-				Activator.logErrorMessage("ModelService:: No resource associated with issue file: " + issue.getFileAbsolutePath());
+			if (resource == null || !resource.exists()) {
+				Activator.logErrorMessage("ModelService::linkReports No resource associated with issue file: " + issue.getFileAbsolutePath());
 				continue;
 			}
 			File file = resource.getRawLocation().toFile();
