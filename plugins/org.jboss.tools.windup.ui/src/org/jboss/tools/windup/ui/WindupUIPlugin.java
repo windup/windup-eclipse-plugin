@@ -200,6 +200,10 @@ public class WindupUIPlugin extends AbstractUIPlugin
 	public static void log(IStatus status) {
 		WindupCorePlugin.getDefault().getLog().log(status);
 	}
+	
+	public static void logInfo(final String message) {
+		log(new Status(IStatus.INFO, PLUGIN_ID, IStatus.INFO, message, null));
+	}
 
 	public static void logErrorMessage(final String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));

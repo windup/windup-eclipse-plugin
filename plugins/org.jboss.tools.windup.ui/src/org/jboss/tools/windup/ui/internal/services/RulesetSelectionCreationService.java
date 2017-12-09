@@ -66,14 +66,18 @@ public class RulesetSelectionCreationService {
 	public List<Element> createRuleFromJavaEditorSelection(Document document, ASTNode[] nodes) {
 		try {
 			List<Element> javaClassElements = Arrays.stream(nodes).filter(node -> {
+				WindupUIPlugin.logInfo("Attempting to match AST node to Annotation."); //$NON-NLS-1$
 				if (node instanceof Annotation || (node instanceof Name && node.getParent() instanceof Annotation)) {
+					WindupUIPlugin.logInfo("Annotation found."); //$NON-NLS-1$
 					return true;
 				}
+				WindupUIPlugin.logInfo("Unable to match AST node to Annotation."); //$NON-NLS-1$
 				return false;
 			}).map(node -> {
 				if (node instanceof Name && node.getParent() instanceof Annotation) {
 					node = node.getParent();
 				}
+				WindupUIPlugin.logInfo("Attempting to create rule for annotation."); //$NON-NLS-1$
 				return createJavaClassElementForAnnotations(document, Lists.newArrayList((Annotation)node));
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 			
@@ -88,11 +92,13 @@ public class RulesetSelectionCreationService {
 				// <javaclass references="..." /> IMPORT
 				if (node instanceof ImportDeclaration) {
 					String importName = ((ImportDeclaration)node).getName().getFullyQualifiedName();
+					WindupUIPlugin.logInfo("Attempting to create rule for import."); //$NON-NLS-1$
 					return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName));
 				}
 				// <javaclass references="..." /> IMPORT
 				if (node instanceof QualifiedName && node.getParent() instanceof ImportDeclaration) {
 					String importName = ((ImportDeclaration)node.getParent()).getName().getFullyQualifiedName();
+					WindupUIPlugin.logInfo("Attempting to create rule for import.."); //$NON-NLS-1$
 					return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName));
 				}
 				// <javaclass references="..." /> IMPLEMENTS_TYPE
@@ -103,8 +109,13 @@ public class RulesetSelectionCreationService {
 					if (binding != null) {
 						referenceName = binding.getQualifiedName();
 					}
+					WindupUIPlugin.logInfo("Attempting to create rule for implements type."); //$NON-NLS-1$
 					return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPLEMENTS_TYPE.toString(), referenceName));
 				}
+				WindupUIPlugin.logInfo("The selected AST node is not supported by the current rule generation facilities."); //$NON-NLS-1$
+			}
+			else {
+				WindupUIPlugin.logInfo("Unable to create rule from selection. Only one AST node is supported."); //$NON-NLS-1$
 			}
 		}
 		catch (Exception e) {

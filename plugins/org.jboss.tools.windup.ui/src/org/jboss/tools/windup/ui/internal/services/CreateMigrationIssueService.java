@@ -72,7 +72,7 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("restriction")
 @Creatable
 public class CreateMigrationIssueService implements MouseListener, IMenuListener {
-
+	
 	@Inject private EPartService partService;
 	@Inject private RulesetSelectionCreationService creationService;
 	@Inject private RulesetDOMService domService;
@@ -196,47 +196,47 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 				if (wizardDialog.open() == Window.OK) {
 					IFile ruleset = wizard.getRuleset();
 					if (ruleset != null && ruleset.exists()) {
-							Document document = getDocument(ruleset);
-							if (document != null) {
-								IStructuredModel model = ((IDOMNode) document).getModel();
-								IStructuredDocument doc = model.getStructuredDocument();
-								boolean dirty = model.isDirty();
-								if (doc == null) {
-									FileEditorInput input = new FileEditorInput(ruleset);
-									TextFileDocumentProvider provider = new TextFileDocumentProvider();
+						Document document = getDocument(ruleset);
+						if (document != null) {
+							IStructuredModel model = ((IDOMNode) document).getModel();
+							IStructuredDocument doc = model.getStructuredDocument();
+							boolean dirty = model.isDirty();
+							if (doc == null) {
+								FileEditorInput input = new FileEditorInput(ruleset);
+								TextFileDocumentProvider provider = new TextFileDocumentProvider();
+								
+								try {
+									provider.connect(input);
 									
-									try {
-										provider.connect(input);
-										
-										IDocument iDoc = provider.getDocument(input);
-										model = StructuredModelManager.getModelManager().getModelForEdit((IStructuredDocument) iDoc);
-										EditorModelUtil.addFactoriesTo(model);
-										
-										document = ((IDOMModel) model).getDocument();
-										List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, nodes);
-										openEditor(wizard.openEditor(), document, elements, ruleset);
-										provider.disconnect(input);
-									}
-									catch (Exception e) {
-										WindupUIPlugin.log(e);
-									}
-								}
-								else {
+									IDocument iDoc = provider.getDocument(input);
+									model = StructuredModelManager.getModelManager().getModelForEdit((IStructuredDocument) iDoc);
+									EditorModelUtil.addFactoriesTo(model);
+									
+									document = ((IDOMModel) model).getDocument();
 									List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, nodes);
 									openEditor(wizard.openEditor(), document, elements, ruleset);
+									provider.disconnect(input);
 								}
-								if (!dirty) {
-									try {
-										model.save();
-									}
-									catch (Exception e) {
-										WindupUIPlugin.log(e);
-									}
+								catch (Exception e) {
+									WindupUIPlugin.log(e);
 								}
 							}
 							else {
-								WindupUIPlugin.logErrorMessage("Unable to obtain Document for rule generation." ); //$NON-NLS-1$
+								List<Element> elements = creationService.createRuleFromJavaEditorSelection(document, nodes);
+								openEditor(wizard.openEditor(), document, elements, ruleset);
 							}
+							if (!dirty) {
+								try {
+									model.save();
+								}
+								catch (Exception e) {
+									WindupUIPlugin.log(e);
+								}
+							}
+						}
+						else {
+							WindupUIPlugin.logErrorMessage("Unable to obtain Document for rule generation." ); //$NON-NLS-1$
+						}
 					}
 				}
 			});
