@@ -138,6 +138,9 @@ public class WindupService
                 if (path.getSource() != null) {
                 		execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
                 }
+                if (path.getTarget() != null) {
+                		execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
+                }
                 if (!configuration.getPackages().isEmpty()) {
                 		execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
                 }

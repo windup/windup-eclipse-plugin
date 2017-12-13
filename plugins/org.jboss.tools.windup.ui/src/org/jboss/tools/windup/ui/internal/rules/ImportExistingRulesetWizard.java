@@ -35,10 +35,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.jboss.tools.windup.ui.internal.Messages;
 
-@SuppressWarnings("restriction")
 public class ImportExistingRulesetWizard extends Wizard implements IImportWizard{
 
 	@Inject protected EPartService partService;
