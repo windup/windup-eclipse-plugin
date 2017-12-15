@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 
 import com.google.common.collect.Maps;
 
@@ -97,7 +98,16 @@ public class BaseTabStack {
 	}
 	
 	protected <T> T create(Class<T> clazz, IEclipseContext context) {
-		return ContextInjectionFactory.make(clazz, context);
+		try {
+			T result = ContextInjectionFactory.make(clazz, context);
+			return result;
+		}
+		catch (Exception e) {
+			WindupUIPlugin.logError("BaseTabStack::106 :: Error occurred while trying to create.", e);
+			WindupUIPlugin.logErrorMessage("Class: " + clazz.getName());
+			WindupUIPlugin.logErrorMessage("Message: " + e.getMessage());
+		}
+		return null;
 	}
 	
 	public Control getControl() {
