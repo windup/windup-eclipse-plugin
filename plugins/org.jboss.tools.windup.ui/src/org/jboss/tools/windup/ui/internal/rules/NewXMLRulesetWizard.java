@@ -68,10 +68,10 @@ public class NewXMLRulesetWizard extends Wizard implements INewWizard, IExecutab
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IResource container = ResourcesPlugin.getWorkspace().getRoot().findMember(startPage.getContainerFullPath());
 			if (container instanceof IContainer) {
-		    	String rulesetId = startPage.getRulesetId();
-		    	String fileName = startPage.getFileName();
-		    	boolean generateQuickstart = startPage.generateQuickStartTemplate();
-		    	generateOperation.init(getShell().getDisplay(), (IContainer)container, fileName, rulesetId, generateQuickstart);
+			    	String rulesetId = startPage.getRulesetId();
+			    	String fileName = startPage.getFileName();
+			    	boolean generateQuickstart = startPage.generateQuickStartTemplate();
+			    	generateOperation.init(getShell().getDisplay(), (IContainer)container, fileName, rulesetId, generateQuickstart);
 				getContainer().run(false, true, generateOperation);
 				this.newRulesetLocation = ((IContainer)container).getFile(new Path(fileName)).getLocation().toString();
 				createRulesetOperation.init(newRulesetLocation);

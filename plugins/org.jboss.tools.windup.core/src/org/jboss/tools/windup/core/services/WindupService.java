@@ -58,6 +58,7 @@ import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.ReportLink;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -139,7 +140,10 @@ public class WindupService
                 		execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
                 }
                 if (path.getTarget() != null) {
-                		execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
+                		String versionRange = path.getTarget().getVersionRange();
+                		String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
+                		String value = path.getTarget().getId() + versionRangeSuffix;
+                		execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(value));
                 }
                 if (!configuration.getPackages().isEmpty()) {
                 		execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
