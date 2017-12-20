@@ -27,10 +27,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.launch.OptionUiFacades.OptionUiFacade;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.windup.bootstrap.help.OptionDescription;
 
 public class OptionsDialog extends Dialog {
 

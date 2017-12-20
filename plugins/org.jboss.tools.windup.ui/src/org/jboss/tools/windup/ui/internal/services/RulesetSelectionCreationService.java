@@ -32,10 +32,10 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.jboss.tools.common.xml.XMLUtilities;
+import org.jboss.tools.windup.runtime.options.TypeReferenceLocation;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.rules.delegate.AnnotationUtil.EvaluationContext;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

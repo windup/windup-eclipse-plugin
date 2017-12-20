@@ -17,10 +17,10 @@ import java.util.Map;
 import org.eclipse.swt.widgets.Composite;
 import org.jboss.tools.windup.model.OptionFacades;
 import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.ui.internal.launch.OptionUiFacades.OptionUiFacade;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Pair;
-import org.jboss.windup.bootstrap.help.OptionDescription;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

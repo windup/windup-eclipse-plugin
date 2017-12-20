@@ -28,8 +28,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.jboss.tools.common.util.PlatformUtil;
 import org.jboss.tools.common.xml.IMemento;
 import org.jboss.tools.common.xml.XMLMemento;
-import org.jboss.windup.bootstrap.help.Help;
-import org.jboss.windup.bootstrap.help.OptionDescription;
+import org.jboss.tools.windup.runtime.options.Help;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.Lists;
