@@ -27,6 +27,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -41,7 +42,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -56,11 +56,12 @@ import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.osgi.service.prefs.BackingStoreException;
 
+@SuppressWarnings("restriction")
 public class WindupPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
-	private FileFieldEditor homeEditor;
+	private DirectoryFieldEditor homeEditor;
 	private IntegerFieldEditor portEditor;
 	
 	private IntegerFieldEditor startTimeoutDurationEditor;
@@ -83,11 +84,9 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	
 	@Override
 	protected void createFieldEditors() {
-		homeEditor = new FileFieldEditor(
+		homeEditor = new DirectoryFieldEditor(
 				IPreferenceConstants.WINDUP_HOME, 
 				Messages.WindupPreferenceHome, 
-				true, 
-				StringFieldEditor.VALIDATE_ON_KEY_STROKE, 
 				getFieldEditorParent());
 		homeEditor.setEmptyStringAllowed(false);
 		addField(homeEditor);

@@ -14,7 +14,6 @@ package org.jboss.tools.windup.runtime;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logError;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.rmi.ConnectException;
@@ -66,17 +65,6 @@ public class WindupRmiClient {
 	private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
-	public Path getWindupHome() {
-		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "");
-		if (path.isEmpty()) {
-			path = defaultPreferences.get(IPreferenceConstants.WINDUP_HOME, "");
-		}
-		if (path.isEmpty()) {
-			path = WindupRuntimePlugin.getDefaultWindupHome();
-		}
-		return new File(path).toPath();
-	}
-	
 	public int getRmiPort() {
 		int port = preferences.getInt(IPreferenceConstants.RMI_PORT, -1);
 		if (port == -1) {
@@ -117,7 +105,14 @@ public class WindupRmiClient {
 		logInfo("Begin start RHAMT."); //$NON-NLS-1$
 		monitor.worked(1);
 		
-		CommandLine cmdLine = CommandLine.parse(getWindupHome().toString());
+		String windupExecutable = WindupRuntimePlugin.computeWindupExecutable();
+		
+		if (windupExecutable == null) {
+			// TODO: Open error info
+			return;
+		}
+		
+		CommandLine cmdLine = CommandLine.parse(windupExecutable);
 		Map<String, String> env = Maps.newHashMap();
 		if (!jreHome.trim().isEmpty()) {
 			env.put(JAVA_HOME, jreHome);

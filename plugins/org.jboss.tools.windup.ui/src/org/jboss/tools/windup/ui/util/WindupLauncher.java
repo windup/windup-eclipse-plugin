@@ -124,7 +124,7 @@ public class WindupLauncher {
 	public void start(WinupServerCallback callback, String jreHome) {
 		Display.getDefault().syncExec(() -> {
 			logger.info("Start Windup Server."); //$NON-NLS-1$
-			String windupHome = windupClient.getWindupHome().toString();
+			String windupHome = WindupRuntimePlugin.computeWindupHome().toString();
 			boolean executable = new File(windupHome).setExecutable(true);
 			if (!executable) {
 				logger.info("Windup not executable."); //$NON-NLS-1$

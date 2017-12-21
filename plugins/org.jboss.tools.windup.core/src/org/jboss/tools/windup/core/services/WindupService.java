@@ -126,7 +126,7 @@ public class WindupService
                 progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, input.getName()), IProgressMonitor.UNKNOWN);
                 
                 IPath outputPath = modelService.getGeneratedReportBaseLocation(configuration, input);
-                execBuilder.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
+                execBuilder.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
                 execBuilder.setInput(projectPath.toString());
                 execBuilder.setOutput(outputPath.toFile().toPath().toString());
                 execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));

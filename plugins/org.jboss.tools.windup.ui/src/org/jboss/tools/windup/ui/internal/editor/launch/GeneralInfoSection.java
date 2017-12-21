@@ -66,7 +66,7 @@ public class GeneralInfoSection extends AbstractSection {
 				EMFProperties.value(WindupPackage.eINSTANCE.getNamedElement_Name()).
 					observe(configuration));
 		Hyperlink windupHomeLink = toolkit.createHyperlink(parent, windupHomeLocation, SWT.NONE);
-		String home = WindupRuntimePlugin.findWindupHome().toPath().toString();
+		String home = WindupRuntimePlugin.computeWindupHome().toString();
 		Text windupLocationText = toolkit.createText(parent, home);
 		windupLocationText.setBackground(Display.getDefault().getActiveShell().getBackground());
 		windupLocationText.setEditable(false);

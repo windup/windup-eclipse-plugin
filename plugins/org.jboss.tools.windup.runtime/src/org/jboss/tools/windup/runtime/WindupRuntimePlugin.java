@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +23,8 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -63,18 +66,31 @@ public class WindupRuntimePlugin extends Plugin
      */
     private static WindupRuntimePlugin plugin;
     
-    public static String getDefaultWindupHome() {
-		String location = WindupRuntimePlugin.findWindupHome().toPath().resolve("bin").resolve("rhamt-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    public static Path computeWindupHome() {
+    		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
+    		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
+		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "");
+		if (path.isEmpty()) {
+			path = defaultPreferences.get(IPreferenceConstants.WINDUP_HOME, "");
+		}
+		if (path.isEmpty()) {
+			path = WindupRuntimePlugin.getDefaultWindupHome().toPath().toString();
+		}
+		return new File(path).toPath();
+	}
+    
+    public static String computeWindupExecutable() {
+    		String location = WindupRuntimePlugin.computeWindupHome().resolve("bin").resolve("rhamt-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		if (PlatformUtil.isWindows()) {
 			location = location + ".bat"; //$NON-NLS-1$
 		}
 		return location;
-	}
+    }
 
     /**
      * Returns the root directory of the embedded Windup installation.
      */
-    public static File findWindupHome()
+    private static File getDefaultWindupHome()
     {
         try
         {
@@ -103,8 +119,9 @@ public class WindupRuntimePlugin extends Plugin
      */
 	public static Help findWindupHelpCache() {
 		Help result = new Help();
-    	File windupHome = WindupRuntimePlugin.findWindupHome();
-    	File cacheFile = new File(windupHome, HELP_CACHE);
+	    	File windupHome = WindupRuntimePlugin.computeWindupHome().toFile();
+	    	WindupRuntimePlugin.logInfo("Retrieving help.xml options from RHAMT_HOME: " + windupHome.toString());
+	    	File cacheFile = new File(windupHome, HELP_CACHE);
 		try {
 		  	URL url = cacheFile.toURI().toURL();
 			InputStream input = url.openStream();

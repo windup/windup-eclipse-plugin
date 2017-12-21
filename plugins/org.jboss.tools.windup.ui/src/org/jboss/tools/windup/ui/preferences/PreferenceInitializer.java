@@ -23,7 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	
 	@Override
 	public void initializeDefaultPreferences() {
-		String windupHome = WindupRuntimePlugin.getDefaultWindupHome(); 
+		String windupHome = WindupRuntimePlugin.computeWindupHome().toString(); 
 		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 		defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, windupHome);
 		defaultPreferences.put(IPreferenceConstants.RMI_PORT, String.valueOf(IPreferenceConstants.DEFAULT_RMI_PORT));

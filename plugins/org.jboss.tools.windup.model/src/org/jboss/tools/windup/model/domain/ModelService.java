@@ -104,8 +104,6 @@ public class ModelService {
     
     private static final String MODEL_FILE = "windup.xmi";
 
-    private OptionsFacadeManager optionsFacadeManager;
-    
 	@Inject private IEventBroker broker;
 	@Inject private WindupDomainListener modelListener;
 	
@@ -161,11 +159,8 @@ public class ModelService {
     }
 	
 	public OptionsFacadeManager getOptionFacadeManager() {
-		if (this.optionsFacadeManager == null) {
-			Help help = WindupRuntimePlugin.findWindupHelpCache();
-			this.optionsFacadeManager = OptionFacades.createOptionsFacadeManager(help);
-		}
-		return this.optionsFacadeManager;
+		Help help = WindupRuntimePlugin.findWindupHelpCache();
+		return OptionFacades.createOptionsFacadeManager(help);
 	}
 	
 	/**
@@ -296,7 +291,7 @@ public class ModelService {
 				try {
 					ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
 					configuration.setName(name);
-					configuration.setWindupHome(WindupRuntimePlugin.findWindupHome().toPath().toString());
+					configuration.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
 					configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
 					configuration.setSourceMode(true);
 					configuration.setGenerateReport(true);
