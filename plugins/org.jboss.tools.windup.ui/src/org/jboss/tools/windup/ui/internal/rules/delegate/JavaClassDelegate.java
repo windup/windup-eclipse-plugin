@@ -60,6 +60,7 @@ import org.eclipse.wst.xml.core.internal.contentmodel.CMAttributeDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.CMElementDeclaration;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQuery;
 import org.eclipse.wst.xml.core.internal.contentmodel.modelquery.ModelQueryAction;
+import org.jboss.tools.windup.runtime.options.TypeReferenceLocation;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.RuleMessages;
@@ -75,7 +76,6 @@ import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationElement.Att
 import org.jboss.tools.windup.ui.internal.rules.annotation.AnnotationModel;
 import org.jboss.tools.windup.ui.internal.services.AnnotationService;
 import org.jboss.tools.windup.ui.internal.services.RulesetDOMService;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

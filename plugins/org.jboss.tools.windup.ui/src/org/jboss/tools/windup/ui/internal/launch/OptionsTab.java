@@ -55,13 +55,13 @@ import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.runtime.IPreferenceConstants;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.preferences.WindupPreferencePage;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.WindupFactory;
-import org.jboss.windup.bootstrap.help.OptionDescription;
 
 import com.google.common.collect.Lists;
 

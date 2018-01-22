@@ -16,7 +16,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.LogRecord;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.tooling.WindupToolingProgressMonitor;
 
 /**

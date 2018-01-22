@@ -41,17 +41,12 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
+import org.jboss.tools.windup.runtime.options.IOptionKeys;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
-import org.jboss.windup.bootstrap.help.OptionDescription;
-import org.jboss.windup.config.SkipReportsRenderingOption;
-import org.jboss.windup.exec.configuration.options.SourceOption;
-import org.jboss.windup.exec.configuration.options.TargetOption;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
-import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Classification;
@@ -130,29 +125,29 @@ public class WindupService
                 execBuilder.setInput(projectPath.toString());
                 execBuilder.setOutput(outputPath.toFile().toPath().toString());
                 execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
-                execBuilder.setOption(SourceModeOption.NAME, true);
-                execBuilder.setOption(SkipReportsRenderingOption.NAME, !configuration.isGenerateReport());
+                execBuilder.setOption(IOptionKeys.sourceModeOption, true);
+                execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
             		execBuilder.ignore("\\.class$");
 
                 MigrationPath path = configuration.getMigrationPath();
-                execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(path.getTarget().getId()));
+                execBuilder.setOption(IOptionKeys.targetOption, Lists.newArrayList(path.getTarget().getId()));
                 if (path.getSource() != null) {
-                		execBuilder.setOption(SourceOption.NAME, Lists.newArrayList(path.getSource().getId()));
+                		execBuilder.setOption(IOptionKeys.sourceOption, Lists.newArrayList(path.getSource().getId()));
                 }
                 if (path.getTarget() != null) {
                 		String versionRange = path.getTarget().getVersionRange();
                 		String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
                 		String value = path.getTarget().getId() + versionRangeSuffix;
-                		execBuilder.setOption(TargetOption.NAME, Lists.newArrayList(value));
+                		execBuilder.setOption(IOptionKeys.targetOption, Lists.newArrayList(value));
                 }
                 if (!configuration.getPackages().isEmpty()) {
-                		execBuilder.setOption(ScanPackagesOption.NAME, Lists.newArrayList(configuration.getPackages()));
+                		execBuilder.setOption(IOptionKeys.scanPackagesOption, Lists.newArrayList(configuration.getPackages()));
                 }
                 modelService.cleanCustomRuleRepositories(configuration);
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
 					// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
 	                	File file = new File(configuration.getUserRulesDirectories().get(0));
-	                	execBuilder.setOption(UserRulesDirectoryOption.NAME, Lists.newArrayList(file));
+	                	execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, Lists.newArrayList(file));
 	                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
                 }
                 

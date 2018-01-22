@@ -33,8 +33,8 @@ import org.jboss.tools.windup.model.OptionFacades.OptionTypeFacade;
 import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.OptionFacades.Type;
 import org.jboss.tools.windup.model.OptionFacades.UiType;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.ui.internal.Messages;
-import org.jboss.windup.bootstrap.help.OptionDescription;
 
 /**
  * GUI facades for options. 

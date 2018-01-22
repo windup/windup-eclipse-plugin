@@ -15,8 +15,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.jboss.tools.windup.model.Facades.IFacade;
-import org.jboss.windup.bootstrap.help.Help;
-import org.jboss.windup.bootstrap.help.OptionDescription;
+import org.jboss.tools.windup.runtime.options.Help;
+import org.jboss.tools.windup.runtime.options.OptionDescription;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
