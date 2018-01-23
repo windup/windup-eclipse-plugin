@@ -393,7 +393,7 @@
                      </test></iterate></and>
             </visibleWhen>
          </command>
-         <command
+         <!-- <command
                commandId="org.jboss.tools.windup.ui.openRuleDefinition"
                icon="icons/rule.png"
                label="Open Rule Defintion"
@@ -409,7 +409,7 @@
                            value="false">
                      </test></iterate></and>
             </visibleWhen>
-         </command>
+         </command> -->
       </menuContribution>
       <menuContribution
             allPopups="false"
