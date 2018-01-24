@@ -15,7 +15,6 @@ import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logError;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

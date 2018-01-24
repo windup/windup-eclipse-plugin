@@ -450,8 +450,9 @@ public class HintMessageTab extends ElementAttributesContainer {
 			+ "}; return getScrollTop();"; //$NON-NLS-1$
 	
 	private void updatePreview() {
-		Object result = browser.evaluate(JAVASCRIPT_GETSCROLLTOP);
-		final int verticalScrollbarPos = result != null ? ((Number) result).intValue() : 0;
+		// Temporary until fixed. See: https://issues.jboss.org/browse/WINDUP-1812 and https://bugs.eclipse.org/bugs/show_bug.cgi?id=525340 
+		//Object result = browser.evaluate(JAVASCRIPT_GETSCROLLTOP);
+		final int verticalScrollbarPos = 0; // result != null ? ((Number) result).intValue() : 0;
 		String title = file == null ? "" : file.getName(); //$NON-NLS-1$
 		if (title.lastIndexOf('.') != -1) {
 			title = title.substring(0, title.lastIndexOf('.'));
