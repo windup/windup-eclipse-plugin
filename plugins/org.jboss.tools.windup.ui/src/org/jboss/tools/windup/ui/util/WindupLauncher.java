@@ -11,7 +11,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.util;
 
-import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -124,13 +123,6 @@ public class WindupLauncher {
 	public void start(WinupServerCallback callback, String jreHome) {
 		Display.getDefault().syncExec(() -> {
 			logger.info("Start Windup Server."); //$NON-NLS-1$
-			String windupHome = WindupRuntimePlugin.computeWindupHome().toString();
-			boolean executable = new File(windupHome).setExecutable(true);
-			if (!executable) {
-				logger.info("Windup not executable."); //$NON-NLS-1$
-				callback.windupNotExecutable();
-				return;
-			}
 			Job job = createStartWindupJob(jreHome);
 			int duration = preferences.getInt(IPreferenceConstants.START_TIMEOUT);
 			IStatus status = FutureUtils.runWithProgress(job, duration, 5, callback.getShell(),

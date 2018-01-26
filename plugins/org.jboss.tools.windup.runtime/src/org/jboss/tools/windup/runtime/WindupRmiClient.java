@@ -14,6 +14,7 @@ package org.jboss.tools.windup.runtime;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logError;
 import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 
+import java.io.File;
 import java.io.IOException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
@@ -107,7 +108,13 @@ public class WindupRmiClient {
 		String windupExecutable = WindupRuntimePlugin.computeWindupExecutable();
 		
 		if (windupExecutable == null) {
-			// TODO: Open error info
+			WindupRuntimePlugin.logErrorMessage("rhamt-cli not specified."); //$NON-NLS-1$
+			return;
+		}
+		
+		boolean executable = new File(windupExecutable).setExecutable(true);
+		if (!executable) {
+			WindupRuntimePlugin.logErrorMessage("rhamt-cli not executable."); //$NON-NLS-1$
 			return;
 		}
 		
@@ -125,7 +132,8 @@ public class WindupRmiClient {
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
 			public void onProcessFailed(ExecuteException e) {
-				logInfo("onProcessFailed"); //$NON-NLS-1$
+				logInfo("onProcessFailed:"); //$NON-NLS-1$
+				logInfo(e.getMessage()); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
