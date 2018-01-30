@@ -89,6 +89,16 @@ public class RulesetSelectionCreationService {
 				
 				ASTNode node = nodes[0];
 				
+				if (node instanceof SimpleName && node.getParent() instanceof QualifiedName) {
+					QualifiedName qualifiedName = (QualifiedName)node.getParent();
+					if (qualifiedName.getParent() instanceof Type) {
+						node = qualifiedName.getParent();
+					}
+					else if (qualifiedName.getParent() instanceof ImportDeclaration) {
+						node = qualifiedName.getParent();
+					}
+				}
+				
 				// <javaclass references="..." /> IMPORT
 				if (node instanceof ImportDeclaration) {
 					String importName = ((ImportDeclaration)node).getName().getFullyQualifiedName();
@@ -104,13 +114,6 @@ public class RulesetSelectionCreationService {
 				
 				if (node instanceof SimpleName && node.getParent() instanceof Type) {
 					node = node.getParent();
-				}
-				
-				else if (node instanceof SimpleName && node.getParent() instanceof QualifiedName) {
-					QualifiedName qualifiedName = (QualifiedName)node.getParent();
-					if (qualifiedName.getParent() instanceof Type) {
-						node = qualifiedName.getParent();
-					}
 				}
 				
 				// <javaclass references="..." /> IMPLEMENTS_TYPE
