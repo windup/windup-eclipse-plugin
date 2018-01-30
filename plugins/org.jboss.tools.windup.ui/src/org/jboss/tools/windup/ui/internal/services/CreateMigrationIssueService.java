@@ -169,8 +169,15 @@ public class CreateMigrationIssueService implements MouseListener, IMenuListener
 			JavaEditor editor = (JavaEditor)theEditor;
 			if (SelectionConverter.getInputAsCompilationUnit(editor) != null) {
 				ITextSelection textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
-				JavaTextSelection javaSelection= new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
-				return createRuleFromSelectionAction(javaSelection.resolveSelectedNodes());
+				JavaTextSelection javaSelection = new JavaTextSelection(domService.getEditorInput(editor), domService.getDocument(editor), textSelection.getOffset(), textSelection.getLength());
+				ASTNode[] selectedNodes = javaSelection.resolveSelectedNodes();
+				if (selectedNodes.length == 0) {
+					ASTNode coveringNode = javaSelection.resolveCoveringNode();
+					if (coveringNode != null) {
+						selectedNodes = new ASTNode[] {coveringNode};
+					}
+				}
+				return createRuleFromSelectionAction(selectedNodes);
 			}
 		}
 		return null;

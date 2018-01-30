@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -43,7 +44,6 @@ import com.google.common.collect.Lists;
 
 @Creatable
 @Singleton
-@SuppressWarnings("restriction")
 public class RulesetSelectionCreationService {
 
 	@Inject private RulesetDOMService domService;
@@ -101,6 +101,18 @@ public class RulesetSelectionCreationService {
 					WindupUIPlugin.logInfo("Attempting to create rule for import.."); //$NON-NLS-1$
 					return Lists.newArrayList(createJavaClassReferenceElement(document, TypeReferenceLocation.IMPORT.toString(), importName));
 				}
+				
+				if (node instanceof SimpleName && node.getParent() instanceof Type) {
+					node = node.getParent();
+				}
+				
+				else if (node instanceof SimpleName && node.getParent() instanceof QualifiedName) {
+					QualifiedName qualifiedName = (QualifiedName)node.getParent();
+					if (qualifiedName.getParent() instanceof Type) {
+						node = qualifiedName.getParent();
+					}
+				}
+				
 				// <javaclass references="..." /> IMPLEMENTS_TYPE
 				if (node instanceof SimpleType && node.getParent() != null &&
 						node.getParent() instanceof TypeDeclaration && ((TypeDeclaration)node.getParent()).superInterfaceTypes().contains(node)) {
