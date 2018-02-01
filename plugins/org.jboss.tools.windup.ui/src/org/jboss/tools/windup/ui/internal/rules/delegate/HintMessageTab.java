@@ -438,21 +438,8 @@ public class HintMessageTab extends ElementAttributesContainer {
 		}
 	}
 	
-	/**
-	 * JavaScript that returns the current top scroll position of the browser widget
-	 */
-	private static final String JAVASCRIPT_GETSCROLLTOP = "function getScrollTop() { " //$NON-NLS-1$
-			+ "  if(typeof pageYOffset!='undefined') return pageYOffset;" //$NON-NLS-1$
-			+ "  else{" + //$NON-NLS-1$
-			"var B=document.body;" + //$NON-NLS-1$
-			"var D=document.documentElement;" + //$NON-NLS-1$
-			"D=(D.clientHeight)?D:B;return D.scrollTop;}" //$NON-NLS-1$
-			+ "}; return getScrollTop();"; //$NON-NLS-1$
-	
 	private void updatePreview() {
-		// Temporary until fixed. See: https://issues.jboss.org/browse/WINDUP-1812 and https://bugs.eclipse.org/bugs/show_bug.cgi?id=525340 
-		//Object result = browser.evaluate(JAVASCRIPT_GETSCROLLTOP);
-		final int verticalScrollbarPos = 0; // result != null ? ((Number) result).intValue() : 0;
+		final int verticalScrollbarPos = 0;
 		String title = file == null ? "" : file.getName(); //$NON-NLS-1$
 		if (title.lastIndexOf('.') != -1) {
 			title = title.substring(0, title.lastIndexOf('.'));
