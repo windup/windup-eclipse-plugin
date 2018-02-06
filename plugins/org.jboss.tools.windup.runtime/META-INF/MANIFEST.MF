@@ -34,6 +34,7 @@ Bundle-ClassPath: .,
  lib/dom4j-1.6.1.jar,
  lib/windup-tooling-impl-4.0.0.Final.jar,
  lib/windup-utils-4.0.0.Final.jar,
+ lib/windup-config-api-4.0.0.Final.jar,
  lib/windup-graph-api-4.0.0.Final.jar
 Export-Package: org.eclipse.xtend.core,
  org.eclipse.xtend.core.compiler,
