@@ -16,26 +16,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.WindupModel;
-import org.jboss.tools.windup.windup.WindupResult;
-import org.jboss.windup.tooling.data.Hint;
-
-import com.google.common.collect.Lists;
 
 /**
  * The content provider Windup's configuration element tree.

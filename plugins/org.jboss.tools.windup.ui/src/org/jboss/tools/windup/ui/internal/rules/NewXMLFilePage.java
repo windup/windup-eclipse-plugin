@@ -2,14 +2,14 @@ package org.jboss.tools.windup.ui.internal.rules;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -19,6 +19,7 @@ import org.jboss.tools.windup.ui.internal.Messages;
 
 public class NewXMLFilePage extends WizardNewFileCreationPage {
 
+	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	protected static final int USE_EMPTY = 0;
 	protected static final int USE_DEFAULT = 1;
 	protected static final int USE_CURRENT_TP = 2;
@@ -45,23 +46,48 @@ public class NewXMLFilePage extends WizardNewFileCreationPage {
 
 	@Override
 	protected void createAdvancedControls(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(group);
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 18).applyTo(group);
-		new Label(group, SWT.NONE).setText(Messages.NewRulesetWizard_rulesetId);
-		rulesetIdText = new Text(group, SWT.NONE);
+//		Composite group = new Composite(parent, SWT.NONE);
+//		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(group);
+//		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 18).applyTo(group);
+//		new Label(group, SWT.NONE).setText(Messages.NewRulesetWizard_rulesetId);
+//		rulesetIdText = new Text(group, SWT.NONE);
+//		rulesetIdText.addListener(SWT.Modify, new Listener() {
+//			@Override
+//			public void handleEvent(Event event) {
+//				setPageComplete(validatePage());
+//			}
+//		});
+		
+		Font font = parent.getFont();
+		
+		Composite nameGroup = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		nameGroup.setLayout(layout);
+		nameGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.GRAB_HORIZONTAL));
+		nameGroup.setFont(font);
+
+		Label label = new Label(nameGroup, SWT.NONE);
+		label.setText(Messages.NewRulesetWizard_rulesetId);
+		label.setFont(font);
+
+		// resource name entry field
+		rulesetIdText = new Text(nameGroup, SWT.BORDER);
 		rulesetIdText.addListener(SWT.Modify, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
 				setPageComplete(validatePage());
 			}
 		});
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.GRAB_HORIZONTAL);
+		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
+		rulesetIdText.setLayoutData(data);
+		rulesetIdText.setFont(font);
 		
-		group = new Group(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().applyTo(group);
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 18).applyTo(group);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(rulesetIdText);
-		quickstartButton = new Button(group, SWT.CHECK);
+		quickstartButton = new Button(parent, SWT.CHECK);
 		quickstartButton.setText(Messages.NewRulesetWizard_generateTemplate);
 	}
 	
