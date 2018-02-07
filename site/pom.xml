@@ -15,6 +15,7 @@
 	<properties>
 		<update.site.name>JBoss Tools - Windup</update.site.name>
 		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
+		<deployZipTargetFolder>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</deployZipTargetFolder>
 	</properties>
 
 	<profiles>
@@ -39,9 +40,9 @@
 										<arg>-s</arg>
 										<arg>${project.build.directory}</arg>
 										<arg>-t</arg>
-										<arg>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</arg>
+										<arg>${deployZipTargetFolder}</arg>
 										<arg>-i</arg>
-										<arg>repository.zip</arg>
+										<arg>windup.site*.zip</arg>
 									</arguments>
 									<skip>${skipDeployToJBossOrg}</skip>
 								</configuration>
