@@ -132,14 +132,14 @@ public class WindupRmiClient {
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
 			public void onProcessFailed(ExecuteException e) {
-				logInfo("onProcessFailed:"); //$NON-NLS-1$
+				logInfo("The RHAMT process failed:"); //$NON-NLS-1$
 				logInfo(e.getMessage()); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
-				logInfo("onProcessComplete"); //$NON-NLS-1$
+				logInfo("The RHAMT process has completed."); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
@@ -210,7 +210,10 @@ public class WindupRmiClient {
 	        return executionBuilder;
 		} catch (ConnectException e) {
 		} catch (RemoteException e) {
-			logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
+			// TODO: We are polluting the log with this. Is there a better way?
+			// Since onProcessFailed will be called when/if the process fails, can we rely on the logs sent from the rhamt-cli script? 
+			// logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
+			logInfo("Unable to find ExecutionBuilder RMI registry."); //$NON-NLS-1$
 		} catch (NotBoundException e) {
 			logError("ExecutionBuilder not yet bound.", e); //$NON-NLS-1$
 		}
