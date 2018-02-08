@@ -209,129 +209,125 @@ public class WindupService
      * 
      * @return <code>true</code> if a report exists for the {@link IProject} containing the given {@link IResource}, <code>false</code> otherwise.
      */
-    public boolean reportExists(IResource resource)
-    {
+    public boolean reportExists(IResource resource) {
         IPath reportPath = getProjectReportPath(resource);
         File reportDir = new File(reportPath.toString());
-
         return reportDir.exists();
     }
 
-    /**
-     * <p>
-     * Get the Windup report for the given resource.
-     * </p>
-     * 
-     * @param resource get the location of the Windup report for this {@link IResource}
-     * 
-     * @return location of the Windup report for the given {@link IResource}
-     */
-    public IPath getReportLocation(IResource resource)
-    {
-        IPath projectReportPath = getProjectReportPath(resource);
+	/**
+	 * <p>
+	 * Get the Windup report for the given resource.
+	 * </p>
+	 * 
+	 * @param resource
+	 *            get the location of the Windup report for this {@link IResource}
+	 * 
+	 * @return location of the Windup report for the given {@link IResource}
+	 */
+	public IPath getReportLocation(IResource resource) {
+		IPath projectReportPath = getProjectReportPath(resource);
 
-        IPath reportPath = null;
-        switch (resource.getType())
-        {
-        // if selected resource is a file get the file specific report page
-        case IResource.FILE:
-        {
-            File resourceAsFile = resource.getLocation().toFile().getAbsoluteFile();
-            ExecutionResults executionResults = projectToResults.get(resource.getProject());
-            if (executionResults == null)
-                break;
-            for (ReportLink reportLink : executionResults.getReportLinks())
-            {
-                if (resourceAsFile.equals(reportLink.getInputFile()))
-                {
-                    File reportFile = reportLink.getReportFile();
-                    Path projectPath = resource.getProject().getLocation().toFile().toPath();
-                    Path reportFileRelativeToProject = projectPath.relativize(reportFile.toPath());
-                    IPath projectLocation = resource.getProject().getLocation();
-                    reportPath = projectLocation.append(reportFileRelativeToProject.toString());
-                    break;
-                }
-            }
-            break;
-        }
+		IPath reportPath = null;
+		switch (resource.getType()) {
+		// if selected resource is a file get the file specific report page
+		case IResource.FILE: {
+			File resourceAsFile = resource.getLocation().toFile().getAbsoluteFile();
+			ExecutionResults executionResults = projectToResults.get(resource.getProject());
+			if (executionResults == null)
+				break;
+			for (ReportLink reportLink : executionResults.getReportLinks()) {
+				if (resourceAsFile.equals(reportLink.getInputFile())) {
+					File reportFile = reportLink.getReportFile();
+					Path projectPath = resource.getProject().getLocation().toFile().toPath();
+					Path reportFileRelativeToProject = projectPath.relativize(reportFile.toPath());
+					IPath projectLocation = resource.getProject().getLocation();
+					reportPath = projectLocation.append(reportFileRelativeToProject.toString());
+					break;
+				}
+			}
+			break;
+		}
 
-        /*
-         * if selected resource is the project then get the Windup report home page for that project
-         */
-        case IResource.PROJECT:
-        {
-            reportPath = projectReportPath.append(ModelService.PROJECT_REPORT_HOME_PAGE);
-            break;
-        }
+		/*
+		 * if selected resource is the project then get the Windup report home page for
+		 * that project
+		 */
+		case IResource.PROJECT: {
+			reportPath = projectReportPath.append(ModelService.PROJECT_REPORT_HOME_PAGE);
+			break;
+		}
 
-        default:
-        {
-            break;
-        }
-        }
+		default: {
+			break;
+		}
+		}
 
-        // determine if the report of the given file exists, if it doesn't return null
-        if (reportPath != null)
-        {
-            File reportFile = new File(reportPath.toString());
-            if (!reportFile.exists())
-            {
-                reportPath = null;
-            }
-        }
+		// determine if the report of the given file exists, if it doesn't return null
+		if (reportPath != null) {
+			File reportFile = new File(reportPath.toString());
+			if (!reportFile.exists()) {
+				reportPath = null;
+			}
+		}
 
-        return reportPath;
-    }
-
-    /**
-     * <p>
-     * Get the Windup report parent directory for the given resource.
-     * </p>
-     * 
-     * @param resource get the location of the Windup report parent directory for this {@link IResource}
-     * 
-     * @return location of the Windup report parent directory for the given {@link IResource}
-     */
-    public IPath getReportParentDirectoryLocation(IResource resource)
-    {
-        return getProjectReportPath(resource);
-    }
+		return reportPath;
+	}
 
 	/**
-     * <p>
-     * Registers a {@link IWindupListener}.
-     * </p>
-     * 
-     * @param listener {@link IWindupListener} to register
-     */
-    public void addWindupListener(IWindupListener listener)
-    {
-        this.windupListeners.add(listener);
-    }
+	 * <p>
+	 * Get the Windup report parent directory for the given resource.
+	 * </p>
+	 * 
+	 * @param resource
+	 *            get the location of the Windup report parent directory for this
+	 *            {@link IResource}
+	 * 
+	 * @return location of the Windup report parent directory for the given
+	 *         {@link IResource}
+	 */
+	public IPath getReportParentDirectoryLocation(IResource resource) {
+		return getProjectReportPath(resource);
+	}
 
-    /**
-     * <p>
-     * Removes an already registered {@link IWindupListener}.
-     * </p>
-     * 
-     * @param listener {@link IWindupListener} to unregister
-     */
-    public void removeWindupListener(IWindupListener listener)
-    {
-        this.windupListeners.remove(listener);
-    }
+	/**
+	 * <p>
+	 * Registers a {@link IWindupListener}.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            {@link IWindupListener} to register
+	 */
+	public void addWindupListener(IWindupListener listener) {
+		this.windupListeners.add(listener);
+	}
 
-    /**
-     * <p>
-     * Get the location where the report should be stored for the {@link IProject} containing the given {@link IResource}
-     * </p>
-     * 
-     * @param resource get the location where the report should be stored for the {@link IProject} containing this {@link IResource}
-     * 
-     * @return location where the report should be stored for the {@link IProject} containing the given {@link IResource}
-     */
-    private IPath getProjectReportPath(IResource resource)
-    {
-        return ModelService.reportsDir.append(resource.getProject().getName());
-    }
+	/**
+	 * <p>
+	 * Removes an already registered {@link IWindupListener}.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            {@link IWindupListener} to unregister
+	 */
+	public void removeWindupListener(IWindupListener listener) {
+		this.windupListeners.remove(listener);
+	}
+
+	/**
+	 * <p>
+	 * Get the location where the report should be stored for the {@link IProject}
+	 * containing the given {@link IResource}
+	 * </p>
+	 * 
+	 * @param resource
+	 *            get the location where the report should be stored for the
+	 *            {@link IProject} containing this {@link IResource}
+	 * 
+	 * @return location where the report should be stored for the {@link IProject}
+	 *         containing the given {@link IResource}
+	 */
+	private IPath getProjectReportPath(IResource resource) {
+		return ModelService.reportsDir.append(resource.getProject().getName());
+	}
 }
