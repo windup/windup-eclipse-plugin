@@ -22,6 +22,7 @@ class XmlTemplate {
                 </description>
                 <!-- version ranges applied to from and to technologies -->
                 <dependencies>
+                    <addon/>
                 </dependencies>
             </metadata>
             <rules>
@@ -51,6 +52,7 @@ class XmlTemplate {
                 </description>
                 <!-- version ranges applied to from and to technologies -->
                 <dependencies>
+                    <addon/>
                 </dependencies>
             </metadata>
             <rules>
