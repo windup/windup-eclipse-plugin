@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -162,15 +163,19 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 						if (segment instanceof IProject) {
 							resourceMap.put((IProject)segment, child);
 							if (configuration.isGenerateReport() && !configuration.getInputs().isEmpty()) {
-								Input input = configuration.getInputs().get(0);
-					    		IPath reportPath = modelService.getGeneratedReport(configuration, input);
-					    		File report = new File(reportPath.toString());
-								if (report.exists()) {
-									TreeNode reportNode = child.getChildPath(Messages.generatedReport);
-									if (reportNode == null) {
-										reportNode = new RootReportNode(Messages.generatedReport, 
-												reportPath.toString());
-										child.addChild(reportNode);
+								String projectName = ((IProject)segment).getName();
+								Optional<Input> option = configuration.getInputs().stream().filter((input) -> projectName.equals(input.getName())).findFirst();
+								if (option.isPresent()) {
+									Input input = option.get();
+							    		IPath reportPath = modelService.getGeneratedReport(configuration, input);
+							    		File report = new File(reportPath.toString());
+									if (report.exists()) {
+										TreeNode reportNode = child.getChildPath(Messages.generatedReport);
+										if (reportNode == null) {
+											reportNode = new RootReportNode(Messages.generatedReport, 
+													reportPath.toString());
+											child.addChild(reportNode);
+										}
 									}
 								}
 							}

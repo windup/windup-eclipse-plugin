@@ -362,7 +362,7 @@ public class WindupReportView implements IShowInTarget
     }
     
     public void showReport(String path, boolean hideMessage) {
-    	this.currentReportPath = path;
+    		this.currentReportPath = path;
         this.browserViewer.setURL(path);
         this.browserViewer.setVisible(true);
         ((GridData) this.browserViewer.getLayoutData()).exclude = false;
@@ -389,7 +389,7 @@ public class WindupReportView implements IShowInTarget
 
         this.browserViewer.setVisible(!hideReport);
         if (hideReport) {
-        	currentReportPath = "";
+        		currentReportPath = "";
         }
         
         ((GridData) this.browserViewer.getLayoutData()).exclude = hideReport;

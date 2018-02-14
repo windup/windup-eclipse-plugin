@@ -223,6 +223,10 @@ public class IssueExplorer extends CommonNavigator {
 						}
 					}
 				}
+				else if (selection instanceof RootReportNode) {
+					RootReportNode reportNode = (RootReportNode)selection;
+					updateReportView(reportNode.getReportLocation(), false, partService);
+				}
 			}
 		});
 		getCommonViewer().setComparator(new IssueExplorerComparator());
