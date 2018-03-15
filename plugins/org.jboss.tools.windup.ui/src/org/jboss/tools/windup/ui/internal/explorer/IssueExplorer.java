@@ -356,7 +356,7 @@ public class IssueExplorer extends CommonNavigator {
 		CButton preferenceButton = new CButton(buttonBar, SWT.NONE);
 		preferenceButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_HOT));
 		preferenceButton.setColdImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_COLD));
-		preferenceButton.setToolTipText("Configure Windup"); //$NON-NLS-1$
+		preferenceButton.setToolTipText("Configure RHAMT"); //$NON-NLS-1$
 		preferenceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -376,12 +376,12 @@ public class IssueExplorer extends CommonNavigator {
 		if (windupClient.isWindupServerRunning()) {
 			statusLabel.setText("[Running - " + windupClient.getWindupVersion() + "]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
-			startStopButton.setToolTipText("Stop Windup Server"); //$NON-NLS-1$
+			startStopButton.setToolTipText("Stop RHAMT Server"); //$NON-NLS-1$
 		}
 		else {
 			statusLabel.setText("[Not Running]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_START));	
-			startStopButton.setToolTipText("Start Windup Server"); //$NON-NLS-1$
+			startStopButton.setToolTipText("Start RHAMT Server"); //$NON-NLS-1$
 		}
 		startStopButton.redraw();
 		startStopButton.update();

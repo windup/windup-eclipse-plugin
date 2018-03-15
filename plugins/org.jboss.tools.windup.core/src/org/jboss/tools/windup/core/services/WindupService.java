@@ -129,16 +129,18 @@ public class WindupService
                 execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
             		execBuilder.ignore("\\.class$");
 
+            		List<String> sources = Lists.newArrayList();
+            		List<String> targets = Lists.newArrayList();
+            		
                 MigrationPath path = configuration.getMigrationPath();
-                execBuilder.setOption(IOptionKeys.targetOption, Lists.newArrayList(path.getTarget().getId()));
                 if (path.getSource() != null) {
-                		execBuilder.setOption(IOptionKeys.sourceOption, Lists.newArrayList(path.getSource().getId()));
+                		sources.add(path.getSource().getId());
                 }
                 if (path.getTarget() != null) {
                 		String versionRange = path.getTarget().getVersionRange();
                 		String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
                 		String value = path.getTarget().getId() + versionRangeSuffix;
-                		execBuilder.setOption(IOptionKeys.targetOption, Lists.newArrayList(value));
+                		targets.add(value);
                 }
                 if (!configuration.getPackages().isEmpty()) {
                 		execBuilder.setOption(IOptionKeys.scanPackagesOption, Lists.newArrayList(configuration.getPackages()));
@@ -170,13 +172,30 @@ public class WindupService
 	                	}
 	                	else {
 	                		List<?> optionValues = typeFacade.newInstance(values);
-	                		execBuilder.setOption(name, optionValues);
+	                		if (name.equals(IOptionKeys.targetOption)) {
+	                			targets.addAll((List<String>)optionValues);
+	                		}
+	                		else if (name.equals(IOptionKeys.sourceOption)) {
+	                			sources.addAll((List<String>)optionValues);
+	                		}
+	                		else {
+	                			execBuilder.setOption(name, optionValues);
+	                		}
 	                	}
+                }
+                
+                if (!targets.isEmpty()) {
+                		execBuilder.setOption(IOptionKeys.targetOption, targets);
+                }
+                if (!sources.isEmpty()) {
+                		execBuilder.setOption(IOptionKeys.sourceOption, sources);
                 }
                 
                 WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
                 WindupCorePlugin.logInfo("Using input: " + projectPath.toString()); //$NON-NLS-1$
                 WindupCorePlugin.logInfo("Using output: " + outputPath.toFile().toPath().toString()); //$NON-NLS-1$
+                WindupCorePlugin.logInfo("Using sources: " + sources); //$NON-NLS-1$
+                WindupCorePlugin.logInfo("Using targets: " + targets); //$NON-NLS-1$
                 ExecutionResults results = execBuilder.execute();
                 WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
                 modelService.populateConfiguration(configuration, input, outputPath, results);

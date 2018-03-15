@@ -52,7 +52,7 @@ class XmlTemplate {
                 </description>
                 <!-- version ranges applied to from and to technologies -->
                 <dependencies>
-                    <addon/>
+                     <addon/>
                 </dependencies>
             </metadata>
             <rules>
