@@ -35,6 +35,7 @@ import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.environment.EnvironmentUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -120,6 +121,11 @@ public class WindupRmiClient {
 		
 		CommandLine cmdLine = CommandLine.parse(windupExecutable);
 		Map<String, String> env = Maps.newHashMap();
+		try {
+			env = EnvironmentUtils.getProcEnvironment();
+		} catch (IOException e) {
+			WindupRuntimePlugin.logError("Could not read current process environment.", e);
+		}
 		if (!jreHome.trim().isEmpty()) {
 			env.put(JAVA_HOME, jreHome);
 		}
