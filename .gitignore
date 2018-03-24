@@ -6,3 +6,4 @@ plugins/org.jboss.tools.windup.runtime/windup/
 .classpath
 .project
 bin/
+.vscode/
