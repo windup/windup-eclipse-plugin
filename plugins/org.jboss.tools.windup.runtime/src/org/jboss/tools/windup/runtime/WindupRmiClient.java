@@ -119,7 +119,11 @@ public class WindupRmiClient {
 		}
 		
 		CommandLine cmdLine = CommandLine.parse(windupExecutable);
+		
 		Map<String, String> env = Maps.newHashMap();
+		for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+			env.put(entry.getKey(), entry.getValue());
+		}
 		if (!jreHome.trim().isEmpty()) {
 			env.put(JAVA_HOME, jreHome);
 		}
