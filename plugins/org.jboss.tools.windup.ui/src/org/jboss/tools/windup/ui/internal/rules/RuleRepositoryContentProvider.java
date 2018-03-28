@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.jboss.tools.common.util.FileUtils;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.ui.internal.rules.RulesNode.CustomRulesNode;
@@ -96,6 +97,8 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		else if (parentElement instanceof RuleProvider) {
 			RuleProvider provider = (RuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
+			String path = FileUtils.fileURLToFilePath(provider.getOrigin());
+			provider.setOrigin(path);
 			children.add(new RulesetFileNode(provider, new File(provider.getOrigin()), provider.getRuleProviderType()));
 			XMLRulesetModelUtil.createLinkedResource(provider.getOrigin());
 			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getOrigin());
