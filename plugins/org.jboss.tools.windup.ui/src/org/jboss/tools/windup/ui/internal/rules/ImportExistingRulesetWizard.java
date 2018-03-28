@@ -116,7 +116,7 @@ public class ImportExistingRulesetWizard extends Wizard implements IImportWizard
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell());
-					dialog.setFilterExtensions(new String[] {NewXMLFilePage.EXTENSION}); 
+					dialog.setFilterExtensions(new String[] {NewXMLFilePage.FILTER_EXTENSION}); 
 					rulesetFileLocation = dialog.open();
 					if (rulesetFileLocation != null) {
 						directoryText.setText(rulesetFileLocation);

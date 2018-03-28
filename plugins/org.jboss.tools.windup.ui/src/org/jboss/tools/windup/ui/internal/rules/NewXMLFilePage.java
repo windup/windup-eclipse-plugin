@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules;
 
 import org.eclipse.core.runtime.IStatus;
@@ -25,7 +35,8 @@ public class NewXMLFilePage extends WizardNewFileCreationPage {
 	protected static final int USE_CURRENT_TP = 2;
 	protected static final int USE_EXISTING_TARGET = 3;
 
-	public static String EXTENSION = "*.xml"; //$NON-NLS-1$
+	public static String FILTER_EXTENSION = "*.xml"; //$NON-NLS-1$
+	public static String EXTENSION = "xml"; //$NON-NLS-1$
 	
 	private Button quickstartButton;
 	private Text rulesetIdText;
