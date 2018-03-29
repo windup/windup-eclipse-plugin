@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>windup</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.1.Final</version>
     <name>windup.all</name>
 
     <packaging>pom</packaging>

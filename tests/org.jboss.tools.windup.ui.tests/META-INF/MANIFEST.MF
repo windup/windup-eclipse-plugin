@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.ui.tests;singleton:=true
-Bundle-Version: 4.0.2.qualifier
+Bundle-Version: 4.0.1.Final
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime,
