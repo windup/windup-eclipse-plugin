@@ -43,6 +43,9 @@ public class XmlTemplate {
     _builder.append("        ");
     _builder.append("<dependencies>");
     _builder.newLine();
+    _builder.append("            ");
+    _builder.append("<addon/>");
+    _builder.newLine();
     _builder.append("        ");
     _builder.append("</dependencies>");
     _builder.newLine();
@@ -118,6 +121,9 @@ public class XmlTemplate {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("<dependencies>");
+    _builder.newLine();
+    _builder.append("             ");
+    _builder.append("<addon/>");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("</dependencies>");
