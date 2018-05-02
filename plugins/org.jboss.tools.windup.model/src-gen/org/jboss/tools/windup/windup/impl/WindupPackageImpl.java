@@ -641,6 +641,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getIssue_WsPath() {
+		return (EAttribute)issueEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getHint() {
 		return hintEClass;
 	}
@@ -1012,6 +1021,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(issueEClass, ISSUE__STALE);
 		createEAttribute(issueEClass, ISSUE__TITLE);
 		createEAttribute(issueEClass, ISSUE__MESSAGE_OR_DESCRIPTION);
+		createEAttribute(issueEClass, ISSUE__WS_PATH);
 
 		hintEClass = createEClass(HINT);
 		createEAttribute(hintEClass, HINT__LINE_NUMBER);
@@ -1157,6 +1167,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getIssue_Stale(), ecorePackage.getEBoolean(), "stale", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_Title(), ecorePackage.getEString(), "title", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIssue_MessageOrDescription(), ecorePackage.getEString(), "messageOrDescription", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIssue_WsPath(), ecorePackage.getEString(), "wsPath", null, 0, 1, Issue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(hintEClass, Hint.class, "Hint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getHint_LineNumber(), ecorePackage.getEInt(), "lineNumber", null, 0, 1, Hint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -123,15 +123,16 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		}
 		if (element instanceof SeverityNode) {
 			SeverityNode node = (SeverityNode)element;
-			int severity = (int)node.getSegment();
+			String severity = (String)node.getSegment();
 			Image image = null;
-			switch (severity) {
-				case IMarker.SEVERITY_ERROR:
-					image = ERROR; break;
-				case IMarker.SEVERITY_WARNING:
-					image = WARNING; break;
-				case IMarker.SEVERITY_INFO:
-					image = INFO;
+			if (String.valueOf(IMarker.SEVERITY_ERROR).equals(severity)) {
+				image = ERROR;
+			}
+			else if (String.valueOf(IMarker.SEVERITY_WARNING).equals(severity)) {
+				image = WARNING;
+			}
+			else {
+				image = INFO;
 			}
 			return image;
 		}
@@ -261,7 +262,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		String label = "";
 		if (node instanceof SeverityNode) {
 			SeverityNode severityNode = (SeverityNode)node;
-			label = WordUtils.capitalize(severityNode.getSeverity().toLowerCase());
+			label = severityNode.getSeverity();
 		}
 		else if (node instanceof RuleGroupNode) {
 			RuleGroupNode ruleNode = (RuleGroupNode)node;

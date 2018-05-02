@@ -743,13 +743,22 @@ public interface WindupPackage extends EPackage {
 	int ISSUE__MESSAGE_OR_DESCRIPTION = MARKER_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
+	 * The feature id for the '<em><b>Ws Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ISSUE__WS_PATH = MARKER_ELEMENT_FEATURE_COUNT + 13;
+
+	/**
 	 * The number of structural features of the '<em>Issue</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ISSUE_FEATURE_COUNT = MARKER_ELEMENT_FEATURE_COUNT + 13;
+	int ISSUE_FEATURE_COUNT = MARKER_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -913,6 +922,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int HINT__MESSAGE_OR_DESCRIPTION = ISSUE__MESSAGE_OR_DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Ws Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HINT__WS_PATH = ISSUE__WS_PATH;
 
 	/**
 	 * The feature id for the '<em><b>Line Number</b></em>' attribute.
@@ -1121,6 +1139,15 @@ public interface WindupPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASSIFICATION__MESSAGE_OR_DESCRIPTION = ISSUE__MESSAGE_OR_DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Ws Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASSIFICATION__WS_PATH = ISSUE__WS_PATH;
 
 	/**
 	 * The number of structural features of the '<em>Classification</em>' class.
@@ -2009,6 +2036,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIssue_MessageOrDescription();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Issue#getWsPath <em>Ws Path</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ws Path</em>'.
+	 * @see org.jboss.tools.windup.windup.Issue#getWsPath()
+	 * @see #getIssue()
+	 * @generated
+	 */
+	EAttribute getIssue_WsPath();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Hint <em>Hint</em>}'.

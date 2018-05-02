@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.Issue#isStale <em>Stale</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getTitle <em>Title</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.Issue#getMessageOrDescription <em>Message Or Description</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Issue#getWsPath <em>Ws Path</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIssue()
@@ -350,5 +351,31 @@ public interface Issue extends MarkerElement {
 	 * @generated
 	 */
 	void setMessageOrDescription(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Ws Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Ws Path</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Ws Path</em>' attribute.
+	 * @see #setWsPath(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getIssue_WsPath()
+	 * @model
+	 * @generated
+	 */
+	String getWsPath();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Issue#getWsPath <em>Ws Path</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ws Path</em>' attribute.
+	 * @see #getWsPath()
+	 * @generated
+	 */
+	void setWsPath(String value);
 
 } // Issue

@@ -43,6 +43,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#isStale <em>Stale</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getTitle <em>Title</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getMessageOrDescription <em>Message Or Description</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IssueImpl#getWsPath <em>Ws Path</em>}</li>
  * </ul>
  *
  * @generated
@@ -287,6 +288,26 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 	 * @ordered
 	 */
 	protected String messageOrDescription = MESSAGE_OR_DESCRIPTION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getWsPath() <em>Ws Path</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWsPath()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String WS_PATH_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getWsPath() <em>Ws Path</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWsPath()
+	 * @generated
+	 * @ordered
+	 */
+	protected String wsPath = WS_PATH_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -567,6 +588,27 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getWsPath() {
+		return wsPath;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setWsPath(String newWsPath) {
+		String oldWsPath = wsPath;
+		wsPath = newWsPath;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.ISSUE__WS_PATH, oldWsPath, wsPath));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -612,6 +654,8 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 				return getTitle();
 			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
 				return getMessageOrDescription();
+			case WindupPackage.ISSUE__WS_PATH:
+				return getWsPath();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -666,6 +710,9 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
 				setMessageOrDescription((String)newValue);
 				return;
+			case WindupPackage.ISSUE__WS_PATH:
+				setWsPath((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -717,6 +764,9 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
 				setMessageOrDescription(MESSAGE_OR_DESCRIPTION_EDEFAULT);
 				return;
+			case WindupPackage.ISSUE__WS_PATH:
+				setWsPath(WS_PATH_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -755,6 +805,8 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 				return TITLE_EDEFAULT == null ? title != null : !TITLE_EDEFAULT.equals(title);
 			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
 				return MESSAGE_OR_DESCRIPTION_EDEFAULT == null ? messageOrDescription != null : !MESSAGE_OR_DESCRIPTION_EDEFAULT.equals(messageOrDescription);
+			case WindupPackage.ISSUE__WS_PATH:
+				return WS_PATH_EDEFAULT == null ? wsPath != null : !WS_PATH_EDEFAULT.equals(wsPath);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -791,6 +843,8 @@ public class IssueImpl extends MarkerElementImpl implements Issue {
 		result.append(title);
 		result.append(", messageOrDescription: ");
 		result.append(messageOrDescription);
+		result.append(", wsPath: ");
+		result.append(wsPath);
 		result.append(')');
 		return result.toString();
 	}

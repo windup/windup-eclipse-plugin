@@ -213,11 +213,13 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			}
 			
 			if (groupService.isGroupBySeverity()) {
-				Object segment = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+				String segment = String.valueOf(marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO));
 				String severity = marker.getAttribute(SEVERITY, Severity.POTENTIAL.toString());
-				TreeNode severityNode = parent.getChildPath(segment);
+				//TreeNode severityNode = parent.getChildPath(segment);
+				TreeNode severityNode = parent.getChildPath(severity);
 				if (severityNode == null) {
-					severityNode = new SeverityNode(segment, severity);
+					//severityNode = new SeverityNode(segment, severity);
+					severityNode = new SeverityNode(severity, severity);
 					parent.addChild(severityNode);
 				}
 				parent = severityNode;

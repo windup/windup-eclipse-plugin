@@ -138,7 +138,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 				dialog.setMultipleSelection(true);
 				dialog.setMessage(Messages.selectExistingRepositories);
 				
-				modelService.cleanCustomRuleRepositories(configuration);
+				//modelService.cleanCustomRuleRepositories(configuration);
 				
 				List<CustomRuleProvider> providers = Lists.newArrayList(modelService.getModel().getCustomRuleRepositories());
 				providers = providers.stream().filter(p -> !configuration.getUserRulesDirectories().contains(p.getLocationURI())).collect(Collectors.toList());
@@ -153,7 +153,7 @@ public class RulesTab extends AbstractLaunchConfigurationTab {
 						
 						// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
 						selected = new Object[] {selected[0]};
-						modelService.write(() -> configuration.getUserRulesDirectories().clear());
+						//modelService.write(() -> configuration.getUserRulesDirectories().clear());
 						// 
 						
 						Arrays.stream(selected).forEach(p -> rulesets.add(((CustomRuleProvider)p).getLocationURI()));

@@ -147,9 +147,9 @@ public class WindupService
                 }
                 modelService.cleanCustomRuleRepositories(configuration);
                 if (!configuration.getUserRulesDirectories().isEmpty()) {
-					// TODO: Temporary - see https://tree.taiga.io/project/rdruss-jboss-migration-windup-v3/task/884
-	                	File file = new File(configuration.getUserRulesDirectories().get(0));
-	                	execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, Lists.newArrayList(file));
+	                	List<File> customRules = Lists.newArrayList();
+	                	configuration.getUserRulesDirectories().stream().forEach(d -> customRules.add(new File(d)));
+	                	execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, customRules);
 	                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
                 }
                 
