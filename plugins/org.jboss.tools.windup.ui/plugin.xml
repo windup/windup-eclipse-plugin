@@ -49,14 +49,14 @@
             name="Task List"
             restorable="true">
       </e4view>
-      <e4view
+      <!--<e4view
             category="org.jboss.tools.windup.ui.view.category.windup"
             class="org.jboss.tools.windup.ui.internal.views.SubmitRulesetInfoView"
             icon="icons/windup.png"
             id="org.jboss.tools.windup.ui.submitRulesetInfo"
             name="Submit Ruleset"
             restorable="false">
-      </e4view>
+      </e4view>-->
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -437,6 +437,15 @@
                tooltip="Refresh Rulesets">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.jboss.tools.windup.ui.rules.rulesView">
+         <command
+               commandId="org.jboss.tools.windup.ui.submitRulesetCommand"
+               label="Submit Ruleset"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -561,6 +570,11 @@
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.delegate.ShowInformationHandler"
             id="org.jboss.tools.windup.ui.showInformation"
             name="Show Tooltip Information">
+      </command>
+      <command
+            defaultHandler="org.jboss.tools.windup.ui.internal.handlers.SubmitRulesetHandler"
+            id="org.jboss.tools.windup.ui.submitRulesetCommand"
+            name="Submit Ruleset">
       </command>
    </extension>
     <extension

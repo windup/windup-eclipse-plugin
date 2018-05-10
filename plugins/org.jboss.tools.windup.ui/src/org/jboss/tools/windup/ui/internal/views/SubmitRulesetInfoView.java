@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.views;
 
 import java.io.IOException;
@@ -11,7 +21,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.browser.BrowserViewer;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
@@ -28,7 +37,7 @@ public class SubmitRulesetInfoView {
 	private void create(Composite parent, IEclipseContext context) {
 		GridLayoutFactory.fillDefaults().applyTo(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
-		browserViewer = new BrowserViewer(parent, SWT.NONE);
+		browserViewer = new BrowserViewer(parent, BrowserViewer.BUTTON_BAR | BrowserViewer.LOCATION_BAR);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(browserViewer);
 		try {
 			Bundle bundle = WindupUIPlugin.getDefault().getBundle();
