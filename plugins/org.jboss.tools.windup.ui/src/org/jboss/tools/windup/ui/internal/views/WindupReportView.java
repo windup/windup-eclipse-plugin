@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Red Hat, Inc.
+ * Copyright (c) 2018 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -254,7 +254,7 @@ public class WindupReportView implements IShowInTarget
     public void dispose()
     {
         // remove listeners
-    	selectionService.removePostSelectionListener(this.selectionChangedListener);
+    		selectionService.removePostSelectionListener(this.selectionChangedListener);
         windupService.removeWindupListener(this.reportListener);
         getPreferenceStore().setValue(PREVIOUS_REPORT_PREF, currentReportPath);
     }
@@ -263,7 +263,7 @@ public class WindupReportView implements IShowInTarget
 		try {
 			String projectName = configuration.getAttribute(ATTR_PROJECT_NAME, DEFAULT);
 			IProject project = findProject(projectName);
-	    	displayReport(project, false);
+			displayReport(project, false);
 		} catch (CoreException e) {
 			WindupUIPlugin.log(e);
 		}
