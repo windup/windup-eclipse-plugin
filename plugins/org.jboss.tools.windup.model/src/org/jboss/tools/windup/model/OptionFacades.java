@@ -27,6 +27,8 @@ import com.google.common.collect.Multimap;
  */
 public class OptionFacades {
 	
+	public static final String OPTION_OUTPUT = "output";
+	
 	public static enum Type {
 		STRING, BOOLEAN, FILE, PATH
 	}
@@ -102,19 +104,19 @@ public class OptionFacades {
 		}
 	}
 	
-	private static class PathOptionTypeFacade extends AbstractOptionTypeFacade<Path> {
+	private static class PathOptionTypeFacade extends AbstractOptionTypeFacade<String> {
 		public PathOptionTypeFacade(OptionDescription optionDescription) {
 			super(optionDescription);
 		}
 		@Override
-		public Path newInstance(String value) {
+		public String newInstance(String value) {
 			File file = new File(value);
-			return file.toPath();
+			return file.toPath().toString();
 		}
 		@Override
-		public List<Path> newInstance(List<String> values) {
-			List<Path> paths = Lists.newArrayList();
-			values.stream().forEach(v -> paths.add(new File(v).toPath()));
+		public List<String> newInstance(List<String> values) {
+			List<String> paths = Lists.newArrayList();
+			values.stream().forEach(v -> paths.add(new File(v).toPath().toString()));
 			return paths;
 		}
 	}

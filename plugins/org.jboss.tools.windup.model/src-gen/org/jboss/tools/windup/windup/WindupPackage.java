@@ -215,13 +215,13 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__SOURCE_MODE = PARAMETERIZED_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Generated Reports Location</b></em>' attribute.
+	 * The feature id for the '<em><b>Output Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION = PARAMETERIZED_FEATURE_COUNT + 3;
+	int CONFIGURATION_ELEMENT__OUTPUT_LOCATION = PARAMETERIZED_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Packages</b></em>' attribute list.
@@ -242,22 +242,13 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__TIMESTAMP = PARAMETERIZED_FEATURE_COUNT + 5;
 
 	/**
-	 * The feature id for the '<em><b>Generate Report</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONFIGURATION_ELEMENT__GENERATE_REPORT = PARAMETERIZED_FEATURE_COUNT + 6;
-
-	/**
 	 * The feature id for the '<em><b>Migration Path</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__MIGRATION_PATH = PARAMETERIZED_FEATURE_COUNT + 7;
+	int CONFIGURATION_ELEMENT__MIGRATION_PATH = PARAMETERIZED_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>User Rules Directories</b></em>' attribute list.
@@ -266,7 +257,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES = PARAMETERIZED_FEATURE_COUNT + 8;
+	int CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES = PARAMETERIZED_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Options</b></em>' containment reference list.
@@ -275,16 +266,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__OPTIONS = PARAMETERIZED_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Report Directory</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONFIGURATION_ELEMENT__REPORT_DIRECTORY = PARAMETERIZED_FEATURE_COUNT + 10;
+	int CONFIGURATION_ELEMENT__OPTIONS = PARAMETERIZED_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Jre Home</b></em>' attribute.
@@ -293,7 +275,16 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT__JRE_HOME = PARAMETERIZED_FEATURE_COUNT + 11;
+	int CONFIGURATION_ELEMENT__JRE_HOME = PARAMETERIZED_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Generate Report</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__GENERATE_REPORT = PARAMETERIZED_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
@@ -302,7 +293,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 12;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 11;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1637,15 +1628,15 @@ public interface WindupPackage extends EPackage {
 	EAttribute getConfigurationElement_SourceMode();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}'.
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getOutputLocation <em>Output Location</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Generated Reports Location</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation()
+	 * @return the meta object for the attribute '<em>Output Location</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getOutputLocation()
 	 * @see #getConfigurationElement()
 	 * @generated
 	 */
-	EAttribute getConfigurationElement_GeneratedReportsLocation();
+	EAttribute getConfigurationElement_OutputLocation();
 
 	/**
 	 * Returns the meta object for the attribute list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}'.
@@ -1668,17 +1659,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getConfigurationElement_Timestamp();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Generate Report</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport()
-	 * @see #getConfigurationElement()
-	 * @generated
-	 */
-	EAttribute getConfigurationElement_GenerateReport();
 
 	/**
 	 * Returns the meta object for the reference '{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}'.
@@ -1714,17 +1694,6 @@ public interface WindupPackage extends EPackage {
 	EReference getConfigurationElement_Options();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Report Directory</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory()
-	 * @see #getConfigurationElement()
-	 * @generated
-	 */
-	EAttribute getConfigurationElement_ReportDirectory();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1734,6 +1703,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getConfigurationElement_JreHome();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generate Report</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EAttribute getConfigurationElement_GenerateReport();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.

@@ -164,11 +164,10 @@ public class QuickfixService {
 			
 			Input input = (Input)hint.eContainer().eContainer();
 			ConfigurationElement configuration = (ConfigurationElement)input.eContainer();
-			String reportBaseLocation = configuration.getReportDirectory();
-			File reportDirectory = new File(reportBaseLocation);
+			//String reportBaseLocation = configuration.getReportDirectory();
 			
 	        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
-	        		reportDirectory,
+	        		new File(configuration.getOutputLocation()),
 	        		original.getLocation().toFile(),
 	        		lineNumber,
 	        		column,

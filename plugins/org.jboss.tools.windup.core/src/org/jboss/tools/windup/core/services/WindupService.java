@@ -105,7 +105,8 @@ public class WindupService
     	
 	    	progress.subTask(Messages.startingWindup);
 	    	modelService.synch(configuration);
-	    	IPath basePath = modelService.getGeneratedReportsBaseLocation(configuration);
+	    	
+	    	IPath basePath = org.eclipse.core.runtime.Path.fromOSString(configuration.getOutputLocation());
 	    	File baseOutputDir = basePath.toFile();
 	
 	    	progress.subTask(Messages.removing_old_report);
@@ -120,10 +121,11 @@ public class WindupService
                 Path projectPath = WorkspaceResourceUtils.computePath(input.getUri());
                 progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, input.getName()), IProgressMonitor.UNKNOWN);
                 
-                IPath outputPath = modelService.getGeneratedReportBaseLocation(configuration, input);
+                String outputDir = configuration.getOutputLocation();
+                
                 execBuilder.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
                 execBuilder.setInput(projectPath.toString());
-                execBuilder.setOutput(outputPath.toFile().toPath().toString());
+                execBuilder.setOutput(outputDir);
                 execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
                 execBuilder.setOption(IOptionKeys.sourceModeOption, true);
                 execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
@@ -169,6 +171,9 @@ public class WindupService
 	                	if (OptionFacades.isSingleValued(option)) {
 	                		Object optionValue = typeFacade.newInstance(values.get(0));
 	                		execBuilder.setOption(name, optionValue);
+	                		if (OptionFacades.OPTION_OUTPUT.equals(name)) {
+	                			configuration.setOutputLocation(outputDir);
+	                		}
 	                	}
 	                	else {
 	                		List<?> optionValues = typeFacade.newInstance(values);
@@ -193,12 +198,12 @@ public class WindupService
                 
                 WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
                 WindupCorePlugin.logInfo("Using input: " + projectPath.toString()); //$NON-NLS-1$
-                WindupCorePlugin.logInfo("Using output: " + outputPath.toFile().toPath().toString()); //$NON-NLS-1$
+                WindupCorePlugin.logInfo("Using output: " + outputDir); //$NON-NLS-1$
                 WindupCorePlugin.logInfo("Using sources: " + sources); //$NON-NLS-1$
                 WindupCorePlugin.logInfo("Using targets: " + targets); //$NON-NLS-1$
                 ExecutionResults results = execBuilder.execute();
                 WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
-                modelService.populateConfiguration(configuration, input, outputPath, results);
+                modelService.populateConfiguration(configuration, input, results);
 	        	}
 	        	
 	        	modelService.save();

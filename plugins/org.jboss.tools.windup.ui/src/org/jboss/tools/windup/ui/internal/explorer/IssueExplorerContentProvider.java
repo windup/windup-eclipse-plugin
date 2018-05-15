@@ -167,7 +167,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 								Optional<Input> option = configuration.getInputs().stream().filter((input) -> projectName.equals(input.getName())).findFirst();
 								if (option.isPresent()) {
 									Input input = option.get();
-							    		IPath reportPath = modelService.getGeneratedReport(configuration, input);
+							    		IPath reportPath = modelService.getReport(configuration, input); //modelService.getGeneratedReport(configuration, input);
 							    		File report = new File(reportPath.toString());
 									if (report.exists()) {
 										TreeNode reportNode = child.getChildPath(Messages.generatedReport);
@@ -213,7 +213,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			}
 			
 			if (groupService.isGroupBySeverity()) {
-				String segment = String.valueOf(marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO));
+				//String segment = String.valueOf(marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO));
 				String severity = marker.getAttribute(SEVERITY, Severity.POTENTIAL.toString());
 				//TreeNode severityNode = parent.getChildPath(segment);
 				TreeNode severityNode = parent.getChildPath(severity);

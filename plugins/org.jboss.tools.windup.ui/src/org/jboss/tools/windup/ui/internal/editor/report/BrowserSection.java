@@ -49,6 +49,6 @@ public class BrowserSection extends AbstractSection {
 	}
 	
 	private void loadReport() {
-		browser.setUrl(modelService.getReportPath(configuration).toString());
+		//browser.setUrl(modelService.getReportPath(configuration).toString());
 	}
 }

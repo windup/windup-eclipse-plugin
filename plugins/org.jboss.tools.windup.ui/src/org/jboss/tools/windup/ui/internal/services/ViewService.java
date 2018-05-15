@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -33,7 +34,6 @@ import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.Input;
 import org.osgi.service.event.Event;
 
 /**
@@ -56,17 +56,17 @@ public class ViewService {
 	}
 	
 	public void renderReport(ConfigurationElement configuration) {
-    	if (configuration.isGenerateReport() && !configuration.getInputs().isEmpty()) {
-    		Input input = configuration.getInputs().get(0);
-    		IPath path = modelService.getGeneratedReport(configuration, input);
+    	if (configuration.isGenerateReport()) {
+    		IPath path = Path.fromOSString(configuration.getOutputLocation());
+    		IPath report = path.append(ModelService.PROJECT_REPORT_HOME_PAGE);
     		File file = new File(path.toString());
     		if (file.exists()) {
-				Display.getDefault().asyncExec(() -> {
-					final WindupReportView view = activateWindupReportView();
-	    			if (view != null) {
-	    				view.showReport(path, true);
-	    			}
-    			});
+			Display.getDefault().asyncExec(() -> {
+				final WindupReportView view = activateWindupReportView();
+				if (view != null) {
+					view.showReport(report, true);
+				}
+			});
     		}
     	}
     }

@@ -308,7 +308,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getConfigurationElement_GeneratedReportsLocation() {
+	public EAttribute getConfigurationElement_OutputLocation() {
 		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -335,17 +335,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getConfigurationElement_GenerateReport() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getConfigurationElement_MigrationPath() {
-		return (EReference)configurationElementEClass.getEStructuralFeatures().get(7);
+		return (EReference)configurationElementEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -354,7 +345,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	public EAttribute getConfigurationElement_UserRulesDirectories() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(8);
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -363,16 +354,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	public EReference getConfigurationElement_Options() {
-		return (EReference)configurationElementEClass.getEStructuralFeatures().get(9);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getConfigurationElement_ReportDirectory() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(10);
+		return (EReference)configurationElementEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -381,7 +363,16 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	public EAttribute getConfigurationElement_JreHome() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(11);
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationElement_GenerateReport() {
+		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -978,15 +969,14 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__INPUTS);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__WINDUP_HOME);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__SOURCE_MODE);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION);
+		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__OUTPUT_LOCATION);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__PACKAGES);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__TIMESTAMP);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__MIGRATION_PATH);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__OPTIONS);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__REPORT_DIRECTORY);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__JRE_HOME);
+		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -1124,15 +1114,14 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEReference(getConfigurationElement_Inputs(), this.getInput(), null, "inputs", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_WindupHome(), ecorePackage.getEString(), "windupHome", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_SourceMode(), ecorePackage.getEBoolean(), "sourceMode", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_GeneratedReportsLocation(), ecorePackage.getEString(), "generatedReportsLocation", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationElement_OutputLocation(), ecorePackage.getEString(), "outputLocation", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_Packages(), ecorePackage.getEString(), "packages", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_Timestamp(), ecorePackage.getEString(), "timestamp", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_MigrationPath(), this.getMigrationPath(), null, "migrationPath", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_UserRulesDirectories(), ecorePackage.getEString(), "userRulesDirectories", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_Options(), this.getPair(), null, "options", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_ReportDirectory(), ecorePackage.getEString(), "reportDirectory", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_JreHome(), ecorePackage.getEString(), "jreHome", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

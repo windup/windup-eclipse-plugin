@@ -16,15 +16,14 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getInputs <em>Inputs</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupHome <em>Windup Home</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isSourceMode <em>Source Mode</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getOutputLocation <em>Output Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getPackages <em>Packages</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getTimestamp <em>Timestamp</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getMigrationPath <em>Migration Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getOptions <em>Options</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -101,30 +100,30 @@ public interface ConfigurationElement extends Parameterized {
 	void setSourceMode(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Generated Reports Location</b></em>' attribute.
+	 * Returns the value of the '<em><b>Output Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Generated Reports Location</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Output Location</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Generated Reports Location</em>' attribute.
-	 * @see #setGeneratedReportsLocation(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GeneratedReportsLocation()
+	 * @return the value of the '<em>Output Location</em>' attribute.
+	 * @see #setOutputLocation(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_OutputLocation()
 	 * @model
 	 * @generated
 	 */
-	String getGeneratedReportsLocation();
+	String getOutputLocation();
 
 	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getGeneratedReportsLocation <em>Generated Reports Location</em>}' attribute.
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getOutputLocation <em>Output Location</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Generated Reports Location</em>' attribute.
-	 * @see #getGeneratedReportsLocation()
+	 * @param value the new value of the '<em>Output Location</em>' attribute.
+	 * @see #getOutputLocation()
 	 * @generated
 	 */
-	void setGeneratedReportsLocation(String value);
+	void setOutputLocation(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Packages</b></em>' attribute list.
@@ -167,32 +166,6 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setTimestamp(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Generate Report</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Generate Report</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Generate Report</em>' attribute.
-	 * @see #setGenerateReport(boolean)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GenerateReport()
-	 * @model
-	 * @generated
-	 */
-	boolean isGenerateReport();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Generate Report</em>' attribute.
-	 * @see #isGenerateReport()
-	 * @generated
-	 */
-	void setGenerateReport(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Migration Path</b></em>' reference.
@@ -253,32 +226,6 @@ public interface ConfigurationElement extends Parameterized {
 	EList<Pair> getOptions();
 
 	/**
-	 * Returns the value of the '<em><b>Report Directory</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Report Directory</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Report Directory</em>' attribute.
-	 * @see #setReportDirectory(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_ReportDirectory()
-	 * @model
-	 * @generated
-	 */
-	String getReportDirectory();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getReportDirectory <em>Report Directory</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Report Directory</em>' attribute.
-	 * @see #getReportDirectory()
-	 * @generated
-	 */
-	void setReportDirectory(String value);
-
-	/**
 	 * Returns the value of the '<em><b>Jre Home</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -303,5 +250,31 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setJreHome(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Generate Report</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Generate Report</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Generate Report</em>' attribute.
+	 * @see #setGenerateReport(boolean)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_GenerateReport()
+	 * @model
+	 * @generated
+	 */
+	boolean isGenerateReport();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Generate Report</em>' attribute.
+	 * @see #isGenerateReport()
+	 * @generated
+	 */
+	void setGenerateReport(boolean value);
 
 } // ConfigurationElement

@@ -292,7 +292,7 @@ public class ModelService {
 					ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
 					configuration.setName(name);
 					configuration.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
-					configuration.setGeneratedReportsLocation(getGeneratedReportsBaseLocation(configuration).toOSString());
+					configuration.setOutputLocation(getDefaultOutputLocation(configuration));
 					configuration.setSourceMode(true);
 					configuration.setGenerateReport(true);
 					configuration.setMigrationPath(model.getMigrationPaths().get(1));
@@ -411,45 +411,58 @@ public class ModelService {
 		return found.isPresent() ? found.get() : null;
 	}
 	
-	public IPath getReportPath(ConfigurationElement configuration) {
+	/*public IPath getReportPath(ConfigurationElement configuration) {
 		return ModelService.reportsDir.append(configuration.getName()).append(PROJECT_REPORT_HOME_PAGE);
-	}
+	}*/
 	
-	public IPath getGeneratedReportsBaseLocation(ConfigurationElement configuration) {
+	/*public IPath getGeneratedReportsBaseLocation(ConfigurationElement configuration) {
 		String path = configuration.getName().replaceAll("\\s+", "");
 		path = path.concat(File.separator);
 		return reportsDir.append(path);
-	}
+	}*/
 	
-	public IPath getGeneratedReportsBaseLocation(Issue issue) {
+	/*public IPath getGeneratedReportsBaseLocation(Issue issue) {
 		Input input = (Input)issue.eContainer().eContainer();
 		ConfigurationElement configuration = (ConfigurationElement)input.eContainer();
 		return getGeneratedReportBaseLocation(configuration, input);
-	}
+	}*/
 	
-	public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration, Input input) {
+	/*public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration, Input input) {
 		IPath path = getGeneratedReportsBaseLocation(configuration);
 		path = path.append(input.getName());
 		path = path.append(File.separator);
 		return path;
-	}
+	}*/
 	
-	public IPath getGeneratedReport(ConfigurationElement configuration, Input input) {
+	/*public IPath getGeneratedReport(ConfigurationElement configuration, Input input) {
 		IPath path = getGeneratedReportBaseLocation(configuration, input);
 		path = path.append(PROJECT_REPORT_HOME_PAGE);
 		return path;
+	}*/
+	
+	public IPath getReport(ConfigurationElement configuration, Input input) {
+		StringBuffer buff = new StringBuffer();
+		buff.append(configuration.getOutputLocation());
+		buff.append(File.separator);
+		buff.append(input.getName());
+		buff.append(ModelService.PROJECT_REPORT_HOME_PAGE);
+		return Path.fromOSString(buff.toString());
+	}
+	
+	public String getDefaultOutputLocation(ConfigurationElement configuration) {
+		String configName = configuration.getName().replaceAll("\\s+", "");
+		return ModelService.reportsDir.append(configName).toOSString();
 	}
 	
 	/**
 	 * Populates the configuration element with the execution results.
 	 */
-	public void populateConfiguration(ConfigurationElement configuration, Input input, IPath reportDirectory, ExecutionResults results) {
+	public void populateConfiguration(ConfigurationElement configuration, Input input, ExecutionResults results) {
     		WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
         input.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
-        configuration.setReportDirectory(reportDirectory.toString());
-        
+
         for (Iterator<Hint> iter = results.getHints().iterator(); iter.hasNext();) {
         		
         		Hint wHint = iter.next();

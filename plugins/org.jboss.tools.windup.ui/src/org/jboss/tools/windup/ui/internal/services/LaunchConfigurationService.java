@@ -88,9 +88,9 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 		if (configuration == null)
 			return;
 		
-		String reportsOutput = configuration.getGeneratedReportsLocation();
+		String reportsOutput = configuration.getOutputLocation();
 		Path reportsOutputPath = new Path(reportsOutput);
-		if ( reportsOutputPath != null ) {
+		if ( reportsOutputPath != null) {
 			FileUtils.delete(reportsOutputPath.toFile(), true);
 		}
 	}

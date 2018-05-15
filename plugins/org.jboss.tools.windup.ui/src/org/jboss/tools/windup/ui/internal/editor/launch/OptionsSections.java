@@ -10,25 +10,19 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.editor.launch;
 
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_SEARCH;
-import static org.jboss.tools.windup.ui.internal.Messages.*;
+import static org.jboss.tools.windup.ui.internal.Messages.generatedReportLocation;
+import static org.jboss.tools.windup.ui.internal.Messages.optionsDescription;
+import static org.jboss.tools.windup.ui.internal.Messages.sourceMode;
+import static org.jboss.tools.windup.ui.internal.Messages.windupOptions;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
-import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.AbstractSection;
 import org.jboss.tools.windup.windup.WindupPackage;
 
@@ -60,7 +54,7 @@ public class OptionsSections extends AbstractSection {
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(container);
 		createLabel(container, generatedReportLocation);
 		
-		Text outputLocationText = toolkit.createText(container, configuration.getGeneratedReportsLocation());
+		/*Text outputLocationText = toolkit.createText(container, configuration.getGeneratedReportsLocation());
 		outputLocationText.setEditable(false);
 		outputLocationText.setBackground(Display.getDefault().getActiveShell().getBackground());
 		GridDataFactory.fillDefaults().grab(true, false).hint(400, SWT.DEFAULT).applyTo(outputLocationText);
@@ -86,5 +80,6 @@ public class OptionsSections extends AbstractSection {
 			}
 		});
 		reportLocationButton.setEnabled(false);
+		*/
 	}
 }

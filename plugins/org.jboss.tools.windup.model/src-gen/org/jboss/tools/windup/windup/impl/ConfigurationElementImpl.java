@@ -35,15 +35,14 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getInputs <em>Inputs</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupHome <em>Windup Home</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isSourceMode <em>Source Mode</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getGeneratedReportsLocation <em>Generated Reports Location</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getOutputLocation <em>Output Location</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getPackages <em>Packages</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getTimestamp <em>Timestamp</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getMigrationPath <em>Migration Path</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getUserRulesDirectories <em>User Rules Directories</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getOptions <em>Options</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getReportDirectory <em>Report Directory</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getJreHome <em>Jre Home</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
  * </ul>
  *
  * @generated
@@ -100,24 +99,24 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	protected boolean sourceMode = SOURCE_MODE_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getGeneratedReportsLocation() <em>Generated Reports Location</em>}' attribute.
+	 * The default value of the '{@link #getOutputLocation() <em>Output Location</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getGeneratedReportsLocation()
+	 * @see #getOutputLocation()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String GENERATED_REPORTS_LOCATION_EDEFAULT = null;
+	protected static final String OUTPUT_LOCATION_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getGeneratedReportsLocation() <em>Generated Reports Location</em>}' attribute.
+	 * The cached value of the '{@link #getOutputLocation() <em>Output Location</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getGeneratedReportsLocation()
+	 * @see #getOutputLocation()
 	 * @generated
 	 * @ordered
 	 */
-	protected String generatedReportsLocation = GENERATED_REPORTS_LOCATION_EDEFAULT;
+	protected String outputLocation = OUTPUT_LOCATION_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getPackages() <em>Packages</em>}' attribute list.
@@ -150,26 +149,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	protected String timestamp = TIMESTAMP_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isGenerateReport() <em>Generate Report</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isGenerateReport()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean GENERATE_REPORT_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isGenerateReport() <em>Generate Report</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isGenerateReport()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean generateReport = GENERATE_REPORT_EDEFAULT;
-
-	/**
 	 * The cached value of the '{@link #getMigrationPath() <em>Migration Path</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -200,26 +179,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	protected EList<Pair> options;
 
 	/**
-	 * The default value of the '{@link #getReportDirectory() <em>Report Directory</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getReportDirectory()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String REPORT_DIRECTORY_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getReportDirectory() <em>Report Directory</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getReportDirectory()
-	 * @generated
-	 * @ordered
-	 */
-	protected String reportDirectory = REPORT_DIRECTORY_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getJreHome() <em>Jre Home</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -238,6 +197,26 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected String jreHome = JRE_HOME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isGenerateReport() <em>Generate Report</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isGenerateReport()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean GENERATE_REPORT_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isGenerateReport() <em>Generate Report</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isGenerateReport()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean generateReport = GENERATE_REPORT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -317,8 +296,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getGeneratedReportsLocation() {
-		return generatedReportsLocation;
+	public String getOutputLocation() {
+		return outputLocation;
 	}
 
 	/**
@@ -326,11 +305,11 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setGeneratedReportsLocation(String newGeneratedReportsLocation) {
-		String oldGeneratedReportsLocation = generatedReportsLocation;
-		generatedReportsLocation = newGeneratedReportsLocation;
+	public void setOutputLocation(String newOutputLocation) {
+		String oldOutputLocation = outputLocation;
+		outputLocation = newOutputLocation;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION, oldGeneratedReportsLocation, generatedReportsLocation));
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__OUTPUT_LOCATION, oldOutputLocation, outputLocation));
 	}
 
 	/**
@@ -364,27 +343,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		timestamp = newTimestamp;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP, oldTimestamp, timestamp));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isGenerateReport() {
-		return generateReport;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setGenerateReport(boolean newGenerateReport) {
-		boolean oldGenerateReport = generateReport;
-		generateReport = newGenerateReport;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT, oldGenerateReport, generateReport));
 	}
 
 	/**
@@ -454,27 +412,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getReportDirectory() {
-		return reportDirectory;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setReportDirectory(String newReportDirectory) {
-		String oldReportDirectory = reportDirectory;
-		reportDirectory = newReportDirectory;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY, oldReportDirectory, reportDirectory));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getJreHome() {
 		return jreHome;
 	}
@@ -489,6 +426,27 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		jreHome = newJreHome;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME, oldJreHome, jreHome));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isGenerateReport() {
+		return generateReport;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setGenerateReport(boolean newGenerateReport) {
+		boolean oldGenerateReport = generateReport;
+		generateReport = newGenerateReport;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT, oldGenerateReport, generateReport));
 	}
 
 	/**
@@ -521,14 +479,12 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getWindupHome();
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				return isSourceMode();
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
-				return getGeneratedReportsLocation();
+			case WindupPackage.CONFIGURATION_ELEMENT__OUTPUT_LOCATION:
+				return getOutputLocation();
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				return getPackages();
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
 				return getTimestamp();
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
-				return isGenerateReport();
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				if (resolve) return getMigrationPath();
 				return basicGetMigrationPath();
@@ -536,10 +492,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getUserRulesDirectories();
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				return getOptions();
-			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
-				return getReportDirectory();
 			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
 				return getJreHome();
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
+				return isGenerateReport();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -563,8 +519,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				setSourceMode((Boolean)newValue);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
-				setGeneratedReportsLocation((String)newValue);
+			case WindupPackage.CONFIGURATION_ELEMENT__OUTPUT_LOCATION:
+				setOutputLocation((String)newValue);
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				getPackages().clear();
@@ -572,9 +528,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
 				setTimestamp((String)newValue);
-				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
-				setGenerateReport((Boolean)newValue);
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				setMigrationPath((MigrationPath)newValue);
@@ -587,11 +540,11 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getOptions().clear();
 				getOptions().addAll((Collection<? extends Pair>)newValue);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
-				setReportDirectory((String)newValue);
-				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
 				setJreHome((String)newValue);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
+				setGenerateReport((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -614,17 +567,14 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				setSourceMode(SOURCE_MODE_EDEFAULT);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
-				setGeneratedReportsLocation(GENERATED_REPORTS_LOCATION_EDEFAULT);
+			case WindupPackage.CONFIGURATION_ELEMENT__OUTPUT_LOCATION:
+				setOutputLocation(OUTPUT_LOCATION_EDEFAULT);
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				getPackages().clear();
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
 				setTimestamp(TIMESTAMP_EDEFAULT);
-				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
-				setGenerateReport(GENERATE_REPORT_EDEFAULT);
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				setMigrationPath((MigrationPath)null);
@@ -635,11 +585,11 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				getOptions().clear();
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
-				setReportDirectory(REPORT_DIRECTORY_EDEFAULT);
-				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
 				setJreHome(JRE_HOME_EDEFAULT);
+				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
+				setGenerateReport(GENERATE_REPORT_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -659,24 +609,22 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return WINDUP_HOME_EDEFAULT == null ? windupHome != null : !WINDUP_HOME_EDEFAULT.equals(windupHome);
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
 				return sourceMode != SOURCE_MODE_EDEFAULT;
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
-				return GENERATED_REPORTS_LOCATION_EDEFAULT == null ? generatedReportsLocation != null : !GENERATED_REPORTS_LOCATION_EDEFAULT.equals(generatedReportsLocation);
+			case WindupPackage.CONFIGURATION_ELEMENT__OUTPUT_LOCATION:
+				return OUTPUT_LOCATION_EDEFAULT == null ? outputLocation != null : !OUTPUT_LOCATION_EDEFAULT.equals(outputLocation);
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 				return packages != null && !packages.isEmpty();
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
 				return TIMESTAMP_EDEFAULT == null ? timestamp != null : !TIMESTAMP_EDEFAULT.equals(timestamp);
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
-				return generateReport != GENERATE_REPORT_EDEFAULT;
 			case WindupPackage.CONFIGURATION_ELEMENT__MIGRATION_PATH:
 				return migrationPath != null;
 			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
 				return userRulesDirectories != null && !userRulesDirectories.isEmpty();
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				return options != null && !options.isEmpty();
-			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
-				return REPORT_DIRECTORY_EDEFAULT == null ? reportDirectory != null : !REPORT_DIRECTORY_EDEFAULT.equals(reportDirectory);
 			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
 				return JRE_HOME_EDEFAULT == null ? jreHome != null : !JRE_HOME_EDEFAULT.equals(jreHome);
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
+				return generateReport != GENERATE_REPORT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -695,20 +643,18 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(windupHome);
 		result.append(", sourceMode: ");
 		result.append(sourceMode);
-		result.append(", generatedReportsLocation: ");
-		result.append(generatedReportsLocation);
+		result.append(", outputLocation: ");
+		result.append(outputLocation);
 		result.append(", packages: ");
 		result.append(packages);
 		result.append(", timestamp: ");
 		result.append(timestamp);
-		result.append(", generateReport: ");
-		result.append(generateReport);
 		result.append(", userRulesDirectories: ");
 		result.append(userRulesDirectories);
-		result.append(", reportDirectory: ");
-		result.append(reportDirectory);
 		result.append(", jreHome: ");
 		result.append(jreHome);
+		result.append(", generateReport: ");
+		result.append(generateReport);
 		result.append(')');
 		return result.toString();
 	}

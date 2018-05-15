@@ -59,6 +59,7 @@ public class IssueItemProvider extends MarkerElementItemProvider {
 			addStalePropertyDescriptor(object);
 			addTitlePropertyDescriptor(object);
 			addMessageOrDescriptionPropertyDescriptor(object);
+			addWsPathPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -306,6 +307,28 @@ public class IssueItemProvider extends MarkerElementItemProvider {
 	}
 
 	/**
+	 * This adds a property descriptor for the Ws Path feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addWsPathPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Issue_wsPath_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Issue_wsPath_feature", "_UI_Issue_type"),
+				 WindupPackage.eINSTANCE.getIssue_WsPath(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -385,6 +408,7 @@ public class IssueItemProvider extends MarkerElementItemProvider {
 			case WindupPackage.ISSUE__STALE:
 			case WindupPackage.ISSUE__TITLE:
 			case WindupPackage.ISSUE__MESSAGE_OR_DESCRIPTION:
+			case WindupPackage.ISSUE__WS_PATH:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.ISSUE__LINKS:

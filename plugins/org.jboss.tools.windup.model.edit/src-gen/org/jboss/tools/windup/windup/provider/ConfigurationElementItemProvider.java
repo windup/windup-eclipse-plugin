@@ -50,14 +50,13 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 
 			addWindupHomePropertyDescriptor(object);
 			addSourceModePropertyDescriptor(object);
-			addGeneratedReportsLocationPropertyDescriptor(object);
+			addOutputLocationPropertyDescriptor(object);
 			addPackagesPropertyDescriptor(object);
 			addTimestampPropertyDescriptor(object);
-			addGenerateReportPropertyDescriptor(object);
 			addMigrationPathPropertyDescriptor(object);
 			addUserRulesDirectoriesPropertyDescriptor(object);
-			addReportDirectoryPropertyDescriptor(object);
 			addJreHomePropertyDescriptor(object);
+			addGenerateReportPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -107,19 +106,19 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
-	 * This adds a property descriptor for the Generated Reports Location feature.
+	 * This adds a property descriptor for the Output Location feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addGeneratedReportsLocationPropertyDescriptor(Object object) {
+	protected void addOutputLocationPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ConfigurationElement_generatedReportsLocation_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generatedReportsLocation_feature", "_UI_ConfigurationElement_type"),
-				 WindupPackage.eINSTANCE.getConfigurationElement_GeneratedReportsLocation(),
+				 getString("_UI_ConfigurationElement_outputLocation_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_outputLocation_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_OutputLocation(),
 				 true,
 				 false,
 				 false,
@@ -173,28 +172,6 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
-	 * This adds a property descriptor for the Generate Report feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addGenerateReportPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ConfigurationElement_generateReport_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generateReport_feature", "_UI_ConfigurationElement_type"),
-				 WindupPackage.eINSTANCE.getConfigurationElement_GenerateReport(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This adds a property descriptor for the Migration Path feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -239,28 +216,6 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 	}
 
 	/**
-	 * This adds a property descriptor for the Report Directory feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addReportDirectoryPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ConfigurationElement_reportDirectory_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_reportDirectory_feature", "_UI_ConfigurationElement_type"),
-				 WindupPackage.eINSTANCE.getConfigurationElement_ReportDirectory(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This adds a property descriptor for the Jre Home feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -278,6 +233,28 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Generate Report feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addGenerateReportPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationElement_generateReport_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationElement_generateReport_feature", "_UI_ConfigurationElement_type"),
+				 WindupPackage.eINSTANCE.getConfigurationElement_GenerateReport(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -353,13 +330,12 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 		switch (notification.getFeatureID(ConfigurationElement.class)) {
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_HOME:
 			case WindupPackage.CONFIGURATION_ELEMENT__SOURCE_MODE:
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATED_REPORTS_LOCATION:
+			case WindupPackage.CONFIGURATION_ELEMENT__OUTPUT_LOCATION:
 			case WindupPackage.CONFIGURATION_ELEMENT__PACKAGES:
 			case WindupPackage.CONFIGURATION_ELEMENT__TIMESTAMP:
-			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 			case WindupPackage.CONFIGURATION_ELEMENT__USER_RULES_DIRECTORIES:
-			case WindupPackage.CONFIGURATION_ELEMENT__REPORT_DIRECTORY:
 			case WindupPackage.CONFIGURATION_ELEMENT__JRE_HOME:
+			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case WindupPackage.CONFIGURATION_ELEMENT__INPUTS:
