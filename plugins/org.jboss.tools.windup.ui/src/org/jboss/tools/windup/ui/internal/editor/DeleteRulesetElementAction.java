@@ -43,7 +43,7 @@ public class DeleteRulesetElementAction extends BaseSelectionListenerAction {
 	
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return selection.size() == 1;
+		return !selection.isEmpty();
 	}
 	
 	@SuppressWarnings("unchecked")
