@@ -411,35 +411,6 @@ public class ModelService {
 		return found.isPresent() ? found.get() : null;
 	}
 	
-	/*public IPath getReportPath(ConfigurationElement configuration) {
-		return ModelService.reportsDir.append(configuration.getName()).append(PROJECT_REPORT_HOME_PAGE);
-	}*/
-	
-	/*public IPath getGeneratedReportsBaseLocation(ConfigurationElement configuration) {
-		String path = configuration.getName().replaceAll("\\s+", "");
-		path = path.concat(File.separator);
-		return reportsDir.append(path);
-	}*/
-	
-	/*public IPath getGeneratedReportsBaseLocation(Issue issue) {
-		Input input = (Input)issue.eContainer().eContainer();
-		ConfigurationElement configuration = (ConfigurationElement)input.eContainer();
-		return getGeneratedReportBaseLocation(configuration, input);
-	}*/
-	
-	/*public IPath getGeneratedReportBaseLocation(ConfigurationElement configuration, Input input) {
-		IPath path = getGeneratedReportsBaseLocation(configuration);
-		path = path.append(input.getName());
-		path = path.append(File.separator);
-		return path;
-	}*/
-	
-	/*public IPath getGeneratedReport(ConfigurationElement configuration, Input input) {
-		IPath path = getGeneratedReportBaseLocation(configuration, input);
-		path = path.append(PROJECT_REPORT_HOME_PAGE);
-		return path;
-	}*/
-	
 	public IPath getReport(ConfigurationElement configuration, Input input) {
 		StringBuffer buff = new StringBuffer();
 		buff.append(configuration.getOutputLocation());

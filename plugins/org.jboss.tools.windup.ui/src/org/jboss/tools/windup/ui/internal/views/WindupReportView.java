@@ -10,10 +10,6 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.views;
 
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-import static org.jboss.tools.windup.model.domain.WindupConstants.DEFAULT;
-import static org.jboss.tools.windup.model.domain.WorkspaceResourceUtils.findProject;
-
 import java.io.File;
 
 import javax.annotation.PreDestroy;
@@ -21,9 +17,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -328,7 +322,7 @@ public class WindupReportView implements IShowInTarget
             }
             else
             {
-                this.showMessage(Messages.report_has_no_information_on_resource, true);
+                this.showMessage(Messages.noWindupReport, true);
             }
         }
     }

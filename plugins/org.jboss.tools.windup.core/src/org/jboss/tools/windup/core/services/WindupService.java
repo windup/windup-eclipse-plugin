@@ -281,20 +281,6 @@ public class WindupService
 				}
 			}
 		}
-			
-			/*for (ReportLink reportLink : executionResults.getReportLinks()) {
-				if (resourceAsFile.equals(reportLink.getInputFile())) {
-					File reportFile = reportLink.getReportFile();
-					Path projectPath = resource.getProject().getLocation().toFile().toPath();
-					Path reportFileRelativeToProject = projectPath.relativize(reportFile.toPath());
-					IPath projectLocation = resource.getProject().getLocation();
-					reportPath = projectLocation.append(reportFileRelativeToProject.toString());
-					break;
-				}
-			}
-			*/
-			//break;
-		//}
 
 		return null;
 	}
