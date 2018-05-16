@@ -143,7 +143,7 @@ public class LaunchUtils {
 		).findAny().isPresent();
 		
 		if (!exists) {
-			modelService.createInput(configuration, Lists.newArrayList(config.project));
+			modelService.createInput(configuration, Lists.newArrayList(config.project.getLocation().toString()));
 		}
 		
 		return wc.doSave();

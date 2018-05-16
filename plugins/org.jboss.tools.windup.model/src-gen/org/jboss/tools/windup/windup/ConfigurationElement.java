@@ -24,6 +24,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getOptions <em>Options</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -276,5 +277,31 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setGenerateReport(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Windup Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Windup Result</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Windup Result</em>' containment reference.
+	 * @see #setWindupResult(WindupResult)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_WindupResult()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	WindupResult getWindupResult();
+
+	/**
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Windup Result</em>' containment reference.
+	 * @see #getWindupResult()
+	 * @generated
+	 */
+	void setWindupResult(WindupResult value);
 
 } // ConfigurationElement

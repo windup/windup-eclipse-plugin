@@ -12,8 +12,7 @@ package org.jboss.tools.windup.windup;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.jboss.tools.windup.windup.Input#getUri <em>Uri</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.Input#getWindupResult <em>Windup Result</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.Input#getLocation <em>Location</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getInput()
@@ -22,55 +21,29 @@ package org.jboss.tools.windup.windup;
  */
 public interface Input extends NamedElement {
 	/**
-	 * Returns the value of the '<em><b>Uri</b></em>' attribute.
+	 * Returns the value of the '<em><b>Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Uri</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Location</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Uri</em>' attribute.
-	 * @see #setUri(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getInput_Uri()
+	 * @return the value of the '<em>Location</em>' attribute.
+	 * @see #setLocation(String)
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getInput_Location()
 	 * @model
 	 * @generated
 	 */
-	String getUri();
+	String getLocation();
 
 	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Input#getUri <em>Uri</em>}' attribute.
+	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Input#getLocation <em>Location</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Uri</em>' attribute.
-	 * @see #getUri()
+	 * @param value the new value of the '<em>Location</em>' attribute.
+	 * @see #getLocation()
 	 * @generated
 	 */
-	void setUri(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Windup Result</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Windup Result</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Windup Result</em>' containment reference.
-	 * @see #setWindupResult(WindupResult)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getInput_WindupResult()
-	 * @model containment="true" resolveProxies="true"
-	 * @generated
-	 */
-	WindupResult getWindupResult();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.Input#getWindupResult <em>Windup Result</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Windup Result</em>' containment reference.
-	 * @see #getWindupResult()
-	 * @generated
-	 */
-	void setWindupResult(WindupResult value);
+	void setLocation(String value);
 
 } // Input

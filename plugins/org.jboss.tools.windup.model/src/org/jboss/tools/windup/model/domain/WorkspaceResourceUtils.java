@@ -64,9 +64,9 @@ public class WorkspaceResourceUtils {
 	/**
 	 * @return the project in the workspace matching the specified name.
 	 */
-	public static IProject findProject(String projectName) {
+	public static IProject findProject(String absoluteLocation) {
 		return Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(proj -> {
-			return Collator.getInstance().equals(proj.getName(), projectName);
+			return Collator.getInstance().equals(proj.getLocation().toString(), absoluteLocation);
 		}).findFirst().get();
 	}
 	

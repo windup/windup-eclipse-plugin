@@ -380,6 +380,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getConfigurationElement_WindupResult() {
+		return (EReference)configurationElementEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getParameter() {
 		return parameterEClass;
 	}
@@ -461,17 +470,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getInput_Uri() {
+	public EAttribute getInput_Location() {
 		return (EAttribute)inputEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getInput_WindupResult() {
-		return (EReference)inputEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -977,6 +977,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__OPTIONS);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__JRE_HOME);
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
+		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__WINDUP_RESULT);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -990,8 +991,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEReference(windupModelEClass, WINDUP_MODEL__CUSTOM_RULE_REPOSITORIES);
 
 		inputEClass = createEClass(INPUT);
-		createEAttribute(inputEClass, INPUT__URI);
-		createEReference(inputEClass, INPUT__WINDUP_RESULT);
+		createEAttribute(inputEClass, INPUT__LOCATION);
 
 		windupResultEClass = createEClass(WINDUP_RESULT);
 		createEAttribute(windupResultEClass, WINDUP_RESULT__EXECUTION_RESULTS);
@@ -1122,6 +1122,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEReference(getConfigurationElement_Options(), this.getPair(), null, "options", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_JreHome(), ecorePackage.getEString(), "jreHome", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfigurationElement_WindupResult(), this.getWindupResult(), null, "windupResult", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1135,8 +1136,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEReference(getWindupModel_CustomRuleRepositories(), this.getCustomRuleProvider(), null, "customRuleRepositories", null, 0, -1, WindupModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(inputEClass, Input.class, "Input", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getInput_Uri(), ecorePackage.getEString(), "uri", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getInput_WindupResult(), this.getWindupResult(), null, "windupResult", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getInput_Location(), ecorePackage.getEString(), "location", null, 0, 1, Input.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(windupResultEClass, WindupResult.class, "WindupResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getWindupResult_ExecutionResults(), this.getWindupExecutionResults(), "executionResults", null, 0, 1, WindupResult.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

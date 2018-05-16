@@ -23,6 +23,7 @@ import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.WindupPackage;
+import org.jboss.tools.windup.windup.WindupResult;
 
 /**
  * <!-- begin-user-doc -->
@@ -43,6 +44,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getOptions <em>Options</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getJreHome <em>Jre Home</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupResult <em>Windup Result</em>}</li>
  * </ul>
  *
  * @generated
@@ -217,6 +219,16 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected boolean generateReport = GENERATE_REPORT_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getWindupResult() <em>Windup Result</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWindupResult()
+	 * @generated
+	 * @ordered
+	 */
+	protected WindupResult windupResult;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -454,6 +466,72 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public WindupResult getWindupResult() {
+		if (windupResult != null && windupResult.eIsProxy()) {
+			InternalEObject oldWindupResult = (InternalEObject)windupResult;
+			windupResult = (WindupResult)eResolveProxy(oldWindupResult);
+			if (windupResult != oldWindupResult) {
+				InternalEObject newWindupResult = (InternalEObject)windupResult;
+				NotificationChain msgs = oldWindupResult.eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, null);
+				if (newWindupResult.eInternalContainer() == null) {
+					msgs = newWindupResult.eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, msgs);
+				}
+				if (msgs != null) msgs.dispatch();
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, oldWindupResult, windupResult));
+			}
+		}
+		return windupResult;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public WindupResult basicGetWindupResult() {
+		return windupResult;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetWindupResult(WindupResult newWindupResult, NotificationChain msgs) {
+		WindupResult oldWindupResult = windupResult;
+		windupResult = newWindupResult;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, oldWindupResult, newWindupResult);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setWindupResult(WindupResult newWindupResult) {
+		if (newWindupResult != windupResult) {
+			NotificationChain msgs = null;
+			if (windupResult != null)
+				msgs = ((InternalEObject)windupResult).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, msgs);
+			if (newWindupResult != null)
+				msgs = ((InternalEObject)newWindupResult).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, null, msgs);
+			msgs = basicSetWindupResult(newWindupResult, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT, newWindupResult, newWindupResult));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -461,6 +539,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return ((InternalEList<?>)getInputs()).basicRemove(otherEnd, msgs);
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 				return ((InternalEList<?>)getOptions()).basicRemove(otherEnd, msgs);
+			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
+				return basicSetWindupResult(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -496,6 +576,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getJreHome();
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				return isGenerateReport();
+			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
+				if (resolve) return getWindupResult();
+				return basicGetWindupResult();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -546,6 +629,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				setGenerateReport((Boolean)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
+				setWindupResult((WindupResult)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -591,6 +677,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				setGenerateReport(GENERATE_REPORT_EDEFAULT);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
+				setWindupResult((WindupResult)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -625,6 +714,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return JRE_HOME_EDEFAULT == null ? jreHome != null : !JRE_HOME_EDEFAULT.equals(jreHome);
 			case WindupPackage.CONFIGURATION_ELEMENT__GENERATE_REPORT:
 				return generateReport != GENERATE_REPORT_EDEFAULT;
+			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
+				return windupResult != null;
 		}
 		return super.eIsSet(featureID);
 	}

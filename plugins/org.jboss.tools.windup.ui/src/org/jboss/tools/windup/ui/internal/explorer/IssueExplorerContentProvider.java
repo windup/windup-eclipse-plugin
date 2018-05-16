@@ -167,7 +167,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 								Optional<Input> option = configuration.getInputs().stream().filter((input) -> projectName.equals(input.getName())).findFirst();
 								if (option.isPresent()) {
 									Input input = option.get();
-							    		IPath reportPath = modelService.getReport(configuration, input); //modelService.getGeneratedReport(configuration, input);
+							    		IPath reportPath = modelService.getReport(configuration, input);
 							    		File report = new File(reportPath.toString());
 									if (report.exists()) {
 										TreeNode reportNode = child.getChildPath(Messages.generatedReport);

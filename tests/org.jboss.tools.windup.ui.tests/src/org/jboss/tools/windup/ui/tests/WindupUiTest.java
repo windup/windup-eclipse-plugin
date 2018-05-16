@@ -148,7 +148,7 @@ public class WindupUiTest extends WindupTest {
 		ConfigurationElement configuration = LaunchUtils.createConfiguration(
 				NameUtil.generateUniqueConfigurationElementName(modelService.getModel()), modelService);
 		IProject project = projectProvider.getProject();
-		modelService.createInput(configuration, Lists.newArrayList(project));
+		modelService.createInput(configuration, Lists.newArrayList(project.getLocation().toString()));
 		return configuration;
 	}
 }

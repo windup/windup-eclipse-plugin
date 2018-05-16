@@ -3,16 +3,13 @@
 package org.jboss.tools.windup.windup.impl;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.WindupPackage;
-import org.jboss.tools.windup.windup.WindupResult;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,42 +19,31 @@ import org.jboss.tools.windup.windup.WindupResult;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.jboss.tools.windup.windup.impl.InputImpl#getUri <em>Uri</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.InputImpl#getWindupResult <em>Windup Result</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.InputImpl#getLocation <em>Location</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class InputImpl extends NamedElementImpl implements Input {
 	/**
-	 * The default value of the '{@link #getUri() <em>Uri</em>}' attribute.
+	 * The default value of the '{@link #getLocation() <em>Location</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getUri()
+	 * @see #getLocation()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String URI_EDEFAULT = null;
+	protected static final String LOCATION_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getUri() <em>Uri</em>}' attribute.
+	 * The cached value of the '{@link #getLocation() <em>Location</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getUri()
+	 * @see #getLocation()
 	 * @generated
 	 * @ordered
 	 */
-	protected String uri = URI_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getWindupResult() <em>Windup Result</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getWindupResult()
-	 * @generated
-	 * @ordered
-	 */
-	protected WindupResult windupResult;
+	protected String location = LOCATION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -83,8 +69,8 @@ public class InputImpl extends NamedElementImpl implements Input {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getUri() {
-		return uri;
+	public String getLocation() {
+		return location;
 	}
 
 	/**
@@ -92,91 +78,11 @@ public class InputImpl extends NamedElementImpl implements Input {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setUri(String newUri) {
-		String oldUri = uri;
-		uri = newUri;
+	public void setLocation(String newLocation) {
+		String oldLocation = location;
+		location = newLocation;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.INPUT__URI, oldUri, uri));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public WindupResult getWindupResult() {
-		if (windupResult != null && windupResult.eIsProxy()) {
-			InternalEObject oldWindupResult = (InternalEObject)windupResult;
-			windupResult = (WindupResult)eResolveProxy(oldWindupResult);
-			if (windupResult != oldWindupResult) {
-				InternalEObject newWindupResult = (InternalEObject)windupResult;
-				NotificationChain msgs = oldWindupResult.eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WindupPackage.INPUT__WINDUP_RESULT, null, null);
-				if (newWindupResult.eInternalContainer() == null) {
-					msgs = newWindupResult.eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WindupPackage.INPUT__WINDUP_RESULT, null, msgs);
-				}
-				if (msgs != null) msgs.dispatch();
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, WindupPackage.INPUT__WINDUP_RESULT, oldWindupResult, windupResult));
-			}
-		}
-		return windupResult;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public WindupResult basicGetWindupResult() {
-		return windupResult;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetWindupResult(WindupResult newWindupResult, NotificationChain msgs) {
-		WindupResult oldWindupResult = windupResult;
-		windupResult = newWindupResult;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, WindupPackage.INPUT__WINDUP_RESULT, oldWindupResult, newWindupResult);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setWindupResult(WindupResult newWindupResult) {
-		if (newWindupResult != windupResult) {
-			NotificationChain msgs = null;
-			if (windupResult != null)
-				msgs = ((InternalEObject)windupResult).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WindupPackage.INPUT__WINDUP_RESULT, null, msgs);
-			if (newWindupResult != null)
-				msgs = ((InternalEObject)newWindupResult).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WindupPackage.INPUT__WINDUP_RESULT, null, msgs);
-			msgs = basicSetWindupResult(newWindupResult, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.INPUT__WINDUP_RESULT, newWindupResult, newWindupResult));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case WindupPackage.INPUT__WINDUP_RESULT:
-				return basicSetWindupResult(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
+			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.INPUT__LOCATION, oldLocation, location));
 	}
 
 	/**
@@ -187,11 +93,8 @@ public class InputImpl extends NamedElementImpl implements Input {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case WindupPackage.INPUT__URI:
-				return getUri();
-			case WindupPackage.INPUT__WINDUP_RESULT:
-				if (resolve) return getWindupResult();
-				return basicGetWindupResult();
+			case WindupPackage.INPUT__LOCATION:
+				return getLocation();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -204,11 +107,8 @@ public class InputImpl extends NamedElementImpl implements Input {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case WindupPackage.INPUT__URI:
-				setUri((String)newValue);
-				return;
-			case WindupPackage.INPUT__WINDUP_RESULT:
-				setWindupResult((WindupResult)newValue);
+			case WindupPackage.INPUT__LOCATION:
+				setLocation((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -222,11 +122,8 @@ public class InputImpl extends NamedElementImpl implements Input {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case WindupPackage.INPUT__URI:
-				setUri(URI_EDEFAULT);
-				return;
-			case WindupPackage.INPUT__WINDUP_RESULT:
-				setWindupResult((WindupResult)null);
+			case WindupPackage.INPUT__LOCATION:
+				setLocation(LOCATION_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -240,10 +137,8 @@ public class InputImpl extends NamedElementImpl implements Input {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case WindupPackage.INPUT__URI:
-				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
-			case WindupPackage.INPUT__WINDUP_RESULT:
-				return windupResult != null;
+			case WindupPackage.INPUT__LOCATION:
+				return LOCATION_EDEFAULT == null ? location != null : !LOCATION_EDEFAULT.equals(location);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -258,8 +153,8 @@ public class InputImpl extends NamedElementImpl implements Input {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (uri: ");
-		result.append(uri);
+		result.append(" (location: ");
+		result.append(location);
 		result.append(')');
 		return result.toString();
 	}

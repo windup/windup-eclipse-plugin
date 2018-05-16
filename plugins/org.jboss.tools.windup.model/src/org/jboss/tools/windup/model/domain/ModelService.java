@@ -100,7 +100,10 @@ public class ModelService {
     private static final String TIMESTAMP_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
 	
 	public static IPath reportsDir = Activator.getDefault().getStateLocation().append("reports"); //$NON-NLS-1$
+	
     public static final String PROJECT_REPORT_HOME_PAGE = "index.html"; //$NON-NLS-1$
+    public static final String REPORT_FOLDER = "reports"; //$NON-NLS-1$
+    public static final String INPUT_INDEX = "report_index_"; //$NON-NLS-1$
     
     private static final String MODEL_FILE = "windup.xmi";
 
@@ -308,12 +311,10 @@ public class ModelService {
 		return cmd.getResultObject();
 	}
 	
-	public void createInput(ConfigurationElement configuration, List<IProject> projects) {
+	public void createInput(ConfigurationElement configuration, List<String> projects) {
 		projects.forEach(project -> {
 			Input input = WindupFactory.eINSTANCE.createInput();
-			URI uri = WorkspaceResourceUtils.createPlatformPluginURI(project.getFullPath());
-			input.setName(project.getName());
-			input.setUri(uri.toString());
+			input.setLocation(project);
 			configuration.getInputs().add(input);
 		});
 	}
@@ -371,8 +372,7 @@ public class ModelService {
 		}
 		for (Iterator<Input> iter = configuration.getInputs().iterator(); iter.hasNext();) {
 			Input input = iter.next();
-			IResource resource = WorkspaceResourceUtils.findResource(input.getUri());
-			if (resource == null || !resource.exists()) {
+			if (!new File(input.getLocation()).exists()) {
 				iter.remove();
 			}
 		}
@@ -457,10 +457,10 @@ public class ModelService {
 	/**
 	 * Populates the configuration element with the execution results.
 	 */
-	public void populateConfiguration(ConfigurationElement configuration, Input input, ExecutionResults results) {
+	public void populateConfiguration(ConfigurationElement configuration, ExecutionResults results) {
     		WindupResult result = WindupFactory.eINSTANCE.createWindupResult();
         result.setExecutionResults(results);
-        input.setWindupResult(result);
+        configuration.setWindupResult(result);
         configuration.setTimestamp(createTimestamp());
 
         for (Iterator<Hint> iter = results.getHints().iterator(); iter.hasNext();) {

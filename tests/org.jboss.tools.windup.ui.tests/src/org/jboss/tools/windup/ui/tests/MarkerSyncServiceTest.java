@@ -33,7 +33,7 @@ public class MarkerSyncServiceTest extends WindupUiTest {
 		ConfigurationElement configuration = super.createRunConfiguration();
 		runWindup(configuration);
 		// get the first hint that contains a replacement quick fix.
-		Hint hint = configuration.getInputs().get(0).getWindupResult().getIssues().
+		Hint hint = configuration.getWindupResult().getIssues().
 				stream().filter(issue -> { 
 					return issue instanceof Hint;
 				}).map(issue -> (Hint)issue).

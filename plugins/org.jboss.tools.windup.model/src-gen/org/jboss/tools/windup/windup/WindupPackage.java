@@ -287,13 +287,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__GENERATE_REPORT = PARAMETERIZED_FEATURE_COUNT + 10;
 
 	/**
+	 * The feature id for the '<em><b>Windup Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__WINDUP_RESULT = PARAMETERIZED_FEATURE_COUNT + 11;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 11;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 12;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -443,22 +452,13 @@ public interface WindupPackage extends EPackage {
 	int INPUT__NAME = NAMED_ELEMENT__NAME;
 
 	/**
-	 * The feature id for the '<em><b>Uri</b></em>' attribute.
+	 * The feature id for the '<em><b>Location</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INPUT__URI = NAMED_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Windup Result</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INPUT__WINDUP_RESULT = NAMED_ELEMENT_FEATURE_COUNT + 1;
+	int INPUT__LOCATION = NAMED_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Input</em>' class.
@@ -467,7 +467,7 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 2;
+	int INPUT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1716,6 +1716,17 @@ public interface WindupPackage extends EPackage {
 	EAttribute getConfigurationElement_GenerateReport();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Windup Result</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_WindupResult();
+
+	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1811,26 +1822,15 @@ public interface WindupPackage extends EPackage {
 	EClass getInput();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Input#getUri <em>Uri</em>}'.
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Input#getLocation <em>Location</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Uri</em>'.
-	 * @see org.jboss.tools.windup.windup.Input#getUri()
+	 * @return the meta object for the attribute '<em>Location</em>'.
+	 * @see org.jboss.tools.windup.windup.Input#getLocation()
 	 * @see #getInput()
 	 * @generated
 	 */
-	EAttribute getInput_Uri();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.jboss.tools.windup.windup.Input#getWindupResult <em>Windup Result</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Windup Result</em>'.
-	 * @see org.jboss.tools.windup.windup.Input#getWindupResult()
-	 * @see #getInput()
-	 * @generated
-	 */
-	EReference getInput_WindupResult();
+	EAttribute getInput_Location();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.WindupResult <em>Result</em>}'.

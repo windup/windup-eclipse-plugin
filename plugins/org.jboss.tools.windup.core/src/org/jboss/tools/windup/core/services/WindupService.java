@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.osgi.util.NLS;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
@@ -38,21 +39,21 @@ import org.jboss.tools.windup.model.OptionFacades;
 import org.jboss.tools.windup.model.OptionFacades.OptionTypeFacade;
 import org.jboss.tools.windup.model.OptionFacades.OptionsFacadeManager;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.model.domain.WorkspaceResourceUtils;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.runtime.options.IOptionKeys;
 import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
+import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.Hint;
-import org.jboss.windup.tooling.data.ReportLink;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
@@ -101,7 +102,8 @@ public class WindupService
             return results.getClassifications();
     }
     
-    public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
+    @SuppressWarnings("unchecked")
+	public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
     	
 	    	progress.subTask(Messages.startingWindup);
 	    	modelService.synch(configuration);
@@ -114,97 +116,101 @@ public class WindupService
 	    IStatus status = null;
 
         try {
-	        	for (Input input : configuration.getInputs()) {
-                ExecutionBuilder execBuilder = windupClient.getExecutionBuilder();
-                execBuilder.clear();
-            	
-                Path projectPath = WorkspaceResourceUtils.computePath(input.getUri());
-                progress.beginTask(NLS.bind(Messages.generate_windup_graph_for, input.getName()), IProgressMonitor.UNKNOWN);
-                
-                String outputDir = configuration.getOutputLocation();
-                
-                execBuilder.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
-                execBuilder.setInput(projectPath.toString());
-                execBuilder.setOutput(outputDir);
-                execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
-                execBuilder.setOption(IOptionKeys.sourceModeOption, true);
-                execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
-            		execBuilder.ignore("\\.class$");
+            ExecutionBuilder execBuilder = windupClient.getExecutionBuilder();
+            execBuilder.clear();
+        	
+            Set<String> input = configuration.getInputs().stream().map(
+            		i -> i.getLocation()).collect(Collectors.toSet());
+            String outputDir = configuration.getOutputLocation();
+            
+            execBuilder.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
+            execBuilder.setOutput(outputDir);
+            execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
+            execBuilder.setOption(IOptionKeys.sourceModeOption, true);
+            execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
+        		execBuilder.ignore("\\.class$");
 
-            		List<String> sources = Lists.newArrayList();
-            		List<String> targets = Lists.newArrayList();
-            		
-                MigrationPath path = configuration.getMigrationPath();
-                if (path.getSource() != null) {
-                		sources.add(path.getSource().getId());
-                }
-                if (path.getTarget() != null) {
-                		String versionRange = path.getTarget().getVersionRange();
-                		String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
-                		String value = path.getTarget().getId() + versionRangeSuffix;
-                		targets.add(value);
-                }
-                if (!configuration.getPackages().isEmpty()) {
-                		execBuilder.setOption(IOptionKeys.scanPackagesOption, Lists.newArrayList(configuration.getPackages()));
-                }
-                modelService.cleanCustomRuleRepositories(configuration);
-                if (!configuration.getUserRulesDirectories().isEmpty()) {
-	                	List<File> customRules = Lists.newArrayList();
-	                	configuration.getUserRulesDirectories().stream().forEach(d -> customRules.add(new File(d)));
-	                	execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, customRules);
-	                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
-                }
-                
-                OptionsFacadeManager facadeMgr = modelService.getOptionFacadeManager();
-                
-                Multimap<String, String> optionMap = ArrayListMultimap.create();
-                for (Pair pair : configuration.getOptions()) {
-	                	String name = pair.getKey();
-	                	String value = pair.getValue();
-	                	optionMap.put(name, value);
-                }
-                
-                for (String name : optionMap.keySet()) {
-	                	List<String> values = (List<String>)optionMap.get(name);
-	                	OptionDescription option = facadeMgr.findOptionDescription(name);
-	                	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
-	                	if (OptionFacades.isSingleValued(option)) {
-	                		Object optionValue = typeFacade.newInstance(values.get(0));
-	                		execBuilder.setOption(name, optionValue);
-	                		if (OptionFacades.OPTION_OUTPUT.equals(name)) {
-	                			configuration.setOutputLocation(outputDir);
-	                		}
-	                	}
-	                	else {
-	                		List<?> optionValues = typeFacade.newInstance(values);
-	                		if (name.equals(IOptionKeys.targetOption)) {
-	                			targets.addAll((List<String>)optionValues);
-	                		}
-	                		else if (name.equals(IOptionKeys.sourceOption)) {
-	                			sources.addAll((List<String>)optionValues);
-	                		}
-	                		else {
-	                			execBuilder.setOption(name, optionValues);
-	                		}
-	                	}
-                }
-                
-                if (!targets.isEmpty()) {
-                		execBuilder.setOption(IOptionKeys.targetOption, targets);
-                }
-                if (!sources.isEmpty()) {
-                		execBuilder.setOption(IOptionKeys.sourceOption, sources);
-                }
-                
-                WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
-                WindupCorePlugin.logInfo("Using input: " + projectPath.toString()); //$NON-NLS-1$
-                WindupCorePlugin.logInfo("Using output: " + outputDir); //$NON-NLS-1$
-                WindupCorePlugin.logInfo("Using sources: " + sources); //$NON-NLS-1$
-                WindupCorePlugin.logInfo("Using targets: " + targets); //$NON-NLS-1$
-                ExecutionResults results = execBuilder.execute();
-                WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
-                modelService.populateConfiguration(configuration, input, results);
-	        	}
+        		List<String> sources = Lists.newArrayList();
+        		List<String> targets = Lists.newArrayList();
+        		
+            MigrationPath path = configuration.getMigrationPath();
+            if (path.getSource() != null) {
+            		sources.add(path.getSource().getId());
+            }
+            if (path.getTarget() != null) {
+            		String versionRange = path.getTarget().getVersionRange();
+            		String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
+            		String value = path.getTarget().getId() + versionRangeSuffix;
+            		targets.add(value);
+            }
+            if (!configuration.getPackages().isEmpty()) {
+            		execBuilder.setOption(IOptionKeys.scanPackagesOption, Lists.newArrayList(configuration.getPackages()));
+            }
+            modelService.cleanCustomRuleRepositories(configuration);
+            if (!configuration.getUserRulesDirectories().isEmpty()) {
+                	List<File> customRules = Lists.newArrayList();
+                	configuration.getUserRulesDirectories().stream().forEach(d -> customRules.add(new File(d)));
+                	execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, customRules);
+                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
+            }
+            
+            OptionsFacadeManager facadeMgr = modelService.getOptionFacadeManager();
+            
+            Multimap<String, String> optionMap = ArrayListMultimap.create();
+            for (Pair pair : configuration.getOptions()) {
+                	String name = pair.getKey();
+                	String value = pair.getValue();
+                	optionMap.put(name, value);
+            }
+            
+            for (String name : optionMap.keySet()) {
+                	List<String> values = (List<String>)optionMap.get(name);
+                	OptionDescription option = facadeMgr.findOptionDescription(name);
+                	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
+                	if (OptionFacades.isSingleValued(option)) {
+                		Object optionValue = typeFacade.newInstance(values.get(0));
+                		if (IOptionKeys.outputOption.equals(name)) {
+                			configuration.setOutputLocation(outputDir);
+                		}
+                    	execBuilder.setOption(name, optionValue);
+                	}
+                	else {
+                		List<?> optionValues = typeFacade.newInstance(values);
+                		if (IOptionKeys.targetOption.equals(name)) {
+                			targets.addAll((List<String>)optionValues);
+                		}
+                		else if (IOptionKeys.sourceOption.equals(name)) {
+                			sources.addAll((List<String>)optionValues);
+                		}
+                		else if (IOptionKeys.inputOption.equals(name)) {
+                			List<Path> paths = (List<Path>)optionValues;
+                			paths.forEach(p -> input.add(p.toString()));
+                			syncInput(configuration, paths);
+                		}
+                		else {
+                			execBuilder.setOption(name, optionValues);
+                		}
+                	}
+            }
+            
+            if (!targets.isEmpty()) {
+            		execBuilder.setOption(IOptionKeys.targetOption, targets);
+            }
+            if (!sources.isEmpty()) {
+            		execBuilder.setOption(IOptionKeys.sourceOption, sources);
+            }
+            
+            execBuilder.setInput(input);
+            
+            WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
+            WindupCorePlugin.logInfo("Using input: " + input); //$NON-NLS-1$
+            WindupCorePlugin.logInfo("Using output: " + outputDir); //$NON-NLS-1$
+            WindupCorePlugin.logInfo("Using sources: " + sources); //$NON-NLS-1$
+            WindupCorePlugin.logInfo("Using targets: " + targets); //$NON-NLS-1$
+            ExecutionResults results = execBuilder.execute();
+            WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
+            
+            modelService.populateConfiguration(configuration, results);
 	        	
 	        	modelService.save();
 	        status = Status.OK_STATUS;
@@ -224,21 +230,17 @@ public class WindupService
         return status;
     }
     
-    /**
-     * <p>
-     * Determines if a report exists for the {@link IProject} containing the given {@link IResource}.
-     * </p>
-     * 
-     * @param resource determine if a report exists for the {@link IProject} containing this {@link IResource}
-     * 
-     * @return <code>true</code> if a report exists for the {@link IProject} containing the given {@link IResource}, <code>false</code> otherwise.
-     */
-    public boolean reportExists(IResource resource) {
-        IPath reportPath = getProjectReportPath(resource);
-        File reportDir = new File(reportPath.toString());
-        return reportDir.exists();
+    private void syncInput(ConfigurationElement configuration, List<Path> paths) {
+    		for (Path path : paths) {
+    			boolean exists = configuration.getInputs().stream().filter(input -> {
+    				return Objects.equal(input.getLocation(), path.toString());
+    			}).findFirst().isPresent();
+    			if (!exists) {
+    				modelService.createInput(configuration, Lists.newArrayList(path.toString()));
+    			}
+    		}
     }
-
+    
 	/**
 	 * <p>
 	 * Get the Windup report for the given resource.
@@ -249,18 +251,38 @@ public class WindupService
 	 * 
 	 * @return location of the Windup report for the given {@link IResource}
 	 */
-	public IPath getReportLocation(IResource resource) {
-		IPath projectReportPath = getProjectReportPath(resource);
+	public String getReportLocation(IResource resource) {
+		
+		ConfigurationElement configuration = modelService.getRecentConfiguration();
+		if (configuration == null) {
+			return null;
+		}
 
-		IPath reportPath = null;
-		switch (resource.getType()) {
-		// if selected resource is a file get the file specific report page
-		case IResource.FILE: {
-			File resourceAsFile = resource.getLocation().toFile().getAbsoluteFile();
-			ExecutionResults executionResults = projectToResults.get(resource.getProject());
-			if (executionResults == null)
-				break;
-			for (ReportLink reportLink : executionResults.getReportLinks()) {
+		String resourceLocation = resource.getLocation().toFile().getAbsolutePath();
+			
+		for (Input input : configuration.getInputs()) {
+
+			if (input.getLocation().equals(resourceLocation)) {
+				StringBuffer buff = new StringBuffer();
+				buff.append(configuration.getOutputLocation());
+				buff.append(File.separator);
+				buff.append(ModelService.REPORT_FOLDER);
+				buff.append(File.separator);
+				buff.append(ModelService.INPUT_INDEX);
+				buff.append(resource.getName());
+				buff.append(".html");
+				return buff.toString();
+			}
+			
+			for (Issue issue : configuration.getWindupResult().getIssues()) {
+				String issueFile = issue.getFileAbsolutePath();
+				if (resourceLocation.equals(issueFile)) {
+					return issue.getGeneratedReportLocation();
+				}
+			}
+		}
+			
+			/*for (ReportLink reportLink : executionResults.getReportLinks()) {
 				if (resourceAsFile.equals(reportLink.getInputFile())) {
 					File reportFile = reportLink.getReportFile();
 					Path projectPath = resource.getProject().getLocation().toFile().toPath();
@@ -270,48 +292,11 @@ public class WindupService
 					break;
 				}
 			}
-			break;
-		}
+			*/
+			//break;
+		//}
 
-		/*
-		 * if selected resource is the project then get the Windup report home page for
-		 * that project
-		 */
-		case IResource.PROJECT: {
-			reportPath = projectReportPath.append(ModelService.PROJECT_REPORT_HOME_PAGE);
-			break;
-		}
-
-		default: {
-			break;
-		}
-		}
-
-		// determine if the report of the given file exists, if it doesn't return null
-		if (reportPath != null) {
-			File reportFile = new File(reportPath.toString());
-			if (!reportFile.exists()) {
-				reportPath = null;
-			}
-		}
-
-		return reportPath;
-	}
-
-	/**
-	 * <p>
-	 * Get the Windup report parent directory for the given resource.
-	 * </p>
-	 * 
-	 * @param resource
-	 *            get the location of the Windup report parent directory for this
-	 *            {@link IResource}
-	 * 
-	 * @return location of the Windup report parent directory for the given
-	 *         {@link IResource}
-	 */
-	public IPath getReportParentDirectoryLocation(IResource resource) {
-		return getProjectReportPath(resource);
+		return null;
 	}
 
 	/**
@@ -336,22 +321,5 @@ public class WindupService
 	 */
 	public void removeWindupListener(IWindupListener listener) {
 		this.windupListeners.remove(listener);
-	}
-
-	/**
-	 * <p>
-	 * Get the location where the report should be stored for the {@link IProject}
-	 * containing the given {@link IResource}
-	 * </p>
-	 * 
-	 * @param resource
-	 *            get the location where the report should be stored for the
-	 *            {@link IProject} containing this {@link IResource}
-	 * 
-	 * @return location where the report should be stored for the {@link IProject}
-	 *         containing the given {@link IResource}
-	 */
-	private IPath getProjectReportPath(IResource resource) {
-		return ModelService.reportsDir.append(resource.getProject().getName());
 	}
 }

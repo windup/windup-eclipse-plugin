@@ -196,18 +196,21 @@ public class WindupReportExportWizardPage1 extends WizardPage implements Listene
         boolean reGenerateAllReports = this.reGenerateReportsCheckbox.getSelection();
         for (IProject selectedProject : selectedProjects)
         {
+        		/*
             IPath reportLocation = windup.getReportParentDirectoryLocation(selectedProject);
             File reportParentDir = reportLocation.toFile();
             reportParentDirectories.add(reportParentDir);
-
+			*/
             /*
              * if regenerating all windup reports or windup report does not exist for project add it to the list of projects to create windup reports
              * for
              */
+        		/*
             if (reGenerateAllReports || !windup.reportExists(selectedProject))
             {
                 generateReportsForProjects.add(selectedProject);
             }
+            */
         }
 
         // about to invoke the operation so save our state

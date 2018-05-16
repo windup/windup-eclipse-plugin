@@ -104,8 +104,8 @@ public class InputProjectsSection extends AbstractSection {
 				if (dialog.open() == Window.OK) {
 					Object[] selected = (Object[])dialog.getResult();
 					if (selected.length > 0) {
-						List<IProject> newProjects = Lists.newArrayList();
-						Arrays.stream(selected).forEach(p -> newProjects.add((IProject)p));
+						List<String> newProjects = Lists.newArrayList();
+						Arrays.stream(selected).forEach(p -> newProjects.add(((IProject)p).getLocation().toString()));
 						modelService.createInput(configuration, newProjects);
 						reloadTable();
 					}

@@ -241,7 +241,8 @@ public class WindupReportView implements IShowInTarget
     }
     
     public void setSynchronizeSelection(boolean sync) {
-    	this.syncronizeViewWithCurrentSelection = sync;
+    		this.syncronizeViewWithCurrentSelection = sync;
+    		 getPreferenceStore().setValue(Preferences.REPORTVIEW_SYNC_SELECTION, sync);
     }
 
     @Focus
@@ -259,16 +260,6 @@ public class WindupReportView implements IShowInTarget
         getPreferenceStore().setValue(PREVIOUS_REPORT_PREF, currentReportPath);
     }
     
-    public void updateConfiguration(ILaunchConfiguration configuration) {
-		try {
-			String projectName = configuration.getAttribute(ATTR_PROJECT_NAME, DEFAULT);
-			IProject project = findProject(projectName);
-			displayReport(project, false);
-		} catch (CoreException e) {
-			WindupUIPlugin.log(e);
-		}
-    }
-
     /**
      * <p>
      * React to a selection change.
@@ -328,23 +319,16 @@ public class WindupReportView implements IShowInTarget
         if (this.currentSelection != resource || force)
         {
             this.currentSelection = resource;
+            
+            String reportLocattion = windupService.getReportLocation(resource);
 
-            if (windupService.reportExists(resource))
+            if (reportLocattion != null)
             {
-                IPath reportPath = windupService.getReportLocation(resource);
-
-                if (reportPath != null)
-                {
-                    this.showReport(reportPath, true);
-                }
-                else
-                {
-                    this.showMessage(Messages.report_has_no_information_on_resource, true);
-                }
+                this.showReport(reportLocattion, true);
             }
             else
             {
-                this.showMessage(Messages.windup_report_has_not_been_generated, true);
+                this.showMessage(Messages.report_has_no_information_on_resource, true);
             }
         }
     }

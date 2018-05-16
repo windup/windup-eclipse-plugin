@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.jboss.tools.test.util.TestProjectProvider;
 import org.jboss.tools.windup.core.IWindupListener;
@@ -66,7 +65,7 @@ public class WindupServiceTest extends WindupTest
         IProject project = provider.getProject();
 
         IFile jspFile = project.getFile(new Path("WebContent/WebContent/Portal.jsp"));
-        IPath reportLocation = windupService.getReportLocation(jspFile);
+        String reportLocation = windupService.getReportLocation(jspFile);
 
         Assert.assertNull("Report location should be null for a resource in a "
                     + "project who's Windup report has not been generated", reportLocation);
@@ -80,7 +79,7 @@ public class WindupServiceTest extends WindupTest
         IProject project = provider.getProject();
 
         IFile folder = project.getFile(new Path("WebContent/WebContent"));
-        IPath reportLocation = windupService.getReportLocation(folder);
+        String reportLocation = windupService.getReportLocation(folder);
 
         Assert.assertNull("Report location should be null for a resource that "
                     + "does not have a corresponding Windup report resource", reportLocation);
@@ -97,15 +96,14 @@ public class WindupServiceTest extends WindupTest
         //windupService.generateGraph(project);
 
         // test that the report home file exists
-        IPath reportHomeLocation = windupService.getReportLocation(project);
-        File reportHomeFile = reportHomeLocation.toFile();
-        Assert.assertTrue("The index.html for the generated report should exist.", reportHomeFile.exists());
+        String reportHomeLocation = windupService.getReportLocation(project);
+        Assert.assertTrue("The index.html for the generated report should exist.", new File(reportHomeLocation).exists());
 
         // test that a report file exists for JSP file
         IFile xmlFile = project.getFile(new Path("EarContent/META-INF/deployment.xml"));
-        IPath xmlReportLocation = windupService.getReportLocation(xmlFile);
+        String xmlReportLocation = windupService.getReportLocation(xmlFile);
         Assert.assertNotNull("JSP Report Location should be found", xmlReportLocation);
-        File xmlReportFile = xmlReportLocation.toFile();
+        File xmlReportFile = new File(xmlReportLocation);
         Assert.assertTrue("A report resource should exist for " + xmlFile, xmlReportFile.exists());
     }
 
@@ -130,15 +128,14 @@ public class WindupServiceTest extends WindupTest
         // verify report index exists for all projects that reports were generated for
         for (IProject project : projects)
         {
-            IPath reportHomeLocation = windupService.getReportLocation(project);
-            File reportHomeFile = reportHomeLocation.toFile();
-            Assert.assertTrue("The index.html for the generated report should exist.", reportHomeFile.exists());
+            String reportHomeLocation = windupService.getReportLocation(project);
+            Assert.assertTrue("The index.html for the generated report should exist.", new File(reportHomeLocation).exists());
         }
 
         // test that a report file exists for WAS deployment file in the was project
         IFile deploymentFile = wasProject.getFile(new Path("EarContent/META-INF/deployment.xml"));
-        IPath deploymentReportLocation = windupService.getReportLocation(deploymentFile);
-        File deploymentReportFile = deploymentReportLocation.toFile();
+        String deploymentReportLocation = windupService.getReportLocation(deploymentFile);
+        File deploymentReportFile = new File(deploymentReportLocation);
         Assert.assertTrue("A report resource should exist for " + deploymentReportFile, deploymentReportFile.exists());
     }
     
@@ -152,7 +149,7 @@ public class WindupServiceTest extends WindupTest
 
         //windupService.generateGraph(project);
 
-        boolean reportExists = windupService.reportExists(project);
+        boolean reportExists = windupService.getReportLocation(project) != null;
         Assert.assertTrue("WindupService should report that the windup report exists for the given project.", reportExists);
     }
 

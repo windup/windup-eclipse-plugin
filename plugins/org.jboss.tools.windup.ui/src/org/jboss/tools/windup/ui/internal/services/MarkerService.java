@@ -49,7 +49,6 @@ import org.jboss.tools.windup.ui.internal.explorer.MarkerUtil;
 import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Hint;
-import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MarkerElement;
 import org.jboss.tools.windup.windup.QuickFix;
@@ -297,21 +296,20 @@ public class MarkerService {
 	}
 	
 	private void createMarkers(ConfigurationElement configuration, IProgressMonitor monitor) throws CoreException {
+		if (configuration.getWindupResult() == null) {
+			return;
+		}
 		int count = 0;
-		for (Input input : configuration.getInputs()) {
-			if (input.getWindupResult() != null) {
-				for (Iterator<Issue> iter = input.getWindupResult().getIssues().iterator(); iter.hasNext();) {
-					Issue issue = iter.next();
-					IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
-					if (resource == null || !resource.exists()) {
-						WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
-						iter.remove();
-						continue;
-					}
-					createWindupMarker(issue, configuration, resource);
-					monitor.worked(++count);
-				}
+		for (Iterator<Issue> iter = configuration.getWindupResult().getIssues().iterator(); iter.hasNext();) {
+			Issue issue = iter.next();
+			IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
+			if (resource == null || !resource.exists()) {
+				WindupUIPlugin.logErrorMessage("MarkerService:: No resource associated with issue file: " + issue.getFileAbsolutePath()); //$NON-NLS-1$
+				iter.remove();
+				continue;
 			}
+			createWindupMarker(issue, configuration, resource);
+			monitor.worked(++count);
 		}
 	}
 	
@@ -394,19 +392,19 @@ public class MarkerService {
 	 */
 	private int getTotalMarkerCount(ConfigurationElement configuration) {
 		int count = 0;
-		for (Input input : configuration.getInputs()) {
-			if (input.getWindupResult() != null) {
-				for (Issue issue : input.getWindupResult().getIssues()) {
-					count++;
-					if (issue instanceof Hint) {
-						Hint hint = (Hint)issue;
-						count += hint.getQuickFixes().size();
-					}
-					else if (issue instanceof Classification) {
-						Classification classification = (Classification)issue;
-						count += classification.getQuickFixes().size();
-					}
-				}
+		if (configuration.getWindupResult() == null) {
+			return count;
+		}
+		
+		for (Issue issue : configuration.getWindupResult().getIssues()) {
+			count++;
+			if (issue instanceof Hint) {
+				Hint hint = (Hint)issue;
+				count += hint.getQuickFixes().size();
+			}
+			else if (issue instanceof Classification) {
+				Classification classification = (Classification)issue;
+				count += classification.getQuickFixes().size();
 			}
 		}
 		return count;

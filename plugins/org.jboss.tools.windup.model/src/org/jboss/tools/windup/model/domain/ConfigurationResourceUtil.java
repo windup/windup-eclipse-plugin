@@ -39,7 +39,7 @@ public class ConfigurationResourceUtil {
 		List<IProject> projects = Lists.newArrayList();
 		for (int i = 0; i < configuration.getInputs().size(); i++) {
 			Input input = configuration.getInputs().get(i);
-			IProject project = (IProject)WorkspaceResourceUtils.findResource(input.getUri());
+			IProject project = (IProject)WorkspaceResourceUtils.findProject(input.getLocation());
 			if (project != null && project.exists() && project.isAccessible()) {
 				projects.add(project);
 			}

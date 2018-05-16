@@ -23,7 +23,7 @@ public class WindupExecutionTest extends WindupUiTest {
 		ConfigurationElement configuration = super.createRunConfiguration();
 		runWindup(configuration);
 		assertNotNull("Windup Execution Result is Null after running Windup.", 
-				configuration.getInputs().get(0).getWindupResult());
+				configuration.getWindupResult());
 	}
 
 	@Test
@@ -31,6 +31,6 @@ public class WindupExecutionTest extends WindupUiTest {
 		ConfigurationElement configuration = super.createRunConfiguration();
 		runWindup(configuration);
 		assertFalse("Expected Issues after running Windup, but none were found.", 
-				configuration.getInputs().get(0).getWindupResult().getIssues().isEmpty());
+				configuration.getWindupResult().getIssues().isEmpty());
 	}
 }
