@@ -39,7 +39,10 @@ public class SubmitRulesetHandler extends AbstractHandler {
 		URL fileURL = FileLocator.find(bundle, new Path("html/submit-ruleset-form.html"), null);
 		String location = null;
 		try {
-			location = FileLocator.resolve(fileURL).toURI().toURL().toString();
+			location = FileLocator.resolve(fileURL).toURI().normalize().toString();
+			if (location.startsWith("/C")) { // normalize strips the protocol
+				location = "file:" + location;
+			}
 		}
 		catch (Exception e) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error opening ruleset submission form.", e.getMessage());
