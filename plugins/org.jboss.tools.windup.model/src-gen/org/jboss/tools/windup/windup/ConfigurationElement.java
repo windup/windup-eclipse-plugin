@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getJreHome <em>Jre Home</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getReports <em>Reports</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -303,5 +304,21 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	void setWindupResult(WindupResult value);
+
+	/**
+	 * Returns the value of the '<em><b>Reports</b></em>' containment reference list.
+	 * The list contents are of type {@link org.jboss.tools.windup.windup.Report}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Reports</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Reports</em>' containment reference list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_Reports()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	EList<Report> getReports();
 
 } // ConfigurationElement

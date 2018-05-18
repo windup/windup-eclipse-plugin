@@ -129,6 +129,8 @@ public class WindupValidator extends EObjectValidator {
 				return validateCustomRuleProvider((CustomRuleProvider)value, diagnostics, context);
 			case WindupPackage.MARKER_ELEMENT:
 				return validateMarkerElement((MarkerElement)value, diagnostics, context);
+			case WindupPackage.REPORT:
+				return validateReport((Report)value, diagnostics, context);
 			case WindupPackage.WINDUP_EXECUTION_RESULTS:
 				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
 			default:
@@ -407,6 +409,15 @@ public class WindupValidator extends EObjectValidator {
 		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(markerElement, diagnostics, context);
 		if (result || diagnostics != null) result &= validateNamedElement_validate(markerElement, diagnostics, context);
 		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateReport(Report report, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(report, diagnostics, context);
 	}
 
 	/**

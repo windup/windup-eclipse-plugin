@@ -22,6 +22,7 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
+import org.jboss.tools.windup.windup.Report;
 import org.jboss.tools.windup.windup.WindupPackage;
 import org.jboss.tools.windup.windup.WindupResult;
 
@@ -45,6 +46,7 @@ import org.jboss.tools.windup.windup.WindupResult;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getJreHome <em>Jre Home</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupResult <em>Windup Result</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getReports <em>Reports</em>}</li>
  * </ul>
  *
  * @generated
@@ -229,6 +231,16 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected WindupResult windupResult;
+
+	/**
+	 * The cached value of the '{@link #getReports() <em>Reports</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getReports()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Report> reports;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -532,6 +544,18 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Report> getReports() {
+		if (reports == null) {
+			reports = new EObjectContainmentEList.Resolving<Report>(Report.class, this, WindupPackage.CONFIGURATION_ELEMENT__REPORTS);
+		}
+		return reports;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -541,6 +565,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return ((InternalEList<?>)getOptions()).basicRemove(otherEnd, msgs);
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 				return basicSetWindupResult(null, msgs);
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
+				return ((InternalEList<?>)getReports()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -579,6 +605,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 				if (resolve) return getWindupResult();
 				return basicGetWindupResult();
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
+				return getReports();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -632,6 +660,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 				setWindupResult((WindupResult)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
+				getReports().clear();
+				getReports().addAll((Collection<? extends Report>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -680,6 +712,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 				setWindupResult((WindupResult)null);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
+				getReports().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -716,6 +751,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return generateReport != GENERATE_REPORT_EDEFAULT;
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 				return windupResult != null;
+			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
+				return reports != null && !reports.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -44,10 +44,9 @@ import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.runtime.options.IOptionKeys;
 import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.windup.ConfigurationElement;
-import org.jboss.tools.windup.windup.Input;
-import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
+import org.jboss.tools.windup.windup.Report;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.jboss.windup.tooling.ExecutionResults;
 import org.jboss.windup.tooling.data.Classification;
@@ -72,7 +71,9 @@ public class WindupService
     private Map<IProject, ExecutionResults> projectToResults = new HashMap<>();
     
     @Inject private ModelService modelService;
-    @Inject private WindupRmiClient windupClient; 
+    @Inject private WindupRmiClient windupClient;
+    
+    private ConfigurationElement recentConfiguration;
     
     /**
      * Returns an {@link Iterable} with all {@link Hint}s returned by Windup during the last run.
@@ -169,9 +170,6 @@ public class WindupService
                 	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
                 	if (OptionFacades.isSingleValued(option)) {
                 		Object optionValue = typeFacade.newInstance(values.get(0));
-                		if (IOptionKeys.outputOption.equals(name)) {
-                			configuration.setOutputLocation(outputDir);
-                		}
                     	execBuilder.setOption(name, optionValue);
                 	}
                 	else {
@@ -210,6 +208,7 @@ public class WindupService
             ExecutionResults results = execBuilder.execute();
             WindupCorePlugin.logInfo("ExecutionBuilder has returned the Windup results"); //$NON-NLS-1$
             
+            this.recentConfiguration = configuration;
             modelService.populateConfiguration(configuration, results);
 	        	
 	        	modelService.save();
@@ -253,31 +252,27 @@ public class WindupService
 	 */
 	public String getReportLocation(IResource resource) {
 		
-		ConfigurationElement configuration = modelService.getRecentConfiguration();
-		if (configuration == null) {
-			return null;
+		if (this.recentConfiguration == null) {
+			this.recentConfiguration = modelService.getRecentConfiguration();
+			if (recentConfiguration == null) {
+				return null;
+			}
 		}
 
 		String resourceLocation = resource.getLocation().toFile().getAbsolutePath();
-			
-		for (Input input : configuration.getInputs()) {
-
-			if (input.getLocation().equals(resourceLocation)) {
-				StringBuffer buff = new StringBuffer();
-				buff.append(configuration.getOutputLocation());
-				buff.append(File.separator);
-				buff.append(ModelService.REPORT_FOLDER);
-				buff.append(File.separator);
-				buff.append(ModelService.INPUT_INDEX);
-				buff.append(resource.getName());
-				buff.append(".html");
-				return buff.toString();
+		
+		for (Report report : recentConfiguration.getReports()) {
+			if (report.getInputFile().equals(resourceLocation)) {
+				return report.getLocation();
 			}
-			
-			for (Issue issue : configuration.getWindupResult().getIssues()) {
-				String issueFile = issue.getFileAbsolutePath();
-				if (resourceLocation.equals(issueFile)) {
-					return issue.getGeneratedReportLocation();
+		}
+		
+		File output = new File(recentConfiguration.getOutputLocation()+File.separator+ModelService.REPORT_FOLDER);
+		if (output.exists()) {
+			String name = ModelService.INPUT_INDEX+resource.getName();
+			for (File report : output.listFiles()) {
+				if (report.getName().contains(name)) {
+					return report.getAbsolutePath();
 				}
 			}
 		}

@@ -136,6 +136,10 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 				return createMarkerElementAdapter();
 			}
 			@Override
+			public Adapter caseReport(Report object) {
+				return createReportAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -390,6 +394,20 @@ public class WindupAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMarkerElementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.jboss.tools.windup.windup.Report <em>Report</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.jboss.tools.windup.windup.Report
+	 * @generated
+	 */
+	public Adapter createReportAdapter() {
 		return null;
 	}
 

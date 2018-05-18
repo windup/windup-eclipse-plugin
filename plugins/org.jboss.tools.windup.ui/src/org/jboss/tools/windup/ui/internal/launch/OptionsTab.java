@@ -55,6 +55,7 @@ import org.jboss.tools.windup.core.services.WindupOptionsService;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.runtime.IPreferenceConstants;
 import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
+import org.jboss.tools.windup.runtime.options.IOptionKeys;
 import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -329,6 +330,9 @@ public class OptionsTab extends AbstractLaunchConfigurationTab {
 						pair.setKey(option.getName());
 						pair.setValue(value);
 						configuration.getOptions().add(pair);
+						if (IOptionKeys.outputOption.equals(option.getName())) {
+							configuration.setOutputLocation(value);
+						}
 					}
 					reloadOptions();
 				}
@@ -346,6 +350,11 @@ public class OptionsTab extends AbstractLaunchConfigurationTab {
 					@SuppressWarnings("unchecked")
 					List<Pair> options = (List<Pair>)ss.toList();
 					configuration.getOptions().removeAll(options);
+					for (Pair option : options) {
+						if (IOptionKeys.outputOption.equals(option.getKey())) {
+							configuration.setOutputLocation(modelService.getDefaultOutputLocation(configuration));
+						}
+					}
 					reloadOptions();
 				}
 			}

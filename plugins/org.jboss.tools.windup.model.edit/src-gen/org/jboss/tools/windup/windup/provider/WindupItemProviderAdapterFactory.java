@@ -463,6 +463,29 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.Report} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ReportItemProvider reportItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.Report}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createReportAdapter() {
+		if (reportItemProvider == null) {
+			reportItemProvider = new ReportItemProvider(this);
+		}
+
+		return reportItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -578,6 +601,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (pairItemProvider != null) pairItemProvider.dispose();
 		if (customRuleProviderItemProvider != null) customRuleProviderItemProvider.dispose();
 		if (markerElementItemProvider != null) markerElementItemProvider.dispose();
+		if (reportItemProvider != null) reportItemProvider.dispose();
 	}
 
 }

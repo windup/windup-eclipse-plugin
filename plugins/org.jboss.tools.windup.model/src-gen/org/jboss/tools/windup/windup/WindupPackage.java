@@ -296,13 +296,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__WINDUP_RESULT = PARAMETERIZED_FEATURE_COUNT + 11;
 
 	/**
+	 * The feature id for the '<em><b>Reports</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__REPORTS = PARAMETERIZED_FEATURE_COUNT + 12;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 12;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 13;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1543,6 +1552,52 @@ public interface WindupPackage extends EPackage {
 	int CUSTOM_RULE_PROVIDER_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.ReportImpl <em>Report</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.ReportImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getReport()
+	 * @generated
+	 */
+	int REPORT = 17;
+
+	/**
+	 * The feature id for the '<em><b>Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REPORT__LOCATION = 0;
+
+	/**
+	 * The feature id for the '<em><b>Input File</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REPORT__INPUT_FILE = 1;
+
+	/**
+	 * The number of structural features of the '<em>Report</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REPORT_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Report</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REPORT_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1550,7 +1605,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 17;
+	int WINDUP_EXECUTION_RESULTS = 18;
 
 
 	/**
@@ -1725,6 +1780,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getConfigurationElement_WindupResult();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getReports <em>Reports</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Reports</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getReports()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_Reports();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -2370,6 +2436,38 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMarkerElement_Marker();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Report <em>Report</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Report</em>'.
+	 * @see org.jboss.tools.windup.windup.Report
+	 * @generated
+	 */
+	EClass getReport();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Report#getLocation <em>Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Location</em>'.
+	 * @see org.jboss.tools.windup.windup.Report#getLocation()
+	 * @see #getReport()
+	 * @generated
+	 */
+	EAttribute getReport_Location();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.Report#getInputFile <em>Input File</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Input File</em>'.
+	 * @see org.jboss.tools.windup.windup.Report#getInputFile()
+	 * @see #getReport()
+	 * @generated
+	 */
+	EAttribute getReport_InputFile();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

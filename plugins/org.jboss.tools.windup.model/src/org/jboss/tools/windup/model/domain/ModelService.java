@@ -67,6 +67,7 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.Report;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
 import org.jboss.tools.windup.windup.WindupModel;
@@ -448,10 +449,10 @@ public class ModelService {
 				continue;
 			}
 			
-			if (isMavenBuildFile(resource)) {
+			/*if (isMavenBuildFile(resource)) {
 				iter.remove();
 				continue;
-			}
+			}*/
 				
 	        	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
 	        	result.getIssues().add(hint);
@@ -510,9 +511,9 @@ public class ModelService {
 				continue;
 			}
 			
-			if (isMavenBuildFile(resource)) {
+			/*if (isMavenBuildFile(resource)) {
 				continue;
-			}
+			}*/
 				
 	        	org.jboss.tools.windup.windup.Classification classification = WindupFactory.eINSTANCE.createClassification();
 	        	result.getIssues().add(classification);
@@ -561,7 +562,7 @@ public class ModelService {
         }
         
         //
-        linkReports(results, result.getIssues());
+        linkReports(configuration, results, result.getIssues());
 	}
 	
 	private boolean isMavenBuildFile(IResource resource) {
@@ -580,7 +581,8 @@ public class ModelService {
 		return false;
 	}
 	
-	private void linkReports(ExecutionResults results, List<Issue> issues) {
+	private void linkReports(ConfigurationElement configuration, ExecutionResults results, List<Issue> issues) {
+		configuration.getReports().clear();
 		for (Issue issue : issues) {
 			IFile resource = WorkspaceResourceUtils.getResource(issue.getFileAbsolutePath());
 			if (resource == null || !resource.exists()) {
@@ -595,6 +597,12 @@ public class ModelService {
 					break;
 				}
 			}
+		}
+		for (ReportLink link : results.getReportLinks()) {
+			Report report = WindupFactory.eINSTANCE.createReport();
+			report.setInputFile(link.getInputFile().getAbsolutePath());
+			report.setLocation(link.getReportFile().getAbsolutePath());
+			configuration.getReports().add(report);
 		}
 	}
 	
