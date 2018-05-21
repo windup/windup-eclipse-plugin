@@ -75,6 +75,7 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 			case WindupPackage.CUSTOM_RULE_PROVIDER: return createCustomRuleProvider();
 			case WindupPackage.MARKER_ELEMENT: return createMarkerElement();
 			case WindupPackage.REPORT: return createReport();
+			case WindupPackage.IGNORE_PATTERN: return createIgnorePattern();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -284,6 +285,16 @@ public class WindupFactoryImpl extends EFactoryImpl implements WindupFactory {
 	public Report createReport() {
 		ReportImpl report = new ReportImpl();
 		return report;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IgnorePattern createIgnorePattern() {
+		IgnorePatternImpl ignorePattern = new IgnorePatternImpl();
+		return ignorePattern;
 	}
 
 	/**

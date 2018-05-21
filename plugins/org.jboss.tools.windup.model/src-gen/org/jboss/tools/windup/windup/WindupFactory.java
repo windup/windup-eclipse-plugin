@@ -184,6 +184,15 @@ public interface WindupFactory extends EFactory {
 	Report createReport();
 
 	/**
+	 * Returns a new object of class '<em>Ignore Pattern</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Ignore Pattern</em>'.
+	 * @generated
+	 */
+	IgnorePattern createIgnorePattern();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -275,6 +275,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			childrenFeatures.add(WindupPackage.eINSTANCE.getConfigurationElement_Options());
 			childrenFeatures.add(WindupPackage.eINSTANCE.getConfigurationElement_WindupResult());
 			childrenFeatures.add(WindupPackage.eINSTANCE.getConfigurationElement_Reports());
+			childrenFeatures.add(WindupPackage.eINSTANCE.getConfigurationElement_IgnorePatterns());
 		}
 		return childrenFeatures;
 	}
@@ -344,6 +345,7 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			case WindupPackage.CONFIGURATION_ELEMENT__OPTIONS:
 			case WindupPackage.CONFIGURATION_ELEMENT__WINDUP_RESULT:
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
+			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -380,6 +382,11 @@ public class ConfigurationElementItemProvider extends ParameterizedItemProvider 
 			(createChildParameter
 				(WindupPackage.eINSTANCE.getConfigurationElement_Reports(),
 				 WindupFactory.eINSTANCE.createReport()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(WindupPackage.eINSTANCE.getConfigurationElement_IgnorePatterns(),
+				 WindupFactory.eINSTANCE.createIgnorePattern()));
 	}
 
 }

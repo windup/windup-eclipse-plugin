@@ -310,6 +310,17 @@ public class Messages extends NLS
     
     public static String currentJavaHome;
     
+    // Ignore
+    public static String ignorePatternsLabel;
+    public static String ignorePatterns;
+    public static String ignoreDescription;
+    public static String ignorePatternAdd;
+    public static String ignorePatternRemove;
+    public static String ignorePatternShort;
+    public static String ignorePatternLong;
+    public static String ignorePatternExistsShort;
+    public static String ignorePatternExistsLong;
+    
     static
     {
         // initialize resource bundle

@@ -305,13 +305,22 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__REPORTS = PARAMETERIZED_FEATURE_COUNT + 12;
 
 	/**
+	 * The feature id for the '<em><b>Ignore Patterns</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONFIGURATION_ELEMENT__IGNORE_PATTERNS = PARAMETERIZED_FEATURE_COUNT + 13;
+
+	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 13;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 14;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1598,6 +1607,52 @@ public interface WindupPackage extends EPackage {
 	int REPORT_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl <em>Ignore Pattern</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.jboss.tools.windup.windup.impl.IgnorePatternImpl
+	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getIgnorePattern()
+	 * @generated
+	 */
+	int IGNORE_PATTERN = 18;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IGNORE_PATTERN__ENABLED = 0;
+
+	/**
+	 * The feature id for the '<em><b>Pattern</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IGNORE_PATTERN__PATTERN = 1;
+
+	/**
+	 * The number of structural features of the '<em>Ignore Pattern</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IGNORE_PATTERN_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Ignore Pattern</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IGNORE_PATTERN_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Execution Results</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1605,7 +1660,7 @@ public interface WindupPackage extends EPackage {
 	 * @see org.jboss.tools.windup.windup.impl.WindupPackageImpl#getWindupExecutionResults()
 	 * @generated
 	 */
-	int WINDUP_EXECUTION_RESULTS = 18;
+	int WINDUP_EXECUTION_RESULTS = 19;
 
 
 	/**
@@ -1791,6 +1846,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getConfigurationElement_Reports();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnorePatterns <em>Ignore Patterns</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Ignore Patterns</em>'.
+	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getIgnorePatterns()
+	 * @see #getConfigurationElement()
+	 * @generated
+	 */
+	EReference getConfigurationElement_IgnorePatterns();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -2468,6 +2534,38 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getReport_InputFile();
+
+	/**
+	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.IgnorePattern <em>Ignore Pattern</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Ignore Pattern</em>'.
+	 * @see org.jboss.tools.windup.windup.IgnorePattern
+	 * @generated
+	 */
+	EClass getIgnorePattern();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#isEnabled <em>Enabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enabled</em>'.
+	 * @see org.jboss.tools.windup.windup.IgnorePattern#isEnabled()
+	 * @see #getIgnorePattern()
+	 * @generated
+	 */
+	EAttribute getIgnorePattern_Enabled();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#getPattern <em>Pattern</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Pattern</em>'.
+	 * @see org.jboss.tools.windup.windup.IgnorePattern#getPattern()
+	 * @see #getIgnorePattern()
+	 * @generated
+	 */
+	EAttribute getIgnorePattern_Pattern();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

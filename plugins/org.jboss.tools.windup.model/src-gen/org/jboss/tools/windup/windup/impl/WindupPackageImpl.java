@@ -17,6 +17,7 @@ import org.jboss.tools.windup.windup.Classification;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Hint;
+import org.jboss.tools.windup.windup.IgnorePattern;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.Link;
@@ -170,6 +171,13 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * @generated
 	 */
 	private EClass reportEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass ignorePatternEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -399,6 +407,15 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 */
 	public EReference getConfigurationElement_Reports() {
 		return (EReference)configurationElementEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getConfigurationElement_IgnorePatterns() {
+		return (EReference)configurationElementEClass.getEStructuralFeatures().get(13);
 	}
 
 	/**
@@ -973,6 +990,33 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getIgnorePattern() {
+		return ignorePatternEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIgnorePattern_Enabled() {
+		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getIgnorePattern_Pattern() {
+		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -1023,6 +1067,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__GENERATE_REPORT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__WINDUP_RESULT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__REPORTS);
+		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__IGNORE_PATTERNS);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -1103,6 +1148,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(reportEClass, REPORT__LOCATION);
 		createEAttribute(reportEClass, REPORT__INPUT_FILE);
 
+		ignorePatternEClass = createEClass(IGNORE_PATTERN);
+		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__ENABLED);
+		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__PATTERN);
+
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
 	}
@@ -1173,6 +1222,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getConfigurationElement_GenerateReport(), ecorePackage.getEBoolean(), "generateReport", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_WindupResult(), this.getWindupResult(), null, "windupResult", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_Reports(), this.getReport(), null, "reports", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfigurationElement_IgnorePatterns(), this.getIgnorePattern(), null, "ignorePatterns", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1252,6 +1302,10 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEClass(reportEClass, Report.class, "Report", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getReport_Location(), ecorePackage.getEString(), "location", null, 0, 1, Report.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReport_InputFile(), ecorePackage.getEString(), "inputFile", null, 0, 1, Report.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(ignorePatternEClass, IgnorePattern.class, "IgnorePattern", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getIgnorePattern_Enabled(), ecorePackage.getEBoolean(), "enabled", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIgnorePattern_Pattern(), ecorePackage.getEString(), "pattern", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

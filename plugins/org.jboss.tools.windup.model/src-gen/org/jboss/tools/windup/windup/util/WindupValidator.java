@@ -131,6 +131,8 @@ public class WindupValidator extends EObjectValidator {
 				return validateMarkerElement((MarkerElement)value, diagnostics, context);
 			case WindupPackage.REPORT:
 				return validateReport((Report)value, diagnostics, context);
+			case WindupPackage.IGNORE_PATTERN:
+				return validateIgnorePattern((IgnorePattern)value, diagnostics, context);
 			case WindupPackage.WINDUP_EXECUTION_RESULTS:
 				return validateWindupExecutionResults((ExecutionResults)value, diagnostics, context);
 			default:
@@ -418,6 +420,15 @@ public class WindupValidator extends EObjectValidator {
 	 */
 	public boolean validateReport(Report report, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint(report, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateIgnorePattern(IgnorePattern ignorePattern, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(ignorePattern, diagnostics, context);
 	}
 
 	/**

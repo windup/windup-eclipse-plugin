@@ -486,6 +486,29 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.jboss.tools.windup.windup.IgnorePattern} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected IgnorePatternItemProvider ignorePatternItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.jboss.tools.windup.windup.IgnorePattern}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createIgnorePatternAdapter() {
+		if (ignorePatternItemProvider == null) {
+			ignorePatternItemProvider = new IgnorePatternItemProvider(this);
+		}
+
+		return ignorePatternItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -602,6 +625,7 @@ public class WindupItemProviderAdapterFactory extends WindupAdapterFactory imple
 		if (customRuleProviderItemProvider != null) customRuleProviderItemProvider.dispose();
 		if (markerElementItemProvider != null) markerElementItemProvider.dispose();
 		if (reportItemProvider != null) reportItemProvider.dispose();
+		if (ignorePatternItemProvider != null) ignorePatternItemProvider.dispose();
 	}
 
 }

@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.IgnorePattern;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
@@ -47,6 +48,7 @@ import org.jboss.tools.windup.windup.WindupResult;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupResult <em>Windup Result</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getReports <em>Reports</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getIgnorePatterns <em>Ignore Patterns</em>}</li>
  * </ul>
  *
  * @generated
@@ -241,6 +243,16 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<Report> reports;
+
+	/**
+	 * The cached value of the '{@link #getIgnorePatterns() <em>Ignore Patterns</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIgnorePatterns()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<IgnorePattern> ignorePatterns;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -556,6 +568,18 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<IgnorePattern> getIgnorePatterns() {
+		if (ignorePatterns == null) {
+			ignorePatterns = new EObjectContainmentEList.Resolving<IgnorePattern>(IgnorePattern.class, this, WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS);
+		}
+		return ignorePatterns;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -567,6 +591,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return basicSetWindupResult(null, msgs);
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
 				return ((InternalEList<?>)getReports()).basicRemove(otherEnd, msgs);
+			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
+				return ((InternalEList<?>)getIgnorePatterns()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -607,6 +633,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return basicGetWindupResult();
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
 				return getReports();
+			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
+				return getIgnorePatterns();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -664,6 +692,10 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getReports().clear();
 				getReports().addAll((Collection<? extends Report>)newValue);
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
+				getIgnorePatterns().clear();
+				getIgnorePatterns().addAll((Collection<? extends IgnorePattern>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -715,6 +747,9 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
 				getReports().clear();
 				return;
+			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
+				getIgnorePatterns().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -753,6 +788,8 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return windupResult != null;
 			case WindupPackage.CONFIGURATION_ELEMENT__REPORTS:
 				return reports != null && !reports.isEmpty();
+			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
+				return ignorePatterns != null && !ignorePatterns.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#isGenerateReport <em>Generate Report</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getReports <em>Reports</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnorePatterns <em>Ignore Patterns</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -320,5 +321,21 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<Report> getReports();
+
+	/**
+	 * Returns the value of the '<em><b>Ignore Patterns</b></em>' containment reference list.
+	 * The list contents are of type {@link org.jboss.tools.windup.windup.IgnorePattern}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Ignore Patterns</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Ignore Patterns</em>' containment reference list.
+	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_IgnorePatterns()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	EList<IgnorePattern> getIgnorePatterns();
 
 } // ConfigurationElement

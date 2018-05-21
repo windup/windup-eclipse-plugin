@@ -31,6 +31,7 @@ public class WindupLaunchGroup extends AbstractLaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new WindupInputTab(modelService),
 			new OptionsTab(modelService, optionsService),
+			new IgnoreTab(modelService),
 			new RulesTab(modelService, optionsService)
 		};
 		setTabs(tabs);
