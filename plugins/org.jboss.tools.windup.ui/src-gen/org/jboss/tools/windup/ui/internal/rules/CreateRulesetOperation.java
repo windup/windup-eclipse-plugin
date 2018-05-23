@@ -32,6 +32,7 @@ public class CreateRulesetOperation extends WorkspaceModifyOperation {
   
   @Override
   protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-    this.modelService.addRulesetRepository(this.locationURI, this.locationURI);
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method addRulesetRepository(String, String) is undefined for the type ModelService");
   }
 }

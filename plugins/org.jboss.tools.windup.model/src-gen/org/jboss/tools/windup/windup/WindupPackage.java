@@ -1617,22 +1617,22 @@ public interface WindupPackage extends EPackage {
 	int IGNORE_PATTERN = 18;
 
 	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IGNORE_PATTERN__ENABLED = 0;
-
-	/**
 	 * The feature id for the '<em><b>Pattern</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IGNORE_PATTERN__PATTERN = 1;
+	int IGNORE_PATTERN__PATTERN = 0;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IGNORE_PATTERN__ENABLED = 1;
 
 	/**
 	 * The number of structural features of the '<em>Ignore Pattern</em>' class.
@@ -2546,17 +2546,6 @@ public interface WindupPackage extends EPackage {
 	EClass getIgnorePattern();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#isEnabled <em>Enabled</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Enabled</em>'.
-	 * @see org.jboss.tools.windup.windup.IgnorePattern#isEnabled()
-	 * @see #getIgnorePattern()
-	 * @generated
-	 */
-	EAttribute getIgnorePattern_Enabled();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#getPattern <em>Pattern</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2566,6 +2555,17 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIgnorePattern_Pattern();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#isEnabled <em>Enabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enabled</em>'.
+	 * @see org.jboss.tools.windup.windup.IgnorePattern#isEnabled()
+	 * @see #getIgnorePattern()
+	 * @generated
+	 */
+	EAttribute getIgnorePattern_Enabled();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

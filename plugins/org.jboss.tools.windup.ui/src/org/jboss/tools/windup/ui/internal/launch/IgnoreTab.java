@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.commons.io.FileUtils;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -25,15 +31,21 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.runtime.options.IOptionKeys;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.IgnorePattern;
+import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.WindupFactory;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 public class IgnoreTab extends AbstractLaunchConfigurationTab {
 
@@ -111,6 +123,14 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy launchConfig) {
+		try {
+			syncIgnoreWithConfig();
+		} catch (IOException e) {
+			WindupUIPlugin.log(e);
+			MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+    				"Ignore file error", 
+    				"Error while reading ignore file.");
+		}
 		refresh();
 	}
 
@@ -193,5 +213,35 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		return true;
+	}
+	
+	private void syncIgnoreWithConfig() throws IOException {
+		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
+			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
+		}).findFirst();
+		if (optional.isPresent()) {
+			doSyncIgnoreWithConfig(configuration, new File(optional.get().getValue()));
+			
+		} else {
+			doSyncIgnoreWithConfig(configuration, modelService.getDefaultUserIgnore());
+		}
+	}
+	
+	private void doSyncIgnoreWithConfig(ConfigurationElement configuration, 
+			File ignoreFile) throws IOException {
+		Map<String, IgnorePattern> defaultPatterns = generateDefaultPatterns();
+		for (String line : FileUtils.readLines(ignoreFile)) {
+			if (defaultPatterns.containsKey(line))  {
+				defaultPatterns.remove(line);
+			}
+			IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
+			pattern.setPattern(line);
+			pattern.setEnabled(true);
+			configuration.getIgnorePatterns().add(pattern);
+		}
+	}
+	
+	private Map<String, IgnorePattern> generateDefaultPatterns() {
+		return Maps.newHashMap();
 	}
 }

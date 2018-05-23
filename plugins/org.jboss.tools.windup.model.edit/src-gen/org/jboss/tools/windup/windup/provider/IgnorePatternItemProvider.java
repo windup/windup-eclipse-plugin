@@ -60,32 +60,10 @@ public class IgnorePatternItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addEnabledPropertyDescriptor(object);
 			addPatternPropertyDescriptor(object);
+			addEnabledPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Enabled feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addEnabledPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_IgnorePattern_enabled_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_IgnorePattern_enabled_feature", "_UI_IgnorePattern_type"),
-				 WindupPackage.eINSTANCE.getIgnorePattern_Enabled(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
 	}
 
 	/**
@@ -111,6 +89,28 @@ public class IgnorePatternItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Enabled feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addEnabledPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_IgnorePattern_enabled_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_IgnorePattern_enabled_feature", "_UI_IgnorePattern_type"),
+				 WindupPackage.eINSTANCE.getIgnorePattern_Enabled(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns IgnorePattern.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -129,8 +129,10 @@ public class IgnorePatternItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		IgnorePattern ignorePattern = (IgnorePattern)object;
-		return getString("_UI_IgnorePattern_type") + " " + ignorePattern.isEnabled();
+		String label = ((IgnorePattern)object).getPattern();
+		return label == null || label.length() == 0 ?
+			getString("_UI_IgnorePattern_type") :
+			getString("_UI_IgnorePattern_type") + " " + label;
 	}
 	
 
@@ -146,8 +148,8 @@ public class IgnorePatternItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(IgnorePattern.class)) {
-			case WindupPackage.IGNORE_PATTERN__ENABLED:
 			case WindupPackage.IGNORE_PATTERN__PATTERN:
+			case WindupPackage.IGNORE_PATTERN__ENABLED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

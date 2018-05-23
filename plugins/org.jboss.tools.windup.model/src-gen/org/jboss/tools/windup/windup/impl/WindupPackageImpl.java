@@ -999,7 +999,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIgnorePattern_Enabled() {
+	public EAttribute getIgnorePattern_Pattern() {
 		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -1008,7 +1008,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIgnorePattern_Pattern() {
+	public EAttribute getIgnorePattern_Enabled() {
 		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -1149,8 +1149,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(reportEClass, REPORT__INPUT_FILE);
 
 		ignorePatternEClass = createEClass(IGNORE_PATTERN);
-		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__ENABLED);
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__PATTERN);
+		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__ENABLED);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -1304,8 +1304,8 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getReport_InputFile(), ecorePackage.getEString(), "inputFile", null, 0, 1, Report.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ignorePatternEClass, IgnorePattern.class, "IgnorePattern", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getIgnorePattern_Enabled(), ecorePackage.getEBoolean(), "enabled", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIgnorePattern_Pattern(), ecorePackage.getEString(), "pattern", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIgnorePattern_Enabled(), ecorePackage.getEBoolean(), "enabled", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

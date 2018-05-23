@@ -107,6 +107,7 @@ public class ModelService {
     public static final String INPUT_INDEX = "report_index_"; //$NON-NLS-1$
     
     private static final String MODEL_FILE = "windup.xmi";
+    private static final String IGNORE_FILE = "default-windup-ignore.txt";
 
 	@Inject private IEventBroker broker;
 	@Inject private WindupDomainListener modelListener;
@@ -131,10 +132,10 @@ public class ModelService {
 	}
 	
 	private void loadMigrationPaths() {
-    	Bundle bundle = FrameworkUtil.getBundle(ModelService.class);
+		Bundle bundle = FrameworkUtil.getBundle(ModelService.class);
         URL url = FileLocator.find(bundle, new Path(CONFIG_XML_PATH), null);
         try (InputStream input = url.openStream()) {
-        	XMLMemento root = XMLMemento.createReadRoot(input);
+        		XMLMemento root = XMLMemento.createReadRoot(input);
             for (IMemento element : root.getChildren("path")) {
             	MigrationPath path = WindupFactory.eINSTANCE.createMigrationPath();
             	model.getMigrationPaths().add(path);
@@ -211,7 +212,7 @@ public class ModelService {
 	}
 	
 	private void load() {
-		File location = getWindupStateLocation();
+		File location = getWindupStateLocation(MODEL_FILE);
 		Resource resource = createResource();
 		if (location != null && location.exists()) {
 			try {
@@ -250,14 +251,18 @@ public class ModelService {
 	}
 	
 	private URI getStateURI() {
-		return URI.createFileURI(getWindupStateLocation().getAbsolutePath());
+		return URI.createFileURI(getWindupStateLocation(MODEL_FILE).getAbsolutePath());
 	}
 	
-	private File getWindupStateLocation() {
+	public File getDefaultUserIgnore() {
+		return getWindupStateLocation(IGNORE_FILE);
+	}
+	
+	public File getWindupStateLocation(String fileName) {
 		File file = null;
 		try {
 			File bundleFile = FileLocator.getBundleFile(Activator.getDefault().getBundle());
-			file = new File(bundleFile, MODEL_FILE);
+			file = new File(bundleFile, fileName);
 			if (file != null) {
 				file = file.getCanonicalFile();
 			}
@@ -266,10 +271,12 @@ public class ModelService {
 		}
 		if (file == null) {
 			// Fall-back to creating it in workspace.
-			file = Activator.getDefault().getStateLocation().append(MODEL_FILE).toFile();
+			file = Activator.getDefault().getStateLocation().append(fileName).toFile();
 		}
 		return file;
 	}
+	
+	
 	
 	public ConfigurationElement findConfigurationElement(String name) {
 		Optional<ConfigurationElement> configuration = model.getConfigurationElements().stream().filter(c -> Objects.equal(name, c.getName())).findFirst();

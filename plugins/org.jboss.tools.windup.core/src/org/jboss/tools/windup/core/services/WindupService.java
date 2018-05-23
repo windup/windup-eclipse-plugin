@@ -11,12 +11,15 @@
 package org.jboss.tools.windup.core.services;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.WindupProgressMonitorAdapter;
@@ -44,6 +49,7 @@ import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.runtime.options.IOptionKeys;
 import org.jboss.tools.windup.runtime.options.OptionDescription;
 import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.IgnorePattern;
 import org.jboss.tools.windup.windup.MigrationPath;
 import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.Report;
@@ -114,6 +120,17 @@ public class WindupService
 	
 	    	progress.subTask(Messages.removing_old_report);
 	    FileUtils.delete(baseOutputDir, true);
+	    
+	    progress.subTask(Messages.writingUserIgnoreFile);
+	    try {
+	    		writeUserIgnoreFile(configuration);
+	    } 
+	    catch (FileNotFoundException e) {
+	    		WindupCorePlugin.log(e);
+	    		MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+	    				"Ignore file error", 
+	    				"Error while writing user ignore file. Continue with running analysis?");
+	    }
 	    IStatus status = null;
 
         try {
@@ -237,6 +254,29 @@ public class WindupService
     			if (!exists) {
     				modelService.createInput(configuration, Lists.newArrayList(path.toString()));
     			}
+    		}
+    }
+    
+    private void writeUserIgnoreFile(ConfigurationElement configuration) throws FileNotFoundException {
+    		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
+    			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
+    		}).findFirst();
+		if (optional.isPresent()) {
+			doWriteUserIgnoreFile(configuration, new File(optional.get().getValue()));
+			
+		} else {
+			doWriteUserIgnoreFile(configuration, modelService.getDefaultUserIgnore());
+		}
+    }
+    
+    private void doWriteUserIgnoreFile(ConfigurationElement configuration, File ignoreFile) throws FileNotFoundException {
+    		if (!configuration.getIgnorePatterns().isEmpty()) {
+	    		PrintWriter writer = new PrintWriter(ignoreFile);
+	    		for (IgnorePattern pattern : configuration.getIgnorePatterns()) {
+				writer.write(pattern.getPattern());
+				writer.println();
+	    		}
+	    		writer.close();
     		}
     }
     

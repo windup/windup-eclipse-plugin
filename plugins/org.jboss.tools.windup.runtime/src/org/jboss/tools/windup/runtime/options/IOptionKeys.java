@@ -19,4 +19,5 @@ public interface IOptionKeys {
 	public static final String outputOption = "output";
 	public static final String userRulesDirectoryOption = "userRulesDirectory";
 	public static final String scanPackagesOption = "packages";
+	public static final String userIgnorePathOption = "userIgnorePath";
 }

@@ -29,6 +29,8 @@ public class Messages extends NLS
     public static String get_windup_graph_context_factory;
     
     public static String startingWindup;
+    
+    public static String writingUserIgnoreFile;
 
     static
     {
