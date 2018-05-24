@@ -311,10 +311,15 @@ public class WindupService
 		List<IgnorePattern> copy = new ArrayList(configuration.getIgnorePatterns());
 		configuration.getIgnorePatterns().clear();
 		for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
+			if (Strings.isNullOrEmpty(line)) continue;
+			if (existingPatterns.containsKey(line)) {
+				
+			}
 			IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
 			pattern.setEnabled(true);
 			pattern.setReadFromFile(true);
-			if (defaultPatterns.containsKey(line))  {
+			if (defaultPatterns.containsKey(line)) {
+				pattern.setEnabled(defaultPatterns.get(line).isEnabled());
 				defaultPatterns.remove(line);
 			}
 			if (existingPatterns.containsKey(line)) {
