@@ -184,7 +184,7 @@ public class OptionsTab extends AbstractLaunchConfigurationTab {
 				Text textControl = super.getTextControl();
 				if (textControl != null) {
 					String value = configuration.getJreHome();
-					textControl.setText(value);
+					textControl.setText(value != null ? value : "");
 					oldValue = value;
 				}
 				refreshValidState();

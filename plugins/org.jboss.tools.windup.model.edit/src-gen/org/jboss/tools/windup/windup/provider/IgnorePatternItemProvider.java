@@ -62,6 +62,7 @@ public class IgnorePatternItemProvider
 
 			addPatternPropertyDescriptor(object);
 			addEnabledPropertyDescriptor(object);
+			addReadFromFilePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -111,6 +112,28 @@ public class IgnorePatternItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Read From File feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addReadFromFilePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_IgnorePattern_readFromFile_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_IgnorePattern_readFromFile_feature", "_UI_IgnorePattern_type"),
+				 WindupPackage.eINSTANCE.getIgnorePattern_ReadFromFile(),
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns IgnorePattern.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -150,6 +173,7 @@ public class IgnorePatternItemProvider
 		switch (notification.getFeatureID(IgnorePattern.class)) {
 			case WindupPackage.IGNORE_PATTERN__PATTERN:
 			case WindupPackage.IGNORE_PATTERN__ENABLED:
+			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

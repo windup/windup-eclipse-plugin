@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.jboss.tools.windup.core.services.WindupOptionsService;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
 
 /**
@@ -25,13 +26,14 @@ public class WindupLaunchGroup extends AbstractLaunchConfigurationTabGroup {
 	
 	@Inject private ModelService modelService;
 	@Inject private WindupOptionsService optionsService;
+	@Inject private WindupService windupService;
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new WindupInputTab(modelService),
 			new OptionsTab(modelService, optionsService),
-			new IgnoreTab(modelService),
+			new IgnoreTab(modelService, windupService),
 			new RulesTab(modelService, optionsService)
 		};
 		setTabs(tabs);

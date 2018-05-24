@@ -10,12 +10,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -35,17 +31,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.model.domain.ModelService;
-import org.jboss.tools.windup.runtime.options.IOptionKeys;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.IgnorePattern;
-import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.WindupFactory;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
 
 public class IgnoreTab extends AbstractLaunchConfigurationTab {
 
@@ -54,10 +46,12 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 	private Button removeButton;
 	
 	private ModelService modelService;
+	private WindupService windupService;
 	private ConfigurationElement configuration;
 	
-	public IgnoreTab(ModelService modelService) {
+	public IgnoreTab(ModelService modelService, WindupService windupService) {
 		this.modelService = modelService;
+		this.windupService = windupService;
 	}
 	
 	@Override
@@ -85,6 +79,14 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 		gd.heightHint = 300;
 		ignoreTable.setLayoutData(gd);
 		ignoreTable.addListener(SWT.Selection, e -> handleSelection());
+		
+		ignoreTable.addListener(SWT.Selection, (e) -> {
+			if (e.detail == SWT.CHECK) {
+				TableItem item = (TableItem)e.item;
+				IgnorePattern pattern = (IgnorePattern)item.getData(IgnorePattern.class.getName());
+				pattern.setEnabled(item.getChecked());
+			}
+		});
 
 		Composite buttons = new Composite(parent, SWT.NULL);
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -123,26 +125,31 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy launchConfig) {
-		try {
-			syncIgnoreWithConfig();
-		} catch (IOException e) {
-			WindupUIPlugin.log(e);
-			MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-    				"Ignore file error", 
-    				"Error while reading ignore file.");
-		}
 		refresh();
 	}
 
 	private void refresh() {
 		if (ignoreTable != null) {
+			try {
+				windupService.syncIgnoreWithConfig(this.configuration, false);
+			} catch (IOException e) {
+				WindupUIPlugin.log(e);
+				MessageDialog.openError(Display.getDefault().getActiveShell(),
+	    				"Ignore file error", 
+	    				"Error while reading ignore file.");
+			}
 			ignoreTable.removeAll();
 			for (IgnorePattern ignore : configuration.getIgnorePatterns()) {
-				TableItem item = new TableItem(ignoreTable, SWT.NONE);
-				item.setText(TextProcessor.process(ignore.getPattern(), ".*")); //$NON-NLS-1$
-				item.setChecked(ignore.isEnabled());
+				createPatternItem(ignore);
 			}
 		}
+	}
+	
+	private void createPatternItem(IgnorePattern pattern) {
+		TableItem item = new TableItem(ignoreTable, SWT.NONE);
+		item.setText(TextProcessor.process(pattern.getPattern(), ".*")); //$NON-NLS-1$
+		item.setChecked(pattern.isEnabled());
+		item.setData(IgnorePattern.class.getName(), pattern);
 	}
 
 	private void addIgnore() {
@@ -158,16 +165,12 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 				return;
 			}
 		}
-		
 		IgnorePattern ignore = WindupFactory.eINSTANCE.createIgnorePattern();
 		ignore.setPattern(pattern);
 		ignore.setEnabled(true);
 		configuration.getIgnorePatterns().add(ignore);
 		
-		TableItem item = new TableItem(ignoreTable, SWT.NONE);
-		item.setText(TextProcessor.process(pattern, ".*")); //$NON-NLS-1$
-		item.setChecked(true);
-		item.setData(IgnorePattern.class.getName(), ignore);
+		createPatternItem(ignore);
 	}
 
 	private void removeIgnore() {
@@ -177,6 +180,7 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 		}
 		int[] selection = ignoreTable.getSelectionIndices();
 		ignoreTable.remove(selection);
+		refresh();
 	}
 	
 	private void handleSelection() {
@@ -213,35 +217,5 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		return true;
-	}
-	
-	private void syncIgnoreWithConfig() throws IOException {
-		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
-			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
-		}).findFirst();
-		if (optional.isPresent()) {
-			doSyncIgnoreWithConfig(configuration, new File(optional.get().getValue()));
-			
-		} else {
-			doSyncIgnoreWithConfig(configuration, modelService.getDefaultUserIgnore());
-		}
-	}
-	
-	private void doSyncIgnoreWithConfig(ConfigurationElement configuration, 
-			File ignoreFile) throws IOException {
-		Map<String, IgnorePattern> defaultPatterns = generateDefaultPatterns();
-		for (String line : FileUtils.readLines(ignoreFile)) {
-			if (defaultPatterns.containsKey(line))  {
-				defaultPatterns.remove(line);
-			}
-			IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
-			pattern.setPattern(line);
-			pattern.setEnabled(true);
-			configuration.getIgnorePatterns().add(pattern);
-		}
-	}
-	
-	private Map<String, IgnorePattern> generateDefaultPatterns() {
-		return Maps.newHashMap();
 	}
 }
