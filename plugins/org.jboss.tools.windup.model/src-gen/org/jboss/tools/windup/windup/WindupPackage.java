@@ -314,31 +314,13 @@ public interface WindupPackage extends EPackage {
 	int CONFIGURATION_ELEMENT__IGNORE_PATTERNS = PARAMETERIZED_FEATURE_COUNT + 13;
 
 	/**
-	 * The feature id for the '<em><b>Ignore File</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONFIGURATION_ELEMENT__IGNORE_FILE = PARAMETERIZED_FEATURE_COUNT + 14;
-
-	/**
-	 * The feature id for the '<em><b>Ignore File Timestamp</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP = PARAMETERIZED_FEATURE_COUNT + 15;
-
-	/**
 	 * The number of structural features of the '<em>Configuration Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 16;
+	int CONFIGURATION_ELEMENT_FEATURE_COUNT = PARAMETERIZED_FEATURE_COUNT + 14;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1671,31 +1653,13 @@ public interface WindupPackage extends EPackage {
 	int IGNORE_PATTERN__REMOVED = 3;
 
 	/**
-	 * The feature id for the '<em><b>Ignore File</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IGNORE_PATTERN__IGNORE_FILE = 4;
-
-	/**
-	 * The feature id for the '<em><b>Ignore File Timestamp</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP = 5;
-
-	/**
 	 * The number of structural features of the '<em>Ignore Pattern</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IGNORE_PATTERN_FEATURE_COUNT = 6;
+	int IGNORE_PATTERN_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Ignore Pattern</em>' class.
@@ -1911,28 +1875,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getConfigurationElement_IgnorePatterns();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFile <em>Ignore File</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Ignore File</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFile()
-	 * @see #getConfigurationElement()
-	 * @generated
-	 */
-	EAttribute getConfigurationElement_IgnoreFile();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFileTimestamp <em>Ignore File Timestamp</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Ignore File Timestamp</em>'.
-	 * @see org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFileTimestamp()
-	 * @see #getConfigurationElement()
-	 * @generated
-	 */
-	EAttribute getConfigurationElement_IgnoreFileTimestamp();
 
 	/**
 	 * Returns the meta object for class '{@link org.jboss.tools.windup.windup.Parameter <em>Parameter</em>}'.
@@ -2655,37 +2597,15 @@ public interface WindupPackage extends EPackage {
 	EAttribute getIgnorePattern_ReadFromFile();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#getRemoved <em>Removed</em>}'.
+	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#isRemoved <em>Removed</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Removed</em>'.
-	 * @see org.jboss.tools.windup.windup.IgnorePattern#getRemoved()
+	 * @see org.jboss.tools.windup.windup.IgnorePattern#isRemoved()
 	 * @see #getIgnorePattern()
 	 * @generated
 	 */
 	EAttribute getIgnorePattern_Removed();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#getIgnoreFile <em>Ignore File</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Ignore File</em>'.
-	 * @see org.jboss.tools.windup.windup.IgnorePattern#getIgnoreFile()
-	 * @see #getIgnorePattern()
-	 * @generated
-	 */
-	EAttribute getIgnorePattern_IgnoreFile();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#getIgnoreFileTimestamp <em>Ignore File Timestamp</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Ignore File Timestamp</em>'.
-	 * @see org.jboss.tools.windup.windup.IgnorePattern#getIgnoreFileTimestamp()
-	 * @see #getIgnorePattern()
-	 * @generated
-	 */
-	EAttribute getIgnorePattern_IgnoreFileTimestamp();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

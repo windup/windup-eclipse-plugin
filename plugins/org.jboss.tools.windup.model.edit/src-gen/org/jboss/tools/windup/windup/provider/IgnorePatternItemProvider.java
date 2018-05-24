@@ -64,8 +64,6 @@ public class IgnorePatternItemProvider
 			addEnabledPropertyDescriptor(object);
 			addReadFromFilePropertyDescriptor(object);
 			addRemovedPropertyDescriptor(object);
-			addIgnoreFilePropertyDescriptor(object);
-			addIgnoreFileTimestampPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -153,51 +151,7 @@ public class IgnorePatternItemProvider
 				 true,
 				 false,
 				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Ignore File feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addIgnoreFilePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_IgnorePattern_ignoreFile_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_IgnorePattern_ignoreFile_feature", "_UI_IgnorePattern_type"),
-				 WindupPackage.eINSTANCE.getIgnorePattern_IgnoreFile(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Ignore File Timestamp feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addIgnoreFileTimestampPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_IgnorePattern_ignoreFileTimestamp_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_IgnorePattern_ignoreFileTimestamp_feature", "_UI_IgnorePattern_type"),
-				 WindupPackage.eINSTANCE.getIgnorePattern_IgnoreFileTimestamp(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -244,8 +198,6 @@ public class IgnorePatternItemProvider
 			case WindupPackage.IGNORE_PATTERN__ENABLED:
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 			case WindupPackage.IGNORE_PATTERN__REMOVED:
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE:
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

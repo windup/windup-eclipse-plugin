@@ -423,24 +423,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getConfigurationElement_IgnoreFile() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(14);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getConfigurationElement_IgnoreFileTimestamp() {
-		return (EAttribute)configurationElementEClass.getEStructuralFeatures().get(15);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getParameter() {
 		return parameterEClass;
 	}
@@ -1053,24 +1035,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIgnorePattern_IgnoreFile() {
-		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getIgnorePattern_IgnoreFileTimestamp() {
-		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -1122,8 +1086,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__WINDUP_RESULT);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__REPORTS);
 		createEReference(configurationElementEClass, CONFIGURATION_ELEMENT__IGNORE_PATTERNS);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__IGNORE_FILE);
-		createEAttribute(configurationElementEClass, CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
@@ -1209,8 +1171,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__ENABLED);
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__READ_FROM_FILE);
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__REMOVED);
-		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__IGNORE_FILE);
-		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -1283,8 +1243,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEReference(getConfigurationElement_WindupResult(), this.getWindupResult(), null, "windupResult", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_Reports(), this.getReport(), null, "reports", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getConfigurationElement_IgnorePatterns(), this.getIgnorePattern(), null, "ignorePatterns", null, 0, -1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_IgnoreFile(), ecorePackage.getEString(), "ignoreFile", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurationElement_IgnoreFileTimestamp(), ecorePackage.getEString(), "ignoreFileTimestamp", null, 0, 1, ConfigurationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1369,9 +1327,7 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getIgnorePattern_Pattern(), ecorePackage.getEString(), "pattern", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIgnorePattern_Enabled(), ecorePackage.getEBoolean(), "enabled", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIgnorePattern_ReadFromFile(), ecorePackage.getEBoolean(), "readFromFile", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIgnorePattern_Removed(), ecorePackage.getEString(), "removed", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIgnorePattern_IgnoreFile(), ecorePackage.getEString(), "ignoreFile", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIgnorePattern_IgnoreFileTimestamp(), ecorePackage.getEString(), "ignoreFileTimestamp", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIgnorePattern_Removed(), ecorePackage.getEBoolean(), "removed", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

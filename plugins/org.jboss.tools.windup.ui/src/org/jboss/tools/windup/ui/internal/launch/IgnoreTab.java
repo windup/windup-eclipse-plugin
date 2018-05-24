@@ -22,6 +22,8 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -87,7 +89,7 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 				pattern.setEnabled(item.getChecked());
 			}
 		});
-
+		
 		Composite buttons = new Composite(parent, SWT.NULL);
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		layout = new GridLayout();
@@ -105,6 +107,21 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 		removeButton.setEnabled(false);
 		removeButton.addListener(SWT.Selection, e -> removeIgnore());
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(removeButton);
+		
+		ignoreTable.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled = true;
+				for (TableItem item : ignoreTable.getSelection()) {
+					IgnorePattern pattern = (IgnorePattern)item.getData(IgnorePattern.class.getName());
+					if (pattern.isReadFromFile()) {
+						enabled = false;
+						break;
+					}
+				}
+				removeButton.setEnabled(enabled);
+			}
+		});
 		
 		Dialog.applyDialogFont(ancestor);
 		
@@ -176,7 +193,12 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 	private void removeIgnore() {
 		for (TableItem item : ignoreTable.getSelection()) {
 			IgnorePattern ignore = (IgnorePattern)item.getData(IgnorePattern.class.getName());
-			configuration.getIgnorePatterns().remove(ignore);
+			if (ignore.isReadFromFile()) {
+				ignore.setRemoved(true);
+			}
+			else {
+				configuration.getIgnorePatterns().remove(ignore);
+			}
 		}
 		int[] selection = ignoreTable.getSelectionIndices();
 		ignoreTable.remove(selection);

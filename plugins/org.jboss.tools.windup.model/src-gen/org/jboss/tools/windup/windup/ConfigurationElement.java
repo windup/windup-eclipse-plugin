@@ -27,8 +27,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getWindupResult <em>Windup Result</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getReports <em>Reports</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnorePatterns <em>Ignore Patterns</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFile <em>Ignore File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFileTimestamp <em>Ignore File Timestamp</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement()
@@ -339,57 +337,5 @@ public interface ConfigurationElement extends Parameterized {
 	 * @generated
 	 */
 	EList<IgnorePattern> getIgnorePatterns();
-
-	/**
-	 * Returns the value of the '<em><b>Ignore File</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Ignore File</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Ignore File</em>' attribute.
-	 * @see #setIgnoreFile(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_IgnoreFile()
-	 * @model
-	 * @generated
-	 */
-	String getIgnoreFile();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFile <em>Ignore File</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Ignore File</em>' attribute.
-	 * @see #getIgnoreFile()
-	 * @generated
-	 */
-	void setIgnoreFile(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Ignore File Timestamp</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Ignore File Timestamp</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Ignore File Timestamp</em>' attribute.
-	 * @see #setIgnoreFileTimestamp(String)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getConfigurationElement_IgnoreFileTimestamp()
-	 * @model
-	 * @generated
-	 */
-	String getIgnoreFileTimestamp();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.ConfigurationElement#getIgnoreFileTimestamp <em>Ignore File Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Ignore File Timestamp</em>' attribute.
-	 * @see #getIgnoreFileTimestamp()
-	 * @generated
-	 */
-	void setIgnoreFileTimestamp(String value);
 
 } // ConfigurationElement

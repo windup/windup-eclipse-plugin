@@ -23,9 +23,7 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#getPattern <em>Pattern</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#isReadFromFile <em>Read From File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#getRemoved <em>Removed</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#getIgnoreFile <em>Ignore File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#getIgnoreFileTimestamp <em>Ignore File Timestamp</em>}</li>
+ *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#isRemoved <em>Removed</em>}</li>
  * </ul>
  *
  * @generated
@@ -92,64 +90,24 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 	protected boolean readFromFile = READ_FROM_FILE_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getRemoved() <em>Removed</em>}' attribute.
+	 * The default value of the '{@link #isRemoved() <em>Removed</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getRemoved()
+	 * @see #isRemoved()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String REMOVED_EDEFAULT = null;
+	protected static final boolean REMOVED_EDEFAULT = false;
 
 	/**
-	 * The cached value of the '{@link #getRemoved() <em>Removed</em>}' attribute.
+	 * The cached value of the '{@link #isRemoved() <em>Removed</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getRemoved()
+	 * @see #isRemoved()
 	 * @generated
 	 * @ordered
 	 */
-	protected String removed = REMOVED_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getIgnoreFile() <em>Ignore File</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFile()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String IGNORE_FILE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getIgnoreFile() <em>Ignore File</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFile()
-	 * @generated
-	 * @ordered
-	 */
-	protected String ignoreFile = IGNORE_FILE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getIgnoreFileTimestamp() <em>Ignore File Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFileTimestamp()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String IGNORE_FILE_TIMESTAMP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getIgnoreFileTimestamp() <em>Ignore File Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFileTimestamp()
-	 * @generated
-	 * @ordered
-	 */
-	protected String ignoreFileTimestamp = IGNORE_FILE_TIMESTAMP_EDEFAULT;
+	protected boolean removed = REMOVED_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -238,7 +196,7 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getRemoved() {
+	public boolean isRemoved() {
 		return removed;
 	}
 
@@ -247,53 +205,11 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setRemoved(String newRemoved) {
-		String oldRemoved = removed;
+	public void setRemoved(boolean newRemoved) {
+		boolean oldRemoved = removed;
 		removed = newRemoved;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.IGNORE_PATTERN__REMOVED, oldRemoved, removed));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getIgnoreFile() {
-		return ignoreFile;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setIgnoreFile(String newIgnoreFile) {
-		String oldIgnoreFile = ignoreFile;
-		ignoreFile = newIgnoreFile;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.IGNORE_PATTERN__IGNORE_FILE, oldIgnoreFile, ignoreFile));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getIgnoreFileTimestamp() {
-		return ignoreFileTimestamp;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setIgnoreFileTimestamp(String newIgnoreFileTimestamp) {
-		String oldIgnoreFileTimestamp = ignoreFileTimestamp;
-		ignoreFileTimestamp = newIgnoreFileTimestamp;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP, oldIgnoreFileTimestamp, ignoreFileTimestamp));
 	}
 
 	/**
@@ -311,11 +227,7 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				return isReadFromFile();
 			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				return getRemoved();
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE:
-				return getIgnoreFile();
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP:
-				return getIgnoreFileTimestamp();
+				return isRemoved();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -338,13 +250,7 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 				setReadFromFile((Boolean)newValue);
 				return;
 			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				setRemoved((String)newValue);
-				return;
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE:
-				setIgnoreFile((String)newValue);
-				return;
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP:
-				setIgnoreFileTimestamp((String)newValue);
+				setRemoved((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -370,12 +276,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 			case WindupPackage.IGNORE_PATTERN__REMOVED:
 				setRemoved(REMOVED_EDEFAULT);
 				return;
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE:
-				setIgnoreFile(IGNORE_FILE_EDEFAULT);
-				return;
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP:
-				setIgnoreFileTimestamp(IGNORE_FILE_TIMESTAMP_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -395,11 +295,7 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				return readFromFile != READ_FROM_FILE_EDEFAULT;
 			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				return REMOVED_EDEFAULT == null ? removed != null : !REMOVED_EDEFAULT.equals(removed);
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE:
-				return IGNORE_FILE_EDEFAULT == null ? ignoreFile != null : !IGNORE_FILE_EDEFAULT.equals(ignoreFile);
-			case WindupPackage.IGNORE_PATTERN__IGNORE_FILE_TIMESTAMP:
-				return IGNORE_FILE_TIMESTAMP_EDEFAULT == null ? ignoreFileTimestamp != null : !IGNORE_FILE_TIMESTAMP_EDEFAULT.equals(ignoreFileTimestamp);
+				return removed != REMOVED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -422,10 +318,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 		result.append(readFromFile);
 		result.append(", removed: ");
 		result.append(removed);
-		result.append(", ignoreFile: ");
-		result.append(ignoreFile);
-		result.append(", ignoreFileTimestamp: ");
-		result.append(ignoreFileTimestamp);
 		result.append(')');
 		return result.toString();
 	}

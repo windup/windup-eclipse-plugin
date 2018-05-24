@@ -613,17 +613,17 @@ public class ModelService {
 		}
 	}
 	
-	private SimpleDateFormat getTimestampFormat() {
+	private static SimpleDateFormat getTimestampFormat() {
 		return new SimpleDateFormat(TIMESTAMP_FORMAT);
 	}
 	
-	public String createTimestamp() {
+	public static String createTimestamp() {
 		return getTimestampFormat().format(new Date());
 	}
 	
-	private Date getTimestamp(ConfigurationElement configuration) {
+	public static Date getTimestamp(String timestamp) {
 		try {
-			return new SimpleDateFormat(TIMESTAMP_FORMAT).parse(configuration.getTimestamp());
+			return new SimpleDateFormat(TIMESTAMP_FORMAT).parse(timestamp);
 		} catch (ParseException e) {
 			Activator.log(e);
 		}
@@ -638,8 +638,8 @@ public class ModelService {
 			}
 			else if (!mostRecentConfiguration.getName().equals(configuration.getName()) &&
 					mostRecentConfiguration.getTimestamp() != null && configuration.getTimestamp() != null) {
-				Date thisTime = getTimestamp(mostRecentConfiguration);
-				Date otherTime = getTimestamp(configuration);
+				Date thisTime = getTimestamp(mostRecentConfiguration.getTimestamp());
+				Date otherTime = getTimestamp(configuration.getTimestamp());
 				if (thisTime.before(otherTime)) {
 					mostRecentConfiguration = configuration;
 				}

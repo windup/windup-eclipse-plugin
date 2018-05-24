@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -276,14 +275,10 @@ public class WindupService
     private void doWriteUserIgnoreFile(ConfigurationElement configuration, File ignoreFile) throws FileNotFoundException {
     		if (!configuration.getIgnorePatterns().isEmpty()) {
 	    		PrintWriter writer = new PrintWriter(ignoreFile);
-	    		for (Iterator<IgnorePattern> iter = configuration.getIgnorePatterns().iterator(); iter.hasNext();) {
-	    			IgnorePattern pattern = iter.next();
-	    			if (pattern.isEnabled()) {
+	    		for (IgnorePattern pattern : configuration.getIgnorePatterns()) {
+	    			if (pattern.isEnabled() && !pattern.isRemoved()) {
 					writer.write(pattern.getPattern());
 					writer.println();
-	    			}
-	    			else if (pattern.isReadFromFile()) {
-	    				iter.remove();
 	    			}
 	    		}
 	    		writer.close();
@@ -312,9 +307,6 @@ public class WindupService
 		configuration.getIgnorePatterns().clear();
 		for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
 			if (Strings.isNullOrEmpty(line)) continue;
-			if (existingPatterns.containsKey(line)) {
-				
-			}
 			IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
 			pattern.setEnabled(true);
 			pattern.setReadFromFile(true);

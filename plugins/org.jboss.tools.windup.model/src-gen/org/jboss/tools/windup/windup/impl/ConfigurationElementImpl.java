@@ -49,8 +49,6 @@ import org.jboss.tools.windup.windup.WindupResult;
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getWindupResult <em>Windup Result</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getReports <em>Reports</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getIgnorePatterns <em>Ignore Patterns</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getIgnoreFile <em>Ignore File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.ConfigurationElementImpl#getIgnoreFileTimestamp <em>Ignore File Timestamp</em>}</li>
  * </ul>
  *
  * @generated
@@ -255,46 +253,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * @ordered
 	 */
 	protected EList<IgnorePattern> ignorePatterns;
-
-	/**
-	 * The default value of the '{@link #getIgnoreFile() <em>Ignore File</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFile()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String IGNORE_FILE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getIgnoreFile() <em>Ignore File</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFile()
-	 * @generated
-	 * @ordered
-	 */
-	protected String ignoreFile = IGNORE_FILE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getIgnoreFileTimestamp() <em>Ignore File Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFileTimestamp()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String IGNORE_FILE_TIMESTAMP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getIgnoreFileTimestamp() <em>Ignore File Timestamp</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIgnoreFileTimestamp()
-	 * @generated
-	 * @ordered
-	 */
-	protected String ignoreFileTimestamp = IGNORE_FILE_TIMESTAMP_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -622,48 +580,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getIgnoreFile() {
-		return ignoreFile;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setIgnoreFile(String newIgnoreFile) {
-		String oldIgnoreFile = ignoreFile;
-		ignoreFile = newIgnoreFile;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE, oldIgnoreFile, ignoreFile));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getIgnoreFileTimestamp() {
-		return ignoreFileTimestamp;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setIgnoreFileTimestamp(String newIgnoreFileTimestamp) {
-		String oldIgnoreFileTimestamp = ignoreFileTimestamp;
-		ignoreFileTimestamp = newIgnoreFileTimestamp;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP, oldIgnoreFileTimestamp, ignoreFileTimestamp));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -719,10 +635,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return getReports();
 			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
 				return getIgnorePatterns();
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE:
-				return getIgnoreFile();
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP:
-				return getIgnoreFileTimestamp();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -784,12 +696,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				getIgnorePatterns().clear();
 				getIgnorePatterns().addAll((Collection<? extends IgnorePattern>)newValue);
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE:
-				setIgnoreFile((String)newValue);
-				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP:
-				setIgnoreFileTimestamp((String)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -844,12 +750,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
 				getIgnorePatterns().clear();
 				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE:
-				setIgnoreFile(IGNORE_FILE_EDEFAULT);
-				return;
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP:
-				setIgnoreFileTimestamp(IGNORE_FILE_TIMESTAMP_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -890,10 +790,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 				return reports != null && !reports.isEmpty();
 			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_PATTERNS:
 				return ignorePatterns != null && !ignorePatterns.isEmpty();
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE:
-				return IGNORE_FILE_EDEFAULT == null ? ignoreFile != null : !IGNORE_FILE_EDEFAULT.equals(ignoreFile);
-			case WindupPackage.CONFIGURATION_ELEMENT__IGNORE_FILE_TIMESTAMP:
-				return IGNORE_FILE_TIMESTAMP_EDEFAULT == null ? ignoreFileTimestamp != null : !IGNORE_FILE_TIMESTAMP_EDEFAULT.equals(ignoreFileTimestamp);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -924,10 +820,6 @@ public class ConfigurationElementImpl extends ParameterizedImpl implements Confi
 		result.append(jreHome);
 		result.append(", generateReport: ");
 		result.append(generateReport);
-		result.append(", ignoreFile: ");
-		result.append(ignoreFile);
-		result.append(", ignoreFileTimestamp: ");
-		result.append(ignoreFileTimestamp);
 		result.append(')');
 		return result.toString();
 	}
