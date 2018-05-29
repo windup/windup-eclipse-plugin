@@ -193,12 +193,7 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 	private void removeIgnore() {
 		for (TableItem item : ignoreTable.getSelection()) {
 			IgnorePattern ignore = (IgnorePattern)item.getData(IgnorePattern.class.getName());
-			if (ignore.isReadFromFile()) {
-				ignore.setRemoved(true);
-			}
-			else {
-				configuration.getIgnorePatterns().remove(ignore);
-			}
+			configuration.getIgnorePatterns().remove(ignore);
 		}
 		int[] selection = ignoreTable.getSelectionIndices();
 		ignoreTable.remove(selection);

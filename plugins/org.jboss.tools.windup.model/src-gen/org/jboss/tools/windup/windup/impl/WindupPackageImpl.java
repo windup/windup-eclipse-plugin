@@ -1026,15 +1026,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIgnorePattern_Removed() {
-		return (EAttribute)ignorePatternEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getWindupExecutionResults() {
 		return windupExecutionResultsEDataType;
 	}
@@ -1170,7 +1161,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__PATTERN);
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__ENABLED);
 		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__READ_FROM_FILE);
-		createEAttribute(ignorePatternEClass, IGNORE_PATTERN__REMOVED);
 
 		// Create data types
 		windupExecutionResultsEDataType = createEDataType(WINDUP_EXECUTION_RESULTS);
@@ -1327,7 +1317,6 @@ public class WindupPackageImpl extends EPackageImpl implements WindupPackage {
 		initEAttribute(getIgnorePattern_Pattern(), ecorePackage.getEString(), "pattern", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIgnorePattern_Enabled(), ecorePackage.getEBoolean(), "enabled", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIgnorePattern_ReadFromFile(), ecorePackage.getEBoolean(), "readFromFile", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIgnorePattern_Removed(), ecorePackage.getEBoolean(), "removed", null, 0, 1, IgnorePattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(windupExecutionResultsEDataType, ExecutionResults.class, "WindupExecutionResults", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

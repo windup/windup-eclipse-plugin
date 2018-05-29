@@ -23,7 +23,6 @@ import org.jboss.tools.windup.windup.WindupPackage;
  *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#getPattern <em>Pattern</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#isReadFromFile <em>Read From File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.impl.IgnorePatternImpl#isRemoved <em>Removed</em>}</li>
  * </ul>
  *
  * @generated
@@ -88,26 +87,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 	 * @ordered
 	 */
 	protected boolean readFromFile = READ_FROM_FILE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isRemoved() <em>Removed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isRemoved()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean REMOVED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isRemoved() <em>Removed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isRemoved()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean removed = REMOVED_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -196,27 +175,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isRemoved() {
-		return removed;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRemoved(boolean newRemoved) {
-		boolean oldRemoved = removed;
-		removed = newRemoved;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, WindupPackage.IGNORE_PATTERN__REMOVED, oldRemoved, removed));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -226,8 +184,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 				return isEnabled();
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				return isReadFromFile();
-			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				return isRemoved();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -248,9 +204,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 				return;
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				setReadFromFile((Boolean)newValue);
-				return;
-			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				setRemoved((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -273,9 +226,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				setReadFromFile(READ_FROM_FILE_EDEFAULT);
 				return;
-			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				setRemoved(REMOVED_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -294,8 +244,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 				return enabled != ENABLED_EDEFAULT;
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
 				return readFromFile != READ_FROM_FILE_EDEFAULT;
-			case WindupPackage.IGNORE_PATTERN__REMOVED:
-				return removed != REMOVED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -316,8 +264,6 @@ public class IgnorePatternImpl extends MinimalEObjectImpl.Container implements I
 		result.append(enabled);
 		result.append(", readFromFile: ");
 		result.append(readFromFile);
-		result.append(", removed: ");
-		result.append(removed);
 		result.append(')');
 		return result.toString();
 	}

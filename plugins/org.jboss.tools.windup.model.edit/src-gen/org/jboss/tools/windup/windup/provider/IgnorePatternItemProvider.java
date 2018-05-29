@@ -63,7 +63,6 @@ public class IgnorePatternItemProvider
 			addPatternPropertyDescriptor(object);
 			addEnabledPropertyDescriptor(object);
 			addReadFromFilePropertyDescriptor(object);
-			addRemovedPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -135,28 +134,6 @@ public class IgnorePatternItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Removed feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addRemovedPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_IgnorePattern_removed_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_IgnorePattern_removed_feature", "_UI_IgnorePattern_type"),
-				 WindupPackage.eINSTANCE.getIgnorePattern_Removed(),
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This returns IgnorePattern.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -197,7 +174,6 @@ public class IgnorePatternItemProvider
 			case WindupPackage.IGNORE_PATTERN__PATTERN:
 			case WindupPackage.IGNORE_PATTERN__ENABLED:
 			case WindupPackage.IGNORE_PATTERN__READ_FROM_FILE:
-			case WindupPackage.IGNORE_PATTERN__REMOVED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

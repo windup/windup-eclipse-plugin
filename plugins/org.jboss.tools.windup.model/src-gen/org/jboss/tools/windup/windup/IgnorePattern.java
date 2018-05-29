@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#getPattern <em>Pattern</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#isReadFromFile <em>Read From File</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#isRemoved <em>Removed</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIgnorePattern()
@@ -101,31 +100,5 @@ public interface IgnorePattern extends EObject {
 	 * @generated
 	 */
 	void setReadFromFile(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Removed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Removed</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Removed</em>' attribute.
-	 * @see #setRemoved(boolean)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getIgnorePattern_Removed()
-	 * @model
-	 * @generated
-	 */
-	boolean isRemoved();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.IgnorePattern#isRemoved <em>Removed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Removed</em>' attribute.
-	 * @see #isRemoved()
-	 * @generated
-	 */
-	void setRemoved(boolean value);
 
 } // IgnorePattern

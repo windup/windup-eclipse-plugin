@@ -1644,22 +1644,13 @@ public interface WindupPackage extends EPackage {
 	int IGNORE_PATTERN__READ_FROM_FILE = 2;
 
 	/**
-	 * The feature id for the '<em><b>Removed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IGNORE_PATTERN__REMOVED = 3;
-
-	/**
 	 * The number of structural features of the '<em>Ignore Pattern</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IGNORE_PATTERN_FEATURE_COUNT = 4;
+	int IGNORE_PATTERN_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Ignore Pattern</em>' class.
@@ -2595,17 +2586,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIgnorePattern_ReadFromFile();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#isRemoved <em>Removed</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Removed</em>'.
-	 * @see org.jboss.tools.windup.windup.IgnorePattern#isRemoved()
-	 * @see #getIgnorePattern()
-	 * @generated
-	 */
-	EAttribute getIgnorePattern_Removed();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

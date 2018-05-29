@@ -218,6 +218,12 @@ public class WindupService
             		execBuilder.setOption(IOptionKeys.sourceOption, sources);
             }
             
+            if (!optionMap.containsKey(IOptionKeys.userIgnorePathOption)) {
+            		execBuilder.setOption(IOptionKeys.userIgnorePathOption, 
+            				modelService.getDefaultUserIgnore());
+            		WindupCorePlugin.logInfo("Using ignore file: " + modelService.getDefaultUserIgnore().getAbsolutePath());
+            }
+            
             execBuilder.setInput(input);
             
             WindupCorePlugin.logInfo("WindupService is executing the ExecutionBuilder"); //$NON-NLS-1$
@@ -276,7 +282,7 @@ public class WindupService
     		if (!configuration.getIgnorePatterns().isEmpty()) {
 	    		PrintWriter writer = new PrintWriter(ignoreFile);
 	    		for (IgnorePattern pattern : configuration.getIgnorePatterns()) {
-	    			if (pattern.isEnabled() && !pattern.isRemoved()) {
+	    			if (pattern.isEnabled()) {
 					writer.write(pattern.getPattern());
 					writer.println();
 	    			}
@@ -308,7 +314,7 @@ public class WindupService
 		for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
 			if (Strings.isNullOrEmpty(line)) continue;
 			IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
-			pattern.setEnabled(true);
+			pattern.setEnabled(false);
 			pattern.setReadFromFile(true);
 			if (defaultPatterns.containsKey(line)) {
 				pattern.setEnabled(defaultPatterns.get(line).isEnabled());
