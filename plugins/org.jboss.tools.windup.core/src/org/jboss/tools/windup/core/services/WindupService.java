@@ -311,21 +311,23 @@ public class WindupService
 		configuration.getIgnorePatterns().forEach(p -> existingPatterns.put(p.getPattern(), p));
 		List<IgnorePattern> copy = new ArrayList(configuration.getIgnorePatterns());
 		configuration.getIgnorePatterns().clear();
-		for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
-			if (Strings.isNullOrEmpty(line)) continue;
-			IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
-			pattern.setEnabled(false);
-			pattern.setReadFromFile(true);
-			if (defaultPatterns.containsKey(line)) {
-				pattern.setEnabled(defaultPatterns.get(line).isEnabled());
-				defaultPatterns.remove(line);
+		if (ignoreFile.exists()) {
+			for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
+				if (Strings.isNullOrEmpty(line)) continue;
+				IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
+				pattern.setEnabled(false);
+				pattern.setReadFromFile(true);
+				if (defaultPatterns.containsKey(line)) {
+					pattern.setEnabled(defaultPatterns.get(line).isEnabled());
+					defaultPatterns.remove(line);
+				}
+				if (existingPatterns.containsKey(line)) {
+					copy.remove(existingPatterns.get(line));
+					pattern.setEnabled(existingPatterns.get(line).isEnabled());
+				}
+				pattern.setPattern(line);
+				configuration.getIgnorePatterns().add(pattern);
 			}
-			if (existingPatterns.containsKey(line)) {
-				copy.remove(existingPatterns.get(line));
-				pattern.setEnabled(existingPatterns.get(line).isEnabled());
-			}
-			pattern.setPattern(line);
-			configuration.getIgnorePatterns().add(pattern);
 		}
 		for (IgnorePattern pattern : copy) {
 			configuration.getIgnorePatterns().add(pattern);
