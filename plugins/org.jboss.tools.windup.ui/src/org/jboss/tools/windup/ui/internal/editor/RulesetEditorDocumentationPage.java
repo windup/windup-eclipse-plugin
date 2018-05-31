@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Control;
 
 public class RulesetEditorDocumentationPage {
 	
-	private static final String URL = "https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/4.0.beta2/html-single/rules_development_guide/";
+	private static final String URL = "https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/4.1/html-single/rules_development_guide/";
 
 	private Browser browser;
 	
