@@ -143,12 +143,16 @@ public class AddNodeAction extends NodeAction {
 
 		for (Iterator<?> i = list.iterator(); i.hasNext();) {
 			Node newNode = (Node) i.next();
-
+			
 			if (newNode.getNodeType() == Node.ATTRIBUTE_NODE) {
 				Element parentElement = (Element) parent;
 				parentElement.setAttributeNode((Attr) newNode);
 			}
 			else {
+				Node child = newNode.getFirstChild();
+				if (child != null) {
+					newNode.removeChild(child);
+				}
 				parent.insertBefore(newNode, refChild);
 			}
 		}
