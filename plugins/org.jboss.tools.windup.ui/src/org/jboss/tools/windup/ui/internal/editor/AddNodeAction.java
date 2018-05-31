@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import com.google.common.collect.Lists;
 
@@ -150,7 +151,7 @@ public class AddNodeAction extends NodeAction {
 			}
 			else {
 				Node child = newNode.getFirstChild();
-				if (child != null) {
+				if (child != null && child instanceof Text) {
 					newNode.removeChild(child);
 				}
 				parent.insertBefore(newNode, refChild);
