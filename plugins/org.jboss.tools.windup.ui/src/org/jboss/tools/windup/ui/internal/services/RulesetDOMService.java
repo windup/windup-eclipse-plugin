@@ -190,4 +190,9 @@ public class RulesetDOMService {
 			}
 		}
 	}
+	
+	public static void format (Node element, boolean deep) {
+		IStructuredFormatProcessor formatProcessor = new FormatProcessorXML();
+		formatProcessor.formatNode(element);
+	}
 }

@@ -60,6 +60,7 @@ public class AnnotationService {
 	private Element createElement(Element parent, String name) {
 		Element element = parent.getOwnerDocument().createElement(name);
 		parent.appendChild(element);
+		RulesetDOMService.format(parent, true);
 		return element;
 	}
 	
@@ -152,5 +153,6 @@ public class AnnotationService {
 		if (name != null) {
 			contentHelper.setNodeValue(locationElement, name);
 		}
+		RulesetDOMService.format(javaClassElement, true);
 	}
 }
