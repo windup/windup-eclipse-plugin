@@ -53,22 +53,27 @@
 								<artifactItem>
 									<groupId>org.jboss.windup</groupId>
 									<artifactId>windup-tooling-api</artifactId>
+									<version>${windup.version}</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jboss.windup</groupId>
 									<artifactId>windup-tooling-impl</artifactId>
+									<version>${windup.version}</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jboss.windup.utils</groupId>
 									<artifactId>windup-utils</artifactId>
+									<version>${windup.version}</version>
 								</artifactItem>
 								<artifactItem>
 						            <groupId>org.jboss.windup.graph</groupId>
 						            <artifactId>windup-graph-api</artifactId>
+						            <version>${windup.version}</version>
 								</artifactItem>
 								<artifactItem>
 						            <groupId>org.jboss.windup.config</groupId>
 						            <artifactId>windup-config-api</artifactId>
+						            <version>${windup.version}</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>dom4j</groupId>
