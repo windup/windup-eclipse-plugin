@@ -128,7 +128,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		IFile file = XMLRulesetModelUtil.getRuleset(ruleProvider);
 		IDOMModel model = XMLRulesetModelUtil.getModel(file, false);
 		if (model == null) {
-			WindupUIPlugin.logErrorMessage("Error - unable to create a model for ruleset: " + file.getLocation());
+			WindupUIPlugin.logInfo("Error - unable to create a model for ruleset: " + file.getLocation());
 			return;
 		}
 		IModelStateListener listener = listenerMap.get(ruleProvider);
