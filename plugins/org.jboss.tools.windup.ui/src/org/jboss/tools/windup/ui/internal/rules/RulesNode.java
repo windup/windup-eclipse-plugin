@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2018 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -12,6 +12,7 @@ package org.jboss.tools.windup.ui.internal.rules;
 
 import java.io.File;
 
+import org.jboss.tools.common.util.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.jboss.tools.windup.windup.CustomRuleProvider;
@@ -22,6 +23,7 @@ import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 public class RulesNode {
 	
 	protected RuleProviderRegistry ruleProviderRegistry;
+	private RuleProvider[] children = null;
 	
 	public RulesNode (RuleProviderRegistry ruleProviderRegistry) {
 		this.ruleProviderRegistry = ruleProviderRegistry;
@@ -31,7 +33,20 @@ public class RulesNode {
 		if (ruleProviderRegistry == null) {
 			return new Object[0];
 		}
-		return XMLRulesetModelUtil.readSystemRuleProviders(ruleProviderRegistry).stream().toArray(RuleProvider[]::new);
+		if (children == null	) {
+			children = XMLRulesetModelUtil.readSystemRuleProviders(ruleProviderRegistry).stream().toArray(RuleProvider[]::new);
+			init(children);
+		}
+		return children;
+	}
+	
+	private static void init(RuleProvider[] children) {
+		for (Object parentElement : children) {
+			RuleProvider provider = (RuleProvider)parentElement;
+			String path = FileUtils.fileURLToFilePath(provider.getOrigin());
+			provider.setOrigin(path);
+			XMLRulesetModelUtil.createLinkedResource(provider.getOrigin());
+		}
 	}
 	
 	public static class SystemRulesNode extends RulesNode {
