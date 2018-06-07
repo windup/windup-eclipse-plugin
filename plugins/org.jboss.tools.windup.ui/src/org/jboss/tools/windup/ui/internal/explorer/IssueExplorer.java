@@ -639,7 +639,7 @@ public class IssueExplorer extends CommonNavigator {
 	}
 	
 	public static void updateReportView(String reportLocation, boolean open, EPartService partService) {
-		File file = new File(reportLocation);
+		/*File file = new File(reportLocation);
 		MPart part = partService.findPart(WindupReportView.ID);
 		WindupReportView view = (WindupReportView)part.getObject();
 		if (file.exists()) {
@@ -649,7 +649,7 @@ public class IssueExplorer extends CommonNavigator {
 			if (view != null) {
 				view.showReport(reportLocation, true);
 			}
-		}
+		}*/
 	}
 	
 	private IEclipseContext getServiceContext() {

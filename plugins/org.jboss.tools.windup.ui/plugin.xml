@@ -15,7 +15,7 @@
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
-      <e4view
+      <!--<e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
             class="org.jboss.tools.windup.ui.internal.views.WindupReportView"
@@ -23,7 +23,7 @@
             id="org.jboss.tools.windup.ui.views.WindupReportView"
             name="%view.windup_report.name"
             restorable="true">
-      </e4view>
+      </e4view>-->
       <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"

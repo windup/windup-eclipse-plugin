@@ -21,7 +21,6 @@ import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.issues.IssueDetailsView;
 import org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView;
 import org.jboss.tools.windup.ui.internal.views.SubmitRulesetInfoView;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 
 /**
  * The Windup perspective.
@@ -41,7 +40,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IssueExplorer.VIEW_ID);
 		layout.addShowViewShortcut(RuleRepositoryView.VIEW_ID);
 		layout.addShowViewShortcut(IssueDetailsView.ID);
-		layout.addShowViewShortcut(WindupReportView.ID);
+		//layout.addShowViewShortcut(WindupReportView.ID);
 		layout.addShowViewShortcut(TASK_LIST_VIEW_ID);
 		layout.addShowViewShortcut(ITasksUiConstants.ID_VIEW_REPOSITORIES);
 		layout.addShowViewShortcut(SubmitRulesetInfoView.ID);
@@ -57,7 +56,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		// Bottom right.
 		IFolderLayout bottomRight = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.7f, editorArea);//$NON-NLS-1$
 		bottomRight.addView(IssueDetailsView.ID);
-		bottomRight.addView(WindupReportView.ID);
+		//bottomRight.addView(WindupReportView.ID);
 		bottomRight.addView(SubmitRulesetInfoView.ID);
 		bottomRight.addPlaceholder(ID_CONSOLE_VIEW);
 		
