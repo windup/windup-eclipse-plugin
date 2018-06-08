@@ -22,12 +22,10 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
@@ -48,32 +46,35 @@ public class ViewService {
 	@Inject private ModelService modelService;
 	
 	public WindupReportView activateWindupReportView() {
+		/*
 		application.getChildren().get(0).getContext().activate();
 		MPlaceholder holder = partService.createSharedPart(WindupReportView.ID, false);
 		MPart part = (MPart)holder.getRef();
 		partService.showPart(part, PartState.ACTIVATE);
 		return (WindupReportView)part.getObject();
+		*/
+		return null;
 	}
 	
 	public void renderReport(ConfigurationElement configuration) {
-    	if (configuration.isGenerateReport()) {
-    		IPath path = Path.fromOSString(configuration.getOutputLocation());
-    		IPath report = path.append(ModelService.PROJECT_REPORT_HOME_PAGE);
-    		File file = new File(path.toString());
-    		if (file.exists()) {
-			Display.getDefault().asyncExec(() -> {
-				final WindupReportView view = activateWindupReportView();
-				if (view != null) {
-					view.showReport(report, true);
-				}
-			});
-    		}
-    	}
+	    	if (configuration.isGenerateReport()) {
+	    		IPath path = Path.fromOSString(configuration.getOutputLocation());
+	    		IPath report = path.append(ModelService.PROJECT_REPORT_HOME_PAGE);
+	    		File file = new File(path.toString());
+	    		if (file.exists()) {
+				Display.getDefault().asyncExec(() -> {
+					final WindupReportView view = activateWindupReportView();
+					if (view != null) {
+						view.showReport(report, true);
+					}
+				});
+	    		}
+	    	}
     }
     
 	public void launchStarting() {
 		Display.getDefault().asyncExec(() -> {
-	    	WindupReportView view = activateWindupReportView();
+		    	WindupReportView view = activateWindupReportView();
 			if (view != null) {
 				view.showMessage("No report available.", true);
 			}

@@ -51,7 +51,7 @@ public class RunWindupHandler {
             protected IStatus run(IProgressMonitor monitor) {
             	viewService.launchStarting();
             	IStatus status = windupService.generateGraph(configuration, monitor);
-            	viewService.renderReport(configuration);
+            viewService.renderReport(configuration);
             	markerService.generateMarkersForConfiguration(configuration);
             	return status;
             }
