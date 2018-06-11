@@ -22,7 +22,7 @@ class XmlTemplate {
                 </description>
                 <!-- version ranges applied to from and to technologies -->
                 <dependencies>
-                    <addon/>
+                    <addon id="org.jboss.windup.rules,2.4.0.Final"/>
                 </dependencies>
             </metadata>
             <rules>
@@ -52,7 +52,7 @@ class XmlTemplate {
                 </description>
                 <!-- version ranges applied to from and to technologies -->
                 <dependencies>
-                     <addon/>
+                     <addon id="org.jboss.windup.rules,2.4.0.Final"/>
                 </dependencies>
             </metadata>
             <rules>
