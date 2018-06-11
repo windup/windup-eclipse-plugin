@@ -76,6 +76,11 @@
 						            <version>${windup.version}</version>
 								</artifactItem>
 								<artifactItem>
+                                    <groupId>org.jboss.windup.config</groupId>
+                                    <artifactId>windup-config-xml</artifactId>
+                                    <version>${windup.version}</version>
+                                </artifactItem>
+								<artifactItem>
 									<groupId>dom4j</groupId>
 									<artifactId>dom4j</artifactId>
 									<version>1.6.1</version>

@@ -16,6 +16,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
@@ -65,9 +66,13 @@ public class WorkspaceResourceUtils {
 	 * @return the project in the workspace matching the specified name.
 	 */
 	public static IProject findProject(String absoluteLocation) {
-		return Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(proj -> {
+		Optional<IProject> optional = Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(proj -> {
 			return Collator.getInstance().equals(proj.getLocation().toString(), absoluteLocation);
-		}).findFirst().get();
+		}).findFirst();
+		if (optional.isPresent()) {
+			return optional.get();
+		}
+		return null;
 	}
 	
 	public static IResource findResource(String uriString) {
