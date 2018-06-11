@@ -330,7 +330,7 @@ public class ModelService {
 	public void deleteProjects(ConfigurationElement configuration, Set<IProject> projects) {
 		projects.forEach(project -> {
 			Optional<Input> input = configuration.getInputs().stream().filter(i -> {
-				return i.getName().equals(project.getName());
+				return i.getLocation().equals(project.getLocation().toString());
 			}).findFirst();
 			if (input.isPresent()) {
 				configuration.getInputs().remove(input.get());

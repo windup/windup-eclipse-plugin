@@ -31,9 +31,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -85,7 +83,7 @@ import org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction;
 import org.jboss.tools.windup.ui.internal.launch.RHAMTStartupFailedDialog;
 import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
-import org.jboss.tools.windup.ui.internal.views.WindupReportView;
+import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
 import org.jboss.tools.windup.windup.Issue;
@@ -639,6 +637,10 @@ public class IssueExplorer extends CommonNavigator {
 	}
 	
 	public static void updateReportView(String reportLocation, boolean open, EPartService partService) {
+		File file = new File(reportLocation);
+		if (file.exists()) {
+			ViewService.openReport(file);
+		}
 		/*File file = new File(reportLocation);
 		MPart part = partService.findPart(WindupReportView.ID);
 		WindupReportView view = (WindupReportView)part.getObject();

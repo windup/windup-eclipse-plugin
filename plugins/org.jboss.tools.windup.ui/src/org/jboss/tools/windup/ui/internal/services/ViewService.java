@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
+import org.jboss.tools.foundation.ui.util.BrowserUtility;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
@@ -60,17 +61,23 @@ public class ViewService {
 	    	if (configuration.isGenerateReport()) {
 	    		IPath path = Path.fromOSString(configuration.getOutputLocation());
 	    		IPath report = path.append(ModelService.PROJECT_REPORT_HOME_PAGE);
-	    		File file = new File(path.toString());
+	    		File file = new File(report.toString());
 	    		if (file.exists()) {
 				Display.getDefault().asyncExec(() -> {
-					final WindupReportView view = activateWindupReportView();
+					openReport(file);
+					/*final WindupReportView view = activateWindupReportView();
 					if (view != null) {
 						view.showReport(report, true);
-					}
+					}*/
 				});
 	    		}
 	    	}
     }
+	
+	public static void openReport(File report) {
+		String url = report.toURI().toString();
+		new BrowserUtility().openExtenalBrowser(url);
+	}
     
 	public void launchStarting() {
 		Display.getDefault().asyncExec(() -> {
