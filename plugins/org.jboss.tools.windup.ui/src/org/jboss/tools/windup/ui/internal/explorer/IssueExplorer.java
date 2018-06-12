@@ -635,7 +635,7 @@ public class IssueExplorer extends CommonNavigator {
 			}
 		}
 	}
-	
+	 
 	public static void updateReportView(String reportLocation, boolean open, EPartService partService) {
 		File file = new File(reportLocation);
 		if (file.exists()) {

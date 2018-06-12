@@ -118,9 +118,9 @@ public class WindupUiTest extends WindupTest {
 			System.out.println("RHAMT server already running.");
 			Display.getDefault().syncExec(() -> {
 				markerService.clear();
-            		viewService.launchStarting();
+            		//viewService.launchStarting();
 				windupService.generateGraph(configuration, new NullProgressMonitor());
-				viewService.renderReport(configuration);
+				//viewService.renderReport(configuration);
 				markerService.generateMarkersForConfiguration(configuration);
 			});
 		}
@@ -133,9 +133,9 @@ public class WindupUiTest extends WindupTest {
 					if (status.isOK() && windupClient.getExecutionBuilder() != null) {
 						System.out.println("RHAMT server started successfully.");
 						markerService.clear();
-		            		viewService.launchStarting();
+		            		//viewService.launchStarting();
 						windupService.generateGraph(configuration, new NullProgressMonitor());
-						viewService.renderReport(configuration);
+						//viewService.renderReport(configuration);
 		            		markerService.generateMarkersForConfiguration(configuration);
 					}
 				}
