@@ -311,6 +311,7 @@ public class WindupService
 		configuration.getIgnorePatterns().forEach(p -> existingPatterns.put(p.getPattern(), p));
 		List<IgnorePattern> copy = new ArrayList(configuration.getIgnorePatterns());
 		configuration.getIgnorePatterns().clear();
+		
 		if (ignoreFile.exists()) {
 			for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
 				if (Strings.isNullOrEmpty(line)) continue;
@@ -330,7 +331,9 @@ public class WindupService
 			}
 		}
 		for (IgnorePattern pattern : copy) {
-			configuration.getIgnorePatterns().add(pattern);
+			if (!pattern.isReadFromFile() || pattern.isEnabled()) {
+				configuration.getIgnorePatterns().add(pattern);
+			}
 		}
 		for (IgnorePattern pattern : defaultPatterns.values()) {
 			if (!existingPatterns.containsKey(pattern.getPattern())) {
