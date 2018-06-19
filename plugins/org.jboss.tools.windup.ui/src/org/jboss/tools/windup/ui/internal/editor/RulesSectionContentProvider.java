@@ -13,10 +13,10 @@ package org.jboss.tools.windup.ui.internal.editor;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_CLASSIFICATION;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_HINT;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_JAVA;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_PARAM;
-import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_RULE;
 import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_TASK;
+import static org.jboss.tools.windup.ui.WindupUIPlugin.IMG_XML_RULE;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,12 +41,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.misc.StringMatcher;
-import org.eclipse.ui.internal.misc.StringMatcher.Position;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.IElementUiDelegate;
 import org.jboss.tools.windup.ui.internal.editor.RulesetElementUiDelegateFactory.RulesetConstants;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
+import org.jboss.tools.windup.ui.internal.explorer.StringMatcher;
 import org.jboss.tools.windup.ui.internal.rules.xml.XMLRulesetModelUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -255,7 +254,7 @@ public class RulesSectionContentProvider extends StyledCellLabelProvider impleme
 		if (obj instanceof Element && !text.isEmpty()) {
 			StringMatcher matcher = IssueExplorer.getFilterMatcher(text);
 			String label = style.getString();
-			Position position = matcher.find(label, 0, label.length());
+			StringMatcher.Position position = matcher.find(label, 0, label.length());
 			if (position != null && (position.getEnd() - position.getStart()) > 0) {
 				style.setStyle(position.getStart(), position.getEnd() - position.getStart(), new Styler() {
 					@Override

@@ -50,8 +50,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.StringMatcher;
-import org.eclipse.ui.internal.misc.StringMatcher.Position;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -391,7 +389,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 		if (!filterText.isEmpty()) {
 			StringMatcher matcher = IssueExplorer.getFilterMatcher(filterText);
 			String label = style.getString();
-			Position position = matcher.find(label, 0, label.length());
+			StringMatcher.Position position = matcher.find(label, 0, label.length());
 			if (position != null && (position.getEnd() - position.getStart()) > 0) {
 				style.setStyle(position.getStart(), position.getEnd() - position.getStart(), new Styler() {
 					@Override
