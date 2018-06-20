@@ -13,7 +13,7 @@
         <sourceTechnology id="hibernate" versionRange="[,3.9)" />
         <targetTechnology id="hibernate" versionRange="[4,)" />
         <targetTechnology id="eap" versionRange="[6,7)" />
-        <tag>reviewed-2016-04-27</tag>
+        <tag>reviewed-2018-04-27</tag>
     </metadata>
     <rules>
     </rules>
