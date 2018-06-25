@@ -111,15 +111,9 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 		ignoreTable.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = true;
-				for (TableItem item : ignoreTable.getSelection()) {
-					IgnorePattern pattern = (IgnorePattern)item.getData(IgnorePattern.class.getName());
-					if (pattern.isReadFromFile()) {
-						enabled = false;
-						break;
-					}
-				}
+				boolean enabled = ignoreTable.getSelectionCount() > 0 ? true : false;
 				removeButton.setEnabled(enabled);
+				refresh();
 			}
 		});
 		
@@ -148,7 +142,7 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 	private void refresh() {
 		if (ignoreTable != null) {
 			try {
-				windupService.syncIgnoreWithConfig(this.configuration, false);
+				windupService.syncIgnoreWithConfig(this.configuration);
 			} catch (IOException e) {
 				WindupUIPlugin.log(e);
 				MessageDialog.openError(Display.getDefault().getActiveShell(),
@@ -187,7 +181,7 @@ public class IgnoreTab extends AbstractLaunchConfigurationTab {
 		ignore.setEnabled(true);
 		configuration.getIgnorePatterns().add(ignore);
 		
-		createPatternItem(ignore);
+		refresh();
 	}
 
 	private void removeIgnore() {

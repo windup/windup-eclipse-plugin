@@ -1635,22 +1635,13 @@ public interface WindupPackage extends EPackage {
 	int IGNORE_PATTERN__ENABLED = 1;
 
 	/**
-	 * The feature id for the '<em><b>Read From File</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IGNORE_PATTERN__READ_FROM_FILE = 2;
-
-	/**
 	 * The number of structural features of the '<em>Ignore Pattern</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IGNORE_PATTERN_FEATURE_COUNT = 3;
+	int IGNORE_PATTERN_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Ignore Pattern</em>' class.
@@ -2575,17 +2566,6 @@ public interface WindupPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIgnorePattern_Enabled();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.jboss.tools.windup.windup.IgnorePattern#isReadFromFile <em>Read From File</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Read From File</em>'.
-	 * @see org.jboss.tools.windup.windup.IgnorePattern#isReadFromFile()
-	 * @see #getIgnorePattern()
-	 * @generated
-	 */
-	EAttribute getIgnorePattern_ReadFromFile();
 
 	/**
 	 * Returns the meta object for data type '{@link org.jboss.windup.tooling.ExecutionResults <em>Execution Results</em>}'.

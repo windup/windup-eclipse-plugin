@@ -126,7 +126,7 @@ public class WindupService
 	    
 	    progress.subTask(Messages.writingUserIgnoreFile);
 	    try {
-	    		syncIgnoreWithConfig(configuration, true);
+	    		syncIgnoreWithConfig(configuration);
 	    } 
 	    catch (IOException e) {
 	    		WindupCorePlugin.log(e);
@@ -291,21 +291,21 @@ public class WindupService
     		}
     }
     
-    public void syncIgnoreWithConfig(ConfigurationElement configuration, boolean write) throws IOException {
+    public void syncIgnoreWithConfig(ConfigurationElement configuration) throws IOException {
 		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
 			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
 		}).findFirst();
 		if (optional.isPresent()) {
-			doSyncIgnoreWithConfig(configuration, new File(optional.get().getValue()), write);
+			doSyncIgnoreWithConfig(configuration, new File(optional.get().getValue()));
 			
 		} else {
-			doSyncIgnoreWithConfig(configuration, modelService.getDefaultUserIgnore(), write);
+			doSyncIgnoreWithConfig(configuration, modelService.getDefaultUserIgnore());
 		}
 	}
 	
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void doSyncIgnoreWithConfig(ConfigurationElement configuration,
-			File ignoreFile, boolean write) throws IOException {
+			File ignoreFile) throws IOException {
 		Map<String, IgnorePattern> defaultPatterns = generateDefaultPatterns(configuration);
 		Map<String, IgnorePattern> existingPatterns = Maps.newHashMap();
 		configuration.getIgnorePatterns().forEach(p -> existingPatterns.put(p.getPattern(), p));
@@ -317,7 +317,6 @@ public class WindupService
 				if (Strings.isNullOrEmpty(line)) continue;
 				IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
 				pattern.setEnabled(false);
-				pattern.setReadFromFile(true);
 				if (defaultPatterns.containsKey(line)) {
 					pattern.setEnabled(defaultPatterns.get(line).isEnabled());
 					defaultPatterns.remove(line);
@@ -331,18 +330,14 @@ public class WindupService
 			}
 		}
 		for (IgnorePattern pattern : copy) {
-			if (!pattern.isReadFromFile() || pattern.isEnabled()) {
-				configuration.getIgnorePatterns().add(pattern);
-			}
+			configuration.getIgnorePatterns().add(pattern);
 		}
 		for (IgnorePattern pattern : defaultPatterns.values()) {
 			if (!existingPatterns.containsKey(pattern.getPattern())) {
 				configuration.getIgnorePatterns().add(pattern);
 			}
 		}
-		if (write) {
-			writeUserIgnoreFile(configuration);
-		}
+		writeUserIgnoreFile(configuration);
 	}
 	
 	private Map<String, IgnorePattern> generateDefaultPatterns(ConfigurationElement configuration) {

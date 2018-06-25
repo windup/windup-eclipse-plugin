@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#getPattern <em>Pattern</em>}</li>
  *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#isEnabled <em>Enabled</em>}</li>
- *   <li>{@link org.jboss.tools.windup.windup.IgnorePattern#isReadFromFile <em>Read From File</em>}</li>
  * </ul>
  *
  * @see org.jboss.tools.windup.windup.WindupPackage#getIgnorePattern()
@@ -74,31 +73,5 @@ public interface IgnorePattern extends EObject {
 	 * @generated
 	 */
 	void setEnabled(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Read From File</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Read From File</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Read From File</em>' attribute.
-	 * @see #setReadFromFile(boolean)
-	 * @see org.jboss.tools.windup.windup.WindupPackage#getIgnorePattern_ReadFromFile()
-	 * @model
-	 * @generated
-	 */
-	boolean isReadFromFile();
-
-	/**
-	 * Sets the value of the '{@link org.jboss.tools.windup.windup.IgnorePattern#isReadFromFile <em>Read From File</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Read From File</em>' attribute.
-	 * @see #isReadFromFile()
-	 * @generated
-	 */
-	void setReadFromFile(boolean value);
 
 } // IgnorePattern
