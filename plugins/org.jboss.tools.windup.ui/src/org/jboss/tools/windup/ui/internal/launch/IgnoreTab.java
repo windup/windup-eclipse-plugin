@@ -41,6 +41,9 @@ import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.IgnorePattern;
 import org.jboss.tools.windup.windup.WindupFactory;
 
+/**
+ * Tab for specifying ignore patterns. 
+ */
 public class IgnoreTab extends AbstractLaunchConfigurationTab {
 
 	private Table ignoreTable;
