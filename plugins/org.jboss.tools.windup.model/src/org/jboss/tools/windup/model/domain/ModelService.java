@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -217,17 +218,23 @@ public class ModelService {
 		if (location != null && location.exists()) {
 			try {
 				resource.load(null);
+				model = (WindupModel)resource.getContents().get(0);
 			} catch (IOException e) {
-				Activator.log(e);
-				return;
+				Activator.logInfo("Something has gone wrong and invalidated the underlying RHAMT model. Creating another one...");
+				resource.getContents().clear();
+				initModel(resource);
 			}
-			model = (WindupModel)resource.getContents().get(0);
 		}
 		else {
-			model = WindupFactory.eINSTANCE.createWindupModel();
-			resource.getContents().add(model);
-			loadMigrationPaths();
+			initModel(resource);
 		}
+	}
+	
+	private void initModel(Resource resource) {
+		model = WindupFactory.eINSTANCE.createWindupModel();
+		resource.getContents().add(model);
+		loadMigrationPaths();
+		save();
 	}
 	
 	public void save() {
@@ -240,7 +247,6 @@ public class ModelService {
 	
 	private Resource createResource() {
 		ResourceSet resourceSet = new ResourceSetImpl();
-        
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put
             (Resource.Factory.Registry.DEFAULT_EXTENSION, 
              new XMIResourceFactoryImpl());
@@ -464,8 +470,10 @@ public class ModelService {
 	        	org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
 	        	result.getIssues().add(hint);
 	        	
-	        	String line = DocumentUtils.getLine(resource, wHint.getLineNumber()-1);
-	        	hint.setOriginalLineSource(line);
+	        	if (isTextMimeType(wHint)) {
+		        	String line = DocumentUtils.getLine(resource, wHint.getLineNumber()-1);
+		        	hint.setOriginalLineSource(line);
+	        	}
 	
 	        	for (Quickfix fix : wHint.getQuickfixes()) {
 	    			org.jboss.tools.windup.windup.QuickFix quickFix = WindupFactory.eINSTANCE.createQuickFix();
@@ -570,6 +578,21 @@ public class ModelService {
         
         //
         linkReports(configuration, results, result.getIssues());
+	}
+	
+	private boolean isTextMimeType(Hint hint) {
+		String mimeType = null;
+		try {
+			mimeType = Files.probeContentType(hint.getFile().toPath());
+			if (mimeType != null && mimeType.startsWith("text")) { //$NON-NLS-1$
+				return true;
+			}
+		} catch (IOException e) {
+		}
+		Activator.logInfo("Hint corresponding to file " + hint.getFile().getAbsolutePath() + //$NON-NLS-1$
+				" contains unsupported mime type " + mimeType + //$NON-NLS-1$ 
+				" - Rule ID: " + hint.getRuleID() + " Hint: " + hint.getHint()); //$NON-NLS-1$ //$NON-NLS-2$
+		return false;
 	}
 	
 	private boolean isMavenBuildFile(IResource resource) {

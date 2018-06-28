@@ -11,7 +11,6 @@
 package org.jboss.tools.windup.core.services;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -125,15 +124,9 @@ public class WindupService
 	    FileUtils.delete(baseOutputDir, true);
 	    
 	    progress.subTask(Messages.writingUserIgnoreFile);
-	    try {
-	    		syncIgnoreWithConfig(configuration);
-	    } 
-	    catch (IOException e) {
-	    		WindupCorePlugin.log(e);
-	    		MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-	    				"Ignore file error", 
-	    				"Error writing user ignore file. Continue with running analysis?");
-	    }
+	    
+    		writeUserIgnoreFile(configuration);
+    		
 	    IStatus status = null;
 
         try {
@@ -266,10 +259,75 @@ public class WindupService
     		}
     }
     
-    public void writeUserIgnoreFile(ConfigurationElement configuration) throws FileNotFoundException {
-    		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
-    			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
-    		}).findFirst();
+    private void syncIgnoreWithConfig(ConfigurationElement configuration, List<String> markedForDeletion) {
+		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
+			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
+		}).findFirst();
+		File ignoreFile = null;
+		if (optional.isPresent()) {
+			ignoreFile = new File(optional.get().getValue());
+		} else {
+			ignoreFile = modelService.getDefaultUserIgnore();
+		}
+		doSyncIgnoreWithConfig(configuration, ignoreFile, markedForDeletion);
+	}
+	
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void doSyncIgnoreWithConfig(ConfigurationElement configuration, File ignoreFile, 
+    		List<String> markedForDeletion) {
+		Map<String, IgnorePattern> defaultPatterns = generateDefaultPatterns(configuration);
+		Map<String, IgnorePattern> existingPatterns = Maps.newHashMap();
+		configuration.getIgnorePatterns().forEach(p -> existingPatterns.put(p.getPattern(), p));
+		List<IgnorePattern> copy = new ArrayList(configuration.getIgnorePatterns());
+		configuration.getIgnorePatterns().clear();
+		
+		if (ignoreFile.exists()) {
+			List<String> lines = null;
+			try {
+				lines = org.apache.commons.io.FileUtils.readLines(ignoreFile);
+			}
+			catch (IOException e) {
+				WindupCorePlugin.log(e);
+				MessageDialog.openError(Display.getDefault().getActiveShell(),
+	    				"User ignore file error", 
+	    				"Error while reading user ignore file - " + ignoreFile.getAbsolutePath());
+			}
+			if (lines != null) {
+				for (String line : lines) {
+					if (Strings.isNullOrEmpty(line)) continue;
+					if (markedForDeletion.contains(line)) continue;
+					IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
+					pattern.setEnabled(false);
+					if (defaultPatterns.containsKey(line)) {
+						pattern.setEnabled(defaultPatterns.get(line).isEnabled());
+						defaultPatterns.remove(line);
+					}
+					if (existingPatterns.containsKey(line)) {
+						copy.remove(existingPatterns.get(line));
+						pattern.setEnabled(existingPatterns.get(line).isEnabled());
+					}
+					pattern.setPattern(line);
+					configuration.getIgnorePatterns().add(pattern);
+				}
+			}
+		}
+		for (IgnorePattern pattern : copy) {
+			configuration.getIgnorePatterns().add(pattern);
+		}
+		for (IgnorePattern pattern : defaultPatterns.values()) {
+			// TODO: We need to handle if a defaultPattern was removed by user.
+			// We'll need to add a list of removedDefaultPatterns to the configuration at some point
+			// to track this.
+			if (!existingPatterns.containsKey(pattern.getPattern())) { 
+				configuration.getIgnorePatterns().add(pattern);
+			}
+		}
+	}
+	
+    private void writeUserIgnoreFile(ConfigurationElement configuration) {
+		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
+			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
+		}).findFirst();
 		if (optional.isPresent()) {
 			doWriteUserIgnoreFile(configuration, new File(optional.get().getValue()));
 			
@@ -278,68 +336,26 @@ public class WindupService
 		}
     }
     
-    private void doWriteUserIgnoreFile(ConfigurationElement configuration, File ignoreFile) throws FileNotFoundException {
-    		if (!configuration.getIgnorePatterns().isEmpty()) {
-	    		PrintWriter writer = new PrintWriter(ignoreFile);
-	    		for (IgnorePattern pattern : configuration.getIgnorePatterns()) {
-	    			if (pattern.isEnabled()) {
-					writer.write(pattern.getPattern());
-					writer.println();
-	    			}
-	    		}
-	    		writer.close();
-    		}
+    private void doWriteUserIgnoreFile(ConfigurationElement configuration, File ignoreFile) {
+		if (!configuration.getIgnorePatterns().isEmpty()) {
+			try {
+				PrintWriter writer = new PrintWriter(ignoreFile);
+				for (IgnorePattern pattern : configuration.getIgnorePatterns()) {
+					if (pattern.isEnabled()) {
+						writer.write(pattern.getPattern());
+						writer.println();
+					}
+				}
+				writer.close();
+			} catch (IOException e) {
+				WindupCorePlugin.log(e);
+				MessageDialog.openError(Display.getDefault().getActiveShell(),
+	    				"User ignore file error", 
+	    				"Error while writing user ignore file.");
+			}
+		}
     }
     
-    public void syncIgnoreWithConfig(ConfigurationElement configuration) throws IOException {
-		Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
-			return Objects.equal(option.getKey(), IOptionKeys.userIgnorePathOption);
-		}).findFirst();
-		if (optional.isPresent()) {
-			doSyncIgnoreWithConfig(configuration, new File(optional.get().getValue()));
-			
-		} else {
-			doSyncIgnoreWithConfig(configuration, modelService.getDefaultUserIgnore());
-		}
-	}
-	
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void doSyncIgnoreWithConfig(ConfigurationElement configuration,
-			File ignoreFile) throws IOException {
-		Map<String, IgnorePattern> defaultPatterns = generateDefaultPatterns(configuration);
-		Map<String, IgnorePattern> existingPatterns = Maps.newHashMap();
-		configuration.getIgnorePatterns().forEach(p -> existingPatterns.put(p.getPattern(), p));
-		List<IgnorePattern> copy = new ArrayList(configuration.getIgnorePatterns());
-		configuration.getIgnorePatterns().clear();
-		
-		if (ignoreFile.exists()) {
-			for (String line : org.apache.commons.io.FileUtils.readLines(ignoreFile)) {
-				if (Strings.isNullOrEmpty(line)) continue;
-				IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
-				pattern.setEnabled(false);
-				if (defaultPatterns.containsKey(line)) {
-					pattern.setEnabled(defaultPatterns.get(line).isEnabled());
-					defaultPatterns.remove(line);
-				}
-				if (existingPatterns.containsKey(line)) {
-					copy.remove(existingPatterns.get(line));
-					pattern.setEnabled(existingPatterns.get(line).isEnabled());
-				}
-				pattern.setPattern(line);
-				configuration.getIgnorePatterns().add(pattern);
-			}
-		}
-		for (IgnorePattern pattern : copy) {
-			configuration.getIgnorePatterns().add(pattern);
-		}
-		for (IgnorePattern pattern : defaultPatterns.values()) {
-			if (!existingPatterns.containsKey(pattern.getPattern())) {
-				configuration.getIgnorePatterns().add(pattern);
-			}
-		}
-		writeUserIgnoreFile(configuration);
-	}
-	
 	private Map<String, IgnorePattern> generateDefaultPatterns(ConfigurationElement configuration) {
 		/*IgnorePattern pattern = WindupFactory.eINSTANCE.createIgnorePattern();
 		pattern.setPattern("");

@@ -85,4 +85,8 @@ public class Activator extends AbstractUIPlugin {
 		}
 		log(status);
 	}
+	
+	public static void logInfo(final String message) {
+		log(new Status(IStatus.INFO, PLUGIN_ID, IStatus.INFO, message, null));
+	}
 }
