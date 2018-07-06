@@ -233,14 +233,11 @@ public class WindupService
 	        	modelService.save();
 	        status = Status.OK_STATUS;
         }
-        catch (Exception e)
-        {
-        		WindupCorePlugin.log(e);
-            throw new RuntimeException(e);
+        catch (Exception e) {
+	    		status = new Status(Status.ERROR, WindupCorePlugin.PLUGIN_ID, e.getMessage());
+	    		WindupCorePlugin.log(e);
         }
-        
-        finally
-        {
+        finally {
             // mark the monitor as complete
             progress.done();
         }

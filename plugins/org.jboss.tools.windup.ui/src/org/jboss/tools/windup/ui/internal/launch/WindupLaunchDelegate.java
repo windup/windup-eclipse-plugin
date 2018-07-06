@@ -176,11 +176,11 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		Job job = new Job(NLS.bind(Messages.generate_windup_report_for, configuration.getName())) {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
-            	viewService.launchStarting();
-            	IStatus status = windupService.generateGraph(configuration, monitor);
-            	viewService.renderReport(configuration);
-            	markerService.generateMarkersForConfiguration(configuration);
-            	return status;
+	            	viewService.launchStarting();
+	            	IStatus status = windupService.generateGraph(configuration, monitor);
+	            	viewService.renderReport(configuration);
+	            	markerService.generateMarkersForConfiguration(configuration);
+	            	return status;
             }
         };
         job.setUser(true);
