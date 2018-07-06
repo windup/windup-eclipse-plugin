@@ -539,7 +539,7 @@
 	            </xs:annotation>
             </xs:attribute>
             <!-- <xs:attribute name="severity" type="severity-type" use="optional" /> -->
-            <xs:attribute name="category-id" type="severity-type" use="optional">
+            <xs:attribute name="category-id" type="category-type" use="optional">
 	            <xs:annotation>
 	                 <xs:documentation>
 	                 <![CDATA[
@@ -576,13 +576,23 @@
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
-
+    
     <xs:simpleType name="severity-type">
         <xs:restriction base="xs:string">
             <xs:enumeration value="optional"/>
             <xs:enumeration value="mandatory"/>
             <xs:enumeration value="potential"/>
         </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="string-pattern-type">
+	    <xs:restriction base="xs:string">
+	        <xs:pattern value="\S.*"/>
+	    </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="category-type">
+        <xs:union memberTypes="severity-type string-pattern-type"/>
     </xs:simpleType>
     
     <xs:simpleType name="quickfix-type">
