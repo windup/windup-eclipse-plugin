@@ -13,7 +13,7 @@
 	<packaging>eclipse-repository</packaging>
 
 	<properties>
-		<update.site.name>JBoss Tools - Windup</update.site.name>
+		<update.site.name>Red Hat Application Migration Toolkit (RHAMT)</update.site.name>
 		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
 		<deployZipTargetFolder>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</deployZipTargetFolder>
 	</properties>
