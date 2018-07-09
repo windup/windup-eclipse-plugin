@@ -14,9 +14,44 @@
 
 	<properties>
 		<update.site.name>Red Hat Application Migration Toolkit (RHAMT)</update.site.name>
+		<VERSION>${project.version}</VERSION>
+		<BUILD_ALIAS>LOCAL</BUILD_ALIAS>
+		<update.site.version>windup-eclipse-plugin-${VERSION}</update.site.version>
+		<target.eclipse.version>4.8 (Photon) or &lt;a href="https://www.jboss.org/products/devstudio/overview/"&gt;JBoss Developer Studio 12&lt;/a&gt;</target.eclipse.version>
+    	<siteTemplateFolder>./siteTemplateFolder</siteTemplateFolder>
 		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
 		<deployZipTargetFolder>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</deployZipTargetFolder>
 	</properties>
+
+	<build>
+		<plugins>			
+			<!-- Configure jboss repository-utils to use our index.htm. -->
+			<plugin>
+				<groupId>org.jboss.tools.tycho-plugins</groupId>
+				<artifactId>repository-utils</artifactId>
+				<version>0.26.1</version>
+				<executions>
+					<execution>
+						<id>generate-facade</id>
+						<phase>package</phase>
+						<goals>
+							<goal>generate-repository-facade</goal>
+						</goals>
+						<configuration>
+	                        <symbols>
+	                            <update.site.name>${update.site.name}</update.site.name>
+	                            <package.version>${package.version}</package.version>
+	                            <update.site.version>${update.site.version}</update.site.version>
+	                            <update.site.url>${update.site.url}</update.site.url>
+	                            <target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
+	                        </symbols>
+	                        <siteTemplateFolder>siteTemplateFolder/</siteTemplateFolder>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
