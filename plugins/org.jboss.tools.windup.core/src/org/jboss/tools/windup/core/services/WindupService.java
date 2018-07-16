@@ -114,18 +114,18 @@ public class WindupService
     @SuppressWarnings("unchecked")
 	public IStatus generateGraph(ConfigurationElement configuration, IProgressMonitor progress) {
     	
-	    	progress.subTask(Messages.startingWindup);
-	    	modelService.synch(configuration);
-	    	
-	    	IPath basePath = org.eclipse.core.runtime.Path.fromOSString(configuration.getOutputLocation());
-	    	File baseOutputDir = basePath.toFile();
+		progress.subTask(Messages.startingWindup);
+		modelService.synch(configuration);
+		
+		IPath basePath = org.eclipse.core.runtime.Path.fromOSString(configuration.getOutputLocation());
+		File baseOutputDir = basePath.toFile();
 	
-	    	progress.subTask(Messages.removing_old_report);
+		progress.subTask(Messages.removing_old_report);
 	    FileUtils.delete(baseOutputDir, true);
 	    
 	    progress.subTask(Messages.writingUserIgnoreFile);
 	    
-    		writeUserIgnoreFile(configuration);
+		writeUserIgnoreFile(configuration);
     		
 	    IStatus status = null;
 
@@ -142,79 +142,79 @@ public class WindupService
             execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
             execBuilder.setOption(IOptionKeys.sourceModeOption, true);
             execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
-        		execBuilder.ignore("\\.class$");
+        	execBuilder.ignore("\\.class$");
 
-        		List<String> sources = Lists.newArrayList();
-        		List<String> targets = Lists.newArrayList();
+			List<String> sources = Lists.newArrayList();
+			List<String> targets = Lists.newArrayList();
         		
             MigrationPath path = configuration.getMigrationPath();
             if (path.getSource() != null) {
-            		sources.add(path.getSource().getId());
+				sources.add(path.getSource().getId());
             }
             if (path.getTarget() != null) {
-            		String versionRange = path.getTarget().getVersionRange();
-            		String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
-            		String value = path.getTarget().getId() + versionRangeSuffix;
-            		targets.add(value);
+				String versionRange = path.getTarget().getVersionRange();
+				String versionRangeSuffix = !Strings.isNullOrEmpty(versionRange) ? ":" + versionRange : "";
+				String value = path.getTarget().getId() + versionRangeSuffix;
+				targets.add(value);
             }
             if (!configuration.getPackages().isEmpty()) {
-            		execBuilder.setOption(IOptionKeys.scanPackagesOption, Lists.newArrayList(configuration.getPackages()));
+				execBuilder.setOption(IOptionKeys.scanPackagesOption, Lists.newArrayList(configuration.getPackages()));
             }
             modelService.cleanCustomRuleRepositories(configuration);
             if (!configuration.getUserRulesDirectories().isEmpty()) {
-                	List<File> customRules = Lists.newArrayList();
-                	configuration.getUserRulesDirectories().stream().forEach(d -> customRules.add(new File(d)));
-                	execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, customRules);
-                	//execBuilder.addUserRulesPath(file.getParentFile().toString());
+				List<File> customRules = Lists.newArrayList();
+				configuration.getUserRulesDirectories().stream().forEach(d -> customRules.add(new File(d)));
+				execBuilder.setOption(IOptionKeys.userRulesDirectoryOption, customRules);
+				//execBuilder.addUserRulesPath(file.getParentFile().toString());
             }
             
             OptionsFacadeManager facadeMgr = modelService.getOptionFacadeManager();
             
             Multimap<String, String> optionMap = ArrayListMultimap.create();
             for (Pair pair : configuration.getOptions()) {
-                	String name = pair.getKey();
-                	String value = pair.getValue();
-                	optionMap.put(name, value);
+				String name = pair.getKey();
+				String value = pair.getValue();
+				optionMap.put(name, value);
             }
             
             for (String name : optionMap.keySet()) {
-                	List<String> values = (List<String>)optionMap.get(name);
-                	OptionDescription option = facadeMgr.findOptionDescription(name);
-                	OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
-                	if (OptionFacades.isSingleValued(option)) {
-                		Object optionValue = typeFacade.newInstance(values.get(0));
-                    	execBuilder.setOption(name, optionValue);
-                	}
-                	else {
-                		List<?> optionValues = typeFacade.newInstance(values);
-                		if (IOptionKeys.targetOption.equals(name)) {
-                			targets.addAll((List<String>)optionValues);
-                		}
-                		else if (IOptionKeys.sourceOption.equals(name)) {
-                			sources.addAll((List<String>)optionValues);
-                		}
-                		else if (IOptionKeys.inputOption.equals(name)) {
-                			List<Path> paths = (List<Path>)optionValues;
-                			paths.forEach(p -> input.add(p.toString()));
-                			syncInput(configuration, paths);
-                		}
-                		else {
-                			execBuilder.setOption(name, optionValues);
-                		}
-                	}
+				List<String> values = (List<String>)optionMap.get(name);
+				OptionDescription option = facadeMgr.findOptionDescription(name);
+				OptionTypeFacade<?> typeFacade = facadeMgr.getFacade(option, OptionTypeFacade.class);
+				if (OptionFacades.isSingleValued(option)) {
+					Object optionValue = typeFacade.newInstance(values.get(0));
+					execBuilder.setOption(name, optionValue);
+				}
+				else {
+					List<?> optionValues = typeFacade.newInstance(values);
+					if (IOptionKeys.targetOption.equals(name)) {
+						targets.addAll((List<String>)optionValues);
+					}
+					else if (IOptionKeys.sourceOption.equals(name)) {
+						sources.addAll((List<String>)optionValues);
+					}
+					else if (IOptionKeys.inputOption.equals(name)) {
+						List<Path> paths = (List<Path>)optionValues;
+						paths.forEach(p -> input.add(p.toString()));
+						syncInput(configuration, paths);
+					}
+					else {
+						execBuilder.setOption(name, optionValues);
+					}
+				}
             }
             
             if (!targets.isEmpty()) {
-            		execBuilder.setOption(IOptionKeys.targetOption, targets);
+				execBuilder.setOption(IOptionKeys.targetOption, targets);
             }
             if (!sources.isEmpty()) {
-            		execBuilder.setOption(IOptionKeys.sourceOption, sources);
+				execBuilder.setOption(IOptionKeys.sourceOption, sources);
             }
             
             if (!optionMap.containsKey(IOptionKeys.userIgnorePathOption)) {
-            		execBuilder.setOption(IOptionKeys.userIgnorePathOption, 
-            				modelService.getDefaultUserIgnore());
-            		WindupCorePlugin.logInfo("Using ignore file: " + modelService.getDefaultUserIgnore().getAbsolutePath());
+				execBuilder.setOption(IOptionKeys.userIgnorePathOption, 
+				modelService.getDefaultUserIgnore());
+				WindupCorePlugin.logInfo("Using ignore file: " + modelService.getDefaultUserIgnore().getAbsolutePath());
             }
             
             execBuilder.setInput(input);
@@ -230,12 +230,12 @@ public class WindupService
             this.recentConfiguration = configuration;
             modelService.populateConfiguration(configuration, results);
 	        	
-	        	modelService.save();
+			modelService.save();
 	        status = Status.OK_STATUS;
         }
         catch (Exception e) {
-	    		status = new Status(Status.ERROR, WindupCorePlugin.PLUGIN_ID, e.getMessage());
-	    		WindupCorePlugin.log(e);
+			status = new Status(Status.ERROR, WindupCorePlugin.PLUGIN_ID, e.getMessage());
+			WindupCorePlugin.log(e);
         }
         finally {
             // mark the monitor as complete
