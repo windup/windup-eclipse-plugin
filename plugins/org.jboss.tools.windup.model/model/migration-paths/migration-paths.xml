@@ -54,4 +54,10 @@
         <source id="eap" version-range="[6]"/>
         <target id="eap" version-range="[7]"/>
     </path>
+    
+    <path id="800">
+        <name>Oracle JDK 7 to Open OpenJDK 7</name>
+        <source id="oraclejdk" version-range="[7]"/>
+        <target id="openjdk" version-range="[7]"/>
+    </path>
 </migration-paths>
