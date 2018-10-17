@@ -248,7 +248,7 @@ public class IssueExplorer extends CommonNavigator {
 	
 	private void createServerArea(final Composite parent) {
 		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(parent);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+//		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().spacing(0, 0).numColumns(2).applyTo(top);
