@@ -56,7 +56,7 @@
     </path>
     
     <path id="800">
-        <name>Oracle JDK 7 to Open OpenJDK 7</name>
+        <name>Oracle JDK 7 to OpenJDK 7</name>
         <source id="oraclejdk" version-range="[7]"/>
         <target id="openjdk" version-range="[7]"/>
     </path>
