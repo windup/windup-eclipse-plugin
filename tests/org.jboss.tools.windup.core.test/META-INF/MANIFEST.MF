@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.core.test;singleton:=true
-Bundle-Version: 4.2.0.Alpha2
+Bundle-Version: 4.2.0.qualifier
 Bundle-Activator: org.jboss.tools.windup.core.test.WindupCoreTestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
