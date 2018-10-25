@@ -113,7 +113,7 @@ import com.google.common.collect.Lists;
 public class RulesetElementUiDelegateFactory {
 	
 	enum CATEGORY {
-		MANDATORY, OPTIONAL, POTENTIAL
+		MANDATORY, OPTIONAL, POTENTIAL, INFORMATION
 	}
 		
 	public static interface RulesetConstants {

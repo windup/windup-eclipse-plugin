@@ -842,15 +842,13 @@
     </extension>
     <extension
           point="org.eclipse.wst.xml.core.catalogContributions">
-       <catalogContribution>
+       <catalogContribution id="default">
           <uri
                 name="http://windup.jboss.org/schema/jboss-ruleset"
-                uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd">
-          </uri>
+                uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd" />
           <system
                 systemId="http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"
-                uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd">
-          </system>
+                uri="platform:/plugin/org.jboss.tools.windup.ui/schema/xsd/windup-jboss-ruleset.xsd" />
        </catalogContribution>
     </extension>
     <extension

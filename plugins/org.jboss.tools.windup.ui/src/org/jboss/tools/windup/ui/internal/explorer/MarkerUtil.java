@@ -114,6 +114,9 @@ public class MarkerUtil {
 		else if (severity.equals(Severity.POTENTIAL.toString())) {
 			return IMarker.SEVERITY_WARNING;
 		}
+		else if (severity.equals(Severity.INFORMATION.toString())) {
+			return IMarker.SEVERITY_INFO;
+		}
 		else {
 			return IMarker.SEVERITY_ERROR;
 		}

@@ -547,8 +547,9 @@
 	                    <p>The default categories are:</p>
 	                    <ul>
 						    <li>mandatory</li>
-						    <li>optional</li>
-						    <li>potential</li>
+                            <li>optional</li>
+                            <li>potential</li>
+                            <li>information</li>
 						</ul>
 	                 ]]>
 	                 </xs:documentation>
@@ -579,9 +580,10 @@
     
     <xs:simpleType name="severity-type">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="optional"/>
             <xs:enumeration value="mandatory"/>
+            <xs:enumeration value="optional"/>
             <xs:enumeration value="potential"/>
+            <xs:enumeration value="information"/>
         </xs:restriction>
     </xs:simpleType>
     
@@ -641,7 +643,7 @@
                 </xs:annotation>
             </xs:attribute>
             <!-- <xs:attribute name="severity" type="severity-type" use="optional" /> -->
-            <xs:attribute name="category-id" type="severity-type" use="optional">
+            <xs:attribute name="category-id" type="category-type" use="optional">
                 <xs:annotation>
                      <xs:documentation>
                      <![CDATA[
@@ -651,6 +653,7 @@
                             <li>mandatory</li>
                             <li>optional</li>
                             <li>potential</li>
+                            <li>information</li>
                         </ul>
                      ]]>
                      </xs:documentation>

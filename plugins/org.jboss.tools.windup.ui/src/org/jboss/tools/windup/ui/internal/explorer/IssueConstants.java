@@ -16,9 +16,9 @@ package org.jboss.tools.windup.ui.internal.explorer;
 public interface IssueConstants {
 	
 	public static enum Severity {
-		MANDATORY, POTENTIAL, OPTIONAL
+		MANDATORY, OPTIONAL, POTENTIAL, INFORMATION
 	}
-	
+
 	String ISSUE_ID = "WINDUP_ISSUE_ID";
 	String ELEMENT_ID = "ELEMENT_ID";
 	
