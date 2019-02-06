@@ -142,7 +142,7 @@ public class WindupService
             execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
             execBuilder.setOption(IOptionKeys.sourceModeOption, true);
             execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
-        	execBuilder.ignore("\\.class$");
+            execBuilder.ignore("\\.class$");
 
 			List<String> sources = Lists.newArrayList();
 			List<String> targets = Lists.newArrayList();
