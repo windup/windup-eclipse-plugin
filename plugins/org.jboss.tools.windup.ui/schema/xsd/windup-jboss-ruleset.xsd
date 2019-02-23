@@ -550,6 +550,8 @@
                             <li>optional</li>
                             <li>potential</li>
                             <li>information</li>
+                            <li>cloud-mandatory</li>
+                            <li>cloud-optional</li>
 						</ul>
 	                 ]]>
 	                 </xs:documentation>
@@ -584,6 +586,8 @@
             <xs:enumeration value="optional"/>
             <xs:enumeration value="potential"/>
             <xs:enumeration value="information"/>
+            <xs:enumeration value="cloud-mandatory"/>
+            <xs:enumeration value="cloud-optional"/>
         </xs:restriction>
     </xs:simpleType>
     
@@ -654,6 +658,8 @@
                             <li>optional</li>
                             <li>potential</li>
                             <li>information</li>
+                            <li>cloud-mandatory</li>
+                            <li>cloud-optional</li>
                         </ul>
                      ]]>
                      </xs:documentation>

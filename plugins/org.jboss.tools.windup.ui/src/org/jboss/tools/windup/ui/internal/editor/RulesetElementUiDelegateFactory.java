@@ -113,7 +113,7 @@ import com.google.common.collect.Lists;
 public class RulesetElementUiDelegateFactory {
 	
 	enum CATEGORY {
-		MANDATORY, OPTIONAL, POTENTIAL, INFORMATION
+		MANDATORY, OPTIONAL, POTENTIAL, INFORMATION, CLOUD_MANDATORY, CLOUD_OPTIONAL
 	}
 		
 	public static interface RulesetConstants {
@@ -790,7 +790,10 @@ public class RulesetElementUiDelegateFactory {
 		return new ChoiceAttributeRow(element, cmNode, false) {
 			@Override
 			protected List<String> getOptions() {
-				return Arrays.stream(CATEGORY.values()).map(c -> c.toString().toLowerCase()).collect(Collectors.toList());
+				return Arrays.stream(CATEGORY.values()).map(c -> {
+					String value = c.toString().toLowerCase();
+					return value.replace("_", "-");
+				}).collect(Collectors.toList());
 			}
 		};
 	}
