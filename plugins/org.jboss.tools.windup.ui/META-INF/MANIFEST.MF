@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.ui;singleton:=true
-Bundle-Version: 4.2.1.Final
+Bundle-Version: 4.3.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
