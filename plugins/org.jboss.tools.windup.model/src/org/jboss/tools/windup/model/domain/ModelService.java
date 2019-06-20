@@ -493,7 +493,6 @@ public class ModelService {
 	        		hint.getQuickFixes().add(quickFix);
 	        	}
 	
-	        	// TODO: I think we might want to change this to project relative for portability.
 	        	hint.setFileAbsolutePath(wHint.getFile().getAbsolutePath());
 	        	hint.setSeverity(wHint.getIssueCategory().getCategoryID().toUpperCase());
 	        	hint.setRuleId(wHint.getRuleID());

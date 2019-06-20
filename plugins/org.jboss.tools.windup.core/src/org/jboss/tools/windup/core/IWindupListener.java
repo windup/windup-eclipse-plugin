@@ -19,9 +19,7 @@ import org.eclipse.core.resources.IProject;
  * Interface for listening to Windup report changes.
  * </p>
  */
-public interface IWindupListener extends EventListener
-{
-
+public interface IWindupListener extends EventListener {
     /**
      * <p>
      * Notifiers the listener when a Windup {@link GraphContext} is generated for the given {@link IProject}
