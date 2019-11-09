@@ -19,7 +19,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.text,
  org.eclipse.jface.text,
- com.google.inject;bundle-version="3.0.0",
  org.jboss.tools.common,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.ui.workbench,
@@ -93,7 +92,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.mylyn.wikitext.twiki.ui,
  org.eclipse.mylyn.wikitext.ui,
  org.eclipse.wst.xml.xpath.core,
- org.eclipse.mylyn.commons.workbench
+ org.eclipse.mylyn.commons.workbench,
+ javax.inject,
+ com.google.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,
