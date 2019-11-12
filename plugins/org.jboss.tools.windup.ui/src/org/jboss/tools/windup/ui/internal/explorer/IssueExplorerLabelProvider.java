@@ -351,7 +351,7 @@ public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyled
 			else if (issue instanceof Classification) {
 				Classification classification = (Classification)issue;
 				if (issue.isFixed()) {
-					style.append(classification.getName(), new Styler() {
+					style.append(classification.getTitle(), new Styler() {
 						@Override
 						public void applyStyles(TextStyle textStyle) {
 							textStyle.foreground = GREEN;
