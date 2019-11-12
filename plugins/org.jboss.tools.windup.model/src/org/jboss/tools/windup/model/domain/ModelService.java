@@ -653,6 +653,7 @@ public class ModelService {
 	}
 	
 	public ConfigurationElement getRecentConfiguration() {
+		if (getModel() == null) return null;
 		ConfigurationElement mostRecentConfiguration = null;
 		for (ConfigurationElement configuration : getModel().getConfigurationElements()) {
 			if (mostRecentConfiguration == null) {
