@@ -70,7 +70,6 @@ import com.google.common.collect.Maps;
 /**
  * The label provider for the Windup explorer.
  */
-@SuppressWarnings("restriction")
 public class IssueExplorerLabelProvider implements ICommonLabelProvider, IStyledLabelProvider, IFontProvider {
 	
 	private static final Color GREEN = new Color(Display.getDefault(), 107,169,128);

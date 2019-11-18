@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.tools</groupId>
         <artifactId>parent</artifactId>
-        <version>4.13.0.Final-SNAPSHOT</version>
+        <version>4.14.0.AM1-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup</artifactId>
@@ -28,7 +28,7 @@
         See https://github.com/jbosstools/jbosstools-devdoc/blob/master/source/build_checks.adoc#enforce-no-snapshots-final -->
         <enforceExcludePatternExtras>|windup.version</enforceExcludePatternExtras>
     </properties>
-
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -150,5 +150,11 @@
 		<layout>p2</layout>
 		<url>${jbosstools-forge-site}</url>
 	    </repository>
+	    
+		<repository>
+			<id>jbosstools-central</id>
+			<layout>p2</layout>
+			<url>${jbosstools-central-site}</url>
+		</repository>
     </repositories>
 </project>
