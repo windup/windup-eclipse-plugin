@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.wst.validation.ValidationFramework;
 import org.jboss.tools.test.util.TestProjectProvider;
+import org.jboss.tools.windup.util.test.WindupTest;
 import org.junit.Ignore;
 import org.junit.Test;
 

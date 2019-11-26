@@ -24,6 +24,7 @@ import org.jboss.tools.test.util.TestProjectProvider;
 import org.jboss.tools.windup.core.IWindupListener;
 import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.core.services.WindupService;
+import org.jboss.tools.windup.util.test.WindupTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;

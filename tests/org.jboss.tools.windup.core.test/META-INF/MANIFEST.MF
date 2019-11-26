@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.core.di,
  org.jboss.tools.windup.model,
  org.jboss.tools.tests,
- javax.inject
+ javax.inject,
+ org.jboss.tools.windup.util.test
 Export-Package: org.jboss.tools.windup.core.test
 Bundle-Vendor: %plugin.vendor

@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.windup.core.test;
+package org.jboss.tools.windup.util.test;
 
 import javax.inject.Inject;
 
