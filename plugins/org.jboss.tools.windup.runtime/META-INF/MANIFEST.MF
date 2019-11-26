@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  javax.inject
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %plugin.vendor
 Bundle-ClassPath: .,
  xtext/org.eclipse.xtend.core-2.11.0.jar,
