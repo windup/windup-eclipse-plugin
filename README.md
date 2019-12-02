@@ -5,6 +5,8 @@ Windup Eclipse Plugin
 
 ## Summary
 
+[Windup](https://github.com/windup/windup) is a command-line Application Migration and Modernization assessment tool.
+
 The Windup Eclipse Project provides Eclipse plugins to integrate the Windup project with Eclipse.
 
 ## Installing
@@ -13,20 +15,20 @@ Before you can install the Windup plugin, you'll need to have [JBoss Tools](http
 
 Building the project generates a zip archive containing an Eclipse update site under site/target/. You can install the features into Eclipse from the archive via "Help > Install New Software > Add... > Archive...".
 
-Also, a [nightly build](http://download.jboss.org/jbosstools/oxygen/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
+Also, a [nightly build](https://download.jboss.org/jbosstools/photon/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
 
 ### Offline
 
 #### Bring your own Eclipse
 
-* Download a distribution of the [Eclipse Oxygen.1a (4.7.1a)](https://www.eclipse.org/downloads/).
-* Download the latest release of the Red Hat Developer Studio [update-site 11.1.0.GA](http://tools.jboss.org/downloads/devstudio/oxygen/11.1.0.GA.html#zips).
-* Download the latest release of the RHAMT plugins [update-site 4.0.0-Beta5](http://download.jboss.org/jbosstools/oxygen/development/updates/rhamt/4.0.0.Beta5/).
+* Download a distribution of the [Eclipse IDE 2019-09 (4.12.0)](https://www.eclipse.org/downloads/).
+* Download the latest release of the Red Hat CodeReady Studio [update-site 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#zips).
+* Download the latest release of the RHAMT plugins [update-site 4.3.0.Final](https://download.jboss.org/jbosstools/photon/stable/updates/rhamt/4.3.0.Final/).
 
-#### Red Hat Developer Studio
+#### Red Hat CodeReady Studio
 
-* Download and install Red Hat Developer Studio [installer 11.1.0.GA](http://tools.jboss.org/downloads/devstudio/oxygen/11.1.0.GA.html#direct_download)
-* Download the latest release of the RHAMT plugins [update-site 4.0.0-Beta5](http://download.jboss.org/jbosstools/oxygen/development/updates/rhamt/4.0.0.Beta5/).
+* Download and install Red Hat CodeReady Studio [installer 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#direct_download)
+* Download the latest release of the RHAMT plugins [update-site 4.3.0.Final](https://download.jboss.org/jbosstools/photon/stable/updates/rhamt/4.3.0.Final/).
 
 
 ## Get the code
