@@ -23,12 +23,12 @@ Also, a [nightly build](https://download.jboss.org/jbosstools/photon/snapshots/b
 
 * Download a distribution of the [Eclipse IDE 2019-09 (4.12.0)](https://www.eclipse.org/downloads/).
 * Download the latest release of the Red Hat CodeReady Studio [update-site 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#zips).
-* Download the latest release of the RHAMT plugins [update-site 4.3.0.Final](https://download.jboss.org/jbosstools/photon/stable/updates/rhamt/4.3.0.Final/).
+* Download the latest release of the RHAMT [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/rhamt).
 
 #### Red Hat CodeReady Studio
 
 * Download and install Red Hat CodeReady Studio [installer 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#direct_download)
-* Download the latest release of the RHAMT plugins [update-site 4.3.0.Final](https://download.jboss.org/jbosstools/photon/stable/updates/rhamt/4.3.0.Final/).
+* Download the latest release of the RHAMT [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/rhamt).
 
 
 ## Get the code
