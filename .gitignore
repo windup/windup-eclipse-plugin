@@ -7,3 +7,4 @@ plugins/org.jboss.tools.windup.runtime/windup/
 .project
 bin/
 .vscode/
+.DS_Store
