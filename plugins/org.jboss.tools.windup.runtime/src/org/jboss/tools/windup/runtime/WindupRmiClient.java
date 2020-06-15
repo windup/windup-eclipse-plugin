@@ -102,19 +102,19 @@ public class WindupRmiClient {
 	}
 	
 	public void startWindup(final IProgressMonitor monitor, String jreHome) {
-		logInfo("Begin start RHAMT."); //$NON-NLS-1$
+		logInfo("Begin start MTA."); //$NON-NLS-1$
 		monitor.worked(1);
 		
 		String windupExecutable = WindupRuntimePlugin.computeWindupExecutable();
 		
 		if (windupExecutable == null) {
-			WindupRuntimePlugin.logErrorMessage("rhamt-cli not specified."); //$NON-NLS-1$
+			WindupRuntimePlugin.logErrorMessage("mta-cli not specified."); //$NON-NLS-1$
 			return;
 		}
 		
 		boolean executable = new File(windupExecutable).setExecutable(true);
 		if (!executable) {
-			WindupRuntimePlugin.logErrorMessage("rhamt-cli not executable."); //$NON-NLS-1$
+			WindupRuntimePlugin.logErrorMessage("mta-cli not executable."); //$NON-NLS-1$
 			return;
 		}
 		
@@ -136,14 +136,14 @@ public class WindupRmiClient {
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
 			public void onProcessFailed(ExecuteException e) {
-				logInfo("The RHAMT process failed:"); //$NON-NLS-1$
+				logInfo("The MTA process failed:"); //$NON-NLS-1$
 				logInfo(e.getMessage()); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
-				logInfo("The RHAMT process has completed."); //$NON-NLS-1$
+				logInfo("The MTA process has completed."); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
@@ -152,7 +152,7 @@ public class WindupRmiClient {
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				logInfo("Message from RHAMT executor: " + line); //$NON-NLS-1$
+				logInfo("Message from MTA executor: " + line); //$NON-NLS-1$
 				monitor.worked(1);
 			}
 		}));
@@ -160,7 +160,7 @@ public class WindupRmiClient {
 		executor.setExitValue(1);
 		monitor.worked(1);
 		try {
-			logInfo("Starting RHAMT in server mode..."); //$NON-NLS-1$
+			logInfo("Starting MTA in server mode..."); //$NON-NLS-1$
 			logInfo("Command-line: " + cmdLine); //$NON-NLS-1$
 			executor.execute(cmdLine, env, handler);
 		} catch (IOException e) {
@@ -199,7 +199,7 @@ public class WindupRmiClient {
 		try {
 			version = executionBuilder.getVersion();
 		} catch (RemoteException e) {
-	        logInfo("Issue while attempting to retrieve RHAMT server version."); //$NON-NLS-1$
+	        logInfo("Issue while attempting to retrieve MTA server version."); //$NON-NLS-1$
 		}
 		return version;
 	}
@@ -215,7 +215,7 @@ public class WindupRmiClient {
 		} catch (ConnectException e) {
 		} catch (RemoteException e) {
 			// TODO: We are polluting the log with this. Is there a better way?
-			// Since onProcessFailed will be called when/if the process fails, can we rely on the logs sent from the rhamt-cli script? 
+			// Since onProcessFailed will be called when/if the process fails, can we rely on the logs sent from the mta-cli script? 
 			// logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
 			logInfo("Unable to find ExecutionBuilder RMI registry."); //$NON-NLS-1$
 		} catch (NotBoundException e) {
@@ -236,7 +236,7 @@ public class WindupRmiClient {
 					executionBuilder.terminate();
 				}
 			} catch (RemoteException e) {
-				logError("Error while terminating a previous RHAMT server instance.", e); //$NON-NLS-1$ 
+				logError("Error while terminating a previous MTA server instance.", e); //$NON-NLS-1$ 
 			}
 		}
 		executionBuilder = null;

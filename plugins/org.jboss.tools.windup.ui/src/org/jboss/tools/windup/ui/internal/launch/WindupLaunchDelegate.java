@@ -60,7 +60,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			Display.getDefault().asyncExec(() -> {
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
 						Messages.launchErrorTitle, Messages.launchErrorMessage);
-				WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to launch RHAMT. Input is empty."); //$NON-NLS-1$
+				WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to launch MTA. Input is empty."); //$NON-NLS-1$
 			});
 		}
 		else {
@@ -88,7 +88,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 				launcher.start(new WindupServerCallbackAdapter(shell) {
 					@Override
 					public void windupNotExecutable() {
-						WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the RHAMT server."); //$NON-NLS-1$
+						WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the MTA server."); //$NON-NLS-1$
 						MessageDialog.openError(shell, 
 								Messages.WindupNotExecutableTitle, 
 								Messages.WindupNotExecutableInfo);
@@ -99,7 +99,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 							MessageDialog.openError(shell,
 									Messages.WindupStartingError, 
 									status.getMessage());
-							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the RHAMT server. Message: " + status.getMessage()); //$NON-NLS-1$
+							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the MTA server. Message: " + status.getMessage()); //$NON-NLS-1$
 						}
 						if (status.isOK()) {
 							runWindup(configuration);
@@ -128,7 +128,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 					MessageDialog.openError(shell, 
 							Messages.WindupShuttingDownError, 
 							status.getMessage());
-					WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to shutdown the RHAMT server. " + status.getMessage()); //$NON-NLS-1$
+					WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to shutdown the MTA server. " + status.getMessage()); //$NON-NLS-1$
 				}
 				if (shutdown) {
 					launcher.start(new WindupServerCallbackAdapter(shell) {
@@ -137,7 +137,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 							MessageDialog.openError(shell, 
 									Messages.WindupNotExecutableTitle, 
 									Messages.WindupNotExecutableInfo);
-							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the RHAMT server. Script not executable."); //$NON-NLS-1$
+							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the MTA server. Script not executable."); //$NON-NLS-1$
 						}
 						@Override
 						public void serverStart(IStatus status) {
@@ -160,7 +160,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 								builder.append(Messages.WindupStartNotStartingSolution5);
 								RHAMTStartupFailedDialog dialog = new RHAMTStartupFailedDialog(Display.getDefault().getActiveShell());
 								dialog.open();
-								WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: Failed to start the RHAMT server. Message:" + status.getMessage()); //$NON-NLS-1$
+								WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: Failed to start the MTA server. Message:" + status.getMessage()); //$NON-NLS-1$
 							}
 							if(windupClient.isWindupServerRunning()) {
 								runWindup(configuration);

@@ -15,9 +15,9 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8hk14DtbEeam9qnVAiy5Fw" featurename="menuContributions" parentElementId="org.eclipse.e4.legacy.ide.application" positionInList="">
     <elements xsi:type="menu:MenuContribution" xmi:id="_yZIe4DteEeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.menucontribution.0" positionInParent="after=additions" parentId="popup">
-      <children xsi:type="menu:Menu" xmi:id="_Lx_r8DtcEeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.menu.windup" label="RHAMT">
+      <children xsi:type="menu:Menu" xmi:id="_Lx_r8DtcEeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.menu.windup" label="MTA">
         <tags>menuContribution:popup</tags>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_JB7TsDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.handledmenuitem.generateReport" label="Run RHAMT" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" command="_qa3OUDs-Eeam9qnVAiy5Fw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_JB7TsDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.handledmenuitem.generateReport" label="Run MTA" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" command="_qa3OUDs-Eeam9qnVAiy5Fw">
           <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_bdhAoDu_EeaLtOjo5cPJrg" coreExpressionId="org.jboss.tools.windup.ui.expression.generateReport"/>
         </children>
       </children>

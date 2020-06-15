@@ -47,7 +47,7 @@ public class NewXMLFilePage extends WizardNewFileCreationPage {
 		setDescription(Messages._UI_WIZARD_CREATE_XML_FILE_EXPL);
 		setFileExtension(EXTENSION);
 		setImageDescriptor(WindupUIPlugin.getImageDescriptor(WindupUIPlugin.IMG_XML_WIZ));
-		setFileName("custom.rules.rhamt.xml"); //$NON-NLS-1$
+		setFileName("custom.rules.mta.xml"); //$NON-NLS-1$
 	}
 
 	@Override

@@ -90,15 +90,15 @@ public class WindupUiTest extends WindupTest {
 		this.issueExplorer = (IssueExplorer)((CompatibilityView)partService.findPart(
 				IssueExplorer.VIEW_ID).getObject()).getView();
 		assertNotNull("Issue Explorer is NULL.", issueExplorer);
-		System.out.println("@Before::init:: start RHAMT server.");
+		System.out.println("@Before::init:: start MTA server.");
 		windupLauncher.start(new WindupServerCallbackAdapter(Display.getDefault().getActiveShell()) {
 			@Override
 			public void serverStart(IStatus status) {
 				if (status.isOK() && windupClient.getExecutionBuilder() != null) {
-					System.out.println("@Before::init:: RHAMT server started successfully.");
+					System.out.println("@Before::init:: MTA server started successfully.");
 				}
 				else {
-					System.out.println("@Before::init:: RHAMT server failed to start.");
+					System.out.println("@Before::init:: MTA server failed to start.");
 				}
 			}
 		}, WindupRuntimePlugin.computeJRELocation());
@@ -115,7 +115,7 @@ public class WindupUiTest extends WindupTest {
 	
 	protected void runWindup(ConfigurationElement configuration) {
 		if (windupClient.isWindupServerRunning()) {
-			System.out.println("RHAMT server already running.");
+			System.out.println("MTA server already running.");
 			Display.getDefault().syncExec(() -> {
 				markerService.clear();
             		//viewService.launchStarting();
@@ -125,13 +125,13 @@ public class WindupUiTest extends WindupTest {
 			});
 		}
 		else {
-			System.out.println("RHAMT server not running. Attempting to start it.");
+			System.out.println("MTA server not running. Attempting to start it.");
 			windupLauncher.start(new WindupServerCallbackAdapter(Display.getDefault().getActiveShell()) {
 				@Override
 				public void serverStart(IStatus status) {
-					System.out.println("Finished attempt to start RHAMT server.");
+					System.out.println("Finished attempt to start MTA server.");
 					if (status.isOK() && windupClient.getExecutionBuilder() != null) {
-						System.out.println("RHAMT server started successfully.");
+						System.out.println("MTA server started successfully.");
 						markerService.clear();
 		            		//viewService.launchStarting();
 						windupService.generateGraph(configuration, new NullProgressMonitor());
