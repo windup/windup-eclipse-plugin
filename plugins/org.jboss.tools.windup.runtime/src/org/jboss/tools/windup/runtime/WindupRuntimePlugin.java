@@ -80,7 +80,7 @@ public class WindupRuntimePlugin extends Plugin {
 	}
 
 	public static String computeWindupExecutable() {
-		String location = WindupRuntimePlugin.computeWindupHome().resolve("bin").resolve("rhamt-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String location = WindupRuntimePlugin.computeWindupHome().resolve("bin").resolve("mta-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		if (PlatformUtil.isWindows()) {
 			location = location + ".bat"; //$NON-NLS-1$
 		}
@@ -115,7 +115,7 @@ public class WindupRuntimePlugin extends Plugin {
 	public static Help findWindupHelpCache() {
 		Help result = new Help();
 		File windupHome = WindupRuntimePlugin.computeWindupHome().toFile();
-		WindupRuntimePlugin.logInfo("Retrieving help.xml options from RHAMT_HOME: " + windupHome.toString());
+		WindupRuntimePlugin.logInfo("Retrieving help.xml options from MTA_HOME: " + windupHome.toString());
 		File cacheFile = new File(windupHome, HELP_CACHE);
 		try {
 			URL url = cacheFile.toURI().toURL();

@@ -70,7 +70,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup</groupId>
-                <artifactId>rhamt-cli</artifactId>
+                <artifactId>mta-cli</artifactId>
                 <version>${windup.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

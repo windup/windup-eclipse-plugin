@@ -24,7 +24,7 @@
 		<!-- Windup API -->
 		<dependency>
 			<groupId>org.jboss.windup</groupId>
-			<artifactId>rhamt-cli</artifactId>
+			<artifactId>mta-cli</artifactId>
 			<version>${windup.version}</version>
 			<classifier>offline</classifier>
 			<type>zip</type>
@@ -152,7 +152,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.jboss.windup</groupId>
-									<artifactId>rhamt-cli</artifactId>
+									<artifactId>mta-cli</artifactId>
 									<version>${windup.version}</version>
 									<classifier>offline</classifier>
 									<type>zip</type>
