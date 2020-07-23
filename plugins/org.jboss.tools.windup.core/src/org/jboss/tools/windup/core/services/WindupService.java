@@ -204,9 +204,11 @@ public class WindupService
 				}
             }
             
+			// done
             if (!targets.isEmpty()) {
 				execBuilder.setOption(IOptionKeys.targetOption, targets);
             }
+			// done
             if (!sources.isEmpty()) {
 				execBuilder.setOption(IOptionKeys.sourceOption, sources);
             }
