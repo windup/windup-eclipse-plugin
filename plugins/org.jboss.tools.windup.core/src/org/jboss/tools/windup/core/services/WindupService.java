@@ -139,7 +139,8 @@ public class WindupService
             
             execBuilder.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
             execBuilder.setOutput(outputDir);
-            execBuilder.setProgressMonitor(new WindupProgressMonitorAdapter(progress));
+            WindupProgressMonitorAdapter adapter = new WindupProgressMonitorAdapter(progress);
+            execBuilder.setProgressMonitor(adapter);
             execBuilder.setOption(IOptionKeys.sourceModeOption, true);
             execBuilder.setOption(IOptionKeys.skipReportsRenderingOption, !configuration.isGenerateReport());
             execBuilder.ignore("\\.class$");

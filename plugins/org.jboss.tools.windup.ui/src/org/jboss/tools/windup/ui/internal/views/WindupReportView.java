@@ -187,8 +187,8 @@ public class WindupReportView implements IShowInTarget
         // react to Windup report generations
         this.reportListener = new IWindupListener()
         {
-            @Override
-            public void graphGenerated(IProject project)
+        	@Override
+        	public void graphGenerated(IProject project)
             {
                 /*
                  * if the current selection is in the project that just had a report generated, refresh the view
