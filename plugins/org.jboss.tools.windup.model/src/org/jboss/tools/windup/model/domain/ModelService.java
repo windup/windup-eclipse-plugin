@@ -110,14 +110,14 @@ public class ModelService {
     private static final String MODEL_FILE = "windup.xmi";
     private static final String IGNORE_FILE = "default-windup-ignore.txt";
 
-	@Inject private IEventBroker broker;
-	@Inject private WindupDomainListener modelListener;
+    private IEventBroker broker;
 	
 	private WindupModel model;
 	private TransactionalEditingDomain domain;
 	
-	@PostConstruct
-	private void initialize() {
+	@Inject
+	public ModelService(IEventBroker broker, WindupDomainListener modelListener) {
+		this.broker = broker;
 		domain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(DOMAIN_NAME);
 		load();
 		model.eAdapters().add(modelListener);

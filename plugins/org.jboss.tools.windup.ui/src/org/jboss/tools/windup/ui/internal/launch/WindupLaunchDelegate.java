@@ -76,8 +76,8 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 				buff.append("Current JAVA_HOME: " + windupClient.getJavaHome()); //$NON-NLS-1$
 				buff.append(System.lineSeparator());
 				buff.append("Restarting using JAVA_HOME: " + jreHome); //$NON-NLS-1$
-				WindupRuntimePlugin.getDefault().getLog().log(
-	                    new Status(IStatus.INFO, WindupRuntimePlugin.PLUGIN_ID, buff.toString()));
+				WindupUIPlugin.getDefault().getLog().log(
+	                    new Status(IStatus.INFO, WindupUIPlugin.PLUGIN_ID, buff.toString()));
 				restartAndRun(configuration, jreHome);
 			}
 				
