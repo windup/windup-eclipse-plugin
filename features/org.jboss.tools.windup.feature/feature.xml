@@ -2,7 +2,7 @@
 <feature
       id="org.jboss.tools.windup.feature"
       label="%featureName"
-      version="5.0.1.Final"
+      version="5.1.0.Alpha1"
       plugin="org.jboss.tools.windup.ui"
       license-feature="org.jboss.tools.foundation.license.feature"
       provider-name="%providerName"

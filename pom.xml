@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>windup</artifactId>
-    <version>5.0.1.Final</version>
+    <version>5.1.0.Alpha1</version>
     <name>windup.all</name>
 
     <packaging>pom</packaging>
@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <windup.version>5.0.1.Final</windup.version>
+        <windup.version>5.1.0.Alpha1</windup.version>
         <tycho.scmUrl>scm:git:https://github.com/windup/windup-eclipse-plugin.git</tycho.scmUrl>
         <!-- exclude variables that are allowed to have SNAPSHOT versions
         See https://github.com/jbosstools/jbosstools-devdoc/blob/master/source/build_checks.adoc#enforce-no-snapshots-final -->
