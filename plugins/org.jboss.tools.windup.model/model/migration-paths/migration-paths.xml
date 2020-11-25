@@ -60,4 +60,10 @@
         <source id="oraclejdk"/>
         <target id="openjdk"/>
     </path>
+
+    <path id="900">
+        <name>Spring Boot to Quarkus</name>
+        <source id="springboot"/>
+        <target id="quarkus"/>
+    </path>
 </migration-paths>
