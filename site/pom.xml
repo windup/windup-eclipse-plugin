@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>windup</artifactId>
-		<version>5.1.0.Alpha1</version>
+		<version>5.1.0.Beta1</version>
 	</parent>
 	<groupId>org.jboss.tools.windup</groupId>
 	<artifactId>windup.site</artifactId>
