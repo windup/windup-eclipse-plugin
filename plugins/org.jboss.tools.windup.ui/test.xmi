@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmi:id="_3OgBIDpHEeatV4ph7A9F8w">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_AOePADpXEeaRMsZSnIA5kQ" featurename="snippets" parentElementId="org.eclipse.e4.legacy.ide.application" positionInList="">
+    <elements xsi:type="advanced:Perspective" xmi:id="_ENGnwDpXEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.perspective" label="Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="JBoss Migration Windup">
+      <tags>persp.actionSet:org.eclipse.debug.ui.launchActionSet</tags>
+      <children xsi:type="basic:PartSashContainer" xmi:id="_Sgn7QDpYEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partsashcontainer" selectedElement="_38dDkDpYEeaRMsZSnIA5kQ" horizontal="true">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_38dDkDpYEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partsashcontainer.child1" containerData="2600" selectedElement="_9kS10DpYEeaRMsZSnIA5kQ">
+          <children xsi:type="basic:PartStack" xmi:id="_9kS10DpYEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partstack.topLeft" containerData="5000"/>
+          <children xsi:type="basic:PartStack" xmi:id="_BxpnEDpZEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partstack.bottomLeft" containerData="5000"/>
+        </children>
+        <children xsi:type="basic:PartSashContainer" xmi:id="_o4qlMDphEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partsashcontainer.0" containerData="7400">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_t5VCsDphEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partsashcontainer.editorArea" containerData="6600" horizontal="true"/>
+          <children xsi:type="basic:PartStack" xmi:id="_ACfAcDpiEeaRMsZSnIA5kQ" elementId="org.jboss.tools.windup.ui.partstack.bottomRight" containerData="3400">
+            <children xsi:type="advanced:Placeholder" xmi:id="_AHnQwDwSEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.placeholder.windupReport" ref="_FoKaIDwQEeabQKKuPTy1jQ"/>
+            <children xsi:type="basic:Part" xmi:id="_1POzcFMyEeavI68HNfKfbQ" elementId="org.jboss.tools.windup.ui.issue.details" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.issues.IssueDetailsView" label="Issue Details" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" closeable="true"/>
+          </children>
+        </children>
+      </children>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5AHTkDtWEeam9qnVAiy5Fw" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_qa3OUDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.generateReport" commandName="Run Windup on this project"/>
+    <elements xsi:type="commands:Command" xmi:id="_u5c5gDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.showReport" commandName="Show Report"/>
+    <elements xsi:type="commands:Command" xmi:id="_0G2LcDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.command.exportReport" commandName="Export Report"/>
+    <elements xsi:type="commands:Command" xmi:id="_f-MZQEYBEeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.command.help" commandName="Help"/>
+    <elements xsi:type="commands:Command" xmi:id="_86kAMEfpEea84LcAYxXN7w" elementId="org.jboss.tools.windup.ui.command.runWindup" commandName="Run Windup"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ACAB8DtXEeam9qnVAiy5Fw" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_6Tw9cDv-EeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.handler.exportReport" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.ExportWindupReportHandler" command="_0G2LcDs-Eeam9qnVAiy5Fw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_bFNIUDwBEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.handler.showReport" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.ShowWindupReportHandler" command="_u5c5gDs-Eeam9qnVAiy5Fw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_0lTpADwCEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.handler.generateReport" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.GenerateWindupReportHandler" command="_qa3OUDs-Eeam9qnVAiy5Fw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_kOGIMEYBEeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.handler.help" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.HelpHandler" command="_f-MZQEYBEeaZwMMgWaV59g"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8hk14DtbEeam9qnVAiy5Fw" featurename="menuContributions" parentElementId="org.eclipse.e4.legacy.ide.application" positionInList="">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_yZIe4DteEeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.menucontribution.0" positionInParent="after=additions" parentId="popup">
+      <children xsi:type="menu:Menu" xmi:id="_Lx_r8DtcEeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.menu.windup" label="Windup">
+        <tags>menuContribution:popup</tags>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_JB7TsDs-Eeam9qnVAiy5Fw" elementId="org.jboss.tools.windup.ui.handledmenuitem.generateReport" label="Run Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" command="_qa3OUDs-Eeam9qnVAiy5Fw">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_bdhAoDu_EeaLtOjo5cPJrg" coreExpressionId="org.jboss.tools.windup.ui.expression.generateReport"/>
+        </children>
+      </children>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_9YJEsDwPEeabQKKuPTy1jQ" featurename="sharedElements" parentElementId="IDEWindow">
+    <elements xsi:type="basic:Part" xmi:id="_FoKaIDwQEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.views.WindupReportView" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.views.WindupReportView" label="%view.windup_report.name" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="%view.windup_report.name" closeable="true">
+      <toolbar xmi:id="_vUzyMDwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.toolbar.windupReport">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_198pYDwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.directtoolitem.refresh" label="" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/refresh.gif" tooltip="Refresh Windup Report" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.RefreshWindupReportHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_-SaZ8DwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.directtoolitem.sync" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/synced.png" tooltip="Sync with selection" type="Check" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.SyncSelectionHandler"/>
+      </toolbar>
+    </elements>
+    <elements xsi:type="basic:Part" xmi:id="_jbGBUEYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.part.windupEditor" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.WindupEditor" label="Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" closeable="true">
+      <toolbar xmi:id="_qIuW8EYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.toolbar.0"/>
+    </elements>
+    <elements xsi:type="basic:Part" xmi:id="_tn0BYFN6EeaimsGfu-ZPRw" elementId="org.jboss.tools.windup.ui.issue.details" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.issues.IssueDetailsView" label="%view.issueDetails" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="%view.issueDetails"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_jfaZUECHEeaIZs9YJVekXg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="application:Addon" xmi:id="_mXO7AECHEeaIZs9YJVekXg" elementId="org.jboss.tools.windup.ui.addon.viewService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.ViewService"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_m5YxIEX-EeaZwMMgWaV59g" featurename="toolBarContributions" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="menu:ToolBarContribution" xmi:id="_o4nd8EX-EeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.toolbarcontribution.0" parentId="org.jboss.tools.windup.toolbar">
+      <children xsi:type="menu:HandledToolItem" xmi:id="_2x7FMEYAEeaZwMMgWaV59g" elementId="org.jboss.tools.windup.ui.configuration.handledtoolitem.help" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/help.png" tooltip="Help" command="_f-MZQEYBEeaZwMMgWaV59g"/>
+      <children xsi:type="menu:ToolBarSeparator" xmi:id="_kH5A8F_IEea1h6Yw3BfxxA" elementId="org.jboss.tools.windup.ui.toolbarseparator.1"/>
+      <children xsi:type="menu:DirectToolItem" xmi:id="_Y7ahcF_IEea1h6Yw3BfxxA" elementId="org.jboss.tools.windup.ui.directtoolitem.run" label="Run" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/run_exc.png" tooltip="Run Windup using this configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.launch.RunWindupHandler"/>
+    </elements>
+    <elements xsi:type="menu:ToolBarContribution" xmi:id="_uVIFsEbJEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.toolbarcontribution.1" parentId="org.jboss.tools.windup.toolbar.configurations.table">
+      <children xsi:type="menu:DirectToolItem" xmi:id="_2YT5AEbJEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.directtoolitem.add" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/new_con.png" tooltip="New windup launch configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.launch.NewWindupConfigurationHandler"/>
+      <children xsi:type="menu:DirectToolItem" xmi:id="_iQ1wQEbQEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.directtoolitem.0" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/delete_config.png" tooltip="Delete windup launch configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.DeleteWindupConfigurationHandler"/>
+      <children xsi:type="menu:ToolBarSeparator" xmi:id="_ViNdUEbXEeayeegrWTWaaw" elementId="org.jboss.tools.windup.ui.toolbarseparator.0"/>
+      <children xsi:type="menu:DirectToolItem" xmi:id="_QsRgYEkMEeab9oKjuw75kg" elementId="org.jboss.tools.windup.ui.configuration.handledtoolitem.run" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/run_exc.png" tooltip="Run windup launch configuration " contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.launch.RunWindupHandler"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_3VCkoEkGEeab9oKjuw75kg" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="application:Addon" xmi:id="_58crwEkGEeab9oKjuw75kg" elementId="org.jboss.tools.windup.ui.addon.markerService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerService"/>
+    <elements xsi:type="application:Addon" xmi:id="_OATG0E71Eea2x-7ba-JCLw" elementId="org.jboss.tools.windup.ui.addon.launchConfigurationService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.LaunchConfigurationService"/>
+    <elements xsi:type="application:Addon" xmi:id="_pg_D0H9JEeaDaMGaik4Rpg" elementId="org.jboss.tools.windup.ui.addon.markerSyncService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.MarkerSyncService"/>
+    <elements xsi:type="application:Addon" xmi:id="_ICj58Is2Eea8e9Y_llugnA" elementId="org.jboss.tools.windup.ui.addon.contextMenuService" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.services.ContextMenuService"/>
+  </fragments>
+</fragment:ModelFragments>
