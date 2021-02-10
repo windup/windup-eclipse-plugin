@@ -66,4 +66,10 @@
         <source id="springboot"/>
         <target id="quarkus"/>
     </path>
+
+    <path id="1000">
+        <name>Quarkus to Quarkus1</name>
+        <source id="quarkus"/>
+        <target id="quarkus1"/>
+    </path>
 </migration-paths>
