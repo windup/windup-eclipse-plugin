@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.jboss.tools.windup.model.editor;singleton:=true
-Bundle-Version: 5.1.3.Final
+Bundle-Version: 5.1.4.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.jboss.tools.windup.windup.presentation.WindupEditorPlugin$Implementation
 Bundle-Vendor: %providerName
