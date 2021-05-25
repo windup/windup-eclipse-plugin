@@ -129,7 +129,7 @@ public class IssueExplorer extends CommonNavigator {
 		CommonViewer viewer = new CommonViewer(getViewSite().getId(), aParent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL) {
 			@Override
-			public void add(Object parentElement, Object[] childElements) {
+			public void add(Object parentElement, Object... childElements) {
 				super.add(parentElement, childElements);
 				super.refresh(parentElement);
 			}
