@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.launching,
  org.eclipse.debug.core,
  javax.inject,
- javax.xml.bind
+ javax.xml.bind,
+ javax.annotation;bundle-version="1.3.5"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %plugin.vendor

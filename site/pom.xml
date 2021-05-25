@@ -29,7 +29,7 @@
 			<plugin>
 				<groupId>org.jboss.tools.tycho-plugins</groupId>
 				<artifactId>repository-utils</artifactId>
-				<version>0.26.1</version>
+				<version>${tychoVersion}</version>
 				<executions>
 					<execution>
 						<id>generate-facade</id>

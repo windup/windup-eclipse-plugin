@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.tools</groupId>
         <artifactId>parent</artifactId>
-        <version>4.17.0.AM1-SNAPSHOT</version>
+        <version>4.19.0.Final-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup</artifactId>
@@ -86,6 +86,7 @@
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-p2-plugin</artifactId>
+                    <version>${tychoVersion}</version>
                     <executions>
                         <execution>
                             <!-- Don't attach (default) metadata before the source-feature execution. -->
