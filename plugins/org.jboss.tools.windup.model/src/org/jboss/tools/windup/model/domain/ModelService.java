@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -44,6 +43,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -234,6 +234,23 @@ public class ModelService {
 		model = WindupFactory.eINSTANCE.createWindupModel();
 		resource.getContents().add(model);
 		loadMigrationPaths();
+		ECollections.sort(model.getMigrationPaths(), (MigrationPath path1, MigrationPath path2) -> {
+			if (path1.getName() == null) {
+				return -1;
+			}
+			if (path2.getName() == null) {
+				return -1;
+			}
+			String p1 = path1.getName().substring(0, path1.getName().length()-2);
+			String p2 = path2.getName().substring(0, path2.getName().length()-2);
+					
+			// primarily to put eap7 at top.
+			if (p1.equals(p2)) {
+				if (path1.getName().endsWith("7")) return -1;
+			}
+			
+			return path1.getName().compareTo(path2.getName());
+		});
 		save();
 	}
 	

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -138,6 +139,7 @@ public class WindupRuntimePlugin extends Plugin {
 						availableOptions.add(availableOption);
 					}
 				}
+				Collections.sort(availableOptions);
 				boolean required = false;
 				XMLMemento requiredElement = (XMLMemento) element.getChild("require");
 				if (requiredElement != null) {
