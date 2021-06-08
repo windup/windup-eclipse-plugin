@@ -361,7 +361,9 @@ public class ClassificationDelegate extends ElementUiDelegate {
 		@Override
 		protected void bind() {
 			super.bind();
-			loadTags();
+			if (this.tagsTreeViewer != null) {
+				loadTags();
+			}
 		}
 		
 		@SuppressWarnings("deprecation")
