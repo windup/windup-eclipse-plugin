@@ -11,11 +11,9 @@
 package org.jboss.tools.windup.ui;
 
 import javax.inject.Inject;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.jboss.tools.windup.ui.internal.rules.NewXMLRulesetWizard;
 import org.jboss.tools.windup.ui.internal.rules.CreateRulesetOperation;
-
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
