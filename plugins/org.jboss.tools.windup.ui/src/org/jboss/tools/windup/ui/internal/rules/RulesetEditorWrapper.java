@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IModelStateListener;
@@ -76,13 +77,14 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
 	@Override
 	protected IDesignViewer createDesignPage() {
-		designPage = new RulesetDesignPage();
-		IFile file = null;
-		if (super.getEditorInput() instanceof FileEditorInput) {
-			file = ((FileEditorInput)super.getEditorInput()).getFile();
-		}
-		designPage.createControls(getContainer(), file);
-		return designPage;
+		return super.createDesignPage();
+		// designPage = new RulesetDesignPage();
+		// IFile file = null;
+		// if (super.getEditorInput() instanceof FileEditorInput) {
+		// 	file = ((FileEditorInput)super.getEditorInput()).getFile();
+		// }
+		// designPage.createControls(getContainer(), file);
+		// return designPage;
 	}
 	
 	@Override
