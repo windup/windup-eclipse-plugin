@@ -127,7 +127,8 @@ public class RuleRepositoryView extends ViewPart {
 					if (element instanceof RulesetFileNode) {
 						RulesetFileNode node = (RulesetFileNode)element;
 						if (node.getRuleProvider() != null) {
-							XMLRulesetModelUtil.openRuleInEditor(node.getRuleProvider(), null);
+//							XMLRulesetModelUtil.openRuleInEditor(node.getRuleProvider(), null, "org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart");
+							XMLRulesetModelUtil.openRuleInEditor(node.getRuleProvider(), null, RulesetEditor.ID);
 						}
 						/*IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(node.getFile().getParent()));
 						fileStore = fileStore.getChild(node.getName());
@@ -148,7 +149,7 @@ public class RuleRepositoryView extends ViewPart {
 						Node node = (Node)element;
 						Object provider = contentProvider.getProvider(node);
 						if (provider != null) {
-							XMLRulesetModelUtil.openRuleInEditor(provider, node);
+							XMLRulesetModelUtil.openRuleInEditor(provider, node, RulesetEditor.ID);
 						}
 					}
 				}
@@ -214,7 +215,7 @@ public class RuleRepositoryView extends ViewPart {
 						}
     						boolean exists = modelService.ruleProviderExists(resource.getFullPath().toString());
     						if (!exists) {
-							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString());
+    							modelService.addRulesetRepository(rulesetLocation, resource.getFullPath().toString());
     						}
 					}
 				}

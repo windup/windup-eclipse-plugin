@@ -97,18 +97,18 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 			RuleProvider provider = (RuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(provider, new File(provider.getOrigin()), provider.getRuleProviderType()));
-			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getOrigin());
-			ruleNodes.forEach(node -> nodeMap.put(node, provider));
-			children.addAll(ruleNodes);
+//			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getOrigin());
+//			ruleNodes.forEach(node -> nodeMap.put(node, provider));
+//			children.addAll(ruleNodes);
 			return children.stream().toArray(Object[]::new);
 		}
 		else if (parentElement instanceof CustomRuleProvider) {
 			CustomRuleProvider provider = (CustomRuleProvider)parentElement;
 			List<Object> children = Lists.newArrayList();
 			children.add(new RulesetFileNode(provider, new File(provider.getLocationURI()), RuleProviderType.XML));
-			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getLocationURI());
-			ruleNodes.forEach(node -> nodeMap.put(node, provider));
-			children.addAll(ruleNodes);
+//			List<Node> ruleNodes = XMLRulesetModelUtil.getRules(provider.getLocationURI());
+//			ruleNodes.forEach(node -> nodeMap.put(node, provider));
+//			children.addAll(ruleNodes);
 			listen(provider);
 			return children.stream().toArray(Object[]::new);
 		}
@@ -277,12 +277,12 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		if (element instanceof SystemRulesNode && ((SystemRulesNode)element).getChildren().length == 0) {
 			style.append(" [" + "Start MTA to view the system rules" + "]", StyledString.DECORATIONS_STYLER);
 		}
-		else if (element instanceof CustomRuleProvider || element instanceof RuleProvider) {
-			style.append(" (" + (getChildren(element).length - 1) + ")", StyledString.COUNTER_STYLER);
-		}
-		else if (element instanceof RulesetFileNode) {
-			style.append(" [" + ((RulesetFileNode)element).getFile().getPath() + "]", StyledString.DECORATIONS_STYLER);
-		}
+//		else if (element instanceof CustomRuleProvider || element instanceof RuleProvider) {
+//			style.append(" (" + (getChildren(element).length - 1) + ")", StyledString.COUNTER_STYLER);
+//		}
+//		else if (element instanceof RulesetFileNode) {
+//			style.append(" [" + ((RulesetFileNode)element).getFile().getPath() + "]", StyledString.DECORATIONS_STYLER);
+//		}
 		return style;
 	}
 

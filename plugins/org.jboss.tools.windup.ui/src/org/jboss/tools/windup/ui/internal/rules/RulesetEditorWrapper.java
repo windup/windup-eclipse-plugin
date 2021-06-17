@@ -15,6 +15,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,7 +37,7 @@ import org.w3c.dom.Element;
 @SuppressWarnings("restriction")
 public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	
-	private RulesetDesignPage designPage;
+//	private RulesetDesignPage designPage;
 	
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -90,7 +91,7 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	@Override
 	public void dispose() {
 		super.dispose();
-		designPage.dispose();
+//		designPage.dispose();
 	}
 	
 	@Override
@@ -99,16 +100,21 @@ public class RulesetEditorWrapper extends XMLMultiPageEditorPart {
 	}
 	
 	public Document getDocument() {
-		return designPage.getDocument();
+		return (Document)this.getAdapter(IDocument.class);
+//		return designPage.getDocument();
 	}
 	
+//	
 	public void selectAndReveal(Element element) {
-		designPage.getEditor().selectAndReveal(element);
+		super.getEditorSite().getSelectionProvider().setSelection(new StructuredSelection(element));
+//		designPage.getEditor().selectAndReveal(element);
 	}
+//	
+//	public IElementUiDelegate getUiDelegate(Element element) {
+//		return designPage.getEditor().getUiDelegate(element);
+//	}
 	
-	public IElementUiDelegate getUiDelegate(Element element) {
-		return designPage.getEditor().getUiDelegate(element);
-	}
+	
 	
 	public static final class RulesetDesignPage implements IDesignViewer {
 		
