@@ -105,6 +105,7 @@ public class XMLRulesetModelUtil {
 			try {
 				op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shell));
 			} catch (final ExecutionException e) {
+				e.printStackTrace();
 				WindupUIPlugin.log(e);
 			}
 		};
@@ -217,17 +218,52 @@ public class XMLRulesetModelUtil {
 				return (IDOMModel) model;
 			}
 		} catch (IOException | CoreException e) {
+			e.printStackTrace();
 			WindupUIPlugin.log(e);
 		}
 		return null;
 	}
 	
-	public static void openRuleInEditor(Object provider, Node ruleNode) {
+	public static void openSystemRuleInEditor(Object provider, Node ruleNode) {
 		IFile file = XMLRulesetModelUtil.getRuleset(provider);
 		if (file != null && file.exists()) {
 			try {
 				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				IEditorPart editor = IDE.openEditor(page, file);
+//				IEditorPart editor = IDE.openEditor(page, file);
+				IEditorPart editor = IDE.openEditor(page, file, RulesetEditor.XML_EDITOR);
+				if (editor != null && ruleNode != null) {
+					if (editor instanceof RulesetEditorWrapper) {
+						((RulesetEditorWrapper)editor).selectAndReveal((Element)ruleNode);
+					}
+					else {
+						editor.getSite().getSelectionProvider().setSelection(new StructuredSelection(ruleNode));
+						ITextEditor textEditor = editor.getAdapter(ITextEditor.class);
+						if (ruleNode instanceof IndexedRegion && textEditor != null) {
+							int start = ((IndexedRegion) ruleNode).getStartOffset();
+							int length = ((IndexedRegion) ruleNode).getEndOffset() - start;
+							if ((start > -1) && (length > -1)) {
+								textEditor.selectAndReveal(start, length);
+							}
+						}
+					}
+				}
+			} catch (PartInitException e) {
+				WindupUIPlugin.log(e);
+		    		MessageDialog.openError(
+						Display.getDefault().getActiveShell(), 
+						Messages.openRuleset, 
+						Messages.errorOpeningRuleset);
+			}
+		}
+	}
+	
+	public static void openRuleInEditor(Object provider, Node ruleNode, String editorId) {
+		IFile file = XMLRulesetModelUtil.getRuleset(provider);
+		if (file != null && file.exists()) {
+			try {
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//				IEditorPart editor = IDE.openEditor(page, file);
+				IEditorPart editor = IDE.openEditor(page, file, editorId);
 				if (editor != null && ruleNode != null) {
 					if (editor instanceof RulesetEditorWrapper) {
 						((RulesetEditorWrapper)editor).selectAndReveal((Element)ruleNode);

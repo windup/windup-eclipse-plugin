@@ -56,7 +56,7 @@ public class OpenRuleDefinitionHandler extends AbstractHandler {
 					Pair<Object, Node> pair = XMLRulesetModelUtil.findRuleProvider(
 							ruleId, executionBuilder.getSystemRuleProviderRegistry(), modelService);
 					if (pair != null) {
-						XMLRulesetModelUtil.openRuleInEditor(pair.getFirst(), pair.getSecond(), RulesetEditor.ID);
+						XMLRulesetModelUtil.openRuleInEditor(pair.getFirst(), pair.getSecond(), RulesetEditor.XML_EDITOR);
 					}
 				} catch (RemoteException e) {
 					WindupUIPlugin.log(e);
