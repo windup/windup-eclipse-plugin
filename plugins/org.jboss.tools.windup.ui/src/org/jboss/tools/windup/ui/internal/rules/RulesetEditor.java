@@ -48,6 +48,8 @@ public class RulesetEditor {
 	
 	private static final String SASH_LEFT = "weightLeft"; //$NON-NLS-1$
 	private static final String SASH_RIGHT = "weightRight"; //$NON-NLS-1$
+
+	public static final String XML_EDITOR = "org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart"; //$NON-NLS-1$
 	
 	private static final int SASH_LEFT_DEFAULT = 238;
 	private static final int SASH_RIGHT_DEFAULT = 685;
