@@ -23,10 +23,16 @@
 
 		<!-- Windup API -->
 		<dependency>
-			<groupId>org.jboss.windup</groupId>
+			<!-- <groupId>org.jboss.windup</groupId>
 			<artifactId>mta-cli</artifactId>
 			<version>${windup.version}</version>
-			<classifier>offline</classifier>
+			<classifier>offline</classifier> -->
+
+			<groupId>org.jboss.windup</groupId>
+			<artifactId>mta-cli</artifactId>
+			<version>5.2.1-SNAPSHOT</version>
+			<classifier>no-index</classifier>
+
 			<type>zip</type>
 		</dependency>
 	</dependencies>
