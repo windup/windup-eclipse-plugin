@@ -94,7 +94,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.mylyn.commons.workbench,
  javax.inject,
  com.google.inject,
- javax.annotation;bundle-version="1.3.5"
+ javax.annotation;bundle-version="1.3.5",
+ org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.ui,

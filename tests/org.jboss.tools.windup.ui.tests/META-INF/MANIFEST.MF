@@ -40,7 +40,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.wst.sse.core,
  org.eclipse.wst.xml.core,
  org.eclipse.debug.core,
- javax.inject
+ javax.inject,
+ org.apache.log4j
 Bundle-Vendor: %plugin.vendor
 Bundle-Activator: org.jboss.tools.windup.ui.tests.Activator
 Import-Package: org.eclipse.ui.texteditor
