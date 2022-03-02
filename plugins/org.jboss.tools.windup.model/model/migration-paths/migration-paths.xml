@@ -30,6 +30,11 @@
         <source id="websphere"/>
         <target id="eap" version-range="[7]"/>
     </path>
+        <path id="302">
+        <name>WebSphere to OpenLiberty</name>
+        <source id="websphere"/>
+        <target id="openliberty"/>
+    </path>
 
     <path id="400">
         <name>EAP 4 to EAP 6</name>
