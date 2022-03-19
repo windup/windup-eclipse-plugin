@@ -13,7 +13,6 @@ package org.jboss.tools.windup.ui.internal.rules.delegate;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -95,7 +94,7 @@ public class CommentListItem extends ListItem {
 		}
 		GridDataFactory.fillDefaults()
 				.align(SWT.FILL, SWT.BEGINNING)
-				.hint(EditorUtil.MAXIMUM_WIDTH, SWT.DEFAULT)
+				.hint(300, SWT.DEFAULT)
 				.grab(true, false)
 				.applyTo(roundedBorder);
 		return roundedBorder;

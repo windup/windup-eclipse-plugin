@@ -146,7 +146,18 @@ public class IssueExplorerHandlers {
 		@Inject protected QuickfixService quickfixService;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
-			return (MarkerNode)selection.getFirstElement();
+			TreeNode node = (TreeNode)selection.getFirstElement();
+			if (node == null) {
+				System.out.println("getMarkerNode() results in null selection");
+			}
+			if (node instanceof MarkerNode) {
+				System.out.println("Selected node is MarkerNode...");
+				return (MarkerNode)node;
+			}
+			else {
+				System.out.println("getMarkerNode() results non-MarkerNode instance");
+			}
+			return null;
 		}
 		protected IssueExplorer getIssueExplorer() {
 			return (IssueExplorer)partService.findPart(IssueExplorer.VIEW_ID).getObject();
@@ -170,9 +181,19 @@ public class IssueExplorerHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
-			MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
-			IssueDetailsView view = (IssueDetailsView)part.getObject();
-			view.showIssueDetails(node.getMarker());
+			if (node != null) {
+				MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
+				IssueDetailsView view = (IssueDetailsView)part.getObject();
+				if (view != null) {
+					System.out.println("ViewIssueDetailsHandler:: calling view.showIssueDetails with node [" + node + "] and marker [" + node.getMarker() + "]");
+					view.showIssueDetails(node.getMarker());
+				}
+				else {
+					System.out.println("Cannot find Windup Issue Details View.");
+					System.out.println("View Part: " + part);
+					System.out.println("MarkerNode: " + node);
+				}
+			}
 			return null;
 		}
 	}

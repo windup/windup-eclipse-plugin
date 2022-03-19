@@ -809,7 +809,7 @@
                 standalone="false"
                 visible="true">
           </view>
-          <view
+          <!--<view
                 closeable="true"
                 id="org.eclipse.mylyn.tasks.ui.views.tasks"
                 minimized="false"
@@ -820,7 +820,7 @@
                 showTitle="true"
                 standalone="false"
                 visible="true">
-          </view>
+          </view>-->
           <view
                 closeable="true"
                 id="org.jboss.tools.windup.ui.server"

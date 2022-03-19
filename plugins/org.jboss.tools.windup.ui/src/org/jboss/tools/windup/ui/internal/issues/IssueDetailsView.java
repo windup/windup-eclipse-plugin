@@ -105,6 +105,7 @@ public class IssueDetailsView {
 	
 	@Inject
 	public void showIssueDetails(@Optional IMarker marker) {
+		System.out.println("IssueDetailsView :: showIssueDtails :: " + marker);
 		if (detailsComposite != null && !detailsComposite.isDisposed()) {
 			Composite top = placeholder;
 			if (marker != null) {
@@ -115,6 +116,10 @@ public class IssueDetailsView {
 				}
 			}
 			setTop(top);
+		}
+		else {
+			System.out.println("DetailsComposite: " + detailsComposite);
+			System.out.println("marker: " + marker);
 		}
 	}
 	
@@ -138,8 +143,9 @@ public class IssueDetailsView {
 				element.classNames(newNames);
 			});
 			
-			DocumentType type = new DocumentType("html", "", "", "");
-			doc.insertChildren(0, Lists.newArrayList(type));
+			// DocumentType type = new DocumentType("html", "", "", "");
+			// System.out.println("DocumentType is: " + type);
+			// doc.insertChildren(0, Lists.newArrayList(type));
 			
 			Element head = doc.head();
 			Element css = doc.createElement("link");
@@ -190,8 +196,9 @@ public class IssueDetailsView {
 				Document doc = Jsoup.parse(html);
 				IssueDetailsView.addPrism(doc);
 				FileUtils.write(htmlFile, doc.html());
-				browserViewer.setURL(htmlFile.getAbsolutePath());;
+				browserViewer.setURL(htmlFile.getAbsolutePath());
 			} catch (Exception e) {
+				System.out.println("Error refreshing...: " + e);
 				WindupUIPlugin.log(e);
 			}
 		}

@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.mylyn.commons.workbench.forms.DatePicker;
-import org.eclipse.mylyn.internal.tasks.ui.editors.EditorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -173,7 +172,7 @@ public class RuleStatusSection extends ElementAttributesContainer {
 		}
 		GridDataFactory.fillDefaults()
 				.align(SWT.FILL, SWT.BEGINNING)
-				.hint(EditorUtil.MAXIMUM_WIDTH, SWT.DEFAULT)
+				.hint(300, SWT.DEFAULT)
 				.grab(true, false)
 				.applyTo(roundedBorder);
 		return roundedBorder;

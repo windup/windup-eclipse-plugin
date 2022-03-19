@@ -12,7 +12,6 @@ package org.jboss.tools.windup.ui;
 
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.mylyn.tasks.ui.ITasksUiConstants;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -42,7 +41,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IssueDetailsView.ID);
 		//layout.addShowViewShortcut(WindupReportView.ID);
 		layout.addShowViewShortcut(TASK_LIST_VIEW_ID);
-		layout.addShowViewShortcut(ITasksUiConstants.ID_VIEW_REPOSITORIES);
+		layout.addShowViewShortcut("org.eclipse.mylyn.tasks.ui.views.repositories");
 		layout.addShowViewShortcut(SubmitRulesetInfoView.ID);
 		
 		String editorArea = layout.getEditorArea();
@@ -66,7 +65,7 @@ public class WindupPerspectiveFactory implements IPerspectiveFactory {
 		bottomRight.addPlaceholder(IProgressConstants.PROGRESS_VIEW_ID);
 		bottomRight.addPlaceholder(ID_SEARCH_VIEW);
 		bottomRight.addView(RuleRepositoryView.VIEW_ID);
-		bottomRight.addView(ITasksUiConstants.ID_VIEW_REPOSITORIES);
+		bottomRight.addView("org.eclipse.mylyn.tasks.ui.views.repositories");
 		
 		// Bottom far-right.
 		//IFolderLayout bottomFarRight = layout.createFolder("bottomFarRight", IPageLayout.RIGHT, 0.5f, "bottomRight");//$NON-NLS-1$

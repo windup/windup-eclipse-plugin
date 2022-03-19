@@ -2,9 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.ui;singleton:=true
-Bundle-Version: 5.3.0.Alpha1
+Bundle-Version: 5.3.0.Alpha2
 Eclipse-BundleShape: dir
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/org.eclipse.mylyn.wikitext.markdown.jar,
+ lib/org.eclipse.mylyn.wikitext.jar,
+ lib/org.eclipse.mylyn.wikitext.ui.jar,
+ lib/org.eclipse.mylyn.wikitext.textile.jar
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
@@ -65,31 +69,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.sse.core,
  org.eclipse.wst.sse.ui,
  org.jsoup,
- org.eclipse.mylyn.tasks.ui,
  org.eclipse.pde.ui,
  org.eclipse.swt,
- org.eclipse.mylyn.wikitext,
- org.eclipse.mylyn.wikitext.ant,
- org.eclipse.mylyn.wikitext.asciidoc,
- org.eclipse.mylyn.wikitext.asciidoc.ui,
- org.eclipse.mylyn.wikitext.confluence,
- org.eclipse.mylyn.wikitext.confluence.ui,
- org.eclipse.mylyn.wikitext.context.ui,
- org.eclipse.mylyn.wikitext.help.ui,
- org.eclipse.mylyn.wikitext.html,
- org.eclipse.mylyn.wikitext.markdown,
- org.eclipse.mylyn.wikitext.markdown.ui,
- org.eclipse.mylyn.wikitext.mediawiki,
- org.eclipse.mylyn.wikitext.mediawiki.ui,
- org.eclipse.mylyn.wikitext.osgi,
- org.eclipse.mylyn.wikitext.tasks.ui,
- org.eclipse.mylyn.wikitext.textile,
- org.eclipse.mylyn.wikitext.textile.ui,
- org.eclipse.mylyn.wikitext.tracwiki,
- org.eclipse.mylyn.wikitext.tracwiki.ui,
- org.eclipse.mylyn.wikitext.twiki,
- org.eclipse.mylyn.wikitext.twiki.ui,
- org.eclipse.mylyn.wikitext.ui,
  org.eclipse.wst.xml.xpath.core,
  org.eclipse.mylyn.commons.workbench,
  javax.inject,
