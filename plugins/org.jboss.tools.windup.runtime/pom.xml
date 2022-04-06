@@ -160,7 +160,7 @@
 									<groupId>org.jboss.windup</groupId>
 									<artifactId>mta-cli</artifactId>
 									<version>${windup.version}</version>
-									<classifier>offline</classifier>
+									<classifier>no-index</classifier>
 									<type>zip</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${windup.dist.dir}</outputDirectory>

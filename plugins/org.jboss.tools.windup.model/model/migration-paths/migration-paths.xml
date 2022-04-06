@@ -73,12 +73,6 @@
     </path>
 
     <path id="1000">
-        <name>Quarkus to Quarkus1</name>
-        <source id="quarkus"/>
-        <target id="quarkus1"/>
-    </path>
-
-    <path id="1001">
         <name>Thorntail to EAP XP2</name>
         <source id="thorntail"/>
         <target id="eapxp"/>
