@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.ui;singleton:=true
-Bundle-Version: 5.3.0.Alpha2-1
+Bundle-Version: 5.3.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
  lib/org.eclipse.mylyn.wikitext.markdown.jar,
