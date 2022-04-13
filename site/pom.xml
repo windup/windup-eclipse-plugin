@@ -72,6 +72,8 @@
 								<phase>deploy</phase>
 								<configuration>
 									<arguments>
+									    <arg>-DESTINATION</arg>
+   										<arg>tools@filemgmt-prod-sync.jboss.org:downloads_htdocs/jbosstools</arg>
 										<arg>-s</arg>
 										<arg>${project.build.directory}</arg>
 										<arg>-t</arg>
