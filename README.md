@@ -30,6 +30,9 @@ Also, a [nightly build](https://download.jboss.org/jbosstools/photon/snapshots/b
 * Download and install Red Hat CodeReady Studio [installer 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#direct_download)
 * Download the latest release of the MTA [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/mta).
 
+## Latest Release
+
+* 5.3.0.Alpha3
 
 ## Get the code
 
