@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.jboss.tools.windup</groupId>
 		<artifactId>plugins</artifactId>
-		<version>5.3.1.Alpha</version>
+		<version>5.3.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.jboss.tools.windup.plugins</groupId>
@@ -29,7 +29,7 @@
 			<classifier>offline</classifier> -->
 
 			<groupId>org.jboss.windup</groupId>
-			<artifactId>mta-cli</artifactId>
+			<artifactId>windup-cli</artifactId>
 			<version>${windup.version}</version>
 			<classifier>no-index</classifier>
 
@@ -158,7 +158,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.jboss.windup</groupId>
-									<artifactId>mta-cli</artifactId>
+									<artifactId>windup-cli</artifactId>
 									<version>${windup.version}</version>
 									<classifier>no-index</classifier>
 									<type>zip</type>

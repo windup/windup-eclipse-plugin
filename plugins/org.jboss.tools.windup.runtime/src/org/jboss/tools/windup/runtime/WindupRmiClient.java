@@ -102,19 +102,19 @@ public class WindupRmiClient {
 	}
 	
 	public void startWindup(final IProgressMonitor monitor, String jreHome) {
-		logInfo("Begin start MTA."); //$NON-NLS-1$
+		logInfo("Begin start Windup."); //$NON-NLS-1$
 		monitor.worked(1);
 		
 		String windupExecutable = WindupRuntimePlugin.computeWindupExecutable();
 		
 		if (windupExecutable == null) {
-			WindupRuntimePlugin.logErrorMessage("mta-cli not specified."); //$NON-NLS-1$
+			WindupRuntimePlugin.logErrorMessage("windup-cli not specified."); //$NON-NLS-1$
 			return;
 		}
 		
 		boolean executable = new File(windupExecutable).setExecutable(true);
 		if (!executable) {
-			WindupRuntimePlugin.logErrorMessage("mta-cli not executable."); //$NON-NLS-1$
+			WindupRuntimePlugin.logErrorMessage("windup-cli not executable."); //$NON-NLS-1$
 			return;
 		}
 		
@@ -136,14 +136,14 @@ public class WindupRmiClient {
 		ExecuteResultHandler handler = new ExecuteResultHandler() {
 			@Override
 			public void onProcessFailed(ExecuteException e) {
-				logInfo("The MTA process failed:"); //$NON-NLS-1$
+				logInfo("The Windup process failed:"); //$NON-NLS-1$
 				logInfo(e.getMessage()); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
-				logInfo("The MTA process has completed."); //$NON-NLS-1$
+				logInfo("The Windup process has completed."); //$NON-NLS-1$
 				executionBuilder = null;
 				notifyServerChanged();
 			}
@@ -160,7 +160,7 @@ public class WindupRmiClient {
 		executor.setExitValue(1);
 		monitor.worked(1);
 		try {
-			logInfo("Starting MTA in server mode..."); //$NON-NLS-1$
+			logInfo("Starting Windup in server mode..."); //$NON-NLS-1$
 			logInfo("Command-line: " + cmdLine); //$NON-NLS-1$
 			executor.execute(cmdLine, env, handler);
 		} catch (IOException e) {

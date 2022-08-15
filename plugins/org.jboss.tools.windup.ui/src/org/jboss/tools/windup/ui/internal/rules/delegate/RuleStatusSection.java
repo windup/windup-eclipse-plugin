@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.mylyn.commons.workbench.forms.DatePicker;
+// import org.eclipse.mylyn.commons.workbench.forms.DatePicker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -44,9 +44,9 @@ public class RuleStatusSection extends ElementAttributesContainer {
 	private Button statusCompleteButton;
 	private Button statusIncompleteButton;
 	
-	private DatePicker createdDate;
-	private DatePicker dueDate;
-	private DatePicker completedDate;
+	// private DatePicker createdDate;
+	// private DatePicker dueDate;
+	// private DatePicker completedDate;
 	private Text assignedTo;
 	
 	@Override
@@ -83,26 +83,26 @@ public class RuleStatusSection extends ElementAttributesContainer {
 			}
 		});
 
-		createdDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Created);
-		createdDate.addPickerSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-			}
-		});
+		// createdDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Created);
+		// createdDate.addPickerSelectionListener(new SelectionAdapter() {
+		// 	@Override
+		// 	public void widgetSelected(SelectionEvent arg0) {
+		// 	}
+		// });
 
-		dueDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Due);
-		dueDate.addPickerSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-			}
-		});
+		// dueDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Due);
+		// dueDate.addPickerSelectionListener(new SelectionAdapter() {
+		// 	@Override
+		// 	public void widgetSelected(SelectionEvent arg0) {
+		// 	}
+		// });
 		
-		completedDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Completed);
-		completedDate.addPickerSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-			}
-		});
+		// completedDate = createDatePicker(toolkit, container, RuleMessages.TaskPlanning_Completed);
+		// completedDate.addPickerSelectionListener(new SelectionAdapter() {
+		// 	@Override
+		// 	public void widgetSelected(SelectionEvent arg0) {
+		// 	}
+		// });
 		
 		container = toolkit.createComposite(container);
 		GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 5).applyTo(container);
@@ -127,25 +127,25 @@ public class RuleStatusSection extends ElementAttributesContainer {
 		return labelControl;
 	}
 	
-	private static DatePicker createDatePicker(FormToolkit toolkit, Composite parent, String textLabel) {
-		Label label = toolkit.createLabel(parent, textLabel);
-		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+	// private static DatePicker createDatePicker(FormToolkit toolkit, Composite parent, String textLabel) {
+	// 	Label label = toolkit.createLabel(parent, textLabel);
+	// 	label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
-		Composite composite = createComposite(parent, 1, toolkit);
-
-		DatePicker datePicker = new DatePicker(composite, SWT.FLAT, DatePicker.LABEL_CHOOSE, true, 0);
-		GridDataFactory.fillDefaults().hint(CONTROL_WIDTH, SWT.DEFAULT).applyTo(datePicker);
-		datePicker.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-		datePicker.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-		/*if (getTask().getDueDate() != null) {
-			Calendar calendar = TaskActivityUtil.getCalendar();
-			calendar.setTime(getTask().getDueDate());
-			createdDate.setDate(calendar);
-		}*/
-		toolkit.adapt(datePicker, false, false);
-		toolkit.paintBordersFor(composite);
-		return datePicker;
-	}
+	// 	Composite composite = createComposite(parent, 1, toolkit);
+	
+	// 	DatePicker datePicker = new DatePicker(composite, SWT.FLAT, DatePicker.LABEL_CHOOSE, true, 0);
+	// 	GridDataFactory.fillDefaults().hint(CONTROL_WIDTH, SWT.DEFAULT).applyTo(datePicker);
+	// 	datePicker.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+	// 	datePicker.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	// 	/*if (getTask().getDueDate() != null) {
+	// 		Calendar calendar = TaskActivityUtil.getCalendar();
+	// 		calendar.setTime(getTask().getDueDate());
+	// 		createdDate.setDate(calendar);
+	// 	}*/
+	// 	toolkit.adapt(datePicker, false, false);
+	// 	toolkit.paintBordersFor(composite);
+	// 	return datePicker;
+	// }
 	
 	private static Composite createComposite(Composite parent, int col, FormToolkit toolkit) {
 		Composite nameValueComp = toolkit.createComposite(parent);

@@ -4,11 +4,11 @@
 	To install these features, point Eclipse at this site.
 	</description>
 
-	<category-def label="JBoss Tools - Migration Toolkit for Applications (MTA)" name="AllFeatures">
-		<description>JBoss Tools MTA Nightly Build Update Site: contains all features in this build.</description>
+	<category-def label="Migration Toolkit for Applications (MTA)" name="AllFeatures">
+		<description>MTA Nightly Build Update Site: contains all features in this build.</description>
 	</category-def>
-	<category-def label="JBoss Tools - Migration Toolkit for Applications (MTA)" name="AllSources">
-		<description>JBoss Tools MTA Nightly Build Update Site: contains all source features in this build.</description>
+	<category-def label="Migration Toolkit for Applications (MTA)" name="AllSources">
+		<description>MTA Nightly Build Update Site: contains all source features in this build.</description>
 	</category-def>
 
 <!-- tests -->
