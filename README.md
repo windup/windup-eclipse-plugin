@@ -1,13 +1,13 @@
 windup-eclipse-plugin
 =====================
 
-Migration Toolkit for Applications (MTA) Eclipse Plugin
+Migration Toolkit for Runtimes (MTR) Eclipse Plugin
 
 ## Summary
 
 [Windup](https://github.com/windup/windup) is a command-line Application Migration and Modernization assessment tool.
 
-Provides Eclipse integration with the Migration Toolkit for Applications (MTA) project.
+Provides Eclipse integration with the Migration Toolkit for Runtimes (MTR) project.
 
 ## Installing
 
@@ -23,12 +23,12 @@ Also, a [nightly build](https://download.jboss.org/jbosstools/photon/snapshots/b
 
 * Download a distribution of the [Eclipse IDE 2019-09 (4.12.0)](https://www.eclipse.org/downloads/).
 * Download the latest release of the Red Hat CodeReady Studio [update-site 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#zips).
-* Download the latest release of the MTA [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/mta).
+* Download the latest release of the MTR [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/mtr).
 
 #### Red Hat CodeReady Studio
 
 * Download and install Red Hat CodeReady Studio [installer 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#direct_download)
-* Download the latest release of the MTA [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/mta).
+* Download the latest release of the MTR [plugin](https://download.jboss.org/jbosstools/photon/stable/updates/mtr).
 
 
 ## Get the code

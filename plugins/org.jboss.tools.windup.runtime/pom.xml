@@ -24,7 +24,7 @@
 		<!-- Windup API -->
 		<dependency>
 			<!-- <groupId>org.jboss.windup</groupId>
-			<artifactId>mta-cli</artifactId>
+			<artifactId>mtr-cli</artifactId>
 			<version>${windup.version}</version>
 			<classifier>offline</classifier> -->
 

@@ -120,7 +120,7 @@ public class RulesetEditorTests extends WindupUiTest {
 	}
 	
 	private RulesetEditorWrapper openRulesetEditor() throws PartInitException {
-		IFile demo = projectProvider.getProject().getFile("custom.rules.mta.xml");
+		IFile demo = projectProvider.getProject().getFile("custom.rules.windup.xml");
 		assertTrue(demo.exists());
 		return (RulesetEditorWrapper)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(demo), RulesetEditor.ID);
 	}

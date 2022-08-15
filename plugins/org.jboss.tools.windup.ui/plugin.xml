@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="%category.MTA.name"
+            name="%category.MTR.name"
             id="org.jboss.tools.windup.ui.view.category.windup">
       </category>
       <view
@@ -457,7 +457,7 @@
       <command
             defaultHandler="org.jboss.tools.windup.ui.internal.editor.CreateRunConfigurationHandler"
             id="org.jboss.tools.windup.ui.createRunConfiguration"
-            name="Create MTA Run Configuration">
+            name="Create MTR Run Configuration">
       </command>
       <command
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers$GroupByProjectHierarchy"
@@ -596,7 +596,7 @@
              icon="icons/windup.png"
              id="org.jboss.tools.windup.ui.explorer.WindupExplorerContentProvider"
              labelProvider="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.explorer.IssueExplorerLabelProvider"
-             name="MTA Explorer Content Provider"
+             name="MTR Explorer Content Provider"
              priority="highest">
           <triggerPoints>
              <adapt
@@ -729,7 +729,7 @@
     </extension>
     <extension point="org.eclipse.ui.actionSets">
         <actionSet id="org.jboss.tools.windup.ui.actionSet.workbench"
-            label="MTA Getting Started" visible="true">
+            label="MTR Getting Started" visible="true">
             <action
                   class="org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction"
                   icon="icons/windup.png"
@@ -754,7 +754,7 @@
              fixed="false"
              icon="icons/windup.png"
              id="org.jboss.tools.windup.ui.perspective"
-             name="MTA">
+             name="MTR">
        </perspective>
     </extension>
     <extension
@@ -768,7 +768,7 @@
        <page
              class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
              id="org.jboss.tools.windup.ui.preferences.WindupPreferencePage"
-             name="MTA">
+             name="MTR">
        </page>
     </extension>
     <extension
@@ -865,7 +865,7 @@
              hasPages="true"
              icon="icons/rules/repository-middle.gif"
              id="org.jboss.tools.windup.ui.xml.ruleset.wizard"
-             name="MTA XML Ruleset"
+             name="MTR XML Ruleset"
              preferredPerspectives="org.jboss.tools.windup.ui.perspective">
           <description>
              %_UI_CREATE_NEW_XML_RULESET
@@ -902,7 +902,7 @@
              base-type="org.eclipse.core.runtime.xml"
              file-extensions="xml"
              id="org.jboss.tools.windup.ui.rulesetContentType"
-             name="MTA Ruleset"
+             name="MTR Ruleset"
              priority="high">
           <describer
                 class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2"
