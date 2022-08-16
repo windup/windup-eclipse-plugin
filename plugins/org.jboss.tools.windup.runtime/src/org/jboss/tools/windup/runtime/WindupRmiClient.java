@@ -199,7 +199,7 @@ public class WindupRmiClient {
 		try {
 			version = executionBuilder.getVersion();
 		} catch (RemoteException e) {
-	        logInfo("Issue while attempting to retrieve MTR server version."); //$NON-NLS-1$
+	        logInfo("Issue while attempting to retrieve Windup version."); //$NON-NLS-1$
 		}
 		return version;
 	}
@@ -236,7 +236,7 @@ public class WindupRmiClient {
 					executionBuilder.terminate();
 				}
 			} catch (RemoteException e) {
-				logError("Error while terminating a previous MTR server instance.", e); //$NON-NLS-1$ 
+				logError("Error while terminating a previous Windup instance.", e); //$NON-NLS-1$ 
 			}
 		}
 		executionBuilder = null;

@@ -88,7 +88,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 				launcher.start(new WindupServerCallbackAdapter(shell) {
 					@Override
 					public void windupNotExecutable() {
-						WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the MTR server."); //$NON-NLS-1$
+						WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the Windup."); //$NON-NLS-1$
 						MessageDialog.openError(shell, 
 								Messages.WindupNotExecutableTitle, 
 								Messages.WindupNotExecutableInfo);
@@ -99,7 +99,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 							MessageDialog.openError(shell,
 									Messages.WindupStartingError, 
 									status.getMessage());
-							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the MTR server. Message: " + status.getMessage()); //$NON-NLS-1$
+							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the Windup. Message: " + status.getMessage()); //$NON-NLS-1$
 						}
 						if (status.isOK()) {
 							runWindup(configuration);
@@ -128,7 +128,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 					MessageDialog.openError(shell, 
 							Messages.WindupShuttingDownError, 
 							status.getMessage());
-					WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to shutdown the MTR server. " + status.getMessage()); //$NON-NLS-1$
+					WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to shutdown the Windup. " + status.getMessage()); //$NON-NLS-1$
 				}
 				if (shutdown) {
 					launcher.start(new WindupServerCallbackAdapter(shell) {
@@ -137,7 +137,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 							MessageDialog.openError(shell, 
 									Messages.WindupNotExecutableTitle, 
 									Messages.WindupNotExecutableInfo);
-							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the MTR server. Script not executable."); //$NON-NLS-1$
+							WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to start the Windup. Script not executable."); //$NON-NLS-1$
 						}
 						@Override
 						public void serverStart(IStatus status) {
@@ -160,7 +160,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 								builder.append(Messages.WindupStartNotStartingSolution5);
 								RHAMTStartupFailedDialog dialog = new RHAMTStartupFailedDialog(Display.getDefault().getActiveShell());
 								dialog.open();
-								WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: Failed to start the MTR server. Message:" + status.getMessage()); //$NON-NLS-1$
+								WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: Failed to start the Windup. Message:" + status.getMessage()); //$NON-NLS-1$
 							}
 							if(windupClient.isWindupServerRunning()) {
 								runWindup(configuration);

@@ -373,12 +373,12 @@ public class IssueExplorer extends CommonNavigator {
 		if (windupClient.isWindupServerRunning()) {
 			statusLabel.setText("[Running - " + windupClient.getWindupVersion() + "]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_STOP));
-			startStopButton.setToolTipText("Stop MTR Server"); //$NON-NLS-1$
+			startStopButton.setToolTipText("Stop Windup"); //$NON-NLS-1$
 		}
 		else {
 			statusLabel.setText("[Not Running]"); //$NON-NLS-1$
 			startStopButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_START));	
-			startStopButton.setToolTipText("Start MTR Server"); //$NON-NLS-1$
+			startStopButton.setToolTipText("Start Windup"); //$NON-NLS-1$
 		}
 		startStopButton.redraw();
 		startStopButton.update();
