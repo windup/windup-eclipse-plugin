@@ -220,7 +220,7 @@ public class ModelService {
 				resource.load(null);
 				model = (WindupModel)resource.getContents().get(0);
 			} catch (IOException e) {
-				Activator.logInfo("Something has gone wrong and invalidated the underlying MTR model. Creating another one...");
+				Activator.logInfo("Something has gone wrong and invalidated the underlying model. Creating another one...");
 				resource.getContents().clear();
 				initModel(resource);
 			}

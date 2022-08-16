@@ -23,11 +23,6 @@
 
 		<!-- Windup API -->
 		<dependency>
-			<!-- <groupId>org.jboss.windup</groupId>
-			<artifactId>mtr-cli</artifactId>
-			<version>${windup.version}</version>
-			<classifier>offline</classifier> -->
-
 			<groupId>org.jboss.windup</groupId>
 			<artifactId>windup-cli</artifactId>
 			<version>${windup.version}</version>

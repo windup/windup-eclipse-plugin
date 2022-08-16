@@ -152,7 +152,7 @@ public class WindupRmiClient {
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				logInfo("Message from MTR executor: " + line); //$NON-NLS-1$
+				logInfo("Message from MTA executor: " + line); //$NON-NLS-1$
 				monitor.worked(1);
 			}
 		}));
@@ -215,7 +215,7 @@ public class WindupRmiClient {
 		} catch (ConnectException e) {
 		} catch (RemoteException e) {
 			// TODO: We are polluting the log with this. Is there a better way?
-			// Since onProcessFailed will be called when/if the process fails, can we rely on the logs sent from the mtr-cli script? 
+			// Since onProcessFailed will be called when/if the process fails, can we rely on the logs sent from the windup script? 
 			// logError("Error while attempting to retrieve the ExecutionBuilder from RMI registry.", e); //$NON-NLS-1$
 			logInfo("Unable to find ExecutionBuilder RMI registry."); //$NON-NLS-1$
 		} catch (NotBoundException e) {
