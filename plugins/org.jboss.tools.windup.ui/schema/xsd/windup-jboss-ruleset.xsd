@@ -543,7 +543,7 @@
 	            <xs:annotation>
 	                 <xs:documentation>
 	                 <![CDATA[
-	                    <p>A reference to a category as defined in <code>MTA_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
+	                    <p>A reference to a category as defined in <code>MTR_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
 	                    <p>The default categories are:</p>
 	                    <ul>
 						    <li>mandatory</li>
@@ -651,7 +651,7 @@
                 <xs:annotation>
                      <xs:documentation>
                      <![CDATA[
-                        <p>A reference to a category as defined in <code>MTA_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
+                        <p>A reference to a category as defined in <code>MTR_HOME/rules/migration-core/core.windup.categories.xml</code>.</p>
                         <p>The default categories are:</p>
                         <ul>
                             <li>mandatory</li>
