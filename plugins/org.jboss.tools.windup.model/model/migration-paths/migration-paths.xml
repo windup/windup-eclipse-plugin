@@ -1,29 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <migration-paths>
-    <path id="100">
-        <name>Anything to EAP 6</name>
-        <target id="eap" version-range="[6]"/>
+    <path id="1">
+        <name>Anything to EAP 8</name>
+        <target id="eap" version-range="[8]"/>
     </path>
+
+    <path id="2">
+        <name>Anything to Jakarta EE</name>
+        <target id="jakarta-ee"/>
+    </path>
+
+    <path id="3">
+        <name>OpenJDK 8 to OpenJDK 11</name>
+        <source id="openjdk8"/>
+        <target id="openjdk11"/>
+    </path>
+
+    <path id="4">
+        <name>OpenJDK 8 to OpenJDK 17</name>
+        <source id="openjdk8"/>
+        <target id="openjdk17"/>
+    </path>
+
+    <path id="5">
+        <name>OpenJDK 11 to OpenJDK 17</name>
+        <source id="openjdk11"/>
+        <target id="openjdk17"/>
+    </path>
+
+    <path id="6">
+        <name>Anything to Azure App Service</name>
+        <target id="azure-appservice"/>
+    </path>
+
     <path id="101">
         <name>Anything to EAP 7</name>
         <target id="eap" version-range="[7]"/>
-    </path>
-
-    <path id="200">
-        <name>WebLogic to EAP 6</name>
-        <source id="weblogic"/>
-        <target id="eap" version-range="[6]"/>
     </path>
     <path id="201">
         <name>WebLogic to EAP 7</name>
         <source id="weblogic"/>
         <target id="eap" version-range="[7]"/>
-    </path>
-
-    <path id="300">
-        <name>WebSphere to EAP 6</name>
-        <source id="websphere"/>
-        <target id="eap" version-range="[6]"/>
     </path>
     <path id="301">
         <name>WebSphere to EAP 7</name>
@@ -35,19 +52,6 @@
         <source id="websphere"/>
         <target id="openliberty"/>
     </path>
-
-    <path id="400">
-        <name>EAP 4 to EAP 6</name>
-        <source id="eap" version-range="[4]"/>
-        <target id="eap" version-range="[6]"/>
-    </path>
-
-    <path id="500">
-        <name>EAP 5 to EAP 6</name>
-        <source id="eap" version-range="[5]"/>
-        <target id="eap" version-range="[6]"/>
-    </path>
-
     <path id="600">
         <name>EAP 5 to EAP 7</name>
         <source id="eap" version-range="[5]"/>

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.jboss.tools.windup.runtime;singleton:=true
-Bundle-Version: 1.0.0.Final
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.jboss.tools.windup.runtime.WindupRuntimePlugin
 Eclipse-BundleShape: dir
 Require-Bundle: org.eclipse.core.runtime,
