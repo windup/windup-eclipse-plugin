@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>org.jboss.tools.windup</groupId>
 		<artifactId>plugins</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.Final</version>
 	</parent>
 
 	<groupId>org.jboss.tools.windup.plugins</groupId>
