@@ -353,7 +353,7 @@ public class IssueExplorer extends CommonNavigator {
 		CButton preferenceButton = new CButton(buttonBar, SWT.NONE);
 		preferenceButton.setHotImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_HOT));
 		preferenceButton.setColdImage(WindupUIPlugin.getDefault().getImageRegistry().get(WindupUIPlugin.IMG_CONFIG_COLD));
-		preferenceButton.setToolTipText("Configure MTR"); //$NON-NLS-1$
+		preferenceButton.setToolTipText("Configure MTA"); //$NON-NLS-1$
 		preferenceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
