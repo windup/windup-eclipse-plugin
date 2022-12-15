@@ -8,8 +8,8 @@
 		<version>1.0.0.Final</version>
 	</parent>
 	<groupId>org.jboss.tools.windup</groupId>
-	<artifactId>windup.site</artifactId>
-	<name>windup.site</name>
+	<artifactId>MTR.site</artifactId>
+	<name>MTR.site</name>
 	<packaging>eclipse-repository</packaging>
 
 	<properties>
@@ -79,7 +79,7 @@
 										<arg>-t</arg>
 										<arg>${deployZipTargetFolder}</arg>
 										<arg>-i</arg>
-										<arg>windup.site*.zip</arg>
+										<arg>MTR.site*.zip</arg>
 									</arguments>
 									<skip>${skipDeployToJBossOrg}</skip>
 								</configuration>
