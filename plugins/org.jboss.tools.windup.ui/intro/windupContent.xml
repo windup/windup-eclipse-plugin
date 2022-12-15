@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
-    <extensionContent id="org.jboss.tools.windup.ui" name="MTA Getting Started"
+    <extensionContent id="org.jboss.tools.windup.ui" name="MTR Getting Started"
         style="overview.css" path="overview/@">
         <group id="content-group" style-id="content-group">
-            <link label="Migration Toolkit for Applications"
+            <link label="Migration Toolkit for Runtimes (MTR)"
                 url="http://org.eclipse.ui.intro/runAction?pluginId=org.jboss.tools.windup.ui&amp;class=org.jboss.tools.windup.ui.internal.intro.ShowGettingStartedAction&amp;id=org.jboss.tools.windup.ui.action.gettingStarted"
                 id="windup-getting-started" style-id="content-link">
-                <text>Get started with MTA Eclipse tools</text>
+                <text>Get started with MTR Eclipse tools</text>
             </link>
         </group>
     </extensionContent>
