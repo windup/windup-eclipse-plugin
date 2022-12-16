@@ -41,6 +41,7 @@
 						<configuration>
 	                        <symbols>
 	                            <update.site.name>${update.site.name}</update.site.name>
+								<dev.site.version>${dev.site.version}</dev.site.version>
 	                            <package.version>${package.version}</package.version>
 	                            <update.site.version>${update.site.version}</update.site.version>
 	                            <update.site.url>${update.site.url}</update.site.url>
