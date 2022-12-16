@@ -18,6 +18,7 @@
 		<BUILD_ALIAS>LOCAL</BUILD_ALIAS>
 		<update.site.version>windup-eclipse-plugin-${VERSION}</update.site.version>
 		<target.eclipse.version>4.8 (Photon) or &lt;a href="https://www.jboss.org/products/devstudio/overview/"&gt;JBoss Developer Studio 12&lt;/a&gt;</target.eclipse.version>
+		<dev.site.version>1</dev.site.version>
     	<siteTemplateFolder>./siteTemplateFolder</siteTemplateFolder>
 		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
 		<deployZipTargetFolder>${jbosstools-build-type}/${JOB_NAME}/${BUILD_TIMESTAMP}-B${BUILD_NUMBER}/all/</deployZipTargetFolder>
