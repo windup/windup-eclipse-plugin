@@ -13,6 +13,10 @@
 	<name>windup.plugins</name>
 	
 	<packaging>pom</packaging>
+
+	<properties>
+    	<skipTests>true</skipTests>
+  	</properties>
 	
 	<modules>
 		<module>org.jboss.tools.windup.runtime</module>

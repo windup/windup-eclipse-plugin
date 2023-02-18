@@ -24,7 +24,7 @@ import java.rmi.registry.Registry;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.PreDestroy;
+//import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -108,13 +108,13 @@ public class WindupRmiClient {
 		String windupExecutable = WindupRuntimePlugin.computeWindupExecutable();
 		
 		if (windupExecutable == null) {
-			WindupRuntimePlugin.logErrorMessage("windup-cli not specified."); //$NON-NLS-1$
+			WindupRuntimePlugin.logErrorMessage("CLI not specified."); //$NON-NLS-1$
 			return;
 		}
 		
 		boolean executable = new File(windupExecutable).setExecutable(true);
 		if (!executable) {
-			WindupRuntimePlugin.logErrorMessage("windup-cli not executable."); //$NON-NLS-1$
+			WindupRuntimePlugin.logErrorMessage("CLI not executable."); //$NON-NLS-1$
 			return;
 		}
 		
@@ -224,7 +224,7 @@ public class WindupRmiClient {
 		return null;
 	}
 
-	@PreDestroy
+//	@PreDestroy
 	public void shutdownWindup() {
 		ExecutionBuilder builder = WindupRmiClient.getExecutionBuilder(getRmiPort());
 		if (builder != null) {

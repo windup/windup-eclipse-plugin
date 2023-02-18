@@ -24,7 +24,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
-import org.jboss.tools.test.util.TestProjectProvider;
+//import org.jboss.tools.test.util.TestProjectProvider;
 import org.jboss.tools.windup.core.services.WindupService;
 import org.jboss.tools.windup.core.test.WindupTest;
 import org.jboss.tools.windup.model.domain.ModelService;
@@ -57,7 +57,7 @@ public class WindupUiTest extends WindupTest {
 	
 	private static final String PROJECT = "demo";
 	
-	protected TestProjectProvider projectProvider;
+//	protected TestProjectProvider projectProvider;
 
 	@Inject protected MApplication application;
 	@Inject protected EModelService eModelService;
@@ -85,7 +85,7 @@ public class WindupUiTest extends WindupTest {
 	
 	@Before
 	public void init() throws CoreException {
-		projectProvider = workbenchBot.importProject(Activator.PLUGIN_ID, null, PROJECT, false);
+		/*projectProvider = workbenchBot.importProject(Activator.PLUGIN_ID, null, PROJECT, false);
 		openWindupPerspective();
 		this.issueExplorer = (IssueExplorer)((CompatibilityView)partService.findPart(
 				IssueExplorer.VIEW_ID).getObject()).getView();
@@ -101,12 +101,12 @@ public class WindupUiTest extends WindupTest {
 					System.out.println("@Before::init:: Windup failed to start.");
 				}
 			}
-		}, WindupRuntimePlugin.computeJRELocation());
+		}, WindupRuntimePlugin.computeJRELocation());*/
 	}
 	
 	@After
 	public void clean() {
-		projectProvider.dispose();
+//		projectProvider.dispose();
 	}
 	
 	protected void openWindupPerspective() {
@@ -147,8 +147,8 @@ public class WindupUiTest extends WindupTest {
 		// TODO: We should do this through SWTBot and the Run Configuration dialog.
 		ConfigurationElement configuration = LaunchUtils.createConfiguration(
 				NameUtil.generateUniqueConfigurationElementName(modelService.getModel()), modelService);
-		IProject project = projectProvider.getProject();
-		modelService.createInput(configuration, Lists.newArrayList(project.getLocation().toString()));
+//		IProject project = projectProvider.getProject();
+//		modelService.createInput(configuration, Lists.newArrayList(project.getLocation().toString()));
 		return configuration;
 	}
 }

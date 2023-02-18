@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -248,7 +249,7 @@ public class WindupService
         return status;
     }
     
-    private void syncInput(ConfigurationElement configuration, List<Path> paths) {
+    public void syncInput(ConfigurationElement configuration, Collection<Path> paths) {
     		for (Path path : paths) {
     			boolean exists = configuration.getInputs().stream().filter(input -> {
     				return Objects.equal(input.getLocation(), path.toString());

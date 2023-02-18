@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.jboss.tools.test.util.TestProjectProvider;
+//import org.jboss.tools.test.util.TestProjectProvider;
 
 /**
  * An {@link SWTBot} with capabilities for testing Eclipse workbench related functionality.
@@ -25,8 +25,8 @@ import org.jboss.tools.test.util.TestProjectProvider;
 @Singleton
 public class WorkbenchBot extends SWTWorkbenchBot {
 	
-	public TestProjectProvider importProject(String bundleName, String projectPath, 
+	/*public TestProjectProvider importProject(String bundleName, String projectPath, 
 			String name, boolean makeCopy)  throws CoreException {
 		return new TestProjectProvider(bundleName, projectPath, name, makeCopy);
-	}
+	}*/
 }

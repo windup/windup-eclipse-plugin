@@ -47,6 +47,11 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
+								    <groupId>javax.xml.bind</groupId>
+								    <artifactId>jaxb-api</artifactId>
+								    <version>2.3.1</version>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.apache.commons</groupId>
 									<artifactId>commons-exec</artifactId>
 									<version>1.3</version>
@@ -142,7 +147,7 @@
 						</configuration>
 					</execution>
 
-					<execution>
+					<!-- <execution>
 						<id>unpack</id>
 						<phase>generate-resources</phase>
 						<goals>
@@ -162,7 +167,7 @@
 								</artifactItem>
 							</artifactItems>
 						</configuration>
-					</execution>
+					</execution> -->
 				</executions>
 			</plugin>
 			<plugin>
