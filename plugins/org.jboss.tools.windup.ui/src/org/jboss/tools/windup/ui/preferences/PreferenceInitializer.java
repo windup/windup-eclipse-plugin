@@ -14,6 +14,7 @@ package org.jboss.tools.windup.ui.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.jboss.tools.windup.runtime.IPreferenceConstants;
@@ -23,9 +24,15 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	
 	@Override
 	public void initializeDefaultPreferences() {
-		String windupHome = WindupRuntimePlugin.computeWindupHome().toString(); 
+//		String windupHome = WindupRuntimePlugin.computeWindupHome().toString(); 
 		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
-		defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, windupHome);
+	
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
+		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "");
+		if (!path.isEmpty()) {
+			defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, path);	
+		}
+		
 		defaultPreferences.put(IPreferenceConstants.RMI_PORT, String.valueOf(IPreferenceConstants.DEFAULT_RMI_PORT));
 		IVMInstall jre = JavaRuntime.getDefaultVMInstall();
 		if (jre != null) {

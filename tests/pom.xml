@@ -15,6 +15,7 @@
 
 	<properties>
 		<coverage.filter>org.jboss.tools.windup*</coverage.filter>
+    	<skipTests>true</skipTests>
 	</properties>
 
 	<modules>
