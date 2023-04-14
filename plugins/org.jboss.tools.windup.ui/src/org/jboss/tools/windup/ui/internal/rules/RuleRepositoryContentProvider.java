@@ -275,7 +275,7 @@ public class RuleRepositoryContentProvider implements ITreeContentProvider, ILab
 		text = text != null ? text : "";
 		StyledString style = new StyledString(text);
 		if (element instanceof SystemRulesNode && ((SystemRulesNode)element).getChildren().length == 0) {
-			style.append(" [" + "Start MTR to view the system rules" + "]", StyledString.DECORATIONS_STYLER);
+			style.append(" [" + "Start MTA to view the system rules" + "]", StyledString.DECORATIONS_STYLER);
 		}
 //		else if (element instanceof CustomRuleProvider || element instanceof RuleProvider) {
 //			style.append(" (" + (getChildren(element).length - 1) + ")", StyledString.COUNTER_STYLER);
