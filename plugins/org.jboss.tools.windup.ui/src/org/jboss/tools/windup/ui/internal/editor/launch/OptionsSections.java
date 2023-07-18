@@ -16,7 +16,7 @@ import static org.jboss.tools.windup.ui.internal.Messages.sourceMode;
 import static org.jboss.tools.windup.ui.internal.Messages.windupOptions;
 
 import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -41,9 +41,9 @@ public class OptionsSections extends AbstractSection {
 		GridLayoutFactory.fillDefaults().applyTo(container);
 		GridDataFactory.fillDefaults().span(2, 1).applyTo(container);
 		
-		Button sourceButton = toolkit.createButton(container, sourceMode, SWT.CHECK);
+ 		Button sourceButton = toolkit.createButton(container, sourceMode, SWT.CHECK);
 		sourceButton.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		bindingContext.bindValue(WidgetProperties.selection().observe(sourceButton),
+		bindingContext.bindValue(WidgetProperties.buttonSelection().observe(sourceButton),
 				EMFProperties.value(WindupPackage.eINSTANCE.getConfigurationElement_SourceMode()).
 					observe(configuration));
 		sourceButton.setEnabled(false);
