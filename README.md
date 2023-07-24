@@ -15,19 +15,6 @@ Before you can install the Windup plugin, you'll need to have Eclipse installed.
 
 Building the project generates a zip archive containing an Eclipse update site under site/target/. You can install the features into Eclipse from the archive via "Help > Install New Software > Add... > Archive...".
 
-Also, a [nightly build](https://download.jboss.org/jbosstools/photon/snapshots/builds/windup-eclipse-plugin-NIGHTLY/latest/all/repo/) is available.
-
-### Offline
-
-#### Bring your own Eclipse
-
-* Download a distribution of the [Eclipse IDE 2019-09 (4.12.0)](https://www.eclipse.org/downloads/).
-* Download the latest release of the Red Hat CodeReady Studio [update-site 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#zips).
-
-#### Red Hat CodeReady Studio
-
-* Download and install Red Hat CodeReady Studio [installer 12.13.0.GA](https://tools.jboss.org/downloads/devstudio/2019-09/12.13.0.GA.html#direct_download)
-
 
 ## Get the code
 
