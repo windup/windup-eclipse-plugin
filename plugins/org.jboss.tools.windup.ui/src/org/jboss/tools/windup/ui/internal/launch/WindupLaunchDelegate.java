@@ -60,7 +60,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			Display.getDefault().asyncExec(() -> {
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
 						Messages.launchErrorTitle, Messages.launchErrorMessage);
-				WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to launch MTA. Input is empty."); //$NON-NLS-1$
+				WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to launch MTR. Input is empty."); //$NON-NLS-1$
 			});
 		}
 		else {

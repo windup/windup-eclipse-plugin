@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>windup</artifactId>
-		<version>6.2.0.Final</version>
+		<version>1.2.0.Final</version>
 	</parent>
 	<groupId>org.jboss.tools.windup</groupId>
 	<artifactId>windup.site</artifactId>
@@ -13,7 +13,7 @@
 	<packaging>eclipse-repository</packaging>
 
 	<properties>
-		<update.site.name>Migration Toolkit for Applications (MTA)</update.site.name>
+		<update.site.name>Migration Toolkit for Runtimes (MTR)</update.site.name>
 		<VERSION>${project.version}</VERSION>
 		<BUILD_ALIAS>LOCAL</BUILD_ALIAS>
 		<update.site.version>windup-eclipse-plugin-${VERSION}</update.site.version>
