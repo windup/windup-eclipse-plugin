@@ -8,6 +8,7 @@ import static org.jboss.tools.windup.runtime.WindupRuntimePlugin.logInfo;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -25,7 +26,7 @@ public class KantraRunner {
 	
 	private ExecuteWatchdog watchdog;
 	
-	public void startWindup(final IProgressMonitor monitor, String[] input, String output) {
+	public void startWindup(final IProgressMonitor monitor, String[] input, String output, Consumer<String> onMessage, Consumer<Boolean> onComplete, Consumer<String> onFailed) {
 		logInfo("Begin start kantra."); //$NON-NLS-1$
 		monitor.worked(1);
 		
@@ -59,12 +60,14 @@ public class KantraRunner {
 			public void onProcessFailed(ExecuteException e) {
 				logInfo("kantra process failed:"); //$NON-NLS-1$
 				logInfo(e.getMessage()); //$NON-NLS-1$
+				onFailed.accept(e.getMessage());
 //				executionBuilder = null;
 //				notifyServerChanged();
 			}
 			@Override
 			public void onProcessComplete(int exitValue) {
 				logInfo("kantra process has completed."); //$NON-NLS-1$
+				onComplete.accept(true);
 //				executionBuilder = null;
 //				notifyServerChanged();
 			}
@@ -75,6 +78,7 @@ public class KantraRunner {
 			protected void processLine(String line, int logLevel) {
 				logInfo("kantra output: " + line); //$NON-NLS-1$
 				monitor.worked(1);
+				onMessage.accept(line);
 			}
 		}));
 		executor.setWatchdog(watchdog);
