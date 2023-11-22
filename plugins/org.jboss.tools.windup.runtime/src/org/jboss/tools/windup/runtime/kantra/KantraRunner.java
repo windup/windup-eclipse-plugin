@@ -26,7 +26,7 @@ public class KantraRunner {
 	
 	private ExecuteWatchdog watchdog;
 	
-	public void startWindup(final IProgressMonitor monitor, String[] input, String output, Consumer<String> onMessage, Consumer<Boolean> onComplete, Consumer<String> onFailed) {
+	public void runKantra(final IProgressMonitor monitor, String[] input, String output, Consumer<String> onMessage, Consumer<Boolean> onComplete, Consumer<String> onFailed) {
 		logInfo("Begin start kantra."); //$NON-NLS-1$
 		monitor.worked(1);
 		
