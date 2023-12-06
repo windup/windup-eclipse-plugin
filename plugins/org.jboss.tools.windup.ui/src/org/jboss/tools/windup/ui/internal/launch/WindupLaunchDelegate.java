@@ -84,19 +84,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			this.runKantra(configuration);
 		}
 	}
-	
-	 private MessageConsole findConsole(String name) {
-	      ConsolePlugin plugin = ConsolePlugin.getDefault();
-	      IConsoleManager conMan = plugin.getConsoleManager();
-	      IConsole[] existing = conMan.getConsoles();
-	      for (int i = 0; i < existing.length; i++)
-	         if (name.equals(existing[i].getName()))
-	            return (MessageConsole) existing[i];
-	      MessageConsole myConsole = new MessageConsole(name, null);
-	      conMan.addConsoles(new IConsole[]{myConsole});
-	      return myConsole;
-	   }
-	
+		
 	private void runKantra(ConfigurationElement configuration) {
 		if (WindupLaunchDelegate.activeRunner != null) {
 			WindupLaunchDelegate.activeRunner.kill();
@@ -119,7 +107,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		});
 		
 		
-		kantraJob = new Job(NLS.bind(Messages.generate_windup_report_for, configuration.getName())) {
+		kantraJob = new Job("Kantra Running - " + configuration.getName()) {
 	      @Override
 	      protected IStatus run(IProgressMonitor monitor) {
 	    	  	kantraMonitor = monitor;
@@ -133,10 +121,12 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    		super.done(event);
 	    		System.out.println("kantra job done");
 	    		WindupLaunchDelegate.activeRunner.kill();
+	    		markerService.generateMarkersForConfiguration(configuration);
 	    		kantraMonitor.done();
+	    		viewService.renderReport(configuration);
 	    	}
 	    });
-		kantraJob.setUser(false);
+		kantraJob.setUser(true);
 		kantraJob.schedule();
 	    		
 		
@@ -177,15 +167,25 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     	};
     	Consumer<Boolean> onComplete = (msg) -> { 
     		System.out.println("onComplete: " + msg);
-        	viewService.renderReport(configuration);
-        	markerService.generateMarkersForConfiguration(configuration);
         	kantraJob.cancel();
     	};
     	Consumer<String> onFailed = (msg) -> { 
-    		System.out.println("onFailed: " + msg);
+    		System.out.println("onFailed: " + msg.toString());
     		System.out.println(msg.toString());
     		kantraJob.cancel();
     	};
     	WindupLaunchDelegate.activeRunner.runKantra(inputs, output, sources, targets, onMessage, onComplete, onFailed);
+	}
+	
+	private MessageConsole findConsole(String name) {
+		ConsolePlugin plugin = ConsolePlugin.getDefault();
+		IConsoleManager conMan = plugin.getConsoleManager();
+		IConsole[] existing = conMan.getConsoles();
+		for (int i = 0; i < existing.length; i++)
+			if (name.equals(existing[i].getName()))
+				return (MessageConsole) existing[i];
+		MessageConsole myConsole = new MessageConsole(name, null);
+		conMan.addConsoles(new IConsole[]{myConsole});
+		return myConsole;
 	}
 }
