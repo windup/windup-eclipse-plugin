@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -68,6 +69,7 @@ import org.jboss.tools.windup.windup.CustomRuleProvider;
 import org.jboss.tools.windup.windup.Input;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.tools.windup.windup.MigrationPath;
+import org.jboss.tools.windup.windup.Pair;
 import org.jboss.tools.windup.windup.Report;
 import org.jboss.tools.windup.windup.Technology;
 import org.jboss.tools.windup.windup.WindupFactory;
@@ -83,6 +85,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 /**
  * Service for interacting with Windup's model and editing domain.
@@ -114,6 +117,8 @@ public class ModelService {
 	
 	private WindupModel model;
 	private TransactionalEditingDomain domain;
+	
+	private Map<ConfigurationElement, KantraConfiguration> kantraModelDelegates = Maps.newHashMap(); 
 	
 	@Inject
 	public ModelService(IEventBroker broker, WindupDomainListener modelListener) {
@@ -219,6 +224,10 @@ public class ModelService {
 			try {
 				resource.load(null);
 				model = (WindupModel)resource.getContents().get(0);
+				model.getConfigurationElements().forEach(configuration -> {
+						this.kantraModelDelegates.put(configuration, new KantraConfiguration(configuration));
+					}
+				);
 			} catch (IOException e) {
 				Activator.logInfo("Something has gone wrong and invalidated the underlying model. Creating another one...");
 				resource.getContents().clear();
@@ -318,6 +327,10 @@ public class ModelService {
 		((WindupResult)issue.eContainer()).getIssues().remove(issue);
 	}
 	
+	public KantraConfiguration getKantraDelegate(ConfigurationElement configuration) {
+		return this.kantraModelDelegates.get(configuration);
+	}
+	
 	public ConfigurationElement createConfiguration(String name) {
 		CommandWithResult<ConfigurationElement> cmd = new CommandWithResult<ConfigurationElement>(domain) {
 			@Override
@@ -326,11 +339,17 @@ public class ModelService {
 					ConfigurationElement configuration = WindupFactory.eINSTANCE.createConfigurationElement();
 					configuration.setName(name);
 					configuration.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
+					Pair pair = WindupFactory.eINSTANCE.createPair();
+					pair.setKey("output");
+//					pair.setValue();
+					configuration.getOptions().add(pair);
 					configuration.setOutputLocation(getDefaultOutputLocation(configuration));
 					configuration.setSourceMode(true);
 					configuration.setGenerateReport(true);
 					configuration.setMigrationPath(model.getMigrationPaths().get(1));
 					model.getConfigurationElements().add(configuration);
+					KantraConfiguration delegate = new KantraConfiguration(configuration);
+					ModelService.this.kantraModelDelegates.put(configuration, delegate);
 					setResultObject(configuration);
 					save();
 				} catch (Exception e) {
