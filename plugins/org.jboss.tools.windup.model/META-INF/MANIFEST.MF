@@ -24,7 +24,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.m2e.core,
  javax.inject,
  javax.annotation;bundle-version="1.3.5",
- org.eclipse.emf.common
+ org.eclipse.emf.common,
+ com.fasterxml.jackson.core.jackson-databind;bundle-version="2.15.2",
+ com.fasterxml.jackson.core.jackson-core;bundle-version="2.15.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.windup.model,

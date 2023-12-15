@@ -97,7 +97,9 @@ public class KantraRunner {
 	}
 	
 	public void kill() {
-		this.watchdog.stop();
-		this.watchdog.destroyProcess();
+		if (this.watchdog != null) {
+			this.watchdog.stop();
+			this.watchdog.destroyProcess();
+		}
 	}
 }
