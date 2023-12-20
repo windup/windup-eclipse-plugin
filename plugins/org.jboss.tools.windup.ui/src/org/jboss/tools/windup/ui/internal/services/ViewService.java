@@ -59,8 +59,11 @@ public class ViewService {
 	
 	public void renderReport(ConfigurationElement configuration) {
 	    	if (configuration.isGenerateReport()) {
-	    		IPath path = Path.fromOSString(configuration.getOutputLocation());
-	    		IPath report = path.append(ModelService.PROJECT_REPORT_HOME_PAGE);
+//	    		IPath path = Path.fromOSString(configuration.getOutputLocation());
+//	    		IPath report = path.append(ModelService.PROJECT_REPORT_HOME_PAGE);
+	    		
+	    		String report = configuration.getOutputLocation() + Path.SEPARATOR + "static-report" + Path.SEPARATOR + "index.html";
+	    		
 	    		File file = new File(report.toString());
 	    		if (file.exists()) {
 				Display.getDefault().asyncExec(() -> {

@@ -67,25 +67,27 @@ public class WindupRuntimePlugin extends Plugin {
 	 */
 	private static WindupRuntimePlugin plugin;
 
-	public static Path computeWindupHome() {
-		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
+	public static String computeWindupHome() {
+//		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "");
 		if (path.isEmpty()) {
-			path = defaultPreferences.get(IPreferenceConstants.WINDUP_HOME, "");
+//			path = defaultPreferences.get(IPreferenceConstants.WINDUP_HOME, "");
+			path = "/usr/local/bin/kantra";
 		}
-		if (path.isEmpty()) {
-			path = WindupRuntimePlugin.getDefaultWindupHome().toPath().toString();
-		}
-		return new File(path).toPath();
+//		if (path.isEmpty()) {
+//			path = WindupRuntimePlugin.getDefaultWindupHome().toPath().toString();
+//		}
+//		return new File(path).toPath();
+		return path;
 	}
 
 	public static String computeWindupExecutable() {
-		String location = WindupRuntimePlugin.computeWindupHome().resolve("bin").resolve("windup-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		if (PlatformUtil.isWindows()) {
-			location = location + ".bat"; //$NON-NLS-1$
-		}
-		return location;
+		String location = WindupRuntimePlugin.computeWindupHome(); // .resolve("bin").resolve("windup-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+//		if (PlatformUtil.isWindows()) {
+//			location = location + ".bat"; //$NON-NLS-1$
+//		}
+		return location.toString();
 	}
 
 	/**
@@ -114,45 +116,46 @@ public class WindupRuntimePlugin extends Plugin {
 	 * Returns the cached help file from the embedded Windup installation.
 	 */
 	public static Help findWindupHelpCache() {
-		Help result = new Help();
-		File windupHome = WindupRuntimePlugin.computeWindupHome().toFile();
-		WindupRuntimePlugin.logInfo("Retrieving help.xml options from MTR_HOME: " + windupHome.toString());
-		File cacheFile = new File(windupHome, HELP_CACHE);
-		try {
-			URL url = cacheFile.toURI().toURL();
-			InputStream input = url.openStream();
-			XMLMemento root = XMLMemento.createReadRoot(input);
-			for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
-				String name = element.getString("name"); //$NON-NLS-1$
-				XMLMemento descriptionChild = (XMLMemento) element.getChild("description"); //$NON-NLS-1$
-				String description = descriptionChild.getTextData();
-				XMLMemento typeChild = (XMLMemento) element.getChild("type"); //$NON-NLS-1$
-				String type = typeChild.getTextData();
-				XMLMemento uiTypeChild = (XMLMemento) element.getChild("ui-type"); //$NON-NLS-1$
-				String uiType = uiTypeChild.getTextData();
-				List<String> availableOptions = Lists.newArrayList();
-				XMLMemento availableOptionsElement = (XMLMemento) element.getChild("available-options"); //$NON-NLS-1$
-				if (availableOptionsElement != null) {
-					for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
-						XMLMemento optionMemento = (XMLMemento) optionElement;
-						String availableOption = optionMemento.getTextData();
-						availableOptions.add(availableOption);
-					}
-				}
-				Collections.sort(availableOptions);
-				boolean required = false;
-				XMLMemento requiredElement = (XMLMemento) element.getChild("require");
-				if (requiredElement != null) {
-					required = Boolean.valueOf(requiredElement.getTextData());
-				}
-				OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions,
-						required);
-				result.getOptions().add(option);
-			}
-		} catch (Exception e) {
-			WindupRuntimePlugin.log(e);
-		}
-		return result;
+		return null;
+//		Help result = new Help();
+//		File windupHome = WindupRuntimePlugin.computeWindupHome().toFile();
+//		WindupRuntimePlugin.logInfo("Retrieving help.xml options from MTR_HOME: " + windupHome.toString());
+//		File cacheFile = new File(windupHome, HELP_CACHE);
+//		try {
+//			URL url = cacheFile.toURI().toURL();
+//			InputStream input = url.openStream();
+//			XMLMemento root = XMLMemento.createReadRoot(input);
+//			for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
+//				String name = element.getString("name"); //$NON-NLS-1$
+//				XMLMemento descriptionChild = (XMLMemento) element.getChild("description"); //$NON-NLS-1$
+//				String description = descriptionChild.getTextData();
+//				XMLMemento typeChild = (XMLMemento) element.getChild("type"); //$NON-NLS-1$
+//				String type = typeChild.getTextData();
+//				XMLMemento uiTypeChild = (XMLMemento) element.getChild("ui-type"); //$NON-NLS-1$
+//				String uiType = uiTypeChild.getTextData();
+//				List<String> availableOptions = Lists.newArrayList();
+//				XMLMemento availableOptionsElement = (XMLMemento) element.getChild("available-options"); //$NON-NLS-1$
+//				if (availableOptionsElement != null) {
+//					for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
+//						XMLMemento optionMemento = (XMLMemento) optionElement;
+//						String availableOption = optionMemento.getTextData();
+//						availableOptions.add(availableOption);
+//					}
+//				}
+//				Collections.sort(availableOptions);
+//				boolean required = false;
+//				XMLMemento requiredElement = (XMLMemento) element.getChild("require");
+//				if (requiredElement != null) {
+//					required = Boolean.valueOf(requiredElement.getTextData());
+//				}
+//				OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions,
+//						required);
+//				result.getOptions().add(option);
+//			}
+//		} catch (Exception e) {
+//			WindupRuntimePlugin.log(e);
+//		}
+//		return result;
 	}
 
 	public static String computeJRELocation() {

@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.launch;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -30,7 +32,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
@@ -46,6 +47,7 @@ import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.runtime.kantra.KantraRunner;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -106,11 +108,13 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		});
 		
+		Boolean debugging = false;
 		
 		kantraJob = new Job("Kantra Running - " + configuration.getName()) {
 	      @Override
 	      protected IStatus run(IProgressMonitor monitor) {
 	    	  	kantraMonitor = monitor;
+	    	  	// comment line below when just wanting to load results.
 	      		while (!monitor.isCanceled()) {}    	  	
 	          	return Status.OK_STATUS;
 	      }
@@ -120,10 +124,27 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    	public void done(IJobChangeEvent event) {
 	    		super.done(event);
 	    		System.out.println("kantra job done");
-	    		WindupLaunchDelegate.activeRunner.kill();
-	    		markerService.generateMarkersForConfiguration(configuration);
+	    		// when debugging, 
+				// at this point debugging might do the same thing.
+	    		if (debugging) {
+	    			if (WindupLaunchDelegate.activeRunner != null) {
+	    				WindupLaunchDelegate.activeRunner.kill();
+	    			}	    				
+	    			kantraMonitor.done();
+	    			KantraRulesetParser.parseRulesetForKantraConfig(modelService.getKantraDelegate(configuration));
+	    			modelService.save();
+	    			markerService.generateMarkersForConfiguration(configuration);
+	    			viewService.renderReport(configuration);
+	    			return;
+	    		}
+	    		if (WindupLaunchDelegate.activeRunner != null) {
+	    			WindupLaunchDelegate.activeRunner.kill();
+		    		KantraRulesetParser.parseRulesetForKantraConfig(modelService.getKantraDelegate(configuration));
+		    		modelService.save();
+		    		markerService.generateMarkersForConfiguration(configuration);
+		    		viewService.renderReport(configuration);
+	    		}
 	    		kantraMonitor.done();
-	    		viewService.renderReport(configuration);
 	    	}
 	    });
 		kantraJob.setUser(true);
@@ -137,6 +158,20 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		List<String> sources = Lists.newArrayList();
 		List<String> targets = Lists.newArrayList();
 		String output = configuration.getOutputLocation();
+		String cli = configuration.getWindupHome();
+		
+		File outputFile = new File(output);
+		if (!outputFile.exists()) {
+			try {
+				outputFile.mkdirs();
+			}
+			catch (Exception e) {
+				System.out.println("Error creating kantra output location.");
+				e.printStackTrace();
+				kantraJob.cancel();
+				return;
+			}
+		}
 	            	
     	for (Pair pair : configuration.getOptions()) {
 			String name = pair.getKey();
@@ -174,7 +209,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     		System.out.println(msg.toString());
     		kantraJob.cancel();
     	};
-    	WindupLaunchDelegate.activeRunner.runKantra(inputs, output, sources, targets, onMessage, onComplete, onFailed);
+   	WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
 	}
 	
 	private MessageConsole findConsole(String name) {

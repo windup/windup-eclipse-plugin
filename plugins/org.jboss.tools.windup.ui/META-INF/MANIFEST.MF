@@ -8,7 +8,12 @@ Bundle-ClassPath: .,
  lib/org.eclipse.mylyn.wikitext.markdown.jar,
  lib/org.eclipse.mylyn.wikitext.jar,
  lib/org.eclipse.mylyn.wikitext.ui.jar,
- lib/org.eclipse.mylyn.wikitext.textile.jar
+ lib/org.eclipse.mylyn.wikitext.textile.jar,
+ lib/jackson-core-2.15.2.jar,
+ lib/jackson-dataformat-yaml-2.15.2.jar,
+ lib/jackson-databind-2.15.2.jar,
+ lib/jackson-annotations-2.15.2.jar,
+ lib/snakeyaml-2.2.jar
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin

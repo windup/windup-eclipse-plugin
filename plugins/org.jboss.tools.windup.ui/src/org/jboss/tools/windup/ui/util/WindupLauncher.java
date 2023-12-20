@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.inject.Inject;
+//import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,7 +46,7 @@ public class WindupLauncher {
 	
 	private static Logger logger = LoggerFactory.getLogger(WindupLauncher.class);
 	
-	@Inject private WindupRmiClient windupClient;
+//	@Inject private WindupRmiClient windupClient;
 	
 	private ScopedPreferenceStore preferences = new ScopedPreferenceStore(InstanceScope.INSTANCE, WindupRuntimePlugin.PLUGIN_ID);
 	
@@ -84,11 +84,11 @@ public class WindupLauncher {
 	private void shutdown(IProgressMonitor monitor) throws InterruptedException, ExecutionException, TimeoutException {
 		logger.info("Shutting Windup down."); //$NON-NLS-1$
 		monitor.worked(1);
-		windupClient.shutdownWindup();
+//		windupClient.shutdownWindup();
 		monitor.worked(1);
-		Future<IStatus> future = WindupLauncher.getTerminateWindupFuture(windupClient);
-		int duration = preferences.getInt(IPreferenceConstants.STOP_TIMEOUT);
-		FutureUtils.waitForFuture(duration, future, monitor);
+//		Future<IStatus> future = WindupLauncher.getTerminateWindupFuture(windupClient);
+//		int duration = preferences.getInt(IPreferenceConstants.STOP_TIMEOUT);
+//		FutureUtils.waitForFuture(duration, future, monitor);
 		monitor.worked(1);
 	}
 	
@@ -148,7 +148,8 @@ public class WindupLauncher {
 					}
 					@Override
 					public boolean isDone() {
-						return windupClient.updateWindupServer();
+						return false;
+//						return windupClient.updateWindupServer();
 					}
 					@Override
 					public IStatus get() throws InterruptedException, ExecutionException {
@@ -162,7 +163,10 @@ public class WindupLauncher {
 				};
 				try {
 					monitor.subTask(Messages.WindupRunStartScipt);
-					windupClient.startWindup(monitor, jreHome);
+					
+					
+					
+//					windupClient.startWindup(monitor, jreHome);
 					int duration = preferences.getInt(IPreferenceConstants.START_TIMEOUT);
 					FutureUtils.waitForFuture(duration, future, monitor);
 				} catch (ExecutionException | TimeoutException | InterruptedException e) {
