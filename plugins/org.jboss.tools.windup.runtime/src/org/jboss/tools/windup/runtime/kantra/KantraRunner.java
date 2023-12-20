@@ -27,11 +27,13 @@ public class KantraRunner {
 	
 	private ExecuteWatchdog watchdog;
 	
-	public void runKantra(Set<String> inputs, String output, List<String> sources, List<String> targets, Consumer<String> onMessage, Consumer<Boolean> onComplete, Consumer<String> onFailed) {
+	public void runKantra(String cli, Set<String> inputs, String output, List<String> sources, List<String> targets, Consumer<String> onMessage, Consumer<Boolean> onComplete, Consumer<String> onFailed) {
 		logInfo("Begin start kantra."); //$NON-NLS-1$
 		
 		// todo: compute or parameterize from configuration
-		CommandLine cmdLine = CommandLine.parse("/usr/local/bin/kantra");
+//		CommandLine cmdLine = CommandLine.parse("/usr/local/bin/kantra");
+		CommandLine cmdLine = CommandLine.parse(cli);
+		
 		
 		List<String> params = Lists.newArrayList();
 		params.add("analyze");
