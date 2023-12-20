@@ -12,6 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import org.jboss.tools.windup.runtime.options.IOptionKeys;
+import org.jboss.tools.windup.windup.ConfigurationElement;
+import org.jboss.tools.windup.windup.Pair;
+
 public class KantraConfiguration {
 
     private String name;
@@ -21,6 +25,16 @@ public class KantraConfiguration {
     private AnalysisResultsSummary summary;
     private List<Ruleset> rulesets;
 
+    
+    private ConfigurationElement configuration;
+    
+    public KantraConfiguration(ConfigurationElement configuration) {
+    	this.configuration = configuration;
+    }
+
+    public ConfigurationElement getWindupConfiguration() {
+    	return this.configuration;
+    }
 
     public AnalysisResultsSummary getSummary() {
         return this.summary;
@@ -33,9 +47,6 @@ public class KantraConfiguration {
         this.rulesets = rulesets;
     }
 
-    public Map<String, Object> getOptions() {
-        return this.options;
-    }
     public void addOption(String option, Object value) {
         this.options.put(option, value);
     }
@@ -77,15 +88,33 @@ public class KantraConfiguration {
         Path location = Paths.get(output + File.separator +"static-report","index.html");
         return location.toAbsolutePath().toString();
     }
+    
     public String getRulesetResultLocation() {
-        String output = (String)this.options.get("output");
-        if (output == null || output.isEmpty()) return null;
-        Path location = Paths.get(output,"output.yaml");
-        return location.toAbsolutePath().toString();
+    	return this.configuration.getOutputLocation() + File.separatorChar + "output.yaml";
+    	
+//    	Optional<Pair> optional = configuration.getOptions().stream().filter(option -> { 
+//			return com.google.common.base.Objects.equal(option.getKey(), IOptionKeys.outputOption);
+//		}).findFirst();
+//		if (optional.isPresent()) {
+//			String path = optional.get().getValue();
+//	        Path location = Paths.get(path,"output.yaml");
+//	        return location.toAbsolutePath().toString();
+//		}
+//		return null;
+//		String output = (String)this.options.get("output");
+//        if (output == null || output.isEmpty()) return null;
+//        Path location = Paths.get(output,"output.yaml");
+//        return location.toAbsolutePath().toString();
     }
+    
+    public String sourceBase() {
+        return "file:///opt/input/source/";
+    }
+    
     public boolean skippedReports() {
-        String skippedReports = (String) this.getOptions().get("skipReports");
-        return skippedReports != null ? Boolean.valueOf(skippedReports) : false;
+    	return false;
+//        String skippedReports = (String) this.getOptions().get("skipReports");
+//        return skippedReports != null ? Boolean.valueOf(skippedReports) : false;
     }
 
     public static String generateUniqueId() {
@@ -101,11 +130,12 @@ public class KantraConfiguration {
         public int classificationCount;
 
         private List<Ruleset> rulesets;
-        private ModelService modelService;
-
-        public void setRulesets(List<Ruleset> rulesets) {
-            this.rulesets = rulesets;
+        
+        
+        public AnalysisResultsSummary(List<Ruleset> rulesets) {
+        	this.rulesets = rulesets;
         }
+
         public List<Ruleset> getRulesets() {
             return this.rulesets;
         }
@@ -116,14 +146,6 @@ public class KantraConfiguration {
 
         public List<Incident> incidents = Lists.newArrayList();
         public List<Classification> classifications = Lists.newArrayList();
-
-        public AnalysisResultsSummary(ModelService modelService) {
-            this.modelService = modelService;
-        }
-
-        public ModelService getModelService() {
-            return this.modelService;
-        }
 
         public List<Issue> getIssues() {
             List<Issue> issues = Lists.newArrayList();
