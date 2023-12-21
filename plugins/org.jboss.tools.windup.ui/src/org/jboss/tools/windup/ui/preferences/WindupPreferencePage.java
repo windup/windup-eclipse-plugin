@@ -90,92 +90,92 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 				getFieldEditorParent());
 		homeEditor.setEmptyStringAllowed(false);
 		addField(homeEditor);
-		
-		portEditor = new IntegerFieldEditor(
-				IPreferenceConstants.RMI_PORT, 
-				Messages.WindupPreferenceRmiPort, 
-				getFieldEditorParent());
-		portEditor.setEmptyStringAllowed(false);
-		addField(portEditor);
-		
-		startTimeoutDurationEditor = new IntegerFieldEditor(
-				IPreferenceConstants.START_TIMEOUT, 
-				Messages.WindupPreferenceStartTimeoutDuration, 
-				getFieldEditorParent());
-		startTimeoutDurationEditor.setEmptyStringAllowed(false);
-		addField(startTimeoutDurationEditor);
-		
-		stopTimeoutDurationEditor = new IntegerFieldEditor(
-				IPreferenceConstants.STOP_TIMEOUT, 
-				Messages.WindupPreferenceStopTimeoutDuration, 
-				getFieldEditorParent());
-		stopTimeoutDurationEditor.setEmptyStringAllowed(false);
-		addField(stopTimeoutDurationEditor);
-		
-		jreEditor = new FileFieldEditor(
-				IPreferenceConstants.WINDUP_JRE_HOME, 
-				Messages.WindupPreferenceJRE, 
-				true, 
-				StringFieldEditor.VALIDATE_ON_KEY_STROKE,
-				getFieldEditorParent()) {
-			
-			@Override
-			protected boolean checkState() {
-		        String msg = null;
-		        String path = getTextControl().getText();
-        			clearErrorMessage();
-		        if (path != null) {
-					path = path.trim();
-				} else {
-					path = "";//$NON-NLS-1$
-				}
-		        if (path.length() == 0) {
-		        		return true; 
-		        } else {
-		            File file = new File(path);
-		            if (file.isDirectory()) {
-		                if (!file.isAbsolute()) {
-							msg = Messages.JRENotAbsolute;
-						}
-		            } else {
-		                msg = Messages.InvalidJRELocation;
-		            }
-		        }
-		        if (msg != null) { // error
-		            showErrorMessage(msg);
-		            return false;
-		        }
-		        return true;
-			}
-			
-			@Override
-			protected String changePressed() {
-		        File f = new File(getTextControl().getText());
-		        if (!f.exists()) {
-					f = null;
-				}
-		        
-		        File d = handleAdd();
-		        if (d == null) {
-					return null;
-				}
-
-		        return d.getAbsolutePath();
-		    }
-		};
-		jreEditor.setEmptyStringAllowed(false);
-		addField(jreEditor);
+//		
+//		portEditor = new IntegerFieldEditor(
+//				IPreferenceConstants.RMI_PORT, 
+//				Messages.WindupPreferenceRmiPort, 
+//				getFieldEditorParent());
+//		portEditor.setEmptyStringAllowed(false);
+//		addField(portEditor);
+//		
+//		startTimeoutDurationEditor = new IntegerFieldEditor(
+//				IPreferenceConstants.START_TIMEOUT, 
+//				Messages.WindupPreferenceStartTimeoutDuration, 
+//				getFieldEditorParent());
+//		startTimeoutDurationEditor.setEmptyStringAllowed(false);
+//		addField(startTimeoutDurationEditor);
+//		
+//		stopTimeoutDurationEditor = new IntegerFieldEditor(
+//				IPreferenceConstants.STOP_TIMEOUT, 
+//				Messages.WindupPreferenceStopTimeoutDuration, 
+//				getFieldEditorParent());
+//		stopTimeoutDurationEditor.setEmptyStringAllowed(false);
+//		addField(stopTimeoutDurationEditor);
+//		
+//		jreEditor = new FileFieldEditor(
+//				IPreferenceConstants.WINDUP_JRE_HOME, 
+//				Messages.WindupPreferenceJRE, 
+//				true, 
+//				StringFieldEditor.VALIDATE_ON_KEY_STROKE,
+//				getFieldEditorParent()) {
+//			
+//			@Override
+//			protected boolean checkState() {
+//		        String msg = null;
+//		        String path = getTextControl().getText();
+//        			clearErrorMessage();
+//		        if (path != null) {
+//					path = path.trim();
+//				} else {
+//					path = "";//$NON-NLS-1$
+//				}
+//		        if (path.length() == 0) {
+//		        		return true; 
+//		        } else {
+//		            File file = new File(path);
+//		            if (file.isDirectory()) {
+//		                if (!file.isAbsolute()) {
+//							msg = Messages.JRENotAbsolute;
+//						}
+//		            } else {
+//		                msg = Messages.InvalidJRELocation;
+//		            }
+//		        }
+//		        if (msg != null) { // error
+//		            showErrorMessage(msg);
+//		            return false;
+//		        }
+//		        return true;
+//			}
+//			
+//			@Override
+//			protected String changePressed() {
+//		        File f = new File(getTextControl().getText());
+//		        if (!f.exists()) {
+//					f = null;
+//				}
+//		        
+//		        File d = handleAdd();
+//		        if (d == null) {
+//					return null;
+//				}
+//
+//		        return d.getAbsolutePath();
+//		    }
+//		};
+//		jreEditor.setEmptyStringAllowed(false);
+//		addField(jreEditor);
 	
-		if (windupClient.isWindupServerRunning()) {
-			Composite parent = new Composite(getFieldEditorParent(), SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(parent);
-			GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(parent);
-			new Label(parent, SWT.LEFT).setText(Messages.currentJavaHome);
-			Text text = new Text(parent, SWT.BORDER);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
-			text.setEnabled(false);
-			text.setText(windupClient.getJavaHome());
-		}
+//		if (windupClient.isWindupServerRunning()) {
+//			Composite parent = new Composite(getFieldEditorParent(), SWT.NONE);
+//			GridLayoutFactory.fillDefaults().numColumns(2).applyTo(parent);
+//			GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(parent);
+//			new Label(parent, SWT.LEFT).setText(Messages.currentJavaHome);
+//			Text text = new Text(parent, SWT.BORDER);
+//			GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
+//			text.setEnabled(false);
+//			text.setText(windupClient.getJavaHome());
+//		}
 	}
 	
 	private File handleAdd() {
@@ -223,9 +223,9 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	public boolean performOk() {
 		boolean result = super.performOk();
 		preferences.put(IPreferenceConstants.WINDUP_HOME, homeEditor.getStringValue());
-		preferences.put(IPreferenceConstants.RMI_PORT, portEditor.getStringValue());
-		preferences.put(IPreferenceConstants.START_TIMEOUT, startTimeoutDurationEditor.getStringValue());
-		preferences.put(IPreferenceConstants.STOP_TIMEOUT, stopTimeoutDurationEditor.getStringValue());
+//		preferences.put(IPreferenceConstants.RMI_PORT, portEditor.getStringValue());
+//		preferences.put(IPreferenceConstants.START_TIMEOUT, startTimeoutDurationEditor.getStringValue());
+//		preferences.put(IPreferenceConstants.STOP_TIMEOUT, stopTimeoutDurationEditor.getStringValue());
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
