@@ -28,18 +28,19 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
-		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "");
+		String path = preferences.get(IPreferenceConstants.WINDUP_HOME, "/usr/local/bin/kantra");
+		defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, path);	
 		if (!path.isEmpty()) {
 			defaultPreferences.put(IPreferenceConstants.WINDUP_HOME, path);	
 		}
-		
-		defaultPreferences.put(IPreferenceConstants.RMI_PORT, String.valueOf(IPreferenceConstants.DEFAULT_RMI_PORT));
-		IVMInstall jre = JavaRuntime.getDefaultVMInstall();
-		if (jre != null) {
-			defaultPreferences.put(IPreferenceConstants.WINDUP_JRE_HOME, jre.getInstallLocation().getAbsolutePath());
-		}
-		
-		defaultPreferences.put(IPreferenceConstants.START_TIMEOUT, String.valueOf(IPreferenceConstants.DEFAULT_WINDUP_START_DURATION_TIMEOUT));
-		defaultPreferences.put(IPreferenceConstants.STOP_TIMEOUT, String.valueOf(IPreferenceConstants.DEFAULT_WINDUP_STOP_DURATION_TIMEOUT));
+//		
+//		defaultPreferences.put(IPreferenceConstants.RMI_PORT, String.valueOf(IPreferenceConstants.DEFAULT_RMI_PORT));
+//		IVMInstall jre = JavaRuntime.getDefaultVMInstall();
+//		if (jre != null) {
+//			defaultPreferences.put(IPreferenceConstants.WINDUP_JRE_HOME, jre.getInstallLocation().getAbsolutePath());
+//		}
+//		
+//		defaultPreferences.put(IPreferenceConstants.START_TIMEOUT, String.valueOf(IPreferenceConstants.DEFAULT_WINDUP_START_DURATION_TIMEOUT));
+//		defaultPreferences.put(IPreferenceConstants.STOP_TIMEOUT, String.valueOf(IPreferenceConstants.DEFAULT_WINDUP_STOP_DURATION_TIMEOUT));
 	}
 }
