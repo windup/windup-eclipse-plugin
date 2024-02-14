@@ -38,6 +38,10 @@ public class KantraRunner {
 		List<String> params = Lists.newArrayList();
 		params.add("analyze");
 		
+		params.add("--overwrite");
+		params.add("--mode");
+		params.add("source-only");
+		
 		for (String input : inputs) {
 			params.add("--input");
 			params.add(input);
@@ -92,6 +96,7 @@ public class KantraRunner {
 		try {
 			logInfo("Starting kantra..."); //$NON-NLS-1$
 			logInfo("Command-line: " + cmdLine); //$NON-NLS-1$
+			onMessage.accept("Command-line: " + cmdLine);
 			executor.execute(cmdLine, env, handler);
 		} catch (IOException e) {
 			WindupRuntimePlugin.log(e);

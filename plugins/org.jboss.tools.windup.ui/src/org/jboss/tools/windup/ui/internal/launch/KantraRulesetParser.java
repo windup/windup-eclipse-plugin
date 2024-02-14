@@ -88,14 +88,15 @@ public class KantraRulesetParser {
     		org.jboss.tools.windup.windup.Hint hint = WindupFactory.eINSTANCE.createHint();
     		result.getIssues().add(hint);    		
     		String filePath = incident.getUri();
-    		String absolutePath = filePath.substring(filePath.indexOf("/source") + "/source".length());
+    		String absolutePath = filePath.substring(filePath.indexOf("/source-code") + "/source-code".length());
     		hint.setFileAbsolutePath(input + absolutePath);
     		// System.out.println("Incident File: " + hint.getFileAbsolutePath());
     		hint.setRuleId(ruleId);
     		hint.setTitle(title);
     		hint.setLineNumber(incident.getLineNumber());
     		hint.setOriginalLineSource(incident.getCodeSnip());
-    		hint.setEffort(violation.getEffort());    		
+    		hint.setEffort(violation.getEffort()); 
+    		hint.setMessageOrDescription(incident.getMessage());
     		for (Link link : violation.getLinks()) {
     			org.jboss.tools.windup.windup.Link windupLink = WindupFactory.eINSTANCE.createLink();
     			hint.getLinks().add(windupLink);

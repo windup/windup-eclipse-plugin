@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<help>
+	<option name="target">
+		<description>The target technology to consider for analysis.</description>
+		<type>String</type>
+		<ui-type>SELECT_MANY</ui-type>
+		<available-options>
+			<option>azure-appservice</option>
+			<option>containerization</option>
+			<option>quarkus</option>
+			<option>eap7</option>
+			<option>eap8</option>
+			<option>openjdk</option>
+			<option>jakarta-ee</option>
+			<option>jakarta-ee8+</option>
+			<option>jakarta-ee9+</option>
+			<option>jws6</option>
+			<option>eap</option>
+			<option>camel 3</option>
+			<option>camel 4</option>
+			<option>linux</option>
+			<option>openjdk11</option>
+			<option>openjdk17</option>
+			<option>openjdk21</option>
+			<option>openliberty</option>
+			<option>springboot</option>
+		</available-options>
+		<required>true</required>
+	</option>
+	<option name="source">
+		<description>The source technology to consider for analysis.</description>
+		<type>String</type>
+		<ui-type>SELECT_MANY</ui-type>
+		<available-options>
+			<option>agroal</option>
+			<option>amazon</option>
+			<option>apicurio</option>
+			<option>artemis</option>
+			<option>avro</option>
+			<option>camel</option>
+			<option>config</option>
+			<option>drools</option>
+			<option>eap</option>
+			<option>eap6</option>
+			<option>eap7</option>
+			<option>eapxp</option>
+			<option>elytron</option>
+			<option>flyway</option>
+			<option>glassfish</option>
+			<option>hibernate</option>
+			<option>hibernate-search</option>
+			<option>java</option>
+			<option>java-ee</option>
+			<option>javaee</option>
+			<option>jbpm</option>
+			<option>jdbc</option>
+			<option>jonas</option>
+			<option>jrun</option>
+			<option>jsonb</option>
+			<option>jsonp</option>
+			<option>kafka</option>
+			<option>keycloak</option>
+			<option>kubernetes</option>
+			<option>liquibase</option>
+			<option>log4j</option>
+			<option>logging</option>
+			<option>micrometer</option>
+			<option>narayana</option>
+			<option>openjdk</option>
+			<option>openjdk11</option>
+			<option>openshift</option>
+			<option>opentelemetry</option>
+			<option>oraclejdk</option>
+			<option>orion</option>
+			<option>picocli</option>
+			<option>resin</option>
+			<option>resteasy</option>
+			<option>rmi</option>
+			<option>rpc</option>
+			<option>seam</option>
+			<option>soa</option>
+			<option>soa-p</option>
+			<option>sonic</option>
+			<option>sonicesb</option>
+			<option>springboot</option>
+			<option>thorntail</option>
+			<option>weblogic</option>
+			<option>websphere</option>
+		</available-options>
+		<required>false</required>
+	</option>
+</help>

@@ -31,7 +31,8 @@ public class WindupLaunchGroup extends AbstractLaunchConfigurationTabGroup {
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new WindupInputTab(modelService)
+			new WindupInputTab(modelService),
+			new OptionsTab(modelService, optionsService),
 		};
 		setTabs(tabs);
 	}

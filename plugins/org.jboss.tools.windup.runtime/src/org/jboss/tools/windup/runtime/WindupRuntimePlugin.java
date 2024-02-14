@@ -57,6 +57,7 @@ public class WindupRuntimePlugin extends Plugin {
 	 * </p>
 	 */
 	private static final String WINDUP_DIRECTORY = "windup"; //$NON-NLS-1$
+	private static final String MTA_DIRECTORY = "mta"; //$NON-NLS-1$
 
 	private static final String HELP_CACHE = "/cache/help/help.xml"; //$NON-NLS-1$
 
@@ -83,7 +84,7 @@ public class WindupRuntimePlugin extends Plugin {
 	}
 
 	public static String computeWindupExecutable() {
-		String location = WindupRuntimePlugin.computeWindupHome(); // .resolve("bin").resolve("windup-cli").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String location = WindupRuntimePlugin.computeWindupHome(); //$NON-NLS-1$ //$NON-NLS-2$
 //		if (PlatformUtil.isWindows()) {
 //			location = location + ".bat"; //$NON-NLS-1$
 //		}
@@ -111,51 +112,59 @@ public class WindupRuntimePlugin extends Plugin {
 			return null;
 		}
 	}
+	
+	private static File getMtaOptions() {
+		try {
+			File bundleFile = FileLocator.getBundleFile(WindupRuntimePlugin.getDefault().getBundle());
+			return new File(bundleFile, MTA_DIRECTORY + File.separatorChar + "help.xml");
+		} catch (IOException e) {
+			WindupRuntimePlugin.logError("Error getting MTA help location.", e); //$NON-NLS-1$
+			return null;
+		}
+	}
+
 
 	/**
 	 * Returns the cached help file from the embedded Windup installation.
 	 */
 	public static Help findWindupHelpCache() {
-		return null;
-//		Help result = new Help();
-//		File windupHome = WindupRuntimePlugin.computeWindupHome().toFile();
-//		WindupRuntimePlugin.logInfo("Retrieving help.xml options from MTR_HOME: " + windupHome.toString());
-//		File cacheFile = new File(windupHome, HELP_CACHE);
-//		try {
-//			URL url = cacheFile.toURI().toURL();
-//			InputStream input = url.openStream();
-//			XMLMemento root = XMLMemento.createReadRoot(input);
-//			for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
-//				String name = element.getString("name"); //$NON-NLS-1$
-//				XMLMemento descriptionChild = (XMLMemento) element.getChild("description"); //$NON-NLS-1$
-//				String description = descriptionChild.getTextData();
-//				XMLMemento typeChild = (XMLMemento) element.getChild("type"); //$NON-NLS-1$
-//				String type = typeChild.getTextData();
-//				XMLMemento uiTypeChild = (XMLMemento) element.getChild("ui-type"); //$NON-NLS-1$
-//				String uiType = uiTypeChild.getTextData();
-//				List<String> availableOptions = Lists.newArrayList();
-//				XMLMemento availableOptionsElement = (XMLMemento) element.getChild("available-options"); //$NON-NLS-1$
-//				if (availableOptionsElement != null) {
-//					for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
-//						XMLMemento optionMemento = (XMLMemento) optionElement;
-//						String availableOption = optionMemento.getTextData();
-//						availableOptions.add(availableOption);
-//					}
-//				}
-//				Collections.sort(availableOptions);
-//				boolean required = false;
-//				XMLMemento requiredElement = (XMLMemento) element.getChild("require");
-//				if (requiredElement != null) {
-//					required = Boolean.valueOf(requiredElement.getTextData());
-//				}
-//				OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions,
-//						required);
-//				result.getOptions().add(option);
-//			}
-//		} catch (Exception e) {
-//			WindupRuntimePlugin.log(e);
-//		}
-//		return result;
+		Help result = new Help();
+		File cacheFile = WindupRuntimePlugin.getMtaOptions();
+		try {
+			URL url = cacheFile.toURI().toURL();
+			InputStream input = url.openStream();
+			XMLMemento root = XMLMemento.createReadRoot(input);
+			for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
+				String name = element.getString("name"); //$NON-NLS-1$
+				XMLMemento descriptionChild = (XMLMemento) element.getChild("description"); //$NON-NLS-1$
+				String description = descriptionChild.getTextData();
+				XMLMemento typeChild = (XMLMemento) element.getChild("type"); //$NON-NLS-1$
+				String type = typeChild.getTextData();
+				XMLMemento uiTypeChild = (XMLMemento) element.getChild("ui-type"); //$NON-NLS-1$
+				String uiType = uiTypeChild.getTextData();
+				List<String> availableOptions = Lists.newArrayList();
+				XMLMemento availableOptionsElement = (XMLMemento) element.getChild("available-options"); //$NON-NLS-1$
+				if (availableOptionsElement != null) {
+					for (IMemento optionElement : availableOptionsElement.getChildren("option")) {
+						XMLMemento optionMemento = (XMLMemento) optionElement;
+						String availableOption = optionMemento.getTextData();
+						availableOptions.add(availableOption);
+					}
+				}
+				Collections.sort(availableOptions);
+				boolean required = false;
+				XMLMemento requiredElement = (XMLMemento) element.getChild("require");
+				if (requiredElement != null) {
+					required = Boolean.valueOf(requiredElement.getTextData());
+				}
+				OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions,
+						required);
+				result.getOptions().add(option);
+			}
+		} catch (Exception e) {
+			WindupRuntimePlugin.log(e);
+		}
+		return result;
 	}
 
 	public static String computeJRELocation() {

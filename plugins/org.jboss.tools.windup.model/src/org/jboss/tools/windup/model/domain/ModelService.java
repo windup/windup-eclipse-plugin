@@ -342,7 +342,7 @@ public class ModelService {
 					Pair pair = WindupFactory.eINSTANCE.createPair();
 					pair.setKey("output");
 //					pair.setValue();
-					configuration.getOptions().add(pair);
+//					configuration.getOptions().add(pair);
 					configuration.setOutputLocation(getDefaultOutputLocation(configuration));
 					configuration.setSourceMode(true);
 					configuration.setGenerateReport(true);

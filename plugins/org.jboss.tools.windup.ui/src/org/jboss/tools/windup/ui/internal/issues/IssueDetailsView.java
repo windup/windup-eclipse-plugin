@@ -214,7 +214,9 @@ public class IssueDetailsView {
 				builder.append(markdownProcessor.process(marker.getAttribute(WindupMarker.DESCRIPTION, noIssueDetails)));
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			}			
+			builder.append("<h3>File</h3>");
+			builder.append(marker.getAttribute("file", noIssueDetails));
 			builder.append("<h3>Category ID</h3>");
 			builder.append(marker.getAttribute(SEVERITY, noIssueDetails));
 			builder.append("<h3>Level of Effort</h3>");

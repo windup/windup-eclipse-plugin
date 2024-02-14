@@ -44,6 +44,7 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.jboss.tools.windup.model.domain.ModelService;
+import org.jboss.tools.windup.runtime.WindupRuntimePlugin;
 import org.jboss.tools.windup.runtime.kantra.KantraRunner;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.Messages;
@@ -78,7 +79,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			Display.getDefault().asyncExec(() -> {
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
 						Messages.launchErrorTitle, Messages.launchErrorMessage);
-				WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to launch MTR. Input is empty."); //$NON-NLS-1$
+				WindupUIPlugin.logErrorMessage("WindupLaunchDelegate:: unable to launch MTA. Input is empty."); //$NON-NLS-1$
 			});
 		}
 		else {
@@ -158,7 +159,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		List<String> sources = Lists.newArrayList();
 		List<String> targets = Lists.newArrayList();
 		String output = configuration.getOutputLocation();
-		String cli = configuration.getWindupHome();
+		String cli = WindupRuntimePlugin.computeWindupHome();
 		
 		File outputFile = new File(output);
 		if (!outputFile.exists()) {
@@ -176,9 +177,6 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     	for (Pair pair : configuration.getOptions()) {
 			String name = pair.getKey();
 			String value = pair.getValue();
-			if (name.equals("input")) {
-				inputs.add(value);
-			}
 			if (name.equals("source")) {
 				sources.add(value);
 			}
@@ -209,7 +207,8 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     		System.out.println(msg.toString());
     		kantraJob.cancel();
     	};
-   	WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
+//		kantraJob.cancel();
+   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
 	}
 	
 	private MessageConsole findConsole(String name) {

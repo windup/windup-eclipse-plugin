@@ -95,8 +95,8 @@ public class OptionsTab extends AbstractLaunchConfigurationTab {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		createReportGroup(container);
-		createJREGroup(container);
+//		createReportGroup(container);
+//		createJREGroup(container);
 		createOptionsGroup(container);
 		super.setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, ID);
@@ -364,7 +364,7 @@ public class OptionsTab extends AbstractLaunchConfigurationTab {
 	private void reload() {
 		reloadReportGroup();
 		reloadOptions();
-		reloadJreHome();
+//		reloadJreHome();
 	}
 
 	private void reloadReportGroup() {

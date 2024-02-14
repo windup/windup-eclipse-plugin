@@ -151,7 +151,7 @@ public class WindupRmiClient {
 		executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 			@Override
 			protected void processLine(String line, int logLevel) {
-				logInfo("Message from MTR executor: " + line); //$NON-NLS-1$
+				logInfo("Message from MTA executor: " + line); //$NON-NLS-1$
 				monitor.worked(1);
 			}
 		}));

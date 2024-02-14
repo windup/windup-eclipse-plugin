@@ -1,13 +1,13 @@
 windup-eclipse-plugin
 =====================
 
-Migration Toolkit for Runtimes (MTR) Eclipse Plugin
+Migration Toolkit for Applications (MTA) Eclipse Plugin
 
 ## Summary
 
 [Windup](https://github.com/windup/windup) is a command-line Application Migration and Modernization assessment tool.
 
-Provides Eclipse integration with the Migration Toolkit for Runtimes (MTR) project.
+Provides Eclipse integration with the Migration Toolkit for Applications (MTA) project.
 
 ## Installing
 

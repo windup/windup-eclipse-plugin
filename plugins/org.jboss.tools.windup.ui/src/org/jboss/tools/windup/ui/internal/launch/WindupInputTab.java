@@ -84,9 +84,9 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).minSize(150, 250).applyTo(container);
-		createMigrationPathGroup(container);
+//		createMigrationPathGroup(container);
 		createProjectsGroup(container);
-		createPackagesGroup(container);
+//		createPackagesGroup(container);
 		createVerticalSpacer(container, 1);
 		super.setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, ID);
@@ -105,7 +105,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 	private void reload() {
 		reloadMigrationPath();
 		reloadProjectsTable();
-		reloadPackagesTable();
+//		reloadPackagesTable();
 	}
 	
 	private void reloadProjectsTable() {
@@ -279,6 +279,7 @@ public class WindupInputTab extends AbstractLaunchConfigurationTab {
 					if (selected.length > 0) {
 						List<String> newProjects = Lists.newArrayList();
 						Arrays.stream(selected).forEach(p -> newProjects.add(((IProject)p).getLocation().toString()));
+						configuration.getInputs().clear();
 						modelService.createInput(configuration, newProjects);
 						reloadProjectsTable();
 					}

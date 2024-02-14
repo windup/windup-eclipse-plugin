@@ -61,7 +61,7 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	
-	private DirectoryFieldEditor homeEditor;
+	private FileFieldEditor homeEditor;
 	private IntegerFieldEditor portEditor;
 	
 	private IntegerFieldEditor startTimeoutDurationEditor;
@@ -84,10 +84,17 @@ public class WindupPreferencePage extends FieldEditorPreferencePage implements I
 	
 	@Override
 	protected void createFieldEditors() {
-		homeEditor = new DirectoryFieldEditor(
-				IPreferenceConstants.WINDUP_HOME, 
-				Messages.WindupPreferenceHome, 
+		homeEditor = new FileFieldEditor(
+				IPreferenceConstants.WINDUP_HOME,
+				Messages.WindupPreferenceHome,
+				true,
 				getFieldEditorParent());
+//		homeEditor = new FileFieldEditor(
+//				IPreferenceConstants.WINDUP_HOME,
+//				);
+//				IPreferenceConstants.WINDUP_HOME, 
+//				Messages.WindupPreferenceHome, 
+//				getFieldEditorParent());
 		homeEditor.setEmptyStringAllowed(false);
 		addField(homeEditor);
 //		

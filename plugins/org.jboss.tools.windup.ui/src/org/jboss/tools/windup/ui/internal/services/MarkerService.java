@@ -352,6 +352,7 @@ public class MarkerService {
 		}
 		
 		marker.setAttribute(DESCRIPTION, issue.getMessageOrDescription());
+		marker.setAttribute("file", issue.getFileAbsolutePath());
 		marker.setAttribute(IMarker.MESSAGE, issue.getTitle());
 		marker.setAttribute(TITLE, issue.getTitle());
 		
