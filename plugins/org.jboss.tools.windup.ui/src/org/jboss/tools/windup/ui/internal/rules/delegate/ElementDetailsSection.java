@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.rules.delegate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.e4.core.contexts.IEclipseContext;

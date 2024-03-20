@@ -13,7 +13,7 @@ package org.jboss.tools.windup.ui.internal.views;
 import java.io.File;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -116,14 +116,18 @@ public class WindupReportView implements IShowInTarget
     private IResource currentSelection;
     
     private String currentReportPath;
+    
+    private Composite parentComposite;
 
     /**
      * <p>
      * Required default constructor for this view since it is created via extension point.
      * </p>
      */
-    public WindupReportView()
+    @Inject 
+    public WindupReportView(Composite composite)
     {
+    	this.parentComposite = composite;
         this.browserViewer = null;
         this.selectionChangedListener = null;
         this.currentSelection = null;

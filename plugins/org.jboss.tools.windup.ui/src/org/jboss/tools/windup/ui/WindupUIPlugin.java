@@ -12,6 +12,8 @@ package org.jboss.tools.windup.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -32,7 +34,8 @@ import org.jboss.tools.windup.core.WindupCorePlugin;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.osgi.framework.BundleContext;
 
-import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
+//import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -318,7 +321,11 @@ public class WindupUIPlugin extends AbstractUIPlugin
     
     private Injector createInjector() {
     	try {
-    		return Guice.createInjector(Lists.newArrayList(new WindupUiModule(), new StandaloneBuilderModule()));
+    		List<com.google.inject.Module> list = new ArrayList<com.google.inject.Module>();
+//    		list.add(new WindupUiModule());
+//    		list.add(new StandaloneBuilderModule());
+    		return Guice.createInjector(list);
+//    		return Guice.createInjector(Lists.newArrayList(new WindupUiModule(), new StandaloneBuilderModule()));
     	} catch (Exception e) {
     		logErrorMessage("Failed to create injector");
     		logError(e.getMessage(), e);

@@ -12,7 +12,7 @@ package org.jboss.tools.windup.ui.internal.editor;
 
 import static org.jboss.tools.windup.model.domain.WindupConstants.ACTIVE_CONFIG;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;

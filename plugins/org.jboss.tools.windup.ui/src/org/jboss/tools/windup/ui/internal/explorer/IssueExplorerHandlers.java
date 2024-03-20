@@ -13,7 +13,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
 public class IssueExplorerHandlers {
 	
 	public abstract static class GroupBy extends AbstractHandler {
-		@Inject protected IssueGroupService groupService;
+//		@Inject protected IssueGroupService groupService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			update(!HandlerUtil.toggleCommandState(event.getCommand()));
@@ -67,7 +67,7 @@ public class IssueExplorerHandlers {
 	}
 	
 	public static class OpenReportHandler extends AbstractHandler {
-		@Inject private EPartService partService;
+//		@Inject private EPartService partService;
 		@Inject private MarkerService markerService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -78,7 +78,7 @@ public class IssueExplorerHandlers {
 				Issue issue = markerService.find(marker);
 				String reportLocation = issue.getGeneratedReportLocation();
 				if (reportLocation != null) {
-					IssueExplorer.updateReportView(reportLocation, true, partService);
+					IssueExplorer.updateReportView(reportLocation, true);
 				}
 			}
 			return null;
@@ -88,14 +88,14 @@ public class IssueExplorerHandlers {
 	public static class GroupBySeverity extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {
-			groupService.setGroupBySeverity(enabled);
+//			groupService.setGroupBySeverity(enabled);
 		}
 	}
 	
 	public static class GroupByRule extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {
-			groupService.setGroupByRule(enabled);
+//			groupService.setGroupByRule(enabled);
 		}
 	}
 
@@ -103,29 +103,29 @@ public class IssueExplorerHandlers {
 		@Inject private ICommandService commandService;
 		@Override
 		protected void update(boolean enabled) {
-			groupService.setGroupByHierachy(enabled);
-			if (enabled) {
-				Command c = commandService.getCommand(IssueConstants.GROUP_BY_FILE_CMD);
-				State s = c.getState(IssueConstants.TOGGLE_STATE_ID); 
-				s.setValue(true);
-				commandService.refreshElements(c.getId(), null);
-				groupService.setGroupByFile(true, false);
-			}
+			/*
+			 * groupService.setGroupByHierachy(enabled); if (enabled) { Command c =
+			 * commandService.getCommand(IssueConstants.GROUP_BY_FILE_CMD); State s =
+			 * c.getState(IssueConstants.TOGGLE_STATE_ID); s.setValue(true);
+			 * commandService.refreshElements(c.getId(), null);
+			 * groupService.setGroupByFile(true, false); }
+			 */
 		}
 	}
 	
 	public static class GroupByFile extends GroupBy {
 		@Override
 		protected void update(boolean enabled) {
-			groupService.setGroupByFile(enabled, true);
+//			groupService.setGroupByFile(enabled, true);
 		}
 	}
 	
 	public static class ExpandIssuesHandler extends AbstractHandler {
-		@Inject private IEclipseContext context;
+//		@Inject private IEclipseContext context;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			context.get(IssueExplorerService.class).expandAll();
+//			context.get(IssueExplorerService.class).expandAll();
+			IssueExplorer.current.getCommonViewer().expandAll();
 			return null;
 		}
 	}
@@ -140,9 +140,9 @@ public class IssueExplorerHandlers {
 	}
 	
 	private abstract static class AbstractIssueHandler extends AbstractHandler {
-		@Inject protected IEventBroker broker;
+//		@Inject protected IEventBroker broker;
 		@Inject protected WindupRmiClient windupClient;
-		@Inject protected EPartService partService;
+//		@Inject protected EPartService partService;
 		@Inject protected QuickfixService quickfixService;
 		protected MarkerNode getMarkerNode (ExecutionEvent event) {
 			TreeSelection selection = (TreeSelection) HandlerUtil.getCurrentSelection(event);
@@ -160,7 +160,8 @@ public class IssueExplorerHandlers {
 			return null;
 		}
 		protected IssueExplorer getIssueExplorer() {
-			return (IssueExplorer)partService.findPart(IssueExplorer.VIEW_ID).getObject();
+//			return (IssueExplorer)partService.findPart(IssueExplorer.VIEW_ID).getObject();
+			return IssueExplorer.current;
 		}
 	}
 	
@@ -275,7 +276,7 @@ public class IssueExplorerHandlers {
 			List<MarkerNode> fixableNodes = Lists.newArrayList();
 			for (Object selected : ((StructuredSelection)selection).toList()) {
 				TreeNode node = (TreeNode)selected;
-				IssueExplorerHandlers.collectQuickFixableNodes(node, fixableNodes);
+				collectQuickFixableNodes(node, fixableNodes);
 			}
 			
 			for (MarkerNode node : fixableNodes) {
@@ -297,19 +298,19 @@ public class IssueExplorerHandlers {
 			}
 			return null;
 		}
-	}
-	
-	private static void collectQuickFixableNodes(TreeNode node, List<MarkerNode> nodes) {
-		for (TreeNode child : node.getChildren()) {
-			if (child instanceof MarkerNode) {
-				MarkerNode childNode = (MarkerNode)child;
-				Issue issue = childNode.getIssue();
-				if (QuickfixService.isIssueFixable(issue)) {
-					nodes.add(childNode);
+		
+		private static void collectQuickFixableNodes(TreeNode node, List<MarkerNode> nodes) {
+			for (TreeNode child : node.getChildren()) {
+				if (child instanceof MarkerNode) {
+					MarkerNode childNode = (MarkerNode)child;
+					Issue issue = childNode.getIssue();
+					if (QuickfixService.isIssueFixable(issue)) {
+						nodes.add(childNode);
+					}
 				}
-			}
-			else {
-				collectQuickFixableNodes(child, nodes);
+				else {
+					collectQuickFixableNodes(child, nodes);
+				}
 			}
 		}
 	}

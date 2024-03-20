@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.inject,
  org.apache.log4j,
  javax.inject,
- javax.annotation
+ javax.annotation,
+ jakarta.inject.jakarta.inject-api
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %plugin.vendor

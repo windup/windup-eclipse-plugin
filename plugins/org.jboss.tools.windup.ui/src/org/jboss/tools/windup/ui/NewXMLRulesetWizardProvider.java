@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.jboss.tools.windup.ui.internal.rules.NewXMLRulesetWizard;
 import org.jboss.tools.windup.ui.internal.rules.CreateRulesetOperation;

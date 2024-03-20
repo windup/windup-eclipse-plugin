@@ -30,6 +30,8 @@ public class WindupExtensionFactory extends AbstractUiExtensionFactory {
 	protected Object getInstance() throws Exception {
 		Injector injector = WindupUIPlugin.getDefault().getInjector();
 		Class<?> type = getBundle().loadClass(data);
+		System.out.println("Guice :: getInstance");
+		System.out.println(type);
 		try {
 			injector.getBinding(type);
 			return injector.getInstance(type);
@@ -38,6 +40,8 @@ public class WindupExtensionFactory extends AbstractUiExtensionFactory {
 				Provider<?> provider = injector.getProvider(type);
 				return provider.get();
 			} catch (ConfigurationException e2) {
+				System.out.println("Error creating @Inject instance.");
+				e.printStackTrace();
 			}
 		} 
 		return super.getInstance();

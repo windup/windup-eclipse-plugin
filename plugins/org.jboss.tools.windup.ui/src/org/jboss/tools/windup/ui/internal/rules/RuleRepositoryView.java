@@ -14,7 +14,7 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;

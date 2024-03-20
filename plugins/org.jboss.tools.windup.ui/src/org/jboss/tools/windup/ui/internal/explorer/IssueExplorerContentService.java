@@ -13,8 +13,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
 
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
@@ -27,10 +26,11 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNode;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerContentProvider.TreeNodeBuilder;
-import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
+//import org.jboss.tools.windup.ui.internal.services.IssueGroupService;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Singleton;
 
 /**
  * A service for computing the issue explorer's input.
@@ -39,8 +39,8 @@ import com.google.common.collect.Maps;
 @Creatable
 public class IssueExplorerContentService {
 	
-	@Inject private IssueGroupService groupService;
-	@Inject private IEclipseContext context;
+//	@Inject private IssueGroupService groupService;
+//	@Inject private IEclipseContext context;
 	@Inject private ModelService modelService;
 	@Inject @Optional private IssueExplorer issueExplorer;
 	@Inject private MarkerService markerService;
@@ -84,7 +84,8 @@ public class IssueExplorerContentService {
 	}
 	
 	private Object[] createNodeGroups(List<IMarker> markers) {
-		TreeNodeBuilder builder = new TreeNodeBuilder(markers, issueExplorer, groupService, context, 
+		TreeNodeBuilder builder = new TreeNodeBuilder(markers,
+				issueExplorer, /* groupService, context, */ 
 				markerService, modelService.getRecentConfiguration(), modelService);
 		Object[] input = builder.build();
 		this.nodeMap = builder.getNodeMap();

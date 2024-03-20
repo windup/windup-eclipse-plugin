@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.wizards;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;

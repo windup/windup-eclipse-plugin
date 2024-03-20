@@ -13,7 +13,8 @@ Bundle-ClassPath: .,
  lib/jackson-dataformat-yaml-2.15.2.jar,
  lib/jackson-databind-2.15.2.jar,
  lib/jackson-annotations-2.15.2.jar,
- lib/snakeyaml-2.2.jar
+ lib/snakeyaml-2.2.jar,
+ lib/guice-7.0.0.jar
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
@@ -77,13 +78,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.pde.ui,
  org.eclipse.swt,
  org.eclipse.wst.xml.xpath.core,
- javax.inject,
- com.google.inject,
  javax.annotation;bundle-version="1.3.5",
- org.apache.log4j
+ org.apache.log4j,
+ javax.inject,
+ jakarta.inject.jakarta.inject-api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: org.jboss.tools.windup.ui,
+Export-Package: com.google.inject,
+ org.jboss.tools.windup.ui,
  org.jboss.tools.windup.ui.internal.editor,
  org.jboss.tools.windup.ui.internal.explorer,
  org.jboss.tools.windup.ui.internal.launch,

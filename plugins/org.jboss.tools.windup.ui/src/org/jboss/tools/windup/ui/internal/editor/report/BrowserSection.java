@@ -13,7 +13,7 @@ package org.jboss.tools.windup.ui.internal.editor.report;
 import static org.jboss.tools.windup.model.domain.WindupConstants.WINDUP_RUN_COMPLETED;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;

@@ -24,8 +24,8 @@ import java.rmi.registry.Registry;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -59,7 +59,7 @@ public class WindupRmiClient {
 	
 	private ExecutionBuilder executionBuilder;
 	
-	@Inject private IEventBroker eventBroker;
+//	@Inject private IEventBroker eventBroker;
 	
 	private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
 	private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(WindupRuntimePlugin.PLUGIN_ID);
@@ -186,7 +186,7 @@ public class WindupRmiClient {
 	}
 	
 	private void notifyServerChanged() {
-		eventBroker.post(WINDUP_SERVER_STATUS, executionBuilder);
+//		eventBroker.post(WINDUP_SERVER_STATUS, executionBuilder);
 	}
 	
 	public ExecutionBuilder getExecutionBuilder() {

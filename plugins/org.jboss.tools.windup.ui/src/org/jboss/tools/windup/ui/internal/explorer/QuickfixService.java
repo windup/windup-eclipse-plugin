@@ -13,8 +13,8 @@ package org.jboss.tools.windup.ui.internal.explorer;
 import java.io.File;
 import java.rmi.RemoteException;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IFile;

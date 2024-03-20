@@ -12,7 +12,7 @@ package org.jboss.tools.windup.ui.tests;
 
 import static org.junit.Assert.assertNotNull;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

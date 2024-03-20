@@ -13,7 +13,7 @@ package org.jboss.tools.windup.ui.internal.rules;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

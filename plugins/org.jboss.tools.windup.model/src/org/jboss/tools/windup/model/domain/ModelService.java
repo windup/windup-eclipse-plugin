@@ -30,8 +30,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -116,17 +116,21 @@ public class ModelService {
     private IEventBroker broker;
 	
 	private WindupModel model;
-	private TransactionalEditingDomain domain;
+	private TransactionalEditingDomain domain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(DOMAIN_NAME);
 	
 	private Map<ConfigurationElement, KantraConfiguration> kantraModelDelegates = Maps.newHashMap(); 
 	
-	@Inject
-	public ModelService(IEventBroker broker, WindupDomainListener modelListener) {
-		this.broker = broker;
-		domain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(DOMAIN_NAME);
-		load();
-		model.eAdapters().add(modelListener);
+	public ModelService() {
+		this.load();
 	}
+	
+//	@Inject
+//	public ModelService(IEventBroker broker, WindupDomainListener modelListener) {
+//		this.broker = broker;
+//		domain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(DOMAIN_NAME);
+//		load();
+//		model.eAdapters().add(modelListener);
+//	}
 	
 	@SuppressWarnings("unchecked")
 	public <T extends EditingDomain> T getDomain() {
@@ -320,7 +324,7 @@ public class ModelService {
 	
 	public void deleteConfiguration(ConfigurationElement configuration) {
 		model.getConfigurationElements().remove(configuration);
-		broker.post(CONFIG_DELETED, configuration);
+//		broker.post(CONFIG_DELETED, configuration);
 	}
 	
 	public void deleteIssue(Issue issue) {

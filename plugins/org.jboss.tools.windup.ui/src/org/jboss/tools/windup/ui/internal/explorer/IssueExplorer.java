@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -101,31 +101,38 @@ public class IssueExplorer extends CommonNavigator {
 	
 	public static final String VIEW_ID = "org.jboss.tools.windup.ui.explorer"; //$NON-NLS-1$
 	
-	@Inject private IEclipseContext context;
-	@Inject private IEventBroker broker;
-	@Inject private ModelService modelService;
-	@Inject private IssueGroupService groupService;
-	@Inject private EPartService partService;
-	private IssueExplorerContentService contentService;
+//	@Inject private IEclipseContext context;
+//	@Inject private IEventBroker broker;
 	
+//	@Inject private IssueGroupService groupService;
+//	@Inject private EPartService partService;
+	@Inject private IssueExplorerContentService contentService;
+	@Inject public ModelService modelService;
+	public static IssueExplorer current = null;
 	@Inject private WindupLauncher windupLauncher;
 	@Inject private WindupRmiClient windupClient;
-	@Inject private MarkerService markerService;
+	@Inject public MarkerService markerService;
+	@Inject public ViewService viewService;
 	
 	private Text searchText;
 	
-	@Inject
-	public IssueExplorer(IssueExplorerContentService contentService) {
-		this.contentService = contentService;
-		contentService.setIssuExplorer(this);
+	public IssueExplorer() {
+		IssueExplorer.current = this;
 	}
+	
+//	@Inject
+//	public IssueExplorer(IssueExplorerContentService contentService) {
+//		this.contentService = contentService;
+//		contentService.setIssuExplorer(this);
+//	}
 	
 	@Override
 	protected CommonViewer createCommonViewerObject(Composite aParent) {
 		// See: https://issues.jboss.org/browse/WINDUP-1290
 		// Newly imported projects automatically get added to the tree via PackageExplorer#postAdd
 		// The primary issue with calling super.refresh is it will cause IssueExplorer's tree nodes
-		// to collapse. 
+		// to collapse.
+		IssueExplorer.current = this;
 		CommonViewer viewer = new CommonViewer(getViewSite().getId(), aParent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL) {
 			@Override
@@ -209,7 +216,7 @@ public class IssueExplorer extends CommonNavigator {
 				if (selection instanceof MarkerNode) {
 					type = ((MarkerNode)selection).getMarker();
 				}
-				context.set(IMarker.class, type);
+//				context.set(IMarker.class, type);
 				if (selection instanceof ReportNode) {
 					ReportNode reportNode = (ReportNode)selection;
 					IMarker marker = reportNode.getMarker();
@@ -217,19 +224,19 @@ public class IssueExplorer extends CommonNavigator {
 					if (issue != null) {
 						String reportLocation = issue.getGeneratedReportLocation();
 						if (reportLocation != null) {
-							updateReportView(reportLocation, false, partService);
+							updateReportView(reportLocation, false);
 						}
 					}
 				}
 				else if (selection instanceof RootReportNode) {
 					RootReportNode reportNode = (RootReportNode)selection;
-					updateReportView(reportNode.getReportLocation(), false, partService);
+					updateReportView(reportNode.getReportLocation(), false);
 				}
 			}
 		});
 		getCommonViewer().setComparator(new IssueExplorerComparator());
-		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
-		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
+//		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
+//		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 		initGettingStarted();
 		buildTree();
 	}
@@ -239,13 +246,13 @@ public class IssueExplorer extends CommonNavigator {
 	private Label statusLabel;
 	private CButton startStopButton;
 	
-	@Inject
-	@Optional
-	private void updateServer(@UIEventTopic(WindupRmiClient.WINDUP_SERVER_STATUS) ExecutionBuilder executionBuilder) {
-		if (textLabel != null && !textLabel.isDisposed()) {
-			updateServerGroup();
-		}
-	}
+//	@Inject
+//	@Optional
+//	private void updateServer(@UIEventTopic(WindupRmiClient.WINDUP_SERVER_STATUS) ExecutionBuilder executionBuilder) {
+//		if (textLabel != null && !textLabel.isDisposed()) {
+//			updateServerGroup();
+//		}
+//	}
 	
 	private void createServerArea(final Composite parent) {
 		GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(parent);
@@ -591,7 +598,7 @@ public class IssueExplorer extends CommonNavigator {
 			getCommonViewer().refresh(true);
 		}
 		// TODO: after memento is integrated, re-set to current selection.
-		context.set(IMarker.class, null);
+//		context.set(IMarker.class, null);
 	}
 
 	private class OpenIssueListener implements IDoubleClickListener {
@@ -625,18 +632,18 @@ public class IssueExplorer extends CommonNavigator {
 					Issue issue = markerService.find(marker);
 					String reportLocation = issue.getGeneratedReportLocation();
 					if (reportLocation != null) {
-						updateReportView(reportLocation, true, partService);
+						updateReportView(reportLocation, true);
 					}
 				}
 				else if (element instanceof RootReportNode) {
 					String reportLocation = ((RootReportNode)element).getReportLocation();
-					updateReportView(reportLocation, true, partService);
+					updateReportView(reportLocation, true);
 				}
 			}
 		}
 	}
 	 
-	public static void updateReportView(String reportLocation, boolean open, EPartService partService) {
+	public static void updateReportView(String reportLocation, boolean open/* , EPartService partService */) {
 		File file = new File(reportLocation);
 		if (file.exists()) {
 			ViewService.openReport(file);
@@ -654,9 +661,10 @@ public class IssueExplorer extends CommonNavigator {
 		}*/
 	}
 	
-	private IEclipseContext getServiceContext() {
-		return context.get(MApplication.class).getContext();
-	}
+	/*
+	 * private IEclipseContext getServiceContext() { return
+	 * context.get(MApplication.class).getContext(); }
+	 */
 	
 	public static interface IssueExplorerService {
 		void expandAll();
@@ -666,8 +674,8 @@ public class IssueExplorer extends CommonNavigator {
 	@Override
 	public void dispose() {
 		super.dispose();
-		broker.unsubscribe(groupsChangedHandler);
+//		broker.unsubscribe(groupsChangedHandler);
 		modelService.save();
-		groupService.save();
+//		groupService.save();
 	}
 }

@@ -12,24 +12,32 @@ package org.jboss.tools.windup.ui.internal.services;
 
 import java.io.File;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.eclipse.e4.ui.workbench.UIEvents.Window;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.foundation.ui.util.BrowserUtility;
+import org.jboss.tools.windup.model.Activator;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.ui.WindupPerspectiveFactory;
+import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.views.WindupReportView;
 import org.jboss.tools.windup.windup.ConfigurationElement;
@@ -42,19 +50,26 @@ import org.osgi.service.event.Event;
 @Singleton
 public class ViewService {
 
-	@Inject private EPartService partService;
-	@Inject private MApplication application;
-	@Inject private ModelService modelService;
+//	@Inject private EPartService partService;
+//	@Inject private MApplication application;
+//	@Inject private ModelService modelService;
+	
+	public ViewService() {
+	}
 	
 	public WindupReportView activateWindupReportView() {
-		/*
-		application.getChildren().get(0).getContext().activate();
+		MApplication application = E4Workbench.getServiceContext().get(MApplication.class);
+		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(0);
+//		application.getChildren().get(0).getContext().activate();
+		
+		EPartService partService = (EPartService)window.getContext().get(EPartService.class);
+		
+		
 		MPlaceholder holder = partService.createSharedPart(WindupReportView.ID, false);
 		MPart part = (MPart)holder.getRef();
+		ContextInjectionFactory.inject(part, WindupUIPlugin.getDefault().getContext());
 		partService.showPart(part, PartState.ACTIVATE);
 		return (WindupReportView)part.getObject();
-		*/
-		return null;
 	}
 	
 	public void renderReport(ConfigurationElement configuration) {
@@ -91,19 +106,21 @@ public class ViewService {
 		});
     }
     
-    @Inject
-    @Optional
-    public void showIssueExplorer(@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_OPENED) Event event) {
-		Object element = event.getProperty(EventTags.ELEMENT);
-		if (element instanceof MPerspective) {
-			MPerspective perspective = (MPerspective) element;
-			if (perspective.getElementId().equals(WindupPerspectiveFactory.ID)) {
-				MPart part = partService.findPart(IssueExplorer.VIEW_ID);
-				if (part != null) {
-					partService.activate(part);
-				}
-			}
-		}
-    } 
-
+//    @Inject
+//    @Optional
+//    public void showIssueExplorer(@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_OPENED) Event event) {
+//		Object element = event.getProperty(EventTags.ELEMENT);
+//		if (element instanceof MPerspective) {
+//			MPerspective perspective = (MPerspective) element;
+//			if (perspective.getElementId().equals(WindupPerspectiveFactory.ID)) {
+//				MApplication application = E4Workbench.getServiceContext().get(MApplication.class);
+//				MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(0);
+//				EPartService partService = (EPartService)window.getContext().get(EPartService.class);
+//				MPart part = partService.findPart(IssueExplorer.VIEW_ID);
+//				if (part != null) {
+//					partService.activate(part);
+//				}
+//			}
+//		}
+//    } 
 }

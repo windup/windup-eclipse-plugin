@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
@@ -96,8 +96,8 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		
 		private List<IMarker> markers;
 		private NavigatorContentServiceContentProvider contentProvider;
-		private IssueGroupService groupService;
-		private IEclipseContext context;
+//		private IssueGroupService groupService;
+//		private IEclipseContext context;
 		private ConfigurationElement configuration;
 		private MarkerService markerService;
 		private ModelService modelService;
@@ -107,11 +107,11 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		private Map<IResource, TreeNode> resourceMap = Maps.newHashMap();
 		
 		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
-				IssueGroupService groupService, IEclipseContext context,
+				/*IssueGroupService groupService IEclipseContext context,*/
 				MarkerService markerService, ConfigurationElement configuration,
 				ModelService modelService) {
 			this.markers = markers;
-			this.groupService = groupService;
+//			this.groupService = groupService;
 			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
 			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
 			this.configuration = configuration;
@@ -121,7 +121,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			INavigatorContentService contentService = explorer.getCommonViewer().getNavigatorContentService();
 			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
 			m.setBooleanProperty(IExtensionStateConstants.Values.IS_LAYOUT_FLAT, true);
-			this.context = context;
+//			this.context = context;
 		}
 		
 		public Map<IResource, TreeNode> getResourceMap() {
@@ -152,7 +152,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		}
 		
 		public void build(TreeNode root, TreeNode node, TreePath path, IMarker marker, int index) {
-			if (groupService.isGroupByHierarchy()) {
+//			if (groupService.isGroupByHierarchy()) {
 				// build the hierarchy.
 				if (index < path.getSegmentCount()) {
 					Object segment = path.getSegment(index);
@@ -184,8 +184,8 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 					build(root, child, path, marker, ++index);
 					return;
 				}
-			}
-			TreeNode parent = groupService.isGroupByHierarchy() ? node : root;
+//			}
+			/*TreeNode parent = groupService.isGroupByHierarchy() ? node : root;
 			if (groupService.isGroupByFile()) {
 				TreeNode resourceNode = parent.getChildPath(marker.getResource());
 				if (resourceNode == null) {
@@ -249,7 +249,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				MarkerNode markerNode = ContextInjectionFactory.make(MarkerNode.class, child);
 				parent.addChild(markerNode);
 				nodeMap.put(marker, markerNode);
-			}
+			}*/
 		}
 	}
 	

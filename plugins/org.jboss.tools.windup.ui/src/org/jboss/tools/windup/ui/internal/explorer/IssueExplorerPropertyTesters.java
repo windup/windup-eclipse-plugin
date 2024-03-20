@@ -12,7 +12,7 @@ package org.jboss.tools.windup.ui.internal.explorer;
 
 import java.rmi.RemoteException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.xtext.util.Pair;

@@ -18,8 +18,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -63,18 +62,18 @@ import com.google.common.collect.Lists;
 public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	
 	
-	@Inject private ModelService modelService;
-	@Inject private MarkerService markerService;
-	@Inject private ViewService viewService;
+//	@Inject private ModelService modelService;
+//	@Inject private MarkerService markerService;
+//	@Inject private ViewService viewService;
 	
-	@Inject @Named (IServiceConstants.ACTIVE_SHELL) Shell shell;
+//	@Inject @jakarta.inject.Named (IServiceConstants.ACTIVE_SHELL) Shell shell;
 	
 	public static KantraRunner activeRunner = null;
 	private static Job kantraJob = null;
 	private static IProgressMonitor kantraMonitor;
 	
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) {
-		ConfigurationElement configuration = modelService.findConfiguration(config.getName());
+		ConfigurationElement configuration = IssueExplorer.current.modelService.findConfiguration(config.getName());
 		if (configuration == null || configuration.getInputs().isEmpty()) {
 			Display.getDefault().asyncExec(() -> {
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
@@ -83,7 +82,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			});
 		}
 		else {
-			markerService.clear();
+			IssueExplorer.current.markerService.clear();
 			this.runKantra(configuration);
 		}
 	}
@@ -132,18 +131,18 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    				WindupLaunchDelegate.activeRunner.kill();
 	    			}	    				
 	    			kantraMonitor.done();
-	    			KantraRulesetParser.parseRulesetForKantraConfig(modelService.getKantraDelegate(configuration));
-	    			modelService.save();
-	    			markerService.generateMarkersForConfiguration(configuration);
-	    			viewService.renderReport(configuration);
+	    			KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
+	    			IssueExplorer.current.modelService.save();
+	    			IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
+	    			IssueExplorer.current.viewService.renderReport(configuration);
 	    			return;
 	    		}
 	    		if (WindupLaunchDelegate.activeRunner != null) {
 	    			WindupLaunchDelegate.activeRunner.kill();
-		    		KantraRulesetParser.parseRulesetForKantraConfig(modelService.getKantraDelegate(configuration));
-		    		modelService.save();
-		    		markerService.generateMarkersForConfiguration(configuration);
-		    		viewService.renderReport(configuration);
+		    		KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
+		    		IssueExplorer.current.modelService.save();
+		    		IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
+		    		IssueExplorer.current.viewService.renderReport(configuration);
 	    		}
 	    		kantraMonitor.done();
 	    	}
@@ -191,7 +190,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     		sources.add("springboot");
     	}
 	
-    	viewService.launchStarting();
+    	IssueExplorer.current.viewService.launchStarting();
     	Consumer<String> onMessage = (msg) -> { 
     		System.out.println("onMessage: " + msg);
     		Display.getDefault().asyncExec(() -> {

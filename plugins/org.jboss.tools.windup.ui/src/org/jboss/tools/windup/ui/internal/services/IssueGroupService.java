@@ -12,8 +12,8 @@ package org.jboss.tools.windup.ui.internal.services;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -42,7 +42,7 @@ public class IssueGroupService {
 	private boolean groupByRule;
 	private boolean groupByFile;
 	
-	@Inject	private IEventBroker broker;
+//	@Inject	private IEventBroker broker;
 	
 	@PostConstruct
 	private void start() {
@@ -105,6 +105,6 @@ public class IssueGroupService {
 	
 	private void notifyChanged() {
 		save();
-		broker.post(WindupConstants.GROUPS_CHANGED, true);
+//		broker.post(WindupConstants.GROUPS_CHANGED, true);
 	}
 }

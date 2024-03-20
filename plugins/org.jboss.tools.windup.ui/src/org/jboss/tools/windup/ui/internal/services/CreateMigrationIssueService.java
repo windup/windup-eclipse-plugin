@@ -12,7 +12,7 @@ package org.jboss.tools.windup.ui.internal.services;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.core.resources.IFile;

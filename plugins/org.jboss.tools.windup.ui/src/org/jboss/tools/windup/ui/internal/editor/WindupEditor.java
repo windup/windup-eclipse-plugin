@@ -16,7 +16,7 @@ import static org.jboss.tools.windup.ui.internal.Messages.rulesEditor_tabTitle;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;

@@ -14,7 +14,7 @@ import static org.jboss.tools.windup.model.domain.WindupConstants.CONFIG_DELETED
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -27,6 +27,7 @@ import org.jboss.tools.windup.core.utils.FileUtils;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorer;
 import org.jboss.tools.windup.ui.internal.launch.LaunchUtils;
 import org.jboss.tools.windup.windup.ConfigurationElement;
 
@@ -52,6 +53,7 @@ public class LaunchConfigurationService implements ILaunchConfigurationListener 
 	
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration launchConfig) {
+		ModelService modelService = IssueExplorer.current.modelService;
 		if (isWindupConfig(launchConfig) && modelService.findConfiguration(launchConfig.getName()) == null) {
 			LaunchUtils.createConfiguration(launchConfig.getName(), modelService);
 		}

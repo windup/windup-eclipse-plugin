@@ -11,7 +11,7 @@
 package org.jboss.tools.windup.ui.internal.editor;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
