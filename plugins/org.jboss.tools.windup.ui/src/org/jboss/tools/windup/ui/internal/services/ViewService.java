@@ -67,7 +67,7 @@ public class ViewService {
 		
 		MPlaceholder holder = partService.createSharedPart(WindupReportView.ID, false);
 		MPart part = (MPart)holder.getRef();
-		ContextInjectionFactory.inject(part, WindupUIPlugin.getDefault().getContext());
+		// partService.showPart(part, PartState.CREATE);
 		partService.showPart(part, PartState.ACTIVATE);
 		return (WindupReportView)part.getObject();
 	}

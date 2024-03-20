@@ -124,8 +124,7 @@ public class WindupReportView implements IShowInTarget
      * Required default constructor for this view since it is created via extension point.
      * </p>
      */
-    @Inject 
-    public WindupReportView(Composite composite)
+    public WindupReportView()
     {
     	this.parentComposite = composite;
         this.browserViewer = null;
