@@ -334,7 +334,7 @@ public class MarkerService {
 		if (issue instanceof Hint) {
 			Hint hint = (Hint)issue;
 			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
-			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
+//			marker.setAttribute(IMarker.LINE_NUMBER, hint.getLineNumber());
 			//marker.setAttribute(IMarker.CHAR_START, hint.getColumn());
 			//marker.setAttribute(IMarker.CHAR_END, hint.getLength());
 			marker.setAttribute(SOURCE_SNIPPET, hint.getSourceSnippet());
@@ -423,6 +423,6 @@ public class MarkerService {
 	
 	@PostConstruct
 	private void init() {
-		loadCache();
+//		loadCache();
 	}
 }

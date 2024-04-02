@@ -15,7 +15,15 @@
             id="org.jboss.tools.windup.ui.explorer"
             name="Issue Explorer">
       </view>
-      <e4view
+      <view
+            allowMultiple="false"
+            category="org.jboss.tools.windup.ui.view.category.windup"
+            class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.issues.IssueDetailsView"
+            icon="icons/windup.png"
+            id="org.jboss.tools.windup.ui.issue.details"
+            name="Issue Details">
+      </view>
+      <!-- <e4view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
             class="org.jboss.tools.windup.ui.internal.issues.IssueDetailsView"
@@ -23,8 +31,8 @@
             id="org.jboss.tools.windup.ui.issue.details"
             name="Issue Details"
             restorable="true">
-      </e4view>
-      <view
+      </e4view> -->
+      <!-- <view
             allowMultiple="false"
             category="org.jboss.tools.windup.ui.view.category.windup"
             class="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RuleRepositoryView"
@@ -32,7 +40,7 @@
             id="org.jboss.tools.windup.ui.rules.rulesView"
             name="Rulesets"
             restorable="true">
-      </view>
+      </view> -->
       <e4view
             allowMultiple="true"
             class="org.jboss.tools.windup.ui.internal.views.TaskListView"
@@ -500,16 +508,16 @@
             id="org.jboss.tools.windup.ui.newXMLRulesetCommand"
             name="New Ruleset">
       </command>
-      <command
+      <!-- <command
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.RefreshRulesetsHandler"
             id="org.jboss.tools.windup.ui.refreshRulesets"
             name="Refresh Rulesets">
-      </command>
-      <command
+      </command> -->
+      <!-- <command
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.ImportRulesetHandler"
             id="org.jboss.tools.windup.ui.importRuleset"
             name="Import Ruleset">
-      </command>
+      </command> -->
       <command
             defaultHandler="org.jboss.tools.windup.ui.WindupExtensionFactory:org.jboss.tools.windup.ui.internal.rules.OpenRuleDefinitionHandler"
             id="org.jboss.tools.windup.ui.openRuleDefinition"

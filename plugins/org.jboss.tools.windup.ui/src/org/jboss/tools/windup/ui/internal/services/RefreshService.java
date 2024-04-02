@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import jakarta.inject.Inject;
+//import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import org.eclipse.core.resources.IFile;
@@ -35,7 +35,8 @@ import com.google.common.collect.Lists;
 @Creatable
 public class RefreshService implements IResourceChangeListener {
 	
-	@Inject private ModelService modelService;
+//	@Inject private ModelService modelService;
+	private ModelService modelService = MarkerSyncService.getInstance("org.jboss.tools.windup.model.domain.ModelService");
 
 	@PostConstruct
 	private void init() {

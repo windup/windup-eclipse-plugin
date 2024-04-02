@@ -108,14 +108,22 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		});
 		
-		Boolean debugging = false;
+		Boolean debugging = true;
 		
 		kantraJob = new Job("Kantra Running - " + configuration.getName()) {
 	      @Override
 	      protected IStatus run(IProgressMonitor monitor) {
 	    	  	kantraMonitor = monitor;
 	    	  	// comment line below when just wanting to load results.
-	      		while (!monitor.isCanceled()) {}    	  	
+	      		while (!monitor.isCanceled()) {}
+	      		
+	      		if (monitor.isCanceled()) {
+	      			System.out.println("Kantra Cancelled. TODO: Anything to cleanup?");
+	      			if (WindupLaunchDelegate.activeRunner != null) {
+	    				WindupLaunchDelegate.activeRunner.kill();
+	    			}	
+	      		}
+	      		
 	          	return Status.OK_STATUS;
 	      }
 		};
@@ -124,6 +132,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    	public void done(IJobChangeEvent event) {
 	    		super.done(event);
 	    		System.out.println("kantra job done");
+	    		configuration.setTimestamp(ModelService.createTimestamp());
 	    		// when debugging, 
 				// at this point debugging might do the same thing.
 	    		if (debugging) {
@@ -131,7 +140,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    				WindupLaunchDelegate.activeRunner.kill();
 	    			}	    				
 	    			kantraMonitor.done();
-	    			KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
+	    			org.jboss.tools.windup.model.domain.KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
 	    			IssueExplorer.current.modelService.save();
 	    			IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
 	    			IssueExplorer.current.viewService.renderReport(configuration);
@@ -139,7 +148,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    		}
 	    		if (WindupLaunchDelegate.activeRunner != null) {
 	    			WindupLaunchDelegate.activeRunner.kill();
-		    		KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
+		    		org.jboss.tools.windup.model.domain.KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
 		    		IssueExplorer.current.modelService.save();
 		    		IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
 		    		IssueExplorer.current.viewService.renderReport(configuration);
@@ -206,8 +215,8 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     		System.out.println(msg.toString());
     		kantraJob.cancel();
     	};
-//		kantraJob.cancel();
-   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
+		kantraJob.cancel();
+//   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
 	}
 	
 	private MessageConsole findConsole(String name) {

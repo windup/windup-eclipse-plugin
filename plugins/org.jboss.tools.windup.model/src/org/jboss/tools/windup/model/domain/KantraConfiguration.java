@@ -108,7 +108,8 @@ public class KantraConfiguration {
     }
     
     public String sourceBase() {
-        return "file:///opt/input/source/";
+        // return "file:///opt/input/source/";
+        return "file:///tmp/source-code/";
     }
     
     public boolean skippedReports() {

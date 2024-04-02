@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.workbench.UIEvents.Window;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.jboss.tools.foundation.ui.util.BrowserUtility;
 import org.jboss.tools.windup.model.Activator;
 import org.jboss.tools.windup.model.domain.ModelService;
@@ -67,8 +68,21 @@ public class ViewService {
 		
 		MPlaceholder holder = partService.createSharedPart(WindupReportView.ID, false);
 		MPart part = (MPart)holder.getRef();
-		// partService.showPart(part, PartState.CREATE);
-		partService.showPart(part, PartState.ACTIVATE);
+		
+		 partService.showPart(part, PartState.CREATE);
+//		partService.showPart(part, PartState.ACTIVATE);
+//		part = partService.createPart(WindupReportView.ID);
+		 
+//		 WindupUIPlugin.getDefault().getvi.showView("org.eclipse.ui.views.PropertySheet");
+		 try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(WindupReportView.ID);
+		 }
+		 catch (Exception e) {
+			 e.printStackTrace();
+			 System.out.println(e.getMessage());
+		 }
+		 
+		 
 		return (WindupReportView)part.getObject();
 	}
 	
@@ -98,12 +112,12 @@ public class ViewService {
 	}
     
 	public void launchStarting() {
-		Display.getDefault().asyncExec(() -> {
-		    	WindupReportView view = activateWindupReportView();
-			if (view != null) {
-				view.showMessage("No report available.", true);
-			}
-		});
+//		Display.getDefault().asyncExec(() -> {
+//		    	WindupReportView view = activateWindupReportView();
+//			if (view != null) {
+//				view.showMessage("No report available.", true);
+//			}
+//		});
     }
     
 //    @Inject

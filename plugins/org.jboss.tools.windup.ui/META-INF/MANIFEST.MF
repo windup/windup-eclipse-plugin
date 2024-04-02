@@ -9,11 +9,6 @@ Bundle-ClassPath: .,
  lib/org.eclipse.mylyn.wikitext.jar,
  lib/org.eclipse.mylyn.wikitext.ui.jar,
  lib/org.eclipse.mylyn.wikitext.textile.jar,
- lib/jackson-core-2.15.2.jar,
- lib/jackson-dataformat-yaml-2.15.2.jar,
- lib/jackson-databind-2.15.2.jar,
- lib/jackson-annotations-2.15.2.jar,
- lib/snakeyaml-2.2.jar,
  lib/guice-7.0.0.jar
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
 Bundle-Vendor: %plugin.vendor
@@ -93,4 +88,5 @@ Export-Package: com.google.inject,
  org.jboss.tools.windup.ui.internal.rules.delegate,
  org.jboss.tools.windup.ui.internal.services,
  org.jboss.tools.windup.ui.util
-Import-Package: org.slf4j
+Import-Package: org.jboss.tools.windup.ui.internal.explorer,
+ org.slf4j

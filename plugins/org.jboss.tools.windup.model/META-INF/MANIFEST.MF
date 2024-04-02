@@ -5,6 +5,12 @@ Bundle-SymbolicName: org.jboss.tools.windup.model;singleton:=true
 Bundle-Version: 7.0.0.Final
 Eclipse-BundleShape: dir
 Bundle-Activator: org.jboss.tools.windup.model.Activator
+Bundle-ClassPath: lib/jackson-annotations-2.15.2.jar,
+ lib/jackson-core-2.15.2.jar,
+ lib/jackson-databind-2.15.2.jar,
+ .,
+ lib/jackson-dataformat-yaml-2.15.2.jar,
+ lib/snakeyaml-2.2.jar
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore,

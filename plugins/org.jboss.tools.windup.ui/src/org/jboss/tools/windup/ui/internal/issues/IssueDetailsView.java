@@ -46,7 +46,9 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.browser.BrowserViewer;
 import org.jboss.tools.windup.model.domain.WindupMarker;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
+import org.jboss.tools.windup.ui.internal.explorer.IssueExplorerHandlers.IDetailsAdapter;
 import org.jboss.tools.windup.ui.internal.services.MarkerService;
+import org.jboss.tools.windup.ui.internal.services.MarkerSyncService;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.Issue;
 import org.jsoup.Jsoup;
@@ -60,11 +62,13 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+
+
 /**
  * View for displaying the details of an Issue.
  */
 @SuppressWarnings("restriction")
-public class IssueDetailsView {
+public class IssueDetailsView implements IDetailsAdapter {
 	
 	public static final String ID = "org.jboss.tools.windup.ui.issue.details";
 	
@@ -73,7 +77,13 @@ public class IssueDetailsView {
 	private Composite placeholder;
 	private Composite stack;
 	
-	@Inject private MarkerService markerService;
+	@Override
+	public IssueDetailsView getIssueDetailsView() {
+		return this;
+	}
+	
+//	@Inject private MarkerService markerService;
+	private MarkerService markerService = MarkerSyncService.getInstance("org.jboss.tools.windup.ui.internal.services.MarkerService");
 	
 	private ScrolledForm form;
 
@@ -91,7 +101,8 @@ public class IssueDetailsView {
 		IEclipseContext child = context.createChild();
 		child.set(FormToolkit.class, toolkit);
 		child.set(Composite.class, stack);
-		detailsComposite = ContextInjectionFactory.make(DetailsComposite.class, child);
+//		detailsComposite = ContextInjectionFactory.make(DetailsComposite.class, child);
+		detailsComposite = new DetailsComposite(stack, toolkit);
 		placeholder = toolkit.createComposite(stack);
 		toolkit.createLabel(placeholder, noIssueDetails);
 		GridLayoutFactory.fillDefaults().applyTo(placeholder);
@@ -175,7 +186,7 @@ public class IssueDetailsView {
 		private IMarker marker;
 		private BrowserViewer browserViewer;
 		
-		@Inject
+//		@Inject
 		public DetailsComposite(Composite parent, FormToolkit toolkit) {
 			super(parent, SWT.NONE);
 			GridLayoutFactory.fillDefaults().applyTo(this);

@@ -223,15 +223,19 @@ public class ModelService {
 	
 	private void load() {
 		File location = getWindupStateLocation(MODEL_FILE);
+		System.out.println("State Location:");
+		System.out.println(getStateURI());
 		Resource resource = createResource();
 		if (location != null && location.exists()) {
 			try {
 				resource.load(null);
 				model = (WindupModel)resource.getContents().get(0);
 				model.getConfigurationElements().forEach(configuration -> {
-						this.kantraModelDelegates.put(configuration, new KantraConfiguration(configuration));
-					}
-				);
+					configuration.setWindupResult(null);
+					KantraConfiguration kantraConfig = new KantraConfiguration(configuration);
+					KantraRulesetParser.parseRulesetForKantraConfig(kantraConfig);
+					this.kantraModelDelegates.put(configuration, kantraConfig);
+				});
 			} catch (IOException e) {
 				Activator.logInfo("Something has gone wrong and invalidated the underlying model. Creating another one...");
 				resource.getContents().clear();
@@ -698,8 +702,15 @@ public class ModelService {
 		for (ConfigurationElement configuration : getModel().getConfigurationElements()) {
 			if (mostRecentConfiguration == null) {
 				mostRecentConfiguration = configuration;
+				continue;
 			}
-			else if (!mostRecentConfiguration.getName().equals(configuration.getName()) &&
+			
+			if (mostRecentConfiguration.getTimestamp() == null && configuration.getTimestamp() != null) {
+				mostRecentConfiguration = configuration;
+				continue;
+			}
+			
+			if (!mostRecentConfiguration.getName().equals(configuration.getName()) &&
 					mostRecentConfiguration.getTimestamp() != null && configuration.getTimestamp() != null) {
 				Date thisTime = getTimestamp(mostRecentConfiguration.getTimestamp());
 				Date otherTime = getTimestamp(configuration.getTimestamp());
@@ -708,6 +719,28 @@ public class ModelService {
 				}
 			}
 		}
+		if (mostRecentConfiguration != null) {
+			System.out.println("Most recent run configuration");
+			System.out.println(mostRecentConfiguration.getName());
+			System.out.println("Timestamp");
+			System.out.println(mostRecentConfiguration.getTimestamp());
+			System.out.println("Output Location");
+			System.out.println(mostRecentConfiguration.getOutputLocation());
+		}
+		else {
+			System.err.println("Most recent configuraiton null");
+			if (!getModel().getConfigurationElements().isEmpty()) {
+				mostRecentConfiguration = getModel().getConfigurationElements().get(getModel().getConfigurationElements().size()-1);
+				System.err.println("Using most recently created configuration:");
+				System.out.println("Most recent run configuration");
+				System.out.println(mostRecentConfiguration.getName());
+				System.out.println("Timestamp");
+				System.out.println(mostRecentConfiguration.getTimestamp());
+				System.out.println("Output Location");
+				System.out.println(mostRecentConfiguration.getOutputLocation());
+			}
+		}
+		
 		return mostRecentConfiguration;
 	}
 	

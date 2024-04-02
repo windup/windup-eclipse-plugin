@@ -67,6 +67,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.progress.UIJob;
+import org.jboss.tools.windup.model.domain.KantraConfiguration;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.runtime.WindupRmiClient;
@@ -85,6 +86,7 @@ import org.jboss.tools.windup.ui.internal.services.MarkerService;
 import org.jboss.tools.windup.ui.internal.services.ViewService;
 import org.jboss.tools.windup.ui.util.WindupLauncher;
 import org.jboss.tools.windup.ui.util.WindupServerCallbackAdapter;
+import org.jboss.tools.windup.windup.ConfigurationElement;
 import org.jboss.tools.windup.windup.Issue;
 import org.jboss.windup.tooling.ExecutionBuilder;
 import org.osgi.service.event.Event;
@@ -238,7 +240,15 @@ public class IssueExplorer extends CommonNavigator {
 //		getServiceContext().set(IssueExplorerService.class, explorerSerivce);
 //		broker.subscribe(GROUPS_CHANGED, groupsChangedHandler);
 		initGettingStarted();
-		buildTree();
+		
+//		ConfigurationElement recentConfiguration = this.modelService.getRecentConfiguration();
+//		if (recentConfiguration != null) {
+//			IssueExplorer.current.markerService.generateMarkersForConfiguration(recentConfiguration);
+//		}
+//		
+//		else {
+			buildTree();
+//		}
 	}
 	
 	private Label serverImage;

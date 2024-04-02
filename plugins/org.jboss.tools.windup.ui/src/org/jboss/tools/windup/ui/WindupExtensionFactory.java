@@ -27,7 +27,7 @@ public class WindupExtensionFactory extends AbstractUiExtensionFactory {
 	}
 	
 	@Override
-	protected Object getInstance() throws Exception {
+	public Object getInstance() throws Exception {
 		Injector injector = WindupUIPlugin.getDefault().getInjector();
 		Class<?> type = getBundle().loadClass(data);
 		System.out.println("Guice :: getInstance");

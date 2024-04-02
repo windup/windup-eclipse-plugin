@@ -38,6 +38,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.jboss.tools.windup.model.domain.KantraConfiguration;
 import org.jboss.tools.windup.model.domain.ModelService;
 import org.jboss.tools.windup.model.domain.WindupConstants;
 import org.jboss.tools.windup.model.domain.WindupMarker;
@@ -152,6 +153,12 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		}
 		
 		public void build(TreeNode root, TreeNode node, TreePath path, IMarker marker, int index) {
+			
+			Issue issue = markerService.find(marker);
+			if (issue == null) {
+				return;
+			}
+			
 //			if (groupService.isGroupByHierarchy()) {
 				// build the hierarchy.
 				if (index < path.getSegmentCount()) {
@@ -162,13 +169,19 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 						node.addChild(child);
 						if (segment instanceof IProject) {
 							resourceMap.put((IProject)segment, child);
-							if (configuration.isGenerateReport() && !configuration.getInputs().isEmpty()) {
+							KantraConfiguration kantraConfiguration = this.modelService.getKantraDelegate(configuration);
+							if (kantraConfiguration.getSummary() == null) {
+								org.jboss.tools.windup.model.domain.KantraRulesetParser.parseRulesetForKantraConfig(kantraConfiguration);	
+							}
+							if (kantraConfiguration.getSummary() != null) {
 								String projectName = ((IProject)segment).getName();
+								System.err.println("configuration.getInputs()");
+								System.out.println(configuration.getInputs());
 								Optional<Input> option = configuration.getInputs().stream().filter((input) -> projectName.equals(input.getName())).findFirst();
 								if (option.isPresent()) {
-									Input input = option.get();
-							    		IPath reportPath = modelService.getReport(configuration, input);
-							    		File report = new File(reportPath.toString());
+//									Input input = option.get();
+						    		String reportPath = kantraConfiguration.getReportLocation(); // modelService.getReport(configuration, input);
+						    		File report = new File(reportPath);
 									if (report.exists()) {
 										TreeNode reportNode = child.getChildPath(Messages.generatedReport);
 										if (reportNode == null) {
@@ -185,8 +198,8 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 					return;
 				}
 //			}
-			/*TreeNode parent = groupService.isGroupByHierarchy() ? node : root;
-			if (groupService.isGroupByFile()) {
+			TreeNode parent = node; // groupService.isGroupByHierarchy() ? node : root;
+			if (true /*groupService.isGroupByFile()*/) {
 				TreeNode resourceNode = parent.getChildPath(marker.getResource());
 				if (resourceNode == null) {
 					resourceNode = new TreeNode(marker.getResource());
@@ -195,8 +208,8 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				}
 				parent = resourceNode;
 				
-				if (configuration.isGenerateReport()) {
-					Issue issue = markerService.find(marker);
+//				if (configuration.isGenerateReport()) {
+//					Issue issue = markerService.find(marker);
 					if (issue != null) {
 						if (issue.getGeneratedReportLocation() != null) {
 							File report = new File(issue.getGeneratedReportLocation());
@@ -209,10 +222,10 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 							}
 						}
 					}
-				}
+//				}
 			}
 			
-			if (groupService.isGroupBySeverity()) {
+			if (true/*groupService.isGroupBySeverity()*/) {
 				//String segment = String.valueOf(marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO));
 				String severity = marker.getAttribute(SEVERITY, Severity.POTENTIAL.toString());
 				//TreeNode severityNode = parent.getChildPath(segment);
@@ -225,10 +238,10 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				parent = severityNode;
 			}
 			
-			if (groupService.isGroupByRule()) {
+			if (true/*groupService.isGroupByRule()*/) {
 				String ruleId = marker.getAttribute(WindupMarker.RULE_ID, WindupConstants.DEFAULT_RULE_ID);
 				String title = "";
-				Issue issue = markerService.find(marker);
+//				Issue issue = markerService.find(marker);
 				if (issue instanceof Hint) {
 					title = ((Hint)issue).getTitle();
 				}
@@ -241,15 +254,16 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 				parent = ruleNode;
 			}
 			
-			Issue issue = markerService.find(marker);
-			if (issue != null) {
-				IEclipseContext child = context.createChild();
+//			Issue issue = markerService.find(marker);
+//			if (issue != null) {
+				/*IEclipseContext child = context.createChild();
 				child.set(IMarker.class, marker);
 				child.set(Issue.class, issue);
-				MarkerNode markerNode = ContextInjectionFactory.make(MarkerNode.class, child);
+				MarkerNode markerNode = ContextInjectionFactory.make(MarkerNode.class, child);*/
+				MarkerNode markerNode = new MarkerNode(marker, issue);
 				parent.addChild(markerNode);
 				nodeMap.put(marker, markerNode);
-			}*/
+//			}
 		}
 	}
 	

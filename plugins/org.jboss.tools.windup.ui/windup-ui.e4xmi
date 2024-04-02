@@ -24,12 +24,12 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_9YJEsDwPEeabQKKuPTy1jQ" featurename="sharedElements" parentElementId="IDEWindow">
-    <elements xsi:type="basic:Part" xmi:id="_FoKaIDwQEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.views.WindupReportView" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.views.WindupReportView" label="%view.windup_report.name" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="%view.windup_report.name" closeable="true">
+    <!-- <elements xsi:type="basic:Part" xmi:id="_FoKaIDwQEeabQKKuPTy1jQ" elementId="org.jboss.tools.windup.ui.views.WindupReportView" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.views.WindupReportView" label="%view.windup_report.name" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/windup.png" tooltip="%view.windup_report.name" closeable="true">
       <toolbar xmi:id="_vUzyMDwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.toolbar.windupReport">
         <children xsi:type="menu:DirectToolItem" xmi:id="_198pYDwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.directtoolitem.refresh" label="" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/refresh.gif" tooltip="Refresh Windup Report" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.RefreshWindupReportHandler"/>
         <children xsi:type="menu:DirectToolItem" xmi:id="_-SaZ8DwiEea2t5BqWj67Uw" elementId="org.jboss.tools.windup.ui.directtoolitem.sync" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/synced.png" tooltip="Sync with selection" type="Check" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.handlers.SyncSelectionHandler"/>
       </toolbar>
-    </elements>
+    </elements> -->
     <elements xsi:type="basic:Part" xmi:id="_jbGBUEYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.part.windupEditor" contributionURI="bundleclass://org.jboss.tools.windup.ui/org.jboss.tools.windup.ui.internal.editor.WindupEditor" label="Windup" iconURI="platform:/plugin/org.jboss.tools.windup.ui/icons/rules/repository-middle.gif" closeable="true">
       <toolbar xmi:id="_qIuW8EYqEea0Sf2tdlqnRg" elementId="org.jboss.tools.windup.ui.toolbar.0"/>
     </elements>

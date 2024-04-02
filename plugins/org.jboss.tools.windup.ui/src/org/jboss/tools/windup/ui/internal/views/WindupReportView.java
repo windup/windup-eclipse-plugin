@@ -12,6 +12,7 @@ package org.jboss.tools.windup.ui.internal.views;
 
 import java.io.File;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import jakarta.inject.Inject;
 
@@ -135,8 +136,12 @@ public class WindupReportView implements IShowInTarget
     }
 
     @Inject
-    public void createPartControl(Composite composite)
+    @PostConstruct
+    public void createPartControl(Composite composite, MPart part, WindupService windupService, ESelectionService selectionService)
     {
+    	this.part = part;
+    	this.windupService = windupService;
+    	this.selectionService = selectionService;
     	this.composite = composite;
         //this.composite = new Composite(parent, SWT.NONE);
 //        GridLayout layout = new GridLayout(1, false);
@@ -245,7 +250,7 @@ public class WindupReportView implements IShowInTarget
     @Focus
     public void setFocus()
     {
-        this.browserViewer.setFocus();
+        //  this.browserViewer.setFocus();
     }
 
     @PreDestroy

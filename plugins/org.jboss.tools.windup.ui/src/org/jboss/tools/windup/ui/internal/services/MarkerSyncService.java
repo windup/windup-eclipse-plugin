@@ -10,9 +10,10 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.services;
 
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import jakarta.inject.Inject;
+//import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -25,16 +26,73 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Display;
 import org.jboss.tools.windup.model.util.DocumentUtils;
+import org.jboss.tools.windup.ui.WindupExtensionFactory;
 import org.jboss.tools.windup.ui.WindupUIPlugin;
 import org.jboss.tools.windup.windup.Hint;
 import org.jboss.tools.windup.windup.MarkerElement;
+import org.osgi.framework.Bundle;
+
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 /**
  * Service for synchronizing Windup markers with resources changes.
  */
 public class MarkerSyncService implements IResourceChangeListener, IResourceDeltaVisitor {
 	
-	@Inject private MarkerService markerService;
+	static WindupExtensionFactory factory = new WindupExtensionFactory();
+	
+	private static Bundle getBundle() {
+		return WindupUIPlugin.getDefault().getBundle();
+	}
+	
+	public static <T> T getInstance(String className) {
+		try {
+//			factory.setInitializationData(null, className, "");
+//			T result = (T) factory.getInstance();
+//			return result;
+			Injector injector = WindupUIPlugin.getDefault().getInjector();
+			Class<?> type = getBundle().loadClass(className);
+			System.out.println("Guice :: getInstance");
+			System.out.println(type);
+			try {
+				injector.getBinding(type);
+				return (T) injector.getInstance(type);
+			} catch (ConfigurationException e) {
+				try {
+					Provider<?> provider = injector.getProvider(type);
+					return (T) provider.get();
+				} catch (ConfigurationException e2) {
+					System.out.println("Error creating @Inject instance.");
+					e.printStackTrace();
+				}
+			} 
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		return null;
+	}
+	
+//	@Inject private MarkerService markerService;
+	private MarkerService markerService = getInstance("org.jboss.tools.windup.ui.internal.services.MarkerService");
+	
+	
+	
+	@PostConstruct
+	private void init() {
+		System.out.println("@PostConstruct :: MarkerSyncService");
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_BUILD);
+		
+	}
+	
+	@PreDestroy
+	private void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+	}
+	
 	
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
@@ -94,14 +152,5 @@ public class MarkerSyncService implements IResourceChangeListener, IResourceDelt
 		}
 	}
 	
-	@PostConstruct
-	private void init() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_BUILD);
-		
-	}
-	
-	@PreDestroy
-	private void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-	}
+
 }

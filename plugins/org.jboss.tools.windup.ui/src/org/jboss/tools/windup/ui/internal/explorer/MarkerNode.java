@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.windup.ui.internal.explorer;
 
-import jakarta.inject.Inject;
+//import jakarta.inject.Inject;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +26,7 @@ public class MarkerNode extends TreeNode {
 	private Issue issue;
 	private IMarker marker;
 	
-	@Inject
+//	@Inject
 	public MarkerNode(IMarker marker, Issue issue) {
 		super (marker);
 		this.marker = marker;

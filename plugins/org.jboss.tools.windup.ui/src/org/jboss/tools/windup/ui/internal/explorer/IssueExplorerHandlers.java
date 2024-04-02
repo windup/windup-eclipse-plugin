@@ -32,6 +32,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.commands.ICommandService;
@@ -177,23 +179,47 @@ public class IssueExplorerHandlers {
 		}
 	}
 	
+	public static interface IDetailsAdapter {
+		public IssueDetailsView getIssueDetailsView();
+	}
+	
 	public static class ViewIssueDetailsHandler extends AbstractIssueHandler {
-		@Inject private EPartService partService;
+//		@Inject private EPartService partService;
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			MarkerNode node = getMarkerNode(event);
 			if (node != null) {
-				MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
-				IssueDetailsView view = (IssueDetailsView)part.getObject();
-				if (view != null) {
-					System.out.println("ViewIssueDetailsHandler:: calling view.showIssueDetails with node [" + node + "] and marker [" + node.getMarker() + "]");
-					view.showIssueDetails(node.getMarker());
+				IViewPart part;
+				//				MPart part = partService.showPart(IssueDetailsView.ID, PartState.ACTIVATE);
+				try {
+					part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(IssueDetailsView.ID);
+					// We're getting an E4PartWrapper, which apparently we can't get the 'IssueDetailsView' object from. 
+					System.out.println("part");
+					IDetailsAdapter adapter = part.getAdapter(IDetailsAdapter.class);
+					IssueDetailsView view = adapter.getIssueDetailsView();
+					if (view != null) {
+						System.out.println("ViewIssueDetailsHandler:: calling view.showIssueDetails with node [" + node + "] and marker [" + node.getMarker() + "]");
+						view.showIssueDetails(node.getMarker());
+					}
+					else {
+						System.out.println("Cannot find Windup Issue Details View.");
+						System.out.println("View Part: " + part);
+						System.out.println("MarkerNode: " + node);
+					}
+//					.showIssueDetails(node.getMarker());
+				} catch (PartInitException e) {
+					WindupUIPlugin.log(e);
 				}
-				else {
-					System.out.println("Cannot find Windup Issue Details View.");
-					System.out.println("View Part: " + part);
-					System.out.println("MarkerNode: " + node);
-				}
+//				IssueDetailsView view = (IssueDetailsView)part.getObject();
+//				if (view != null) {
+//					System.out.println("ViewIssueDetailsHandler:: calling view.showIssueDetails with node [" + node + "] and marker [" + node.getMarker() + "]");
+//					view.showIssueDetails(node.getMarker());
+//				}
+//				else {
+//					System.out.println("Cannot find Windup Issue Details View.");
+//					System.out.println("View Part: " + part);
+//					System.out.println("MarkerNode: " + node);
+//				}
 			}
 			return null;
 		}
