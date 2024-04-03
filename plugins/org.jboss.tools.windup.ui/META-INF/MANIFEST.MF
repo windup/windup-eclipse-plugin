@@ -9,7 +9,7 @@ Bundle-ClassPath: .,
  lib/org.eclipse.mylyn.wikitext.jar,
  lib/org.eclipse.mylyn.wikitext.ui.jar,
  lib/org.eclipse.mylyn.wikitext.textile.jar,
- lib/guice-7.0.3.jar
+ lib/guice-7.0.0.jar
 Bundle-Activator: org.jboss.tools.windup.ui.WindupUIPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
