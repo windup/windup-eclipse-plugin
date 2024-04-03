@@ -108,7 +108,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		});
 		
-		Boolean debugging = true;
+		Boolean debugging = false;
 		
 		kantraJob = new Job("Kantra Running - " + configuration.getName()) {
 	      @Override
@@ -146,13 +146,15 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	    			IssueExplorer.current.viewService.renderReport(configuration);
 	    			return;
 	    		}
-	    		if (WindupLaunchDelegate.activeRunner != null) {
-	    			WindupLaunchDelegate.activeRunner.kill();
+				else {
+					if (WindupLaunchDelegate.activeRunner != null) {
+	    				WindupLaunchDelegate.activeRunner.kill();
+	    			}
 		    		org.jboss.tools.windup.model.domain.KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
 		    		IssueExplorer.current.modelService.save();
 		    		IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
 		    		IssueExplorer.current.viewService.renderReport(configuration);
-	    		}
+				}
 	    		kantraMonitor.done();
 	    	}
 	    });
