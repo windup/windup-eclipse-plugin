@@ -217,8 +217,8 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     		System.out.println(msg.toString());
     		kantraJob.cancel();
     	};
-		kantraJob.cancel();
-//   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
+//		kantraJob.cancel();
+   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
 	}
 	
 	private MessageConsole findConsole(String name) {

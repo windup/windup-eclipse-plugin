@@ -108,7 +108,7 @@ public class IssueExplorer extends CommonNavigator {
 	
 //	@Inject private IssueGroupService groupService;
 //	@Inject private EPartService partService;
-	@Inject private IssueExplorerContentService contentService;
+	@Inject public IssueExplorerContentService contentService;
 	@Inject public ModelService modelService;
 	public static IssueExplorer current = null;
 	@Inject private WindupLauncher windupLauncher;

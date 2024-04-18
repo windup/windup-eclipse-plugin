@@ -107,21 +107,21 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 		// Used for explorer linking
 		private Map<IResource, TreeNode> resourceMap = Maps.newHashMap();
 		
-		public TreeNodeBuilder(List<IMarker> markers, IssueExplorer explorer, 
+		public TreeNodeBuilder(List<IMarker> markers, /*IssueExplorer explorer,*/ 
 				/*IssueGroupService groupService IEclipseContext context,*/
 				MarkerService markerService, ConfigurationElement configuration,
 				ModelService modelService) {
 			this.markers = markers;
 //			this.groupService = groupService;
-			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
-			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
+//			this.contentProvider = (NavigatorContentServiceContentProvider)explorer.getCommonViewer().getContentProvider();
+//			contentProvider.getParents(ResourcesPlugin.getWorkspace().getRoot());
 			this.configuration = configuration;
 			this.markerService = markerService;
 			this.modelService = modelService;
 			// TODO: Correct this temporary hack to get flat package layout.
-			INavigatorContentService contentService = explorer.getCommonViewer().getNavigatorContentService();
-			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
-			m.setBooleanProperty(IExtensionStateConstants.Values.IS_LAYOUT_FLAT, true);
+//			INavigatorContentService contentService = explorer.getCommonViewer().getNavigatorContentService();
+//			IExtensionStateModel m = contentService.findStateModel(IssueConstants.JDT_CONTENT);
+//			m.setBooleanProperty(IExtensionStateConstants.Values.IS_LAYOUT_FLAT, true);
 //			this.context = context;
 		}
 		
@@ -135,6 +135,7 @@ public class IssueExplorerContentProvider implements ICommonContentProvider {
 			}
 			RootTreeNode root = new RootTreeNode();
 			for (IMarker marker : markers) {
+				NavigatorContentServiceContentProvider contentProvider = (NavigatorContentServiceContentProvider)IssueExplorer.current.getCommonViewer().getContentProvider();
 				List<TreePath> paths = Lists.newArrayList(contentProvider.getParents(marker.getResource()));
 				if (!paths.isEmpty()) {
 					TreePath path = paths.get(0);

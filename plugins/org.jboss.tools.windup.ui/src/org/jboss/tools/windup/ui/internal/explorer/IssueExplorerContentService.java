@@ -42,14 +42,14 @@ public class IssueExplorerContentService {
 //	@Inject private IssueGroupService groupService;
 //	@Inject private IEclipseContext context;
 	@Inject private ModelService modelService;
-	@Inject @Optional private IssueExplorer issueExplorer;
+//	@Inject private IssueExplorer issueExplorer;
 	@Inject private MarkerService markerService;
 	
 	private Map<IResource, TreeNode> resourceMap = Maps.newHashMap();
 	
-	public void setIssuExplorer(IssueExplorer issueExplorer) {
-		this.issueExplorer = issueExplorer;
-	}
+//	public void setIssuExplorer(IssueExplorer issueExplorer) {
+//		this.issueExplorer = issueExplorer;
+//	}
 	
 	private BidiMap nodeMap = new DualHashBidiMap();
 	
@@ -85,7 +85,7 @@ public class IssueExplorerContentService {
 	
 	private Object[] createNodeGroups(List<IMarker> markers) {
 		TreeNodeBuilder builder = new TreeNodeBuilder(markers,
-				issueExplorer, /* groupService, context, */ 
+				/*issueExplorer, */ /* groupService, context, */ 
 				markerService, modelService.getRecentConfiguration(), modelService);
 		Object[] input = builder.build();
 		this.nodeMap = builder.getNodeMap();
