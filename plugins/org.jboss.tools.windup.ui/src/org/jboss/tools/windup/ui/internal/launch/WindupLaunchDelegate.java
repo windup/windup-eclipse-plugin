@@ -195,10 +195,10 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
         }
     	if (targets.isEmpty()) {
-    		targets.add("quarkus");
+//    		targets.add("quarkus");
     	}
     	if (sources.isEmpty()) {
-    		sources.add("springboot");
+//    		sources.add("springboot");
     	}
 	
     	IssueExplorer.current.viewService.launchStarting();
