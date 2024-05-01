@@ -348,9 +348,10 @@ public class ModelService {
 					configuration.setName(name);
 					configuration.setWindupHome(WindupRuntimePlugin.computeWindupHome().toString());
 					Pair pair = WindupFactory.eINSTANCE.createPair();
-					pair.setKey("output");
-//					pair.setValue();
+					pair.setKey("overwrite");
+					pair.setValue("true");
 //					configuration.getOptions().add(pair);
+					configuration.getOptions().add(pair);
 					configuration.setOutputLocation(getDefaultOutputLocation(configuration));
 					configuration.setSourceMode(true);
 					configuration.setGenerateReport(true);

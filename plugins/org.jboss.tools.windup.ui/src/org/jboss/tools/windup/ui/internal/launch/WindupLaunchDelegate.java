@@ -14,6 +14,7 @@ package org.jboss.tools.windup.ui.internal.launch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -86,8 +87,11 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			this.runKantra(configuration);
 		}
 	}
+	
+	private boolean invalidConfig = false; 
 		
 	private void runKantra(ConfigurationElement configuration) {
+		this.invalidConfig = false;
 		if (WindupLaunchDelegate.activeRunner != null) {
 			WindupLaunchDelegate.activeRunner.kill();
 		}
@@ -127,6 +131,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 	          	return Status.OK_STATUS;
 	      }
 		};
+		
 		kantraJob.addJobChangeListener(new JobChangeAdapter() {
 	    	@Override
 	    	public void done(IJobChangeEvent event) {
@@ -150,10 +155,12 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 					if (WindupLaunchDelegate.activeRunner != null) {
 	    				WindupLaunchDelegate.activeRunner.kill();
 	    			}
-		    		org.jboss.tools.windup.model.domain.KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
-		    		IssueExplorer.current.modelService.save();
-		    		IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
-		    		IssueExplorer.current.viewService.renderReport(configuration);
+					if (!WindupLaunchDelegate.this.invalidConfig) {
+			    		org.jboss.tools.windup.model.domain.KantraRulesetParser.parseRulesetForKantraConfig(IssueExplorer.current.modelService.getKantraDelegate(configuration));
+			    		IssueExplorer.current.modelService.save();
+			    		IssueExplorer.current.markerService.generateMarkersForConfiguration(configuration);
+			    		IssueExplorer.current.viewService.renderReport(configuration);
+					}
 				}
 	    		kantraMonitor.done();
 	    	}
@@ -172,6 +179,37 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 		String cli = WindupRuntimePlugin.computeWindupHome();
 		
 		File outputFile = new File(output);
+		
+		Optional<Pair> overwriteOption = configuration.getOptions().stream().filter(option -> option.getKey().equals("overwrite")).findFirst();
+		if (overwriteOption.isPresent()) {
+			Pair pair = overwriteOption.get();
+			if (!Boolean.valueOf(pair.getValue())) {
+				if (outputFile.exists()) {
+					Display.getDefault().asyncExec(() -> {
+						MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
+								Messages.launchErrorTitle, "Output location already exists. `--overwrite` option is required.");
+						WindupUIPlugin.logErrorMessage("Output location already exists. `--overwrite` option is required."); //$NON-NLS-1$
+					});
+					this.invalidConfig = true;
+					kantraJob.cancel();
+					return;
+				}
+			}
+			
+		}
+		else {
+			if (outputFile.exists()) {
+				Display.getDefault().asyncExec(() -> {
+					MessageDialog.openInformation(Display.getDefault().getActiveShell(), 
+							Messages.launchErrorTitle, "Output location already exists. `--overwrite` option is required.");
+					WindupUIPlugin.logErrorMessage("Output location already exists. `--overwrite` option is required."); //$NON-NLS-1$
+				});
+				this.invalidConfig = true;
+				kantraJob.cancel();
+				return;
+			}
+		}
+		
 		if (!outputFile.exists()) {
 			try {
 				outputFile.mkdirs();
@@ -183,6 +221,8 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 				return;
 			}
 		}
+		
+		
 	            	
     	for (Pair pair : configuration.getOptions()) {
 			String name = pair.getKey();

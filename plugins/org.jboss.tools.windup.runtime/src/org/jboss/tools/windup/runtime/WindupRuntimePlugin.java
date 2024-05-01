@@ -171,6 +171,12 @@ public class WindupRuntimePlugin extends Plugin {
 	private static String getOptions() {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<help>\n"
+		+ " <option name=\"overwrite\">\n"
+		+ "		<description>If set, overwrite the output directory.</description>\n"
+		+ "		<type>Boolean</type>\n"
+		+ " 	<ui-type>SINGLE</ui-type>\n"
+		+ " 	<required>false</required>\n"
+		+ " </option>\n"
 		+ "	<option name=\"target\">\n"
 		+ "		<description>The target technology to consider for analysis.</description>\n"
 		+ "		<type>String</type>\n"
