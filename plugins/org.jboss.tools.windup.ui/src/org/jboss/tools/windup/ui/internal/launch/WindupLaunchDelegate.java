@@ -222,7 +222,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		}
 		
-		
+		List<String> rules = Lists.newArrayList();
 	            	
     	for (Pair pair : configuration.getOptions()) {
 			String name = pair.getKey();
@@ -233,6 +233,9 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
 			if (name.equals("target")) {
 				targets.add(value);
 			}
+			if (name.equals("rules")) {
+				rules.add(value);
+			}
         }
     	if (targets.isEmpty()) {
 //    		targets.add("quarkus");
@@ -240,7 +243,7 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     	if (sources.isEmpty()) {
 //    		sources.add("springboot");
     	}
-	
+
     	IssueExplorer.current.viewService.launchStarting();
     	Consumer<String> onMessage = (msg) -> { 
     		System.out.println("onMessage: " + msg);
@@ -257,8 +260,17 @@ public class WindupLaunchDelegate implements ILaunchConfigurationDelegate {
     		System.out.println(msg.toString());
     		kantraJob.cancel();
     	};
+    	
+    	
+    	Optional<Pair> analyzeKnownLibrariesOption = configuration.getOptions().stream().filter(option -> option.getKey().equals("analyze-known-libraries")).findFirst();
+    	boolean analyzeKnownLibraries = false;
+    	if (analyzeKnownLibrariesOption.isPresent() && Boolean.valueOf(analyzeKnownLibrariesOption.get().getValue())) {
+    		analyzeKnownLibraries = true;
+    	}
+    	
+    	
 //		kantraJob.cancel();
-   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, onMessage, onComplete, onFailed);
+   	 WindupLaunchDelegate.activeRunner.runKantra(cli, inputs, output, sources, targets, rules, analyzeKnownLibraries, onMessage, onComplete, onFailed);
 	}
 	
 	private MessageConsole findConsole(String name) {

@@ -175,6 +175,9 @@ public class OptionFacades {
 	}
 	
 	public static boolean isSingleValued(OptionDescription option) {
+		if (option.getName().equals("rules")) {
+			return false;
+		}
 		 UiType uiType = UiType.valueOf(option.getUiType().toUpperCase());
 		return uiType == UiType.SINGLE || uiType == UiType.DIRECTORY || uiType == UiType.FILE_OR_DIRECTORY;
 	}

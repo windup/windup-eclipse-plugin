@@ -167,7 +167,7 @@ public class WindupRuntimePlugin extends Plugin {
 		}
 		return result;
 	}
-	
+
 	private static String getOptions() {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<help>\n"
@@ -175,6 +175,18 @@ public class WindupRuntimePlugin extends Plugin {
 		+ "		<description>If set, overwrite the output directory.</description>\n"
 		+ "		<type>Boolean</type>\n"
 		+ " 	<ui-type>SINGLE</ui-type>\n"
+		+ " 	<required>false</required>\n"
+		+ " </option>\n"
+		+ " <option name=\"analyze-known-libraries\">\n"
+		+ "		<description>Analyze known open-source libraries.</description>\n"
+		+ "		<type>Boolean</type>\n"
+		+ " 	<ui-type>SINGLE</ui-type>\n"
+		+ " 	<required>false</required>\n"
+		+ " </option>\n"
+		+ " <option name=\"rules\">\n"
+		+ "		<description>User Rules Directory/File.</description>\n"
+		+ "		<type>File</type>\n"
+		+ " 	<ui-type>FILE_OR_DIRECTORY</ui-type>\n"
 		+ " 	<required>false</required>\n"
 		+ " </option>\n"
 		+ "	<option name=\"target\">\n"
