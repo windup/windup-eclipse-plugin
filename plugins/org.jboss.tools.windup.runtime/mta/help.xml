@@ -6,24 +6,32 @@
 		<ui-type>SELECT_MANY</ui-type>
 		<available-options>
 			<option>azure-appservice</option>
-			<option>containerization</option>
-			<option>quarkus</option>
+			<option>camel3</option>
+			<option>camel4</option>
+			<option>cloud-readiness</option>
+			<option>drools</option>
+			<option>eap</option>
+			<option>eap6</option>
 			<option>eap7</option>
 			<option>eap8</option>
-			<option>openjdk</option>
+			<option>eapxp</option>
+			<option>fsw</option>
+			<option>fuse</option>
+			<option>hibernate</option>
+			<option>hibernate-search</option>
 			<option>jakarta-ee</option>
-			<option>jakarta-ee8+</option>
-			<option>jakarta-ee9+</option>
+			<option>java-ee</option>
+			<option>jbpm</option>
 			<option>jws6</option>
-			<option>eap</option>
-			<option>camel 3</option>
-			<option>camel 4</option>
 			<option>linux</option>
+			<option>openjdk</option>
 			<option>openjdk11</option>
 			<option>openjdk17</option>
 			<option>openjdk21</option>
 			<option>openliberty</option>
-			<option>springboot</option>
+			<option>quarkus</option>
+			<option>resteasy</option>
+			<option>rhr</option>
 		</available-options>
 		<required>true</required>
 	</option>
@@ -43,17 +51,19 @@
 			<option>eap</option>
 			<option>eap6</option>
 			<option>eap7</option>
+			<option>eap8</option>
 			<option>eapxp</option>
 			<option>elytron</option>
 			<option>flyway</option>
 			<option>glassfish</option>
 			<option>hibernate</option>
 			<option>hibernate-search</option>
-			<option>java</option>
+			<option>jakarta-ee</option>
 			<option>java-ee</option>
-			<option>javaee</option>
 			<option>jbpm</option>
-			<option>jdbc</option>
+			<option>jboss</option>
+			<option>javaee</option>
+			<option>jdbs</option>
 			<option>jonas</option>
 			<option>jrun</option>
 			<option>jsonb</option>
@@ -79,10 +89,8 @@
 			<option>rpc</option>
 			<option>seam</option>
 			<option>soa</option>
-			<option>soa-p</option>
-			<option>sonic</option>
-			<option>sonicesb</option>
-			<option>springboot</option>
+			<option>spring</option>
+			<option>spring-boot</option>
 			<option>thorntail</option>
 			<option>weblogic</option>
 			<option>websphere</option>
