@@ -97,4 +97,22 @@
 		</available-options>
 		<required>false</required>
 	</option>
+	<option name="overwrite">
+		<description>If set, overwrite the report output directory.</description>
+		<type>Boolean</type>
+		<ui-type>SINGLE</ui-type>
+		<required>false</required>
+	</option>
+	<option name="analyze-known-libraries">
+		<description>Analyze known libraries.</description>
+		<type>Boolean</type>
+	 	<ui-type>SINGLE</ui-type>
+	 	<required>false</required>
+	</option>
+	<option name="rules">
+		<description>User Rules Directory/File.</description>
+		<type>File</type>
+		<ui-type>FILE_OR_DIRECTORY</ui-type>
+		<required>false</required>
+	</option>
 </help>

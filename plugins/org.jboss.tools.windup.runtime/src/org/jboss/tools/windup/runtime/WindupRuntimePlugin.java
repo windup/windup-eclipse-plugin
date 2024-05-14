@@ -132,9 +132,9 @@ public class WindupRuntimePlugin extends Plugin {
 		Help result = new Help();
 		File cacheFile = WindupRuntimePlugin.getMtaOptions();
 		try {
-//			URL url = cacheFile.toURI().toURL();			
-			InputStream input = new StringInputStream(WindupRuntimePlugin.getOptions()); // url.openStream();
-			XMLMemento root = XMLMemento.createReadRoot(input);
+			URL url = cacheFile.toURI().toURL();			
+//			InputStream input = new StringInputStream(WindupRuntimePlugin.getOptions()); // url.openStream();
+			XMLMemento root = XMLMemento.createReadRoot(url.openStream());
 			for (IMemento element : root.getChildren("option")) { //$NON-NLS-1$
 				String name = element.getString("name"); //$NON-NLS-1$
 				XMLMemento descriptionChild = (XMLMemento) element.getChild("description"); //$NON-NLS-1$
@@ -172,7 +172,7 @@ public class WindupRuntimePlugin extends Plugin {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<help>\n"
 		+ " <option name=\"overwrite\">\n"
-		+ "		<description>If set, overwrite the output directory.</description>\n"
+		+ "		<description>If set, overwrite the report output directory.</description>\n"
 		+ "		<type>Boolean</type>\n"
 		+ " 	<ui-type>SINGLE</ui-type>\n"
 		+ " 	<required>false</required>\n"
