@@ -5,10 +5,10 @@
 		<type>String</type>
 		<ui-type>SELECT_MANY</ui-type>
 		<available-options>
-			<option>azure-appservice</option>
+			<option>azure</option>
 			<option>camel3</option>
 			<option>camel4</option>
-			<option>cloud-readiness</option>
+			<option>cloud</option>
 			<option>drools</option>
 			<option>eap</option>
 			<option>eap6</option>
@@ -18,9 +18,8 @@
 			<option>fsw</option>
 			<option>fuse</option>
 			<option>hibernate</option>
-			<option>hibernate-search</option>
-			<option>jakarta-ee</option>
-			<option>java-ee</option>
+			<option>jakarta</option>
+			<option>java</option>
 			<option>jbpm</option>
 			<option>jws6</option>
 			<option>linux</option>
@@ -56,7 +55,7 @@
 			<option>elytron</option>
 			<option>flyway</option>
 			<option>glassfish</option>
-			<option>hibernate</option>
+			<option>hibernate</option> 
 			<option>hibernate-search</option>
 			<option>jakarta-ee</option>
 			<option>java-ee</option>
